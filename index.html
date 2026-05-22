@@ -5,15 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saját Manikűr Szalon</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #fff0f5; color: #333; padding: 50px; }
-        h1 { color: #d63384; }
-        .gomb { display: inline-block; padding: 15px 30px; background-color: #d63384; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        /* Az oldal alapbeállításai */
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background-color: #fbfbfb; 
+            color: #333; 
+            margin: 0; /* Eltávolítjuk az alapértelmezett margót */
+            padding-top: 80px; /* EZ FONTOS: Lejjebb toljuk a tartalmat, hogy a fix menü ne takarja ki a címet */
+        }
+        
+        /* A fix menüsáv stílusa (Sötét, elegáns dizájn) */
+        .fejlec {
+            position: fixed; /* Ez a parancs rögzíti a menüt */
+            top: 0; /* A képernyő legtetejére */
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a; /* Sötét színkód */
+            padding: 15px 0;
+            z-index: 1000; /* Biztosítja, hogy mindig minden más elem felett maradjon */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Kis árnyék az aljára */
+        }
+
+        /* A menüben lévő linkek (szövegek) stílusa */
+        .fejlec a {
+            color: #e5c158; /* Elegáns arany/homok színű szöveg */
+            text-decoration: none; /* Aláhúzás eltüntetése */
+            margin: 0 15px; /* Távolság a szavak között */
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase; /* Csupa nagybetű */
+            letter-spacing: 1px; /* Betűköz növelése */
+            transition: color 0.3s; /* Finom átmenet, ha ráviszed az egeret */
+        }
+
+        /* Milyen legyen a link, ha ráviszik az egeret */
+        .fejlec a:hover {
+            color: #ffffff; /* Fehérre vált */
+        }
+
+        /* Címsor és szöveg formázása */
+        h1 { color: #1a1a1a; margin-top: 40px; }
+        p { margin-bottom: 40px; }
+        
+        /* A gomb stílusa, hogy passzoljon a menühöz */
+        .gomb { 
+            display: inline-block; 
+            padding: 15px 30px; 
+            background-color: #1a1a1a; 
+            color: #e5c158; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+        }
     </style>
 </head>
 <body>
-    <h1>Üdvözöllek a Manikűr Oldalamon!</h1>
-    <p>Ez az első, teljesen egyedi, saját készítésű weboldalam.</p>
+    <!-- Itt kezdődik a rögzített menüsáv -->
+    <nav class="fejlec">
+        <a href="#kezdolap">Kezdőlap</a>
+        <a href="#szolgaltatasok">Szolgáltatások</a>
+        <a href="#kapcsolat">Kapcsolat</a>
+    </nav>
+
+    <!-- Az oldal tartalma -->
+    <div id="kezdolap">
+        <h1>Üdvözöllek a Manikűr Oldalamon!</h1>
+        <p>Ez az első, teljesen egyedi, saját készítésű weboldalam.</p>
+        
+        <!-- Ide jön majd az időpontfoglaló naptár kódja -->
+        <a href="#" class="gomb">Időpontfoglalás hamarosan...</a>
+    </div>
     
-    <a href="#" class="gomb">Időpontfoglalás hamarosan...</a>
+    <!-- Ez csak egy kis üres hely, hogy lásd a görgetést működés közben -->
+    <div style="height: 1000px;"></div>
 </body>
 </html>
