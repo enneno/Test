@@ -10,21 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap" rel="stylesheet">
 
     <style>
-        /* Az új mobil menü stílusok */
-        .desktop-menu { display: flex; gap: 20px; }
-        .mobile-menu { display: none; }
-        .hamburger { display: none; font-size: 30px; cursor: pointer; color: white; }
-
-        @media screen and (max-width: 768px) {
-            .desktop-menu { display: none; }
-            .hamburger { display: block; }
-            .mobile-menu.open { 
-                display: block; 
-                position: absolute; top: 60px; right: 20px; 
-                background: #111; padding: 20px; border: 1px solid #c5a059;
-                z-index: 1000;
-            }
-        }
         /* --- KEZDŐLAP HÁTTÉRKÉP BEÁLLÍTÁSA --- */
        #kezdolap {
             /* 1. réteg (oldalsó köd), 2. réteg (felső köd), 3. réteg (kép) */
@@ -50,12 +35,12 @@
             background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%); 
             color: #d4af37; 
             margin: 0; 
-            padding-top: 80px; 
+            padding-top: 60px; 
             scroll-behavior: smooth;
         }
         
         /* --- MENÜSÁV --- */
-        .fejlec {
+        header {
             position: fixed; 
             top: 0; 
             left: 0;
@@ -78,7 +63,8 @@
             letter-spacing: 2px; 
         }
         
-        .menu-pontok a { 
+        .menu-pontok a,
+        .mobile-menu.open a { 
             color: #a0a0a0; 
             text-decoration: none; 
             margin-left: 30px; 
@@ -89,6 +75,8 @@
             transition: color 0.3s; 
         }
         .menu-pontok a:hover { color: #d4af37; }
+        .hamburger:hover { color: #d4af37; }
+        .mobile-menu.open a:hover { color: #d4af37; }
 
         /* --- SZEKCIÓK ÁLTALÁNOS BEÁLLÍTÁSA --- */
         section {
@@ -172,31 +160,72 @@
             font-size: 14px;
             margin-bottom: 0; /* Ne hagyjon üres helyet az alján */
         }
+        /* --- 1. Alapbeállítások (Gépi nézet) --- */
+.hamburger { display: none; }            /* Rejtett */
+.mobile-menu { display: none; }          /* Rejtett */
 
-        /* Mobil nézet */
-        @media (max-width: 768px) {
-            .szolgaltatas-grid { grid-template-columns: 1fr; gap: 20px; }
-            h1 { font-size: 3.2em; }
-            .menu-pontok { display: none; }
-        }
+/* --- 2. Mobil nézet (768 pixel alatt) --- */
+@media screen and (max-width: 768px) {
+    .menu-pontok { 
+        display: none !important;        /* Gépi menü eltüntetése */
+    }
+    .hamburger { 
+        display: block !important;       /* Hamburger megjelenítése */
+    }
+    .mobile-menu.open { 
+        display: block !important;       /* Csak akkor látszik, ha megnyitod */
+    }
+}
+/* 1. A hamburger gomb fixen jobbra */
+.hamburger {
+    display: block !important;
+    position: fixed; /* Fixen a képernyőhöz ragasztva */
+    top: 20px;       /* Fentről 20px távolság */
+    right: 20px;     /* Jobbról 20px távolság */
+    z-index: 9999;   /* Mindig minden felett */
+}
+
+/* 2. A menü lista függőleges beállítása */
+.mobile-menu.open {
+    display: flex !important;      /* Flexboxot használunk a rendezéshez */
+    flex-direction: column;        /* Fentről lefelé pakolja az elemeket */
+    position: fixed;               /* Ez is fix, hogy ne tolja el az oldalt */
+    top: 0;
+    right: 0;
+    width: 200px;                  /* Fix szélesség a menünek */
+    height: auto; 
+    border-bottom-left-radius: 15px;                 /* Teljes magasság */
+    background-color: #111;
+    padding-top: 80px;             /* Hogy a gomb alatt kezdődjön */
+    align-items: flex-end;         /* Jobbra igazítja a szövegeket */
+    z-index: 9998;                 /* Kicsit a gomb alatt van */
+}
+
+/* 3. A linkek stílusa a listában */
+.mobile-menu a {
+    display: block;
+    padding: 20px 30px;
+    font-size: 18px;
+    text-align: right;
+    width: 100%;
+}
     </style>
 </head>
 <body>
-
-<div class="logo">Lumi Nails</div>
-    
-    <nav class="desktop-menu">
+    <header>
+    <div class="logo">Lumi Nails</div>
+        <nav class="menu-pontok">
         <a href="index.html">KEZDŐLAP</a>
         <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
         <a href="foglalas.html">FOGLALÁS</a>
-    </nav>
-
-    <div class="hamburger" onclick="menuToggle()">☰</div>
-    <nav id="mobil-nav" class="mobile-menu">
-        <a href="index.html">KEZDŐLAP</a>
-        <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
-        <a href="foglalas.html">FOGLALÁS</a>
-    </nav>
+        </nav>
+        <div class="hamburger" onclick="menuToggle()">☰</div>
+        <nav id="mobil-nav" class="mobile-menu">
+       <a href="index.html">KEZDŐLAP</a>
+          <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
+          <a href="foglalas.html">FOGLALÁS</a>
+             </nav>
+    </header>
 
     <section id="kezdolap" style="padding-top: 40px; padding-bottom: 40px;">
         <h1>Lumi Nails</h1>
@@ -240,6 +269,10 @@
         <p style="text-align: center; color: #a0a0a0; font-weight: 300;">Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.</p>
         <a href="foglalas.html" class="gomb">Online Időpontfoglalás</a>
     </section>
-
+<script>
+    function menuToggle() {
+        document.getElementById("mobil-nav").classList.toggle("open");
+    }
+</script>
 </body>
 </html>
