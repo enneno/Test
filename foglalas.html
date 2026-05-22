@@ -10,6 +10,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap" rel="stylesheet">
 
     <style>
+        /* Az új mobil menü stílusok */
+        .desktop-menu { display: flex; gap: 20px; }
+        .mobile-menu { display: none; }
+        .hamburger { display: none; font-size: 30px; cursor: pointer; color: white; }
+
+        @media screen and (max-width: 768px) {
+            .desktop-menu { display: none; }
+            .hamburger { display: block; }
+            .mobile-menu.open { 
+                display: block; 
+                position: absolute; top: 60px; right: 20px; 
+                background: #111; padding: 20px; border: 1px solid #c5a059;
+                z-index: 1000;
+            }
+        }
         /* --- ALAP BEÁLLÍTÁSOK --- */
         body { 
             font-family: 'Montserrat', sans-serif; 
