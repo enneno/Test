@@ -181,33 +181,42 @@
     display: block !important;
     position: fixed; /* Fixen a képernyőhöz ragasztva */
     top: 20px;       /* Fentről 20px távolság */
+    font-size: 45px; /* Nagyobb méret a könnyebb kattintásért */
     right: 20px;     /* Jobbról 20px távolság */
     z-index: 9999;   /* Mindig minden felett */
 }
 
 /* 2. A menü lista függőleges beállítása */
 .mobile-menu.open {
-    display: flex !important;      /* Flexboxot használunk a rendezéshez */
-    flex-direction: column;        /* Fentről lefelé pakolja az elemeket */
-    position: fixed;               /* Ez is fix, hogy ne tolja el az oldalt */
-    top: 0;
-    right: 0;
-    width: 200px;                  /* Fix szélesség a menünek */
-    height: auto; 
-    border-bottom-left-radius: 15px;                 /* Teljes magasság */
+    display: flex !important;      
+    flex-direction: column;        
+    position: fixed;               
+    top: 65px;                     /* PONTOSAN A GOMB ALATT KEZDŐDIK (15px + 50px gomb) */
+    right: 20px;                   /* A gombbal egy vonalban a jobb szélen */
+    width: 200px;                  /* A doboz szélessége */
     background-color: #111;
-    padding-top: 80px;             /* Hogy a gomb alatt kezdődjön */
-    align-items: flex-end;         /* Jobbra igazítja a szövegeket */
-    z-index: 9998;                 /* Kicsit a gomb alatt van */
+    border: 1px solid #c5a059;     /* Elegáns arany keret */
+    border-radius: 8px;            /* Lekerekített sarkok */
+    padding: 10px 0;               /* Kis belső térköz fent és lent */
+    z-index: 9998;                 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8); /* Árnyék, hogy kiemelkedjen */
 }
-
 /* 3. A linkek stílusa a listában */
 .mobile-menu a {
     display: block;
-    padding: 20px 30px;
-    font-size: 18px;
-    text-align: right;
+    padding: 15px 20px;            /* Kényelmes kattintási felület */
+    font-size: 16px;
+    text-align: right;             /* Jobbra zárt szöveg, a gomb vonalában */
     width: 100%;
+    box-sizing: border-box;
+    color: #ffffff;
+    text-decoration: none;
+    transition: 0.3s;
+}
+/* Hover (rámutatás) effekt a mobil menüben is */
+.mobile-menu a:hover {
+    color: #c5a059;
+    background-color: rgba(255, 255, 255, 0.05); /* Kicsit kivilágosodik a háttere */
 }
     </style>
 </head>
