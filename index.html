@@ -11,44 +11,63 @@
             text-align: center; 
             background-color: #fbfbfb; 
             color: #333; 
-            margin: 0; /* Eltávolítjuk az alapértelmezett margót */
-            padding-top: 80px; /* EZ FONTOS: Lejjebb toljuk a tartalmat, hogy a fix menü ne takarja ki a címet */
+            margin: 0; 
+            padding-top: 80px; 
         }
         
-        /* A fix menüsáv stílusa (Sötét, elegáns dizájn) */
+        /* ÚJ: Flexbox alapú menüsáv elrendezés */
         .fejlec {
-            position: fixed; /* Ez a parancs rögzíti a menüt */
-            top: 0; /* A képernyő legtetejére */
+            position: fixed; 
+            top: 0; 
             left: 0;
             width: 100%;
-            background-color: #1a1a1a; /* Sötét színkód */
-            padding: 15px 0;
-            z-index: 1000; /* Biztosítja, hogy mindig minden más elem felett maradjon */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Kis árnyék az aljára */
+            background-color: #1a1a1a; 
+            padding: 15px 40px; /* Bal-jobb belső margó a szélektől */
+            box-sizing: border-box; /* Megakadályozza, hogy a sáv lógjon le a képernyőről */
+            z-index: 1000; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
+            
+            /* A varázslat itt történik: két szélre húzza az elemeket */
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; /* Függőlegesen középre zárja őket */
         }
 
-        /* A menüben lévő linkek (szövegek) stílusa */
-        .fejlec a {
-            color: #e5c158; /* Elegáns arany/homok színű szöveg */
-            text-decoration: none; /* Aláhúzás eltüntetése */
-            margin: 0 15px; /* Távolság a szavak között */
+        /* Bal oldali logó / Ikon stílusa */
+        .logo {
+            color: #e5c158;
+            font-size: 24px; /* Nagyobb méret, hogy kiemelkedjen */
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .logo:hover {
+            color: #ffffff;
+        }
+
+        /* Jobb oldali menüpontok konténere és linkjei */
+        .menu-pontok a {
+            color: #e5c158; 
+            text-decoration: none; 
+            margin-left: 30px; /* Egymástól való távolság */
             font-size: 16px;
             font-weight: bold;
-            text-transform: uppercase; /* Csupa nagybetű */
-            letter-spacing: 1px; /* Betűköz növelése */
-            transition: color 0.3s; /* Finom átmenet, ha ráviszed az egeret */
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: color 0.3s; 
         }
 
-        /* Milyen legyen a link, ha ráviszik az egeret */
-        .fejlec a:hover {
-            color: #ffffff; /* Fehérre vált */
+        .menu-pontok a:hover {
+            color: #ffffff; 
         }
 
         /* Címsor és szöveg formázása */
         h1 { color: #1a1a1a; margin-top: 40px; }
         p { margin-bottom: 40px; }
         
-        /* A gomb stílusa, hogy passzoljon a menühöz */
+        /* A gomb stílusa */
         .gomb { 
             display: inline-block; 
             padding: 15px 30px; 
@@ -61,11 +80,17 @@
     </style>
 </head>
 <body>
-    <!-- Itt kezdődik a rögzített menüsáv -->
+    <!-- Rögzített menüsáv -->
     <nav class="fejlec">
-        <a href="#kezdolap">Kezdőlap</a>
-        <a href="#szolgaltatasok">Szolgáltatások</a>
-        <a href="#kapcsolat">Kapcsolat</a>
+        <!-- Bal oldal: Ikon / Logó gomb, ami a kezdőlapra (tetejére) dob -->
+        <a href="#kezdolap" class="logo">💅 SZALON</a>
+
+        <!-- Jobb oldal: Menüpontok egy csoportban -->
+        <div class="menu-pontok">
+            <a href="#kezdolap">Kezdőlap</a>
+            <a href="#szolgaltatasok">Szolgáltatások</a>
+            <a href="#kapcsolat">Kapcsolat</a>
+        </div>
     </nav>
 
     <!-- Az oldal tartalma -->
@@ -77,7 +102,6 @@
         <a href="#" class="gomb">Időpontfoglalás hamarosan...</a>
     </div>
     
-    <!-- Ez csak egy kis üres hely, hogy lásd a görgetést működés közben -->
     <div style="height: 1000px;"></div>
 </body>
 </html>
