@@ -10,6 +10,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap" rel="stylesheet">
 
     <style>
+        /* Az új mobil menü stílusok */
+        .desktop-menu { display: flex; gap: 20px; }
+        .mobile-menu { display: none; }
+        .hamburger { display: none; font-size: 30px; cursor: pointer; color: white; }
+
+        @media screen and (max-width: 768px) {
+            .desktop-menu { display: none; }
+            .hamburger { display: block; }
+            .mobile-menu.open { 
+                display: block; 
+                position: absolute; top: 60px; right: 20px; 
+                background: #111; padding: 20px; border: 1px solid #c5a059;
+                z-index: 1000;
+            }
+        }
         /* --- KEZDŐLAP HÁTTÉRKÉP BEÁLLÍTÁSA --- */
        #kezdolap {
             /* 1. réteg (oldalsó köd), 2. réteg (felső köd), 3. réteg (kép) */
@@ -168,13 +183,19 @@
 </head>
 <body>
 
-    <nav class="fejlec">
-        <a href="#kezdolap" class="logo">Lumi Nails</a>
-        <div class="menu-pontok">
-            <a href="#kezdolap">Kezdőlap</a>
-            <a href="#szolgaltatasok">Szolgáltatások</a>
-            <a href="foglalas.html">Foglalás</a>
-        </div>
+<div class="logo">Lumi Nails</div>
+    
+    <nav class="desktop-menu">
+        <a href="index.html">KEZDŐLAP</a>
+        <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
+        <a href="foglalas.html">FOGLALÁS</a>
+    </nav>
+
+    <div class="hamburger" onclick="menuToggle()">☰</div>
+    <nav id="mobil-nav" class="mobile-menu">
+        <a href="index.html">KEZDŐLAP</a>
+        <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
+        <a href="foglalas.html">FOGLALÁS</a>
     </nav>
 
     <section id="kezdolap" style="padding-top: 40px; padding-bottom: 40px;">
