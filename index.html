@@ -1,287 +1,72 @@
 <!DOCTYPE html>
 <html lang="hu">
+<link rel="stylesheet" href="style.css">
+<div id="fejlec-helye"></div>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumi Nails</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap"
+        rel="stylesheet">
 
-    <style>
-        /* --- KEZDŐLAP HÁTTÉRKÉP BEÁLLÍTÁSA --- */
-       #kezdolap {
-            /* 1. réteg (oldalsó köd), 2. réteg (felső köd), 3. réteg (kép) */
-            background-image: 
-                /* JAVÍTVA: A fekete szín 160 pixelig (a kép széle utánig) teljesen tömör marad, csak utána halványul! */
-                linear-gradient(to right, #0d0d0d 0%, #0d0d0d 160px, transparent 35%, transparent 90%, #0d0d0d 100%),
-                linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.95)),
-                url('kepek/hatter.jpg');
-            
-            /* MÉRETEK RÉTEGENKÉNT: Az első kettő marad 100%, csak a harmadik (a fotó) nagyodik! */
-            background-size: 100% 100%, 100% 100%, 80%; 
-            
-            /* JAVÍTVA (VESSZŐK): Az első két réteg (a ködök) középen maradnak fixen, CSAK a harmadik (a fotó) mozdul el 150px-et! */
-            background-position: center, center, 150px center; 
-            
-            background-repeat: no-repeat; 
-            border-bottom: 1px solid #332a10; 
-        }
-        /* --- ALAPBEÁLLÍTÁSOK (Dark Elegance stílus) --- */
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: #0d0d0d; 
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%); 
-            color: #d4af37; 
-            margin: 0; 
-            padding-top: 60px; 
-            scroll-behavior: smooth;
-        }
-        
-        /* --- MENÜSÁV --- */
-        header {
-            position: fixed; 
-            top: 0; 
-            left: 0;
-            width: 100%;
-            background-color: rgba(10, 10, 10, 0.95); 
-            padding: 15px 40px; 
-            box-sizing: border-box; 
-            z-index: 1000; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #332a10; 
-        }
-
-        .logo { 
-            font-family: 'Playball', cursive; 
-            color: #d4af37; 
-            font-size: 32px; 
-            text-decoration: none; 
-            letter-spacing: 2px; 
-        }
-        
-        .menu-pontok a,
-        .mobile-menu.open a { 
-            color: #a0a0a0; 
-            text-decoration: none; 
-            margin-left: 30px; 
-            font-size: 13px;
-            font-weight: 600; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            transition: color 0.3s; 
-        }
-        .menu-pontok a:hover { color: #d4af37; }
-        .hamburger:hover { color: #d4af37; }
-        .mobile-menu.open a:hover { color: #d4af37; }
-
-        /* --- SZEKCIÓK ÁLTALÁNOS BEÁLLÍTÁSA --- */
-        section {
-            padding: 40px 20px;
-            max-width: 900px; 
-            margin: 0 auto; 
-        }
-
-        /* --- CÍMSOROK ÉS GOMBOK --- */
-        h1 { 
-            font-family: 'Playball', cursive; 
-            color: #d4af37; 
-            font-size: 4.5em; 
-            margin-bottom: 10px; 
-            font-weight: normal;
-            text-align: center;
-        }
-        
-        h2 { 
-            color: #d4af37; 
-            font-size: 2.2em; 
-            font-weight: 400;
-            text-align: center;
-            margin-bottom: 50px; 
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        h3 {
-            color: #ffffff;
-            font-weight: 400;
-            font-size: 1.5em;
-            letter-spacing: 1px;
-            margin-top: 0;
-        }
-        
-        .gomb { 
-            display: block; 
-            width: fit-content;
-            margin: 30px auto;
-            padding: 15px 40px; 
-            background-color: transparent; 
-            color: #d4af37; 
-            text-decoration: none; 
-            border: 1px solid #d4af37;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 13px;
-            transition: all 0.3s; 
-        }
-        .gomb:hover {
-            background-color: #d4af37;
-            color: #000;
-        }
-
-        /* --- KÁRTYÁK A SZOLGÁLTATÁSOKHOZ --- */
-        .szolgaltatas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 50px; /* Nagyobb hely a kártyák és a gomb között */
-        }
-
-        .kartya {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid #222;
-            padding: 40px 30px;
-            border-radius: 4px;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-
-        .kartya:hover {
-            border-color: #332a10; 
-        }
-
-        .kartya p {
-            color: #a0a0a0;
-            font-weight: 300;
-            line-height: 1.6;
-            font-size: 14px;
-            margin-bottom: 0; /* Ne hagyjon üres helyet az alján */
-        }
-        /* --- 1. Alapbeállítások (Gépi nézet) --- */
-.hamburger { display: none; }            /* Rejtett */
-.mobile-menu { display: none; }          /* Rejtett */
-
-/* --- 2. Mobil nézet (768 pixel alatt) --- */
-@media screen and (max-width: 768px) {
-    .menu-pontok { 
-        display: none !important;        /* Gépi menü eltüntetése */
-    }
-    .hamburger { 
-        display: block !important;       /* Hamburger megjelenítése */
-    }
-    .mobile-menu.open { 
-        display: block !important;       /* Csak akkor látszik, ha megnyitod */
-    }
-}
-/* 1. A hamburger gomb fixen jobbra */
-.hamburger {
-    display: block !important;
-    position: fixed; /* Fixen a képernyőhöz ragasztva */
-    top: 5px;       /* Fentről 20px távolság */
-    font-size: 30px; /* Nagyobb méret a könnyebb kattintásért */
-    right: 20px;     /* Jobbról 20px távolság */
-    z-index: 9999;   /* Mindig minden felett */
-}
-
-/* 2. A menü lista függőleges beállítása */
-.mobile-menu.open {
-    display: flex !important;      
-    flex-direction: column;        
-    position: fixed;               
-    top: 5px;                     /* PONTOSAN A GOMB ALATT KEZDŐDIK (15px + 50px gomb) */
-    right: 5px;                   /* A gombbal egy vonalban a jobb szélen */
-    width: 210px;                  /* A doboz szélessége */
-    background-color: #111;
-    border: 1px solid #c5a059;     /* Elegáns arany keret */
-    border-radius: 8px;            /* Lekerekített sarkok */
-    padding: 10px 10px;               /* Kis belső térköz fent és lent */
-    z-index: 9998;                 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.8); /* Árnyék, hogy kiemelkedjen */
-}
-/* 3. A linkek stílusa a listában */
-.mobile-menu a {
-    display: block;
-    padding: 5px 50px;            /* Kényelmes kattintási felület */
-    font-size: 20px;
-    text-align: right;             /* Jobbra zárt szöveg, a gomb vonalában */
-    width: 100%;
-    box-sizing: border-box;
-    color: #ffffff;
-    text-decoration: none;
-    transition: 0.3s;
-}
-/* Hover (rámutatás) effekt a mobil menüben is */
-.mobile-menu a:hover {
-    color: #c5a059;
-    background-color: rgba(255, 255, 255, 0.05); /* Kicsit kivilágosodik a háttere */
-}
-    </style>
 </head>
-<body>
-    <header>
-    <div class="logo">Lumi Nails</div>
-        <nav class="menu-pontok">
-        <a href="index.html">KEZDŐLAP</a>
-        <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
-        <a href="foglalas.html">FOGLALÁS</a>
-        </nav>
-        <div class="hamburger" onclick="menuToggle()">☰</div>
-        <nav id="mobil-nav" class="mobile-menu">
-       <a href="index.html">KEZDŐLAP</a>
-          <a href="index.html#szolgaltatasok">SZOLGÁLTATÁSOK</a>
-          <a href="foglalas.html">FOGLALÁS</a>
-             </nav>
-    </header>
 
-    <section id="kezdolap" style="padding-top: 40px; padding-bottom: 40px;">
-        <h1>Lumi Nails</h1>
-        <p style="text-align: center; color: #a0a0a0; font-weight: 300; font-size: 18px; letter-spacing: 2px;">
-            Elegancia, precizitás és tökéletes harmónia a körmeidnek.
-        </p>
-        <a href="foglalas.html" class="gomb">Időpontot foglalok</a>
+<body>
+
+    <section id="kezdolap">
+        <div class="hero-tarolo">
+
+            <img src="kepek/hatter2.jpg" alt="Lumi Nails" class="hero-img">
+
+            <div class="hero-content">
+                <h1>Lumi Nails</h1>
+                <p>Elegancia, precizitás és<br>
+                    tökéletes harmónia<br>a körmeidnek.</p>
+            </div>
+
+        </div>
     </section>
 
     <section id="szolgaltatasok">
-        <h2>Szolgáltatások</h2>
-        
-        <div class="szolgaltatas-grid">
-            <div class="kartya">
+        <h2>SZOLGÁLTATÁSOK</h2>
+
+        <div class="bento-racs">
+
+            <div class="bento-kartya szeles">
                 <h3>Körömépítés & Töltés</h3>
-                <p>S, M és L méretű zselés vagy porcelán műkörmök precíz felhelyezése és rendszeres karbantartása.</p>
-            </div>
-            
-            <div class="kartya">
-                <h3>Manikűr</h3>
-                <p>Klasszikus körömápolás, gél lakk szakszerű eltávolítása és a kezek kényeztető felfrissítése.</p>
+                <p>S, M és L méretű zselés vagy porcelán műkörmök<br>
+                    precíz felhelyezése és rendszeres karbantartása.</p>
             </div>
 
-            <div class="kartya">
-                <h3>Gél Lakk</h3>
-                <p>Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.</p>
-            </div>
-
-            <div class="kartya">
+            <div class="bento-kartya">
                 <h3>Díszítés / Nail Art</h3>
                 <p>Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.</p>
             </div>
-        </div>
 
-        <a href="#" class="gomb">Teljes Árlista Megtekintése</a>
+            <div class="bento-kartya">
+                <h3>Gél Lakk</h3>
+                <p>Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.
+                </p>
+            </div>
 
+            <div class="bento-kartya szeles">
+                <h3>Manikűr</h3>
+                <p>Klasszikus körömápolás, gél lakk szakszerű eltávolítása<br>
+                    és a kezek kényeztető felfrissítése.</p>
+            </div>
     </section>
 
     <section id="kapcsolat" style="border-top: 1px solid #161616;">
         <h2>Időpontfoglalás</h2>
-        <p style="text-align: center; color: #a0a0a0; font-weight: 300;">Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.</p>
+        <p style="text-align: center; color: #a0a0a0; margin-bottom: 50px; font-weight: 300;">Válaszd ki a neked
+            megfelelő szabad sávot
+            online rendszerünkben.</p>
         <a href="foglalas.html" class="gomb">Online Időpontfoglalás</a>
     </section>
-<script>
-    function menuToggle() {
-        document.getElementById("mobil-nav").classList.toggle("open");
-    }
-</script>
+    <script src="script.js"></script>
 </body>
+
 </html>

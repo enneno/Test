@@ -1,249 +1,74 @@
 <!DOCTYPE html>
 <html lang="hu">
+<link rel="stylesheet" href="style.css">
+<div id="fejlec-helye"></div>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Időpontfoglalás - Lumi Nails</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap" rel="stylesheet">
-
-    <style>
-        /* Az új mobil menü stílusok */
-        .desktop-menu { display: flex; gap: 20px; }
-        .mobile-menu { display: none; }
-        .hamburger { display: none; font-size: 30px; cursor: pointer; color: white; }
-
-        @media screen and (max-width: 768px) {
-            .desktop-menu { display: none; }
-            .hamburger { display: block; }
-            .mobile-menu.open { 
-                display: block; 
-                position: absolute; top: 60px; right: 20px; 
-                background: #111; padding: 20px; border: 1px solid #c5a059;
-                z-index: 1000;
-            }
-        }
-        /* --- ALAP BEÁLLÍTÁSOK --- */
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: #0d0d0d; 
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%); 
-            color: #d4af37; 
-            margin: 0; 
-            padding-top: 120px; 
-            min-height: 100vh;
-        }
-        
-        /* --- MENÜSÁV --- */
-        .fejlec {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background-color: rgba(10, 10, 10, 0.95); 
-            padding: 15px 40px; box-sizing: border-box; z-index: 1000; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid #332a10; 
-        }
-        .logo { font-family: 'Playball', cursive; color: #d4af37; font-size: 32px; text-decoration: none; }
-        .menu-pontok a { color: #a0a0a0; text-decoration: none; margin-left: 30px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
-        .menu-pontok a:hover { color: #d4af37; }
-
-        /* --- SZEKCIÓ ÉS CÍMSOR --- */
-        section { padding: 40px 20px; max-width: 900px; margin: 0 auto; }
-        h2 { font-size: 2.2em; font-weight: 400; text-align: center; margin-bottom: 20px; letter-spacing: 3px; text-transform: uppercase; }
-
-        /* --- ŰRLAP KIALAKÍTÁSA --- */
-        .urlap-kontener { display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto; }
-        
-        .urlap-mezo { 
-            background-color: #0a0a0a; 
-            border: 1px solid #332a10; 
-            color: #ffffff; 
-            padding: 15px; 
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 14px; 
-            border-radius: 4px; 
-            transition: border-color 0.3s; 
-            box-sizing: border-box;
-            
-            /* ÚJ: Megmondjuk a böngészőnek, hogy ez egy sötét oldal. 
-               Így a naptár ikon szépen kivilágosodik és a lenyíló naptár is fekete lesz! */
-            color-scheme: dark; 
-            
-            /* ÚJ: Letiltja a megjegyzés mező kézi méretezését (húzogatását) */
-            resize: none; 
-        }
-        .urlap-mezo:focus { border-color: #d4af37; outline: none; }
-        
-        /* --- ÚJ: SPECIÁLIS TELEFON MEZŐ --- */
-        .tel-csoport {
-            display: flex;
-            align-items: center;
-            background-color: #0a0a0a;
-            border: 1px solid #332a10;
-            border-radius: 4px;
-        }
-        .tel-prefix {
-            padding: 15px;
-            color: #d4af37;
-            font-weight: 600;
-            font-size: 14px;
-            border-right: 1px solid #332a10;
-            background-color: rgba(255, 255, 255, 0.02);
-            user-select: none; /* Nem kijelölhető, fix szöveg */
-        }
-        .tel-csoport .urlap-mezo {
-            flex-grow: 1;
-            border: none; /* Kivesszük a belső keretet */
-            background-color: transparent;
-        }
-
-        .gomb { display: block; width: fit-content; margin: 20px auto; padding: 15px 40px; background-color: transparent; color: #d4af37; text-decoration: none; border: 1px solid #d4af37; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; transition: all 0.3s; cursor: pointer; text-align: center;}
-        .gomb:hover { background-color: #d4af37; color: #000; }
-
-        /* --- FELUGRÓ ABLAK (POPUP) --- */
-        .popup-hatter { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000; justify-content: center; align-items: center; }
-        .popup-doboz { background-color: #111; border: 1px solid #d4af37; padding: 40px; border-radius: 8px; text-align: center; max-width: 90%; width: 350px; }
-        .popup-gomb-sor { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
-        .bezaro-link { color: #a0a0a0; text-decoration: underline; font-size: 12px; cursor: pointer; margin-top: 20px; display: block; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap"
+        rel="stylesheet">
 </head>
-<body>
 
-    <nav class="fejlec">
-        <a href="index.html#kezdolap" class="logo">Lumi Nails</a>
-        <div class="menu-pontok">
-            <a href="index.html#kezdolap">Kezdőlap</a>
-            <a href="index.html#szolgaltatasok">Szolgáltatások</a>
-            <a href="foglalas.html" style="color: #d4af37;">Foglalás</a>
-        </div>
-    </nav>
+<body>
 
     <section>
         <h2>Időpontfoglalás</h2>
-        <p style="text-align: center; color: #a0a0a0; font-weight: 300; margin-bottom: 40px;">Töltsd ki az adatokat, és küldd el nekem üzenetben!</p>
-        
+        <p style="text-align: center; color: #a0a0a0; font-weight: 300; margin-bottom: 40px;">Töltsd ki az adatokat, és
+            küldd el nekem üzenetben!</p>
+
         <div class="urlap-kontener">
             <input type="text" id="foglalas-nev" class="urlap-mezo" placeholder="Teljes neved" required>
-            
+
             <div class="tel-csoport">
                 <span class="tel-prefix">+36</span>
-                <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567" oninput="csakSzamokatEnged(this)" required>
+                <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567"
+                    oninput="csakSzamokatEnged(this)" required>
             </div>
-            
+
             <select id="foglalas-szolgatatas" class="urlap-mezo" required>
                 <option value="" disabled selected>Válassz szolgáltatást...</option>
-                <option value="Körömépítés (S)">Körömépítés (S méret)</option>
-                <option value="Körömépítés (M)">Körömépítés (M méret)</option>
-                <option value="Manikűr és Gél Lakk">Manikűr + Erősített Gél lakk</option>
+                <option value="Körömépítés">Körömépítés </option>
+                <option value="Manikűr">Manikűr</option>
                 <option value="Műköröm eltávolítás">Műköröm leszedés + Manikűr</option>
             </select>
 
             <input type="date" id="foglalas-datum" class="urlap-mezo" required>
-            
+
             <select id="foglalas-ido" class="urlap-mezo" required>
                 <option value="" disabled selected>Válassz időpontot...</option>
             </select>
-            
-            <textarea id="foglalas-komment" class="urlap-mezo" rows="3" placeholder="Megjegyzés, egyedi kérés (Opcionális)"></textarea>
-            
-            <button onclick="foglalasInditasa()" class="gomb" style="width: 100%; border: none; font-weight: 600; background-color: #d4af37; color: #000;">Adatok másolása & Tovább</button>
+
+            <textarea id="foglalas-komment" class="urlap-mezo" rows="3"
+                placeholder="Megjegyzés, egyedi kérés (Opcionális)"></textarea>
+
+            <button onclick="foglalasInditasa()" class="gomb"
+                style="width: 100%; border: none; font-weight: 600; background-color: #d4af37; color: #000;">Adatok
+                másolása & Tovább</button>
         </div>
     </section>
 
     <div id="sikeres-popup" class="popup-hatter">
         <div class="popup-doboz">
             <h3 style="color: #d4af37; margin-bottom: 10px;">Adatok másolva! ✓</h3>
-            <p style="color: #a0a0a0; font-size: 14px; font-weight: 300;">A foglalásod szövegét vágólapra másoltuk. Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a <b>Beillesztés</b> (Paste) gombra a chaten!</p>
-            
+            <p style="color: #a0a0a0; font-size: 14px; font-weight: 300;">A foglalásod szövegét vágólapra másoltuk.
+                Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a <b>Beillesztés</b> (Paste) gombra a chaten!</p>
+
             <div class="popup-gomb-sor">
-                <a href="https://m.me/100005112737265" target="_blank" class="gomb" style="margin: 0; padding: 10px 20px; font-size: 11px;">Messenger</a>
-                <a href="https://ig.me/m/luminails.xx" target="_blank" class="gomb" style="margin: 0; padding: 10px 20px; font-size: 11px;">Instagram</a>
+                <a href="https://m.me/100005112737265" target="_blank" class="gomb"
+                    style="margin: 0; padding: 10px 20px; font-size: 11px;">Messenger</a>
+                <a href="https://ig.me/m/luminails.xx" target="_blank" class="gomb"
+                    style="margin: 0; padding: 10px 20px; font-size: 11px;">Instagram</a>
             </div>
-            
+
             <span onclick="popupBezarasa()" class="bezaro-link">Mégse, visszalépek</span>
         </div>
     </div>
-
-    <script>
-        // 1. OKOS TELEFONSZÁM TISZTÍTÓ
-        function csakSzamokatEnged(input) {
-            let szamok = input.value.replace(/[^0-9]/g, '');
-            
-            // 1. Lépés: Országkódok (0036, 36, 06) levágása
-            if (szamok.startsWith('0036')) {
-                szamok = szamok.substring(4); 
-            } else if (szamok.startsWith('36')) {
-                szamok = szamok.substring(2); 
-            } else if (szamok.startsWith('06')) {
-                szamok = szamok.substring(2);
-            }
-
-            // 2. Lépés: Ha a maradék szám 0-val kezdődik, azt is levágjuk!
-            // Így a 070-ből azonnal 70 lesz.
-            while (szamok.startsWith('0')) {
-                szamok = szamok.substring(1);
-            }
-
-            // 3. Lépés: Biztonsági vágás max 9 karakterre
-            if (szamok.length > 9) {
-                szamok = szamok.substring(0, 9);
-            }
-
-            // Visszaírjuk a letisztított számot a mezőbe
-            input.value = szamok;
-        }
-
-        // 2. IDŐPONTOK GENERÁLÁSA (Ezt hoztuk most vissza!)
-        window.onload = function() {
-            const idoValaszto = document.getElementById('foglalas-ido');
-            const kezdoOra = 8;  
-            const vegOra = 18;   
-
-            for (let ora = kezdoOra; ora <= vegOra; ora++) {
-                for (let perc = 0; perc < 60; perc += 15) {
-                    if (ora === vegOra && perc > 0) break; 
-                    
-                    const pStr = perc === 0 ? '00' : perc;
-                    const oStr = ora < 10 ? '0' + ora : ora;
-                    const idopont = `${oStr}:${pStr}`;
-                    
-                    const option = document.createElement('option');
-                    option.value = idopont;
-                    option.textContent = idopont;
-                    idoValaszto.appendChild(option);
-                }
-            }
-        };
-
-        // 3. FOGLALÁS INDÍTÁSA
-        function foglalasInditasa() {
-            const nev = document.getElementById('foglalas-nev').value;
-            const telReszlet = document.getElementById('foglalas-tel').value; 
-            const szolgatatas = document.getElementById('foglalas-szolgatatas').value;
-            const datum = document.getElementById('foglalas-datum').value;
-            const ido = document.getElementById('foglalas-ido').value;
-            const komment = document.getElementById('foglalas-komment').value;
-
-            if(!nev || !telReszlet || !szolgatatas || !datum || !ido) {
-                alert("Kérlek tölts ki minden kötelező mezőt a folytatáshoz!");
-                return;
-            }
-
-            const teljesTelefon = `+36 ${telReszlet}`;
-            const uzenet = `Szia! Szeretnék időpontot foglalni.\n\nNév: ${nev}\nTelefon: ${teljesTelefon}\nSzolgáltatás: ${szolgatatas}\nDátum: ${datum} - ${ido} óra\nMegjegyzés: ${komment ? komment : '-'}\n\nKérlek jelezz vissza, hogy megfelel-e.\nKöszönöm!`;
-
-            navigator.clipboard.writeText(uzenet).then(() => {
-                document.getElementById('sikeres-popup').style.display = 'flex';
-            }).catch(err => {
-                alert("A böngésződ blokkolta a másolást. Kérlek írj rám manuálisan!");
-            });
-        }
-        
-        // 4. POPUP BEZÁRÁSA
-        function popupBezarasa() {
-            document.getElementById('sikeres-popup').style.display = 'none';
-        }
-    </script>
+<script src="script.js"></script>
 </body>
+
 </html>

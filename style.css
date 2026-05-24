@@ -1,0 +1,574 @@
+/* ===================================
+            1. FEJLÉC ÉS MENÜ (Header, Hamburger)
+            ===================================== */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(10, 10, 10, 0.85);
+    padding: 20px 40px;
+    box-sizing: border-box;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #332a10;
+    height: 70px;
+}
+
+.logo {
+    font-family: 'Playball', cursive;
+    color: #d4af37;
+    font-size: 40px;
+    text-decoration: none;
+    letter-spacing: 2px;
+}
+
+/* Az asztali szöveges menü */
+.menu-pontok {
+    display: flex;
+    align-items: center;
+}
+
+.menu-pontok a {
+    color: #a0a0a0;
+    text-decoration: none;
+    margin-left: 30px;
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+}
+
+.menu-pontok a:hover {
+    color: #d4af37;
+}
+
+/* =========================================
+ 2. KEZDŐLAP ELEMEI (Kártyák, stb.)
+========================================= */
+#kezdolap {
+    width: 95%;
+    /* Mobilon is szép peremet hagy */
+    max-width: 1200px;
+    /* Gépen eddig engedi nőni */
+    margin: 0 auto;
+    /* EZ teszi hajszálpontosan középre az egészet! */
+    padding: 0;
+    /* Leveszünk minden belső üres teret */
+}
+
+/* 2. A HORGONY (Ez tartja egyben a képet és a szöveget) */
+.hero-tarolo {
+    position: relative;
+    width: 100%;
+}
+
+/* 2. Létrehozzuk a sötétítő réteget */
+.hero-tarolo::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* IDE ÍRD A SÖTÉTÍTÉS ERŐSSÉGÉT (rgba 0,0,0 és az opacity) */
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 10px 10px;
+
+    z-index: 1;
+    /* A kép felett, de a szöveg alatt */
+    pointer-events: none;
+    /* Átengedi az kattintást a gombra, ha szükséges */
+}
+
+/* 3. A KÉP BEÁLLÍTÁSA (Itt sűrítjük össze a nagy felbontást) */
+.hero-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0 0 10px 10px;
+    /* Megtartjuk az elegáns sarkokat */
+    z-index: 0;
+    /* Legalul */
+}
+
+/* 4. A SZÖVEG "FELEMELÉSE" A KÉPRE */
+.hero-content {
+    z-index: 2;
+    position: absolute;
+    top: 25%;
+    /* Függőlegesen továbbra is középen tartja */
+    right: 8%;
+    /* A kép jobb szélétől mért távolság (százalékban, így mobilon is arányos!) */
+    transform: translateY(-50%);
+    /* Csak függőlegesen igazítja középre a saját magasságát */
+
+    text-align: right;
+    /* A szövegeket jobbra zárja */
+    width: 45%;
+
+    /* A doboz csak a kép jobb oldalát foglalhatja el, nem lóg át a bal oldalra */
+    /* Ez formázza csak a főcímet a képen */
+}
+
+.hero-content h1 {
+    color: #fffef9;
+    /* (A te arany színkódod, ha azzal akarod) */
+    margin-bottom: 5px;
+    /* Picit eltartja az alatta lévő szöveget */
+    margin-right: -30%;
+}
+
+/* Ez formázza a te P (leírás) szövegedet a képen */
+.hero-content p {
+    color: #cfc5b1;
+    font-weight: 300;
+    font-size: 24px;
+    letter-spacing: 4px;
+    margin-right: -7%;
+    line-height: 1.7;
+    margin-top: 15px;
+}
+
+/* 1. EZ FELEL A TÚLHÚZÁS SZÍNÉÉRT (Eltünteti a fehéret/pirosat az űrből) */
+html {
+    background-color: #fdf4e2;
+}
+
+/* 2. EZ A WEBOLDALAD TARTALMA ÉS A MINTA */
+body {
+    background-color: #fdf4e2;
+    background-image: url('kepek/background2.svg');
+    background-repeat: repeat;
+    background-size: 450px;
+
+    /* Az eddigi dizájn beállításaid */
+    margin: 0;
+    padding-top: 70px;
+    font-family: 'Montserrat', sans-serif;
+    color: #d4af37;
+    scroll-behavior: smooth;
+}
+
+section {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* FŐCÍM STÍLUSA */
+h1 {
+    font-family: 'Playball', cursive;
+    color: #ffffff;
+    font-size: 6.5em;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: center;
+}
+
+
+/* SZOLGÁLTATÁSOK STÍLUSA */
+h2 {
+    color: #ffc400;
+    font-size: 2.2em;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 40px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.gomb {
+    display: block;
+    width: fit-content;
+    margin: 30px auto;
+    padding: 15px 40px;
+    background-color: transparent;
+    color: #d4af37;
+    text-decoration: none;
+    border: 1px solid #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.gomb:hover {
+    background-color: #d4af37;
+    color: #000;
+}
+
+
+/* --- KÁRTYÁK A SZOLGÁLTATÁSOKHOZ --- */
+.bento-racs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Létrehoz 3 egyenlő oszlopot */
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
+    width: 95%;
+}
+
+/* Az általános kártya dizájn (A keret nélküli lebegés) */
+.bento-kartya {
+    background-color: #fffef9;
+    /* Tiszta fehér háttér (a bézs oldalon gyönyörűen kiemelkedik) */
+    border-radius: 20px;
+    /* Modern, puha lekerekítés */
+    padding: 40px;
+    /* Bőséges belső üres tér (whitespace) */
+
+    /* A lebegő árnyék (Ez váltja ki a fekete keretet!) */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+
+    /* Pici animáció, ha a látogató ráviszi az egeret */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* Szövegek középre igazítása a kártyán belül */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Egeres interakció (hover): Kicsit felemelkedik a kártya, mint egy igazi gomb */
+.bento-kartya:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ------------------------------------------------ */
+/* A BENTO BOX TITKA: A széles kártya szabálya */
+.bento-kartya.szeles {
+    grid-column: span 2;
+    /* Ez parancsolja meg, hogy 2 oszlopnyi helyet foglaljon el! */
+}
+
+/* ------------------------------------------------ */
+
+/* Kártyán belüli betűstílusok */
+.bento-kartya h3 {
+    color: #332a10;
+    font-size: 32px;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.bento-kartya p {
+    color: #666666;
+    font-size: 20px;
+    letter-spacing: 1.1px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* =========================================
+            3. FOGLALÁS OLDAL ELEMEI
+            ========================================= */
+.urlap-kontener {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.urlap-mezo {
+    background-color: #0a0a0a;
+    border: 1px solid #332a10;
+    color: #ffffff;
+    padding: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+
+    /* ÚJ: Megmondjuk a böngészőnek, hogy ez egy sötét oldal. 
+               Így a naptár ikon szépen kivilágosodik és a lenyíló naptár is fekete lesz! */
+    color-scheme: dark;
+
+    /* ÚJ: Letiltja a megjegyzés mező kézi méretezését (húzogatását) */
+    resize: none;
+}
+
+.urlap-mezo:focus {
+    border-color: #d4af37;
+    outline: none;
+}
+
+/* --- ÚJ: SPECIÁLIS TELEFON MEZŐ --- */
+.tel-csoport {
+    display: flex;
+    align-items: center;
+    background-color: #0a0a0a;
+    border: 1px solid #332a10;
+    border-radius: 4px;
+}
+
+.tel-prefix {
+    padding: 15px;
+    color: #d4af37;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid #332a10;
+    background-color: rgba(255, 255, 255, 0.02);
+    user-select: none;
+    /* Nem kijelölhető, fix szöveg */
+}
+
+.tel-csoport .urlap-mezo {
+    flex-grow: 1;
+    border: none;
+    /* Kivesszük a belső keretet */
+    background-color: transparent;
+}
+
+.gomb {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 15px 40px;
+    background-color: transparent;
+    color: #d4af37;
+    text-decoration: none;
+    border: 1px solid #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 13px;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.gomb:hover {
+    background-color: #d4af37;
+    color: #000;
+}
+
+/* --- FELUGRÓ ABLAK (POPUP) --- */
+.popup-hatter {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-doboz {
+    background-color: #111;
+    border: 1px solid #d4af37;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 90%;
+    width: 350px;
+}
+
+.popup-gomb-sor {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.bezaro-link {
+    color: #a0a0a0;
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+}
+
+/* --- 1. Alapbeállítások (Gépi nézet) --- */
+.hamburger {
+    display: none;
+}
+
+/* Rejtett */
+.mobile-menu {
+    display: none;
+}
+
+/* Rejtett */
+
+/* =========================================
+            4. MOBIL NÉZET
+            ========================================= */
+
+/* A HAMBURGER GOMB */
+.hamburger {
+    display: none;
+    /* Mobilos nézetben (@media) majd ne felejtsd el display: block-ra tenni! */
+    position: fixed;
+    top: 0;
+    /* JAVÍTVA: A 'center' itt nem működik, pontos pixel érték kell */
+    right: 20px;
+    font-size: 45px;
+    z-index: 9999;
+    cursor: pointer;
+    color: #d4af37;
+}
+
+/* 1. AZ ALAP DOBOZ MINDEN DIZÁJNNAL */
+.mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 72px;
+    /* Ezt állítsd majd a hamburger gombod alá */
+    right: 20px;
+    width: 220px;
+    background-color: #111;
+    border: 1px solid #c5a059;
+    border-radius: 8px;
+    padding: 10px 0;
+    z-index: 9998;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+
+    /* AZ ANIMÁCIÓ TITKA */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: all 0.25s ease-in-out;
+}
+
+/* 2. A LINKEK VÉGLEGES KINÉZETE (Minden itt van, .open nélkül!) */
+.mobile-menu a {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 15px;
+    margin-left: 0;
+    margin-bottom: 15px;
+
+    /* Tipográfia és színek */
+    color: #ffffff;
+    /* Fehér marad bezárás közben is */
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+
+    transition: all 0.3s ease;
+}
+
+/* 3. AZ UTOLSÓ ELEM (.open nélkül) */
+.mobile-menu a:last-child {
+    margin-bottom: 0;
+}
+
+/* 4. HOVER EFFEKTUS (.open nélkül) */
+.mobile-menu a:hover {
+    color: #d4af37;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 5. A NYITOTT ÁLLAPOT (CSAK a doboz megjelenítése) */
+.mobile-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+@media screen and (max-width: 768px) {
+    .menu-pontok {
+        display: none !important;
+        /* Asztali szövegek kikapcsolása */
+    }
+
+    .hamburger {
+        display: block !important;
+        /* 3 vonal bekapcsolása */
+    }
+
+    .hero-content {
+        width: 40%;
+        /* Mobilon egy picit több helyet engedünk a szövegnek */
+        right: 4%;
+    }
+
+    .hero-content h1 {
+        font-size: 50px;
+        margin-right: -5%;
+        margin-top: 28%;
+    }
+
+    .hero-content p {
+        font-size: 15px !important;
+        letter-spacing: 1px !important;
+        margin-top: -2%;
+        margin-right: -5%;
+    }
+
+    .bento-racs {
+        grid-template-columns: 1fr;
+        /* A 3 oszlop helyett csak 1 oszlop lesz! */
+        gap: 20px;
+        /* Kicsit kisebb rés a kártyák között */
+    }
+
+    /* 2. A széles kártyák "visszavágása" */
+    .bento-kartya.szeles {
+        grid-column: span 1;
+        /* Mobilon ne akarjon 2 oszlopot elfoglalni */
+    }
+
+    /* 3. Kártyák belső terének szűkítése */
+    .bento-kartya {
+        padding: 25px;
+        /* A 40px túl sok helyet venne el mobilon */
+    }
+
+    /* 4. Betűméretek finomhangolása mobilra */
+    .bento-kartya h3 {
+        font-size: 24px;
+        /* A 32px helyett */
+    }
+
+    .bento-kartya p {
+        font-size: 16px;
+        /* A 20px helyett */
+    }
+
+    .bento-kartya:nth-child(1) {
+        order: 1;
+        /* A Körömépítés marad az első */
+    }
+
+    .bento-kartya:nth-child(4) {
+        order: 2;
+        /* A 4-es kártyát (Manikűr) felrántjuk a 2. helyre */
+    }
+
+    .bento-kartya:nth-child(3) {
+        order: 3;
+        /* A Gél Lakk marad a 3. helyen */
+    }
+
+    .bento-kartya:nth-child(2) {
+        order: 4;
+        /* A 2-es kártyát (Díszítés) ledobjuk a legaljára */
+    }
+
+    .bento-kartya br {
+        display: none;
+        /* Mobilon a sortörések egyszerűen "köddé válnak" */
+    }
+
+}
