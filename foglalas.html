@@ -1,24 +1,33 @@
 <!DOCTYPE html>
 <html lang="hu">
-<link rel="stylesheet" href="style.css">
-<div id="fejlec-helye"></div>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Időpontfoglalás - Lumi Nails</title>
+    <meta name="description" content="Lumi Nails online időpontfoglalás körömépítéshez, manikűrhöz és gél lakkhoz.">
+    <meta property="og:title" content="Időpontfoglalás - Lumi Nails">
+    <meta property="og:description" content="Készítsd elő a foglalási adataidat, majd küldd el üzenetben.">
+    <meta property="og:site_name" content="Lumi Nails">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://luminails.hu/foglalas.html">
+    <meta property="og:image" content="https://luminails.hu/kepek/hatter2.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://luminails.hu/foglalas.html">
+    <link rel="stylesheet" href="style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playball&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
+    <div id="fejlec-helye"></div>
 
     <section>
         <h2>Időpontfoglalás</h2>
-        <p style="text-align: center; color: #a0a0a0; font-weight: 300; margin-bottom: 40px;">Töltsd ki az adatokat, és
+        <p class="szekcio-leiras urlap-leiras">Töltsd ki az adatokat, és
             küldd el nekem üzenetben!</p>
 
         <div class="urlap-kontener">
@@ -26,15 +35,19 @@
 
             <div class="tel-csoport">
                 <span class="tel-prefix">+36</span>
-                <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567"
-                    oninput="csakSzamokatEnged(this)" required>
+                <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567" inputmode="numeric"
+                    required>
             </div>
 
             <select id="foglalas-szolgatatas" class="urlap-mezo" required>
                 <option value="" disabled selected>Válassz szolgáltatást...</option>
-                <option value="Körömépítés">Körömépítés </option>
-                <option value="Manikűr">Manikűr</option>
-                <option value="Műköröm eltávolítás">Műköröm leszedés + Manikűr</option>
+                <option value="Körömépítés - 1 óra 00 perc">Körömépítés - 1 óra 00 perc</option>
+                <option value="Töltés - 1 óra 00 perc">Töltés - 1 óra 00 perc</option>
+                <option value="Manikűr - 1 óra 00 perc">Manikűr - 1 óra 00 perc</option>
+                <option value="Gél lakk - 1 óra 00 perc">Gél lakk - 1 óra 00 perc</option>
+                <option value="Gél lakk leszedés + manikűr - 1 óra 00 perc">Gél lakk leszedés + manikűr - 1 óra 00 perc</option>
+                <option value="Műköröm leszedés + manikűr - 1 óra 00 perc">Műköröm leszedés + manikűr - 1 óra 00 perc</option>
+                <option value="Díszítés / nail art - 1 óra 00 perc">Díszítés / nail art - 1 óra 00 perc</option>
             </select>
 
             <input type="date" id="foglalas-datum" class="urlap-mezo" required>
@@ -46,26 +59,24 @@
             <textarea id="foglalas-komment" class="urlap-mezo" rows="3"
                 placeholder="Megjegyzés, egyedi kérés (Opcionális)"></textarea>
 
-            <button onclick="foglalasInditasa()" class="gomb"
-                style="width: 100%; border: none; font-weight: 600; background-color: #d4af37; color: #000;">Adatok
+            <button type="button" id="foglalas-kuldes" class="gomb urlap-kuldes-gomb">Foglalási adatok
                 másolása & Tovább</button>
         </div>
     </section>
 
     <div id="sikeres-popup" class="popup-hatter">
         <div class="popup-doboz">
-            <h3 style="color: #d4af37; margin-bottom: 10px;">Adatok másolva! ✓</h3>
-            <p style="color: #a0a0a0; font-size: 14px; font-weight: 300;">A foglalásod szövegét vágólapra másoltuk.
+            <h3 class="popup-cim">Adatok másolva! ✓</h3>
+            <p class="popup-szoveg">A foglalásod szövegét vágólapra másoltuk.
                 Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a <b>Beillesztés</b> (Paste) gombra a chaten!</p>
+            <textarea id="popup-uzenet" class="popup-uzenet" readonly></textarea>
 
             <div class="popup-gomb-sor">
-                <a href="https://m.me/100005112737265" target="_blank" class="gomb"
-                    style="margin: 0; padding: 10px 20px; font-size: 11px;">Messenger</a>
-                <a href="https://ig.me/m/luminails.xx" target="_blank" class="gomb"
-                    style="margin: 0; padding: 10px 20px; font-size: 11px;">Instagram</a>
+                <a href="https://m.me/100005112737265" target="_blank" class="gomb popup-gomb">Messenger</a>
+                <a href="https://ig.me/m/luminails.xx" target="_blank" class="gomb popup-gomb">Instagram</a>
             </div>
 
-            <span onclick="popupBezarasa()" class="bezaro-link">Mégse, visszalépek</span>
+            <button type="button" id="popup-bezaras" class="bezaro-link">Mégse, visszalépek</button>
         </div>
     </div>
 <script src="script.js"></script>

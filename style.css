@@ -1,28 +1,56 @@
+:root {
+    --akcentus: #b9858f;
+    --akcentus-vilagos: #d9aaa7;
+    --tinta: #2b2521;
+    --barna: #5d4d46;
+    --krem: #fdf4e2;
+    --kartya: #fffaf4;
+    --szoveg: #655e57;
+    --rozsa-halvany: #f1ded9;
+    --zsalyaszurke: #a7b7a1;
+}
+
 /* ===================================
             1. FEJLÉC ÉS MENÜ (Header, Hamburger)
             ===================================== */
 header {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(10, 10, 10, 0.85);
-    padding: 20px 40px;
+    top: 12px;
+    left: 50%;
+    width: min(1180px, calc(100% - 32px));
+    background-color: rgba(255, 250, 244, 0.88);
+    backdrop-filter: blur(18px);
+    padding: 10px 18px 10px 24px;
     box-sizing: border-box;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #332a10;
-    height: 70px;
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 999px;
+    box-shadow: 0 14px 34px rgba(70, 48, 42, 0.12);
+    height: 64px;
+    transform: translateX(-50%);
 }
 
 .logo {
-    font-family: 'Playball', cursive;
-    color: #d4af37;
-    font-size: 40px;
+    display: inline-flex;
+    align-items: center;
+    min-width: 150px;
+    min-height: 42px;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--tinta);
+    font-size: 34px;
+    font-weight: 700;
     text-decoration: none;
-    letter-spacing: 2px;
+    letter-spacing: 0.6px;
+}
+
+.logo img {
+    display: block;
+    width: auto;
+    max-width: 150px;
+    max-height: 44px;
 }
 
 /* Az asztali szöveges menü */
@@ -32,177 +60,170 @@ header {
 }
 
 .menu-pontok a {
-    color: #a0a0a0;
+    position: relative;
+    color: rgba(43, 37, 33, 0.72);
     text-decoration: none;
-    margin-left: 30px;
-    font-size: 20px;
-    font-weight: 600;
+    margin-left: 8px;
+    padding: 12px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: color 0.3s;
+    letter-spacing: 1.8px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.menu-pontok a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -8px;
+    width: 0;
+    height: 1px;
+    background-color: var(--akcentus);
+    transition: width 0.25s ease;
 }
 
 .menu-pontok a:hover {
-    color: #d4af37;
+    background-color: rgba(185, 133, 143, 0.12);
+    color: var(--tinta);
+}
+
+.menu-pontok a:hover::after {
+    left: 0;
+    right: auto;
+    width: 100%;
 }
 
 /* =========================================
  2. KEZDŐLAP ELEMEI (Kártyák, stb.)
 ========================================= */
-#kezdolap {
-    width: 95%;
-    /* Mobilon is szép peremet hagy */
-    max-width: 1200px;
-    /* Gépen eddig engedi nőni */
-    margin: 0 auto;
-    /* EZ teszi hajszálpontosan középre az egészet! */
-    padding: 0;
-    /* Leveszünk minden belső üres teret */
-}
-
-/* 2. A HORGONY (Ez tartja egyben a képet és a szöveget) */
-.hero-tarolo {
+#hero {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('kepek/hatter2.jpg');
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    aspect-ratio: 1179 / 500;
     position: relative;
-    width: 100%;
+    padding: 0;
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
 }
 
-/* 2. Létrehozzuk a sötétítő réteget */
-.hero-tarolo::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    /* IDE ÍRD A SÖTÉTÍTÉS ERŐSSÉGÉT (rgba 0,0,0 és az opacity) */
-    background-color: rgba(0, 0, 0, 0.4);
-    border-radius: 0 0 10px 10px;
-
-    z-index: 1;
-    /* A kép felett, de a szöveg alatt */
-    pointer-events: none;
-    /* Átengedi az kattintást a gombra, ha szükséges */
-}
-
-/* 3. A KÉP BEÁLLÍTÁSA (Itt sűrítjük össze a nagy felbontást) */
-.hero-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 0 0 10px 10px;
-    /* Megtartjuk az elegáns sarkokat */
-    z-index: 0;
-    /* Legalul */
-}
-
-/* 4. A SZÖVEG "FELEMELÉSE" A KÉPRE */
 .hero-content {
-    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     position: absolute;
-    top: 25%;
-    /* Függőlegesen továbbra is középen tartja */
-    right: 8%;
-    /* A kép jobb szélétől mért távolság (százalékban, így mobilon is arányos!) */
-    transform: translateY(-50%);
-    /* Csak függőlegesen igazítja középre a saját magasságát */
-
-    text-align: right;
-    /* A szövegeket jobbra zárja */
-    width: 45%;
-
-    /* A doboz csak a kép jobb oldalát foglalhatja el, nem lóg át a bal oldalra */
-    /* Ez formázza csak a főcímet a képen */
+    top: 5.6%;
+    right: 4%;
+    width: 54%;
 }
 
 .hero-content h1 {
-    color: #fffef9;
-    /* (A te arany színkódod, ha azzal akarod) */
-    margin-bottom: 5px;
-    /* Picit eltartja az alatta lévő szöveget */
-    margin-right: -30%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(34px, 7.8vw, 108px);
+    font-weight: 700;
+    text-align: right;
+    color: white;
+    line-height: 0.88;
+    margin: 0 0 1.2%;
+    white-space: nowrap;
 }
 
-/* Ez formázza a te P (leírás) szövegedet a képen */
 .hero-content p {
-    color: #cfc5b1;
-    font-weight: 300;
-    font-size: 24px;
-    letter-spacing: 4px;
-    margin-right: -7%;
-    line-height: 1.7;
-    margin-top: 15px;
+    font-size: clamp(15px, 2.45vw, 34px);
+    font-weight: 400;
+    text-align: right;
+    line-height: 1.35;
+    color: white;
+    margin: clamp(12px, 4.4vw, 64px) 0 0;
 }
 
 /* 1. EZ FELEL A TÚLHÚZÁS SZÍNÉÉRT (Eltünteti a fehéret/pirosat az űrből) */
 html {
-    background-color: #fdf4e2;
+    background-color: var(--krem);
+    scroll-padding-top: 56px;
 }
 
 /* 2. EZ A WEBOLDALAD TARTALMA ÉS A MINTA */
 body {
-    background-color: #fdf4e2;
-    background-image: url('kepek/background2.svg');
+    background-color: var(--krem);
+    background-image: url('kepek/Background2.svg');
     background-repeat: repeat;
     background-size: 450px;
 
     /* Az eddigi dizájn beállításaid */
     margin: 0;
-    padding-top: 70px;
-    font-family: 'Montserrat', sans-serif;
-    color: #d4af37;
+    padding-top: 78px;
+    font-family: 'Manrope', sans-serif;
+    color: var(--akcentus);
     scroll-behavior: smooth;
 }
 
 section {
-    padding: 40px 20px;
+    padding: 30px 20px 40px;
     max-width: 1400px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* FŐCÍM STÍLUSA */
 h1 {
-    font-family: 'Playball', cursive;
+    font-family: 'Cormorant Garamond', serif;
     color: #ffffff;
     font-size: 6.5em;
     margin-bottom: 10px;
-    font-weight: normal;
+    font-weight: 700;
     text-align: center;
 }
 
 
 /* SZOLGÁLTATÁSOK STÍLUSA */
 h2 {
-    color: #ffc400;
-    font-size: 2.2em;
-    font-weight: 400;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--akcentus);
+    font-size: 2.8em;
+    font-weight: 700;
     text-align: center;
     margin-top: 0;
     margin-bottom: 40px;
-    letter-spacing: 3px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
 }
 
-.gomb {
-    display: block;
-    width: fit-content;
-    margin: 30px auto;
-    padding: 15px 40px;
-    background-color: transparent;
-    color: #d4af37;
-    text-decoration: none;
-    border: 1px solid #d4af37;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 15px;
-    transition: all 0.3s;
+.szekcio-leiras {
+    max-width: 620px;
+    margin: 0 auto 50px;
+    color: rgba(23, 19, 13, 0.62);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    text-align: center;
 }
 
-.gomb:hover {
-    background-color: #d4af37;
-    color: #000;
+#kapcsolat {
+    position: relative;
+    border-top: none;
+    margin-top: 18px;
+    padding-top: 58px;
 }
 
+#kapcsolat::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(760px, calc(100% - 40px));
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(185, 133, 143, 0.48), transparent);
+    border-radius: 999px;
+    transform: translateX(-50%);
+}
+
+.szolgaltatas-arlista-gomb {
+    margin-top: 34px;
+}
 
 /* --- KÁRTYÁK A SZOLGÁLTATÁSOKHOZ --- */
 .bento-racs {
@@ -218,20 +239,13 @@ h2 {
 
 /* Az általános kártya dizájn (A keret nélküli lebegés) */
 .bento-kartya {
-    background-color: #fffef9;
-    /* Tiszta fehér háttér (a bézs oldalon gyönyörűen kiemelkedik) */
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--kartya);
+    border: 1px solid rgba(185, 133, 143, 0.16);
     border-radius: 20px;
-    /* Modern, puha lekerekítés */
     padding: 40px;
-    /* Bőséges belső üres tér (whitespace) */
-
-    /* A lebegő árnyék (Ez váltja ki a fekete keretet!) */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-
-    /* Pici animáció, ha a látogató ráviszi az egeret */
+    box-shadow: 0 18px 45px rgba(78, 54, 48, 0.07);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-    /* Szövegek középre igazítása a kártyán belül */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -241,7 +255,7 @@ h2 {
 /* Egeres interakció (hover): Kicsit felemelkedik a kártya, mint egy igazi gomb */
 .bento-kartya:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 24px 52px rgba(78, 54, 48, 0.11);
 }
 
 /* ------------------------------------------------ */
@@ -255,15 +269,18 @@ h2 {
 
 /* Kártyán belüli betűstílusok */
 .bento-kartya h3 {
-    color: #332a10;
+    color: var(--barna);
     font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
     margin-bottom: 15px;
     margin-top: 0;
 }
 
 .bento-kartya p {
-    color: #666666;
+    color: var(--szoveg);
     font-size: 20px;
+    font-weight: 300;
     letter-spacing: 1.1px;
     line-height: 1.6;
     margin: 0;
@@ -280,54 +297,64 @@ h2 {
     margin: 0 auto;
 }
 
+.urlap-leiras {
+    margin-bottom: 40px;
+}
+
 .urlap-mezo {
-    background-color: #0a0a0a;
-    border: 1px solid #332a10;
-    color: #ffffff;
+    background-color: #fffaf4;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    color: var(--tinta);
     padding: 15px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope', sans-serif;
     font-size: 14px;
     border-radius: 4px;
     transition: border-color 0.3s;
     box-sizing: border-box;
-
-    /* ÚJ: Megmondjuk a böngészőnek, hogy ez egy sötét oldal. 
-               Így a naptár ikon szépen kivilágosodik és a lenyíló naptár is fekete lesz! */
-    color-scheme: dark;
-
-    /* ÚJ: Letiltja a megjegyzés mező kézi méretezését (húzogatását) */
+    color-scheme: light;
     resize: none;
 }
 
+.urlap-mezo::placeholder {
+    color: rgba(43, 37, 33, 0.52);
+    opacity: 1;
+}
+
+select.urlap-mezo:invalid {
+    color: rgba(43, 37, 33, 0.58);
+}
+
+.urlap-mezo option {
+    color: var(--tinta);
+    background-color: #fffaf4;
+}
+
 .urlap-mezo:focus {
-    border-color: #d4af37;
+    border-color: var(--akcentus-vilagos);
     outline: none;
 }
 
-/* --- ÚJ: SPECIÁLIS TELEFON MEZŐ --- */
 .tel-csoport {
     display: flex;
     align-items: center;
-    background-color: #0a0a0a;
-    border: 1px solid #332a10;
+    background-color: #fffaf4;
+    border: 1px solid rgba(185, 133, 143, 0.28);
     border-radius: 4px;
 }
 
 .tel-prefix {
     padding: 15px;
-    color: #d4af37;
+    color: var(--akcentus-vilagos);
     font-weight: 600;
     font-size: 14px;
-    border-right: 1px solid #332a10;
-    background-color: rgba(255, 255, 255, 0.02);
+    border-right: 1px solid rgba(185, 133, 143, 0.28);
+    background-color: rgba(185, 133, 143, 0.08);
     user-select: none;
-    /* Nem kijelölhető, fix szöveg */
 }
 
 .tel-csoport .urlap-mezo {
     flex-grow: 1;
     border: none;
-    /* Kivesszük a belső keretet */
     background-color: transparent;
 }
 
@@ -336,21 +363,72 @@ h2 {
     width: fit-content;
     margin: 20px auto;
     padding: 15px 40px;
-    background-color: transparent;
-    color: #d4af37;
+    background-color: rgba(185, 133, 143, 0.08);
+    color: var(--tinta);
     text-decoration: none;
-    border: 1px solid #d4af37;
+    border: 1px solid var(--akcentus);
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 700;
     transition: all 0.3s;
     cursor: pointer;
     text-align: center;
 }
 
 .gomb:hover {
-    background-color: #d4af37;
-    color: #000;
+    background-color: var(--akcentus);
+    color: #fffaf4;
+}
+
+.urlap-kuldes-gomb {
+    width: 100%;
+    border: none;
+    background-color: var(--akcentus);
+    color: #fffaf4;
+}
+
+.urlap-kuldes-gomb:hover {
+    background-color: var(--akcentus-vilagos);
+}
+
+.lebego-foglalas-gomb {
+    position: fixed;
+    right: 28px;
+    bottom: calc(28px + env(safe-area-inset-bottom));
+    z-index: 1200;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 24px;
+    background-color: var(--akcentus);
+    color: #fffaf4;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lebego-foglalas-gomb:hover {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+    transform: translateY(-2px);
+}
+
+.lebego-foglalas-gomb.rejtve {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(14px);
 }
 
 /* --- FELUGRÓ ABLAK (POPUP) --- */
@@ -369,12 +447,47 @@ h2 {
 
 .popup-doboz {
     background-color: #111;
-    border: 1px solid #d4af37;
+    border: 1px solid var(--akcentus);
     padding: 40px;
     border-radius: 8px;
     text-align: center;
     max-width: 90%;
     width: 350px;
+}
+
+.popup-cim {
+    margin: 0 0 10px;
+    color: var(--akcentus-vilagos);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.popup-szoveg {
+    color: rgba(255, 253, 247, 0.68);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.popup-uzenet {
+    display: none;
+    width: 100%;
+    min-height: 120px;
+    margin-top: 18px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid rgba(185, 133, 143, 0.35);
+    border-radius: 8px;
+    background-color: #fffaf4;
+    color: var(--tinta);
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: none;
+}
+
+.popup-uzenet.lathato {
+    display: block;
 }
 
 .popup-gomb-sor {
@@ -384,26 +497,135 @@ h2 {
     margin-top: 25px;
 }
 
+.popup-gomb {
+    margin: 0;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: #fffaf4;
+    border-color: rgba(255, 250, 244, 0.55);
+    font-size: 11px;
+}
+
+.popup-gomb:hover {
+    background-color: #fffaf4;
+    color: var(--tinta);
+    border-color: #fffaf4;
+}
+
 .bezaro-link {
     color: #a0a0a0;
+    background: transparent;
+    border: none;
+    font-family: 'Manrope', sans-serif;
     text-decoration: underline;
     font-size: 12px;
     cursor: pointer;
     margin-top: 20px;
     display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* --- 1. Alapbeállítások (Gépi nézet) --- */
-.hamburger {
-    display: none;
+.arlista-oldal {
+    padding-top: 24px;
 }
 
-/* Rejtett */
-.mobile-menu {
-    display: none;
+.arlista-oldal h2 {
+    margin-bottom: 22px;
 }
 
-/* Rejtett */
+.arlista-oldal .szekcio-leiras {
+    margin-bottom: 34px;
+}
+
+.arlista-panel {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 42px;
+    background-color: rgba(255, 250, 244, 0.9);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 24px;
+    box-shadow: 0 22px 56px rgba(78, 54, 48, 0.1);
+}
+
+.arlista-ket-oszlop {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px;
+}
+
+.arlista-csoport {
+    margin-top: 34px;
+}
+
+.arlista-ket-oszlop .arlista-csoport {
+    margin-top: 0;
+}
+
+.arlista-csoport h3 {
+    margin: 0 0 18px;
+    color: var(--akcentus);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+.arlista-sor {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--tinta);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    line-height: 1.45;
+    padding: 4px 0;
+}
+
+.arlista-sor::before {
+    content: "";
+    flex: 1 1 auto;
+    min-width: 28px;
+    order: 2;
+    margin-top: 0.88em;
+    border-bottom: 1px dotted rgba(93, 77, 70, 0.34);
+}
+
+.arlista-sor > span {
+    min-width: 0;
+    order: 1;
+}
+
+.arlista-sor strong {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    order: 3;
+    color: var(--barna);
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.arlista-ido {
+    color: rgba(43, 37, 33, 0.5);
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.arlista-megjegyzes {
+    margin: 44px 0 0;
+    color: rgba(43, 37, 33, 0.54);
+    font-size: 16px;
+    font-style: italic;
+    text-align: center;
+}
 
 /* =========================================
             4. MOBIL NÉZET
@@ -412,15 +634,57 @@ h2 {
 /* A HAMBURGER GOMB */
 .hamburger {
     display: none;
-    /* Mobilos nézetben (@media) majd ne felejtsd el display: block-ra tenni! */
-    position: fixed;
-    top: 0;
-    /* JAVÍTVA: A 'center' itt nem működik, pontos pixel érték kell */
-    right: 20px;
-    font-size: 45px;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 999px;
+    background-color: rgba(185, 133, 143, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(185, 133, 143, 0.18);
     z-index: 9999;
     cursor: pointer;
-    color: #d4af37;
+    color: var(--akcentus-vilagos);
+    transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.hamburger:hover {
+    background-color: rgba(185, 133, 143, 0.18);
+}
+
+.hamburger span {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    background-color: var(--tinta);
+    border-radius: 999px;
+    transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+}
+
+.hamburger span:nth-child(1) {
+    top: 14px;
+}
+
+.hamburger span:nth-child(2) {
+    top: 21px;
+}
+
+.hamburger span:nth-child(3) {
+    top: 28px;
+}
+
+.hamburger.open span:nth-child(1) {
+    top: 21px;
+    transform: rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    top: 21px;
+    transform: rotate(-45deg);
 }
 
 /* 1. AZ ALAP DOBOZ MINDEN DIZÁJNNAL */
@@ -428,21 +692,19 @@ h2 {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 72px;
-    /* Ezt állítsd majd a hamburger gombod alá */
-    right: 20px;
-    width: 220px;
-    background-color: #111;
-    border: 1px solid #c5a059;
-    border-radius: 8px;
-    padding: 10px 0;
+    top: 88px;
+    right: 16px;
+    width: min(270px, calc(100vw - 32px));
+    background-color: rgba(255, 250, 244, 0.94);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 22px;
+    padding: 10px;
     z-index: 9998;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-
-    /* AZ ANIMÁCIÓ TITKA */
+    box-shadow: 0 20px 46px rgba(70, 48, 42, 0.16);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-15px);
+    transform: translateY(-10px) scale(0.98);
     transition: all 0.25s ease-in-out;
 }
 
@@ -451,21 +713,18 @@ h2 {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 5px 15px;
+    padding: 14px 16px;
     margin-left: 0;
-    margin-bottom: 15px;
-
-    /* Tipográfia és színek */
-    color: #ffffff;
-    /* Fehér marad bezárás közben is */
-    font-size: 16px;
-    font-weight: 600;
-    text-align: right;
+    margin-bottom: 4px;
+    border-radius: 16px;
+    color: var(--tinta);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-decoration: none;
-
-    transition: all 0.3s ease;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
 /* 3. AZ UTOLSÓ ELEM (.open nélkül) */
@@ -475,64 +734,79 @@ h2 {
 
 /* 4. HOVER EFFEKTUS (.open nélkül) */
 .mobile-menu a:hover {
-    color: #d4af37;
-    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--tinta);
+    background-color: rgba(185, 133, 143, 0.12);
+    transform: translateX(2px);
 }
 
 /* 5. A NYITOTT ÁLLAPOT (CSAK a doboz megjelenítése) */
 .mobile-menu.open {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 @media screen and (max-width: 768px) {
+    header {
+        width: calc(100% - 24px);
+        top: 10px;
+        padding: 10px 12px 10px 18px;
+    }
+
+    .logo {
+        min-width: 130px;
+        font-size: 31px;
+    }
+
     .menu-pontok {
         display: none !important;
-        /* Asztali szövegek kikapcsolása */
     }
 
     .hamburger {
         display: block !important;
-        /* 3 vonal bekapcsolása */
     }
 
-    .hero-content {
-        width: 40%;
-        /* Mobilon egy picit több helyet engedünk a szövegnek */
-        right: 4%;
+    .lebego-foglalas-gomb {
+        right: 50%;
+        bottom: calc(18px + env(safe-area-inset-bottom));
+        min-height: 46px;
+        padding: 0 22px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+        transform: translateX(50%);
+        white-space: nowrap;
     }
 
-    .hero-content h1 {
-        font-size: 50px;
-        margin-right: -5%;
-        margin-top: 28%;
+    .lebego-foglalas-gomb:hover {
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+        transform: translateX(50%) translateY(-2px);
     }
 
-    .hero-content p {
-        font-size: 15px !important;
-        letter-spacing: 1px !important;
-        margin-top: -2%;
-        margin-right: -5%;
+    .lebego-foglalas-gomb.rejtve {
+        transform: translateX(50%) translateY(14px);
+    }
+
+    #hero {
+        width: 95%;
+    }
+
+    h2 {
+        font-size: 1.7em;
+        letter-spacing: 2px;
     }
 
     .bento-racs {
         grid-template-columns: 1fr;
-        /* A 3 oszlop helyett csak 1 oszlop lesz! */
         gap: 20px;
-        /* Kicsit kisebb rés a kártyák között */
     }
 
     /* 2. A széles kártyák "visszavágása" */
     .bento-kartya.szeles {
         grid-column: span 1;
-        /* Mobilon ne akarjon 2 oszlopot elfoglalni */
     }
 
     /* 3. Kártyák belső terének szűkítése */
     .bento-kartya {
         padding: 25px;
-        /* A 40px túl sok helyet venne el mobilon */
     }
 
     /* 4. Betűméretek finomhangolása mobilra */
@@ -548,27 +822,89 @@ h2 {
 
     .bento-kartya:nth-child(1) {
         order: 1;
-        /* A Körömépítés marad az első */
     }
 
     .bento-kartya:nth-child(4) {
         order: 2;
-        /* A 4-es kártyát (Manikűr) felrántjuk a 2. helyre */
     }
 
     .bento-kartya:nth-child(3) {
         order: 3;
-        /* A Gél Lakk marad a 3. helyen */
     }
 
     .bento-kartya:nth-child(2) {
         order: 4;
-        /* A 2-es kártyát (Díszítés) ledobjuk a legaljára */
     }
 
     .bento-kartya br {
         display: none;
-        /* Mobilon a sortörések egyszerűen "köddé válnak" */
     }
 
+    #kapcsolat {
+        margin-top: 6px;
+        padding-top: 46px;
+    }
+
+    .arlista-oldal {
+        padding-top: 12px;
+    }
+
+    .arlista-oldal h2 {
+        margin-bottom: 16px;
+    }
+
+    .arlista-oldal .szekcio-leiras {
+        margin-bottom: 24px;
+    }
+
+    .arlista-panel {
+        padding: 28px 20px;
+        border-radius: 20px;
+    }
+
+    .arlista-ket-oszlop {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .arlista-csoport,
+    .arlista-ket-oszlop .arlista-csoport {
+        margin-top: 28px;
+    }
+
+    .arlista-ket-oszlop .arlista-csoport:first-child {
+        margin-top: 0;
+    }
+
+    .arlista-csoport h3 {
+        font-size: 34px;
+    }
+
+    .arlista-sor {
+        font-size: 15px;
+        gap: 8px;
+    }
+
+    .arlista-ido {
+        font-size: 10px;
+        letter-spacing: 0.3px;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    .hero-content {
+        right: 3.6%;
+        width: 60%;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(38px, 11vw, 46px);
+    }
+
+    .hero-content p {
+        font-size: clamp(16px, 4.5vw, 19px);
+        line-height: 1.25;
+        margin-top: clamp(14px, 4.2vw, 20px);
+    }
 }
