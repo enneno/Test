@@ -3,17 +3,70 @@ metaThemeColor.name = 'theme-color';
 metaThemeColor.content = '#fdf4e2';
 document.head.appendChild(metaThemeColor);
 
+let galeriaAktualisIndex = 0;
+let galeriaKepek = [];
+
 document.addEventListener('DOMContentLoaded', function () {
+    tisztaUrlBeallitasa();
+    helyiTisztaLinkekBekotese();
     fejlecBetoltese();
+    lablecBetoltese();
     idopontokGeneralasa();
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
+    galeriaBekotese();
     lebegoFoglalasLetrehozasa();
     lebegoFoglalasFigyeles();
 });
 
+function tisztaUrlBeallitasa() {
+    const tisztaUtvonalak = {
+        '/index.html': '/',
+        '/arlista.html': '/arlista/',
+        '/arlista/index.html': '/arlista/',
+        '/galeria.html': '/galeria/',
+        '/galeria/index.html': '/galeria/',
+        '/foglalas.html': '/foglalas/',
+        '/foglalas/index.html': '/foglalas/'
+    };
+    const tisztaUtvonal = tisztaUtvonalak[window.location.pathname];
+
+    if (tisztaUtvonal) {
+        window.history.replaceState(null, '', tisztaUtvonal + window.location.search + window.location.hash);
+    }
+}
+
+function helyiTisztaLinkekBekotese() {
+    if (!['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
+        return;
+    }
+
+    const helyiFallbackok = {
+        '/arlista/': '/arlista.html',
+        '/galeria/': '/galeria.html',
+        '/foglalas/': '/foglalas.html'
+    };
+
+    document.addEventListener('click', event => {
+        const link = event.target.closest('a');
+
+        if (!link || link.origin !== window.location.origin) {
+            return;
+        }
+
+        const fallback = helyiFallbackok[link.pathname];
+
+        if (!fallback) {
+            return;
+        }
+
+        event.preventDefault();
+        window.location.href = fallback + link.search + link.hash;
+    });
+}
+
 function fejlecBetoltese() {
-    fetch('header.html')
+    fetch('/header.html')
         .then(response => response.text())
         .then(data => {
             const fejlecHelye = document.getElementById('fejlec-helye');
@@ -24,6 +77,21 @@ function fejlecBetoltese() {
 
             fejlecHelye.innerHTML = data;
             menuEsemenyekBekotese();
+            aktivMenuJelolese();
+        });
+}
+
+function lablecBetoltese() {
+    const lablecHelye = document.getElementById('lablec-helye');
+
+    if (!lablecHelye) {
+        return;
+    }
+
+    fetch('/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            lablecHelye.innerHTML = data;
         });
 }
 
@@ -64,6 +132,35 @@ function menuBezarasa() {
     if (hamburger) {
         hamburger.classList.remove('open');
     }
+}
+
+function aktivMenuJelolese() {
+    const aktualis = normalizaltUtvonal(window.location.pathname);
+    const hash = window.location.hash;
+
+    document.querySelectorAll('header nav a').forEach(link => {
+        const linkUtvonal = normalizaltUtvonal(new URL(link.href).pathname);
+        const szolgaltatasLink = link.hash === '#szolgaltatasok';
+        const aktiv = szolgaltatasLink && hash === '#szolgaltatasok'
+            ? true
+            : !szolgaltatasLink && linkUtvonal === aktualis;
+
+        link.classList.toggle('aktiv', aktiv);
+    });
+}
+
+function normalizaltUtvonal(utvonal) {
+    const htmlOldalak = {
+        '/index.html': '/',
+        '/arlista.html': '/arlista/',
+        '/arlista/index.html': '/arlista/',
+        '/galeria.html': '/galeria/',
+        '/galeria/index.html': '/galeria/',
+        '/foglalas.html': '/foglalas/',
+        '/foglalas/index.html': '/foglalas/'
+    };
+
+    return htmlOldalak[utvonal] || utvonal;
 }
 
 document.addEventListener('click', function (event) {
@@ -166,7 +263,7 @@ function lebegoFoglalasLetrehozasa() {
     }
 
     const gomb = document.createElement('a');
-    gomb.href = 'foglalas.html';
+    gomb.href = '/foglalas/';
     gomb.id = 'lebego-foglalas-gomb';
     gomb.className = 'lebego-foglalas-gomb';
     gomb.textContent = 'Időpontfoglalás';
@@ -174,13 +271,90 @@ function lebegoFoglalasLetrehozasa() {
 }
 
 function foglalasOldal() {
-    const fajlnev = window.location.pathname.split('/').pop().toLowerCase();
-    return fajlnev === 'foglalas.html';
+    const utvonal = window.location.pathname.toLowerCase();
+    return utvonal === '/foglalas/' || utvonal.endsWith('/foglalas.html') || utvonal.endsWith('/foglalas/index.html');
+}
+
+function galeriaBekotese() {
+    const galeriaGombok = Array.from(document.querySelectorAll('.galeria-kep-gomb'));
+    const lightbox = document.getElementById('galeria-lightbox');
+
+    if (galeriaGombok.length === 0 || !lightbox) {
+        return;
+    }
+
+    galeriaKepek = galeriaGombok.map(gomb => ({
+        src: gomb.dataset.src,
+        alt: gomb.dataset.alt || ''
+    }));
+
+    galeriaGombok.forEach((gomb, index) => {
+        gomb.addEventListener('click', () => galeriaMegnyitasa(index));
+    });
+
+    lightbox.querySelector('.galeria-lightbox-bezar').addEventListener('click', galeriaBezarasa);
+    lightbox.querySelector('.galeria-lightbox-elozo').addEventListener('click', () => galeriaLepes(-1));
+    lightbox.querySelector('.galeria-lightbox-kovetkezo').addEventListener('click', () => galeriaLepes(1));
+
+    lightbox.addEventListener('click', event => {
+        if (event.target === lightbox) {
+            galeriaBezarasa();
+        }
+    });
+
+    document.addEventListener('keydown', event => {
+        if (!lightbox.classList.contains('nyitva')) {
+            return;
+        }
+
+        if (event.key === 'Escape') galeriaBezarasa();
+        if (event.key === 'ArrowLeft') galeriaLepes(-1);
+        if (event.key === 'ArrowRight') galeriaLepes(1);
+    });
+}
+
+function galeriaMegnyitasa(index) {
+    galeriaAktualisIndex = index;
+    galeriaKepFrissitese();
+
+    const lightbox = document.getElementById('galeria-lightbox');
+    lightbox.classList.add('nyitva');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+}
+
+function galeriaBezarasa() {
+    const lightbox = document.getElementById('galeria-lightbox');
+
+    if (!lightbox) {
+        return;
+    }
+
+    lightbox.classList.remove('nyitva');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+}
+
+function galeriaLepes(irany) {
+    galeriaAktualisIndex = (galeriaAktualisIndex + irany + galeriaKepek.length) % galeriaKepek.length;
+    galeriaKepFrissitese();
+}
+
+function galeriaKepFrissitese() {
+    const lightboxKep = document.querySelector('#galeria-lightbox img');
+    const kep = galeriaKepek[galeriaAktualisIndex];
+
+    if (!lightboxKep || !kep) {
+        return;
+    }
+
+    lightboxKep.src = kep.src;
+    lightboxKep.alt = kep.alt;
 }
 
 function lebegoFoglalasFigyeles() {
     const lebegoGomb = document.getElementById('lebego-foglalas-gomb');
-    const foglalasGombok = Array.from(document.querySelectorAll('a.gomb[href*="foglalas.html"]'))
+    const foglalasGombok = Array.from(document.querySelectorAll('a.gomb[href*="foglalas"]'))
         .filter(gomb => gomb.id !== 'lebego-foglalas-gomb');
 
     if (!lebegoGomb || foglalasGombok.length === 0) {

@@ -17,7 +17,7 @@ header {
     position: fixed;
     top: 12px;
     left: 50%;
-    width: min(1180px, calc(100% - 32px));
+    width: min(1400px, calc(100% - 40px));
     background-color: rgba(255, 250, 244, 0.88);
     backdrop-filter: blur(18px);
     padding: 10px 18px 10px 24px;
@@ -53,6 +53,10 @@ header {
     max-height: 44px;
 }
 
+.logo:hover {
+    color: var(--akcentus);
+}
+
 /* Az asztali szöveges menü */
 .menu-pontok {
     display: flex;
@@ -86,6 +90,11 @@ header {
 
 .menu-pontok a:hover {
     background-color: rgba(185, 133, 143, 0.12);
+    color: var(--tinta);
+}
+
+.menu-pontok a.aktiv {
+    background-color: rgba(185, 133, 143, 0.14);
     color: var(--tinta);
 }
 
@@ -223,6 +232,107 @@ h2 {
 
 .szolgaltatas-arlista-gomb {
     margin-top: 34px;
+}
+
+.bemutatkozas {
+    padding-top: 46px;
+}
+
+.bemutatkozas-belso {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.05fr) minmax(260px, 0.7fr);
+    align-items: center;
+    gap: clamp(28px, 5vw, 70px);
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 34px;
+    background: rgba(255, 250, 244, 0.74);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 24px;
+    box-shadow: 0 18px 48px rgba(78, 54, 48, 0.08);
+}
+
+.bemutatkozas-szoveg h2 {
+    margin-bottom: 22px;
+    text-align: left;
+}
+
+.bemutatkozas-szoveg p {
+    margin: 0 0 16px;
+    color: var(--szoveg);
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+.bemutatkozas-szoveg p:last-child {
+    margin-bottom: 0;
+}
+
+.bemutatkozas-kep {
+    min-height: 360px;
+    overflow: hidden;
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 22px;
+    box-shadow: 0 18px 42px rgba(78, 54, 48, 0.11);
+}
+
+.bemutatkozas-kep img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    object-fit: cover;
+}
+
+#galeria-atvezeto {
+    padding-top: 44px;
+}
+
+.galeria-atvezeto-belso {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.94fr) minmax(300px, 1fr);
+    align-items: center;
+    gap: clamp(28px, 5vw, 72px);
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.galeria-atvezeto-kepek {
+    display: grid;
+    grid-template-columns: 1fr 0.72fr;
+    grid-template-rows: repeat(2, minmax(150px, 1fr));
+    gap: 14px;
+    min-height: 430px;
+}
+
+.galeria-atvezeto-kepek img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    border: 1px solid rgba(185, 133, 143, 0.2);
+    border-radius: 22px;
+    box-shadow: 0 18px 44px rgba(78, 54, 48, 0.1);
+}
+
+.galeria-atvezeto-kepek img:first-child {
+    grid-row: span 2;
+}
+
+.galeria-atvezeto-szoveg h2 {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.galeria-atvezeto-szoveg .szekcio-leiras {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 26px;
+    text-align: left;
+}
+
+.galeria-atvezeto-szoveg .gomb {
+    margin-left: 0;
 }
 
 /* --- KÁRTYÁK A SZOLGÁLTATÁSOKHOZ --- */
@@ -627,6 +737,249 @@ select.urlap-mezo:invalid {
     text-align: center;
 }
 
+.galeria-oldal {
+    padding-top: 24px;
+}
+
+.galeria-oldal h2 {
+    margin-bottom: 22px;
+}
+
+.galeria-oldal .szekcio-leiras {
+    margin-bottom: 34px;
+}
+
+.galeria-racs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 190px;
+    gap: 16px;
+    max-width: 1180px;
+    margin: 0 auto 40px;
+}
+
+.galeria-kep-gomb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 20px;
+    background: var(--kartya);
+    box-shadow: 0 16px 34px rgba(78, 54, 48, 0.08);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.galeria-kep-gomb:hover {
+    border-color: rgba(185, 133, 143, 0.38);
+    box-shadow: 0 22px 46px rgba(78, 54, 48, 0.13);
+    transform: translateY(-3px);
+}
+
+.galeria-kep-gomb.magas {
+    grid-row: span 2;
+}
+
+.galeria-kep-gomb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.galeria-kep-gomb:hover img {
+    transform: scale(1.035);
+}
+
+.galeria-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 34px;
+    background: rgba(22, 18, 16, 0.88);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+.galeria-lightbox.nyitva {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.galeria-lightbox img {
+    display: block;
+    max-width: min(1040px, 88vw);
+    max-height: 86vh;
+    object-fit: contain;
+    border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.galeria-lightbox button {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 250, 244, 0.4);
+    border-radius: 999px;
+    background: rgba(255, 250, 244, 0.15);
+    color: #fffaf4;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.galeria-lightbox button:hover {
+    background: rgba(255, 250, 244, 0.28);
+}
+
+.galeria-lightbox button svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.galeria-lightbox-bezar {
+    top: 22px;
+    right: 22px;
+}
+
+.galeria-lightbox-bezar:hover {
+    transform: translateY(-1px);
+}
+
+.galeria-lightbox-elozo {
+    top: 50%;
+    left: 22px;
+    transform: translateY(-50%);
+}
+
+.galeria-lightbox-kovetkezo {
+    top: 50%;
+    right: 22px;
+    transform: translateY(-50%);
+}
+
+.galeria-lightbox-elozo:hover,
+.galeria-lightbox-kovetkezo:hover {
+    transform: translateY(calc(-50% - 1px));
+}
+
+.site-footer {
+    max-width: 1400px;
+    margin: 36px auto 0;
+    padding: 0 20px 34px;
+    box-sizing: border-box;
+}
+
+.footer-belso {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.1fr) minmax(240px, 0.9fr) minmax(240px, 0.9fr);
+    gap: 30px;
+    padding: 34px;
+    background: rgba(255, 250, 244, 0.86);
+    border: 1px solid rgba(185, 133, 143, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 18px 44px rgba(78, 54, 48, 0.08);
+}
+
+.footer-logo {
+    display: inline-block;
+    color: var(--tinta);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.footer-brand p,
+.footer-kapcsolat address {
+    margin: 14px 0 0;
+    color: var(--szoveg);
+    font-size: 15px;
+    font-style: normal;
+    line-height: 1.7;
+}
+
+.footer-kapcsolat h3,
+.footer-social h3 {
+    margin: 0 0 14px;
+    color: var(--akcentus);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.footer-kapcsolat a {
+    display: block;
+    width: fit-content;
+    color: var(--tinta);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-kapcsolat a:hover,
+.footer-logo:hover {
+    color: var(--akcentus);
+}
+
+.social-linkek {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.social-gomb {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 16px;
+    color: var(--tinta);
+    background: rgba(185, 133, 143, 0.08);
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.social-gomb:hover {
+    background: var(--akcentus);
+    color: #fffaf4;
+    transform: translateY(-2px);
+}
+
+.social-gomb svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 /* =========================================
             4. MOBIL NÉZET
             ========================================= */
@@ -739,6 +1092,11 @@ select.urlap-mezo:invalid {
     transform: translateX(2px);
 }
 
+.mobile-menu a.aktiv {
+    color: var(--tinta);
+    background-color: rgba(185, 133, 143, 0.14);
+}
+
 /* 5. A NYITOTT ÁLLAPOT (CSAK a doboz megjelenítése) */
 .mobile-menu.open {
     opacity: 1;
@@ -840,6 +1198,68 @@ select.urlap-mezo:invalid {
         display: none;
     }
 
+    .bemutatkozas {
+        padding-top: 32px;
+    }
+
+    .bemutatkozas-belso {
+        grid-template-columns: 1fr;
+        padding: 24px;
+        border-radius: 20px;
+    }
+
+    .bemutatkozas-szoveg h2 {
+        text-align: center;
+    }
+
+    .bemutatkozas-szoveg p {
+        font-size: 16px;
+        line-height: 1.7;
+        text-align: center;
+    }
+
+    .bemutatkozas-kep,
+    .bemutatkozas-kep img {
+        min-height: 280px;
+    }
+
+    #galeria-atvezeto {
+        padding-top: 30px;
+    }
+
+    .galeria-atvezeto-belso {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .galeria-atvezeto-kepek {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 170px 170px;
+        min-height: 0;
+    }
+
+    .galeria-atvezeto-kepek img {
+        border-radius: 18px;
+    }
+
+    .galeria-atvezeto-kepek img:first-child {
+        grid-row: span 2;
+    }
+
+    .galeria-atvezeto-szoveg h2,
+    .galeria-atvezeto-szoveg .szekcio-leiras {
+        text-align: center;
+    }
+
+    .galeria-atvezeto-szoveg .szekcio-leiras {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .galeria-atvezeto-szoveg .gomb {
+        margin-left: auto;
+    }
+
     #kapcsolat {
         margin-top: 6px;
         padding-top: 46px;
@@ -888,6 +1308,79 @@ select.urlap-mezo:invalid {
     .arlista-ido {
         font-size: 10px;
         letter-spacing: 0.3px;
+    }
+
+    .galeria-oldal {
+        padding-top: 12px;
+    }
+
+    .galeria-oldal h2 {
+        margin-bottom: 16px;
+    }
+
+    .galeria-oldal .szekcio-leiras {
+        margin-bottom: 24px;
+    }
+
+    .galeria-racs {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 150px;
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .galeria-kep-gomb {
+        border-radius: 16px;
+    }
+
+    .galeria-lightbox {
+        padding: 18px;
+    }
+
+    .galeria-lightbox img {
+        max-width: 92vw;
+        max-height: 78vh;
+        border-radius: 18px;
+    }
+
+    .galeria-lightbox button {
+        width: 40px;
+        height: 40px;
+        font-size: 28px;
+    }
+
+    .galeria-lightbox button svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .galeria-lightbox-elozo {
+        left: 12px;
+    }
+
+    .galeria-lightbox-kovetkezo {
+        right: 12px;
+    }
+
+    .site-footer {
+        margin-top: 24px;
+        padding: 0 12px 28px;
+    }
+
+    .footer-belso {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 26px 22px;
+        text-align: center;
+        border-radius: 20px;
+    }
+
+    .footer-kapcsolat a {
+        width: auto;
+    }
+
+    .social-linkek {
+        justify-content: center;
     }
 
 }
