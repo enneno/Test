@@ -5,6 +5,9 @@ document.head.appendChild(metaThemeColor);
 
 let galeriaAktualisIndex = 0;
 let galeriaKepek = [];
+let galeriaHuzasKezdoX = 0;
+let galeriaHuzasKezdoY = 0;
+let galeriaHuzasAktiv = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
@@ -302,6 +305,15 @@ function galeriaBekotese() {
         }
     });
 
+    if (window.PointerEvent) {
+        lightbox.addEventListener('pointerdown', galeriaPointerHuzasKezdete);
+        lightbox.addEventListener('pointerup', galeriaPointerHuzasVege);
+        lightbox.addEventListener('pointercancel', galeriaPointerHuzasMegszakitas);
+    } else {
+        lightbox.addEventListener('touchstart', galeriaHuzasKezdete, { passive: true });
+        lightbox.addEventListener('touchend', galeriaHuzasVege);
+    }
+
     document.addEventListener('keydown', event => {
         if (!lightbox.classList.contains('nyitva')) {
             return;
@@ -338,6 +350,59 @@ function galeriaBezarasa() {
 function galeriaLepes(irany) {
     galeriaAktualisIndex = (galeriaAktualisIndex + irany + galeriaKepek.length) % galeriaKepek.length;
     galeriaKepFrissitese();
+}
+
+function galeriaHuzasKezdete(event) {
+    const erintes = event.changedTouches[0];
+    galeriaHuzasKezdoX = erintes.clientX;
+    galeriaHuzasKezdoY = erintes.clientY;
+}
+
+function galeriaHuzasVege(event) {
+    const erintes = event.changedTouches[0];
+    galeriaHuzasEldontese(erintes.clientX, erintes.clientY);
+}
+
+function galeriaPointerHuzasKezdete(event) {
+    if (event.button !== 0 || event.target.closest('button')) {
+        return;
+    }
+
+    galeriaHuzasAktiv = true;
+    galeriaHuzasKezdoX = event.clientX;
+    galeriaHuzasKezdoY = event.clientY;
+}
+
+function galeriaPointerHuzasVege(event) {
+    if (!galeriaHuzasAktiv) {
+        return;
+    }
+
+    galeriaHuzasAktiv = false;
+    galeriaHuzasEldontese(event.clientX, event.clientY);
+}
+
+function galeriaPointerHuzasMegszakitas() {
+    galeriaHuzasAktiv = false;
+}
+
+function galeriaHuzasEldontese(vegX, vegY) {
+    const lightbox = document.getElementById('galeria-lightbox');
+
+    if (!lightbox || !lightbox.classList.contains('nyitva')) {
+        return;
+    }
+
+    const deltaX = vegX - galeriaHuzasKezdoX;
+    const deltaY = vegY - galeriaHuzasKezdoY;
+    const elegHosszuHuzas = Math.abs(deltaX) > 55;
+    const inkabbVizszintes = Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+    if (!elegHosszuHuzas || !inkabbVizszintes) {
+        return;
+    }
+
+    galeriaLepes(deltaX < 0 ? 1 : -1);
 }
 
 function galeriaKepFrissitese() {
