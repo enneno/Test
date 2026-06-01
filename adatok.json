@@ -6,7 +6,7 @@
     "kapcsolat": {
         "cimke": "Elérhetőség",
         "cim": "2800 Tatabánya, Kós Károly út",
-        "telefonLathato": true,
+        "telefonLathato": false,
         "telefon": "+36 20 563 6494",
         "telefonLink": "+36205636494",
         "email": "szofipetras087@gmail.com",
