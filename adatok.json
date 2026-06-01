@@ -227,12 +227,12 @@
     },
     "foglalas": {
         "cim": "Időpontfoglalás",
-        "leiras": "Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.",
+        "leiras": "Válassz szolgáltatást, dátumot és szabad időpontot Online vagy irj üzenetet Instagramon.",
         "kuldesGomb": "Foglalás elküldése",
         "lebegoGomb": "Időpontfoglalás",
         "popup": {
             "sikeresCim": "Foglalás elküldve",
-            "sikeresSzoveg": "Köszönöm, megkaptam a foglalásodat. Hamarosan visszajelzek a megadott elérhetőségen.",
+            "sikeresSzoveg": "Köszönöm, megkaptam a foglalásodat.\nVárlak szeretettel. 💅",
             "tartalekCim": "Foglalás elküldve",
             "tartalekSzoveg": "Köszönöm, megkaptam a foglalásodat. Hamarosan visszajelzek a megadott elérhetőségen.",
             "messengerGomb": "Messenger",
