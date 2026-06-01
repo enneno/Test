@@ -1,0 +1,243 @@
+{
+    "marka": {
+        "nev": "Lumi Nails",
+        "rovidLeiras": "Letisztult, nőies körmök Tatabányán, személyes figyelemmel és precíz részletekkel."
+    },
+    "kapcsolat": {
+        "cimke": "Elérhetőség",
+        "cim": "2800 Tatabánya, Kós Károly út",
+        "telefonLathato": true,
+        "telefon": "+36 20 563 6494",
+        "telefonLink": "+36205636494",
+        "email": "szofipetras087@gmail.com",
+        "instagram": "https://www.instagram.com/luminails.xx/",
+        "instagramUzenet": "https://ig.me/m/luminails.xx",
+        "facebook": "https://www.facebook.com/profile.php?id=61576508698202",
+        "messenger": "https://m.me/100005112737265",
+        "terkepUrl": "https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt"
+    },
+    "fooldal": {
+        "hero": {
+            "kicker": "Körmös Tatabánya",
+            "cim": "Lumi Nails",
+            "leiras": "Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel."
+        },
+        "bemutatkozas": {
+            "cim": "Bemutatkozás",
+            "bekezdesek": [
+                "Szia, Szofi vagyok, a Lumi Nails mögött álló körmös. Munka mellett, nagyjából egy éve foglalkozom körmökkel, és minden vendégnél arra figyelek, hogy a végeredmény igényes, hordható és a saját stílusához passzoló legyen.",
+                "A célom, hogy idővel főállásban is ezzel foglalkozhassak, ezért minden elkészült szett számomra fejlődés, figyelem és egy kis lépés afelé, amit igazán szeretek csinálni."
+            ],
+            "kep": "/kepek/bemutatkozas-kep.jpg",
+            "kepAlt": "Lumi Nails köröm munka részlete"
+        },
+        "szolgaltatasok": {
+            "cim": "SZOLGÁLTATÁSOK",
+            "kartyak": [
+                {
+                    "cim": "Körömépítés & Töltés",
+                    "leiras": "S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.",
+                    "szeles": true
+                },
+                {
+                    "cim": "Díszítés / Nail Art",
+                    "leiras": "Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.",
+                    "szeles": false
+                },
+                {
+                    "cim": "Gél Lakk",
+                    "leiras": "Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.",
+                    "szeles": false
+                },
+                {
+                    "cim": "Manikűr",
+                    "leiras": "Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.",
+                    "szeles": true
+                }
+            ]
+        },
+        "galeriaAtvezeto": {
+            "cim": "Galéria",
+            "leiras": "Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.",
+            "gombSzoveg": "Galéria megnyitása",
+            "kepek": [
+                {
+                    "src": "/kepek/galeria-atvezeto-1.jpg",
+                    "alt": "Lumi Nails köröm munka"
+                },
+                {
+                    "src": "/kepek/galeria-atvezeto-2.jpg",
+                    "alt": "Lumi Nails díszített köröm"
+                },
+                {
+                    "src": "/kepek/galeria-atvezeto-3.jpg",
+                    "alt": "Lumi Nails elegáns manikűr"
+                }
+            ]
+        },
+        "foglalasAtvezeto": {
+            "cim": "Időpontfoglalás",
+            "leiras": "Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.",
+            "gombSzoveg": "Online Időpontfoglalás"
+        }
+    },
+    "arlista": {
+        "cim": "Árlista",
+        "leiras": "Az árak tájékoztató jellegűek, a pontos végösszeg az egyedi igényektől és díszítéstől függhet.",
+        "csoportok": [
+            {
+                "cim": "Építés",
+                "tetelek": [
+                    {
+                        "nev": "S méret",
+                        "ar": "5.500 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "M méret",
+                        "ar": "6.500 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "L méret",
+                        "ar": "7.500 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    }
+                ]
+            },
+            {
+                "cim": "Töltés",
+                "tetelek": [
+                    {
+                        "nev": "S méret",
+                        "ar": "5.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "M méret",
+                        "ar": "6.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "L méret",
+                        "ar": "7.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    }
+                ]
+            },
+            {
+                "cim": "Manikűr",
+                "tetelek": [
+                    {
+                        "nev": "Sima manikűr",
+                        "ar": "2.500 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "Gél lakk leszedés + manikűr",
+                        "ar": "3.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "Műköröm leszedés + manikűr",
+                        "ar": "3.500 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    }
+                ]
+            },
+            {
+                "cim": "Gél Lakk",
+                "tetelek": [
+                    {
+                        "nev": "Hagyományos gél lakk",
+                        "ar": "4.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    },
+                    {
+                        "nev": "Erősített gél lakk",
+                        "ar": "5.000 Ft",
+                        "idoOra": 1,
+                        "idoPerc": 0,
+                        "foglalasban": true
+                    }
+                ]
+            },
+            {
+                "cim": "Díszítés",
+                "tetelek": [
+                    {
+                        "nev": "Matrica",
+                        "ar": "150 Ft / db",
+                        "idoOra": "",
+                        "idoPerc": "",
+                        "foglalasban": false
+                    },
+                    {
+                        "nev": "Kő",
+                        "ar": "100 Ft / db",
+                        "idoOra": "",
+                        "idoPerc": "",
+                        "foglalasban": false
+                    },
+                    {
+                        "nev": "Beépített francia",
+                        "ar": "300 Ft / ujj",
+                        "idoOra": "",
+                        "idoPerc": "",
+                        "foglalasban": false
+                    },
+                    {
+                        "nev": "3D dekor",
+                        "ar": "150 Ft / ujj",
+                        "idoOra": "",
+                        "idoPerc": "",
+                        "foglalasban": false
+                    },
+                    {
+                        "nev": "Teli kő (mérettől függő)",
+                        "ar": "500-800 Ft",
+                        "idoOra": "",
+                        "idoPerc": "",
+                        "foglalasban": false
+                    }
+                ]
+            }
+        ],
+        "megjegyzes": "Az ár 2 köröm egyszerű díszítését tartalmazza."
+    },
+    "foglalas": {
+        "cim": "Időpontfoglalás",
+        "leiras": "Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.",
+        "kuldesGomb": "Foglalás elküldése",
+        "lebegoGomb": "Időpontfoglalás",
+        "popup": {
+            "sikeresCim": "Foglalás elküldve",
+            "sikeresSzoveg": "Köszönöm, megkaptam a foglalásodat. Hamarosan visszajelzek a megadott elérhetőségen.",
+            "tartalekCim": "Foglalás elküldve",
+            "tartalekSzoveg": "Köszönöm, megkaptam a foglalásodat. Hamarosan visszajelzek a megadott elérhetőségen.",
+            "messengerGomb": "Messenger",
+            "instagramGomb": "Instagram",
+            "bezarasGomb": "Bezárás"
+        }
+    }
+}

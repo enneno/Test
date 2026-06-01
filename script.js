@@ -12,8 +12,9 @@ let galeriaHuzasAktiv = false;
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
     helyiTisztaLinkekBekotese();
-    fejlecBetoltese();
-    lablecBetoltese();
+    Promise.all([fejlecBetoltese(), lablecBetoltese()])
+        .then(() => adatokBetoltese())
+        .then(adatok => oldalAdatokAlkalmazasa(adatok));
     idopontokGeneralasa();
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
@@ -30,7 +31,9 @@ function tisztaUrlBeallitasa() {
         '/galeria.html': '/galeria/',
         '/galeria/index.html': '/galeria/',
         '/foglalas.html': '/foglalas/',
-        '/foglalas/index.html': '/foglalas/'
+        '/foglalas/index.html': '/foglalas/',
+        '/admin.html': '/admin/',
+        '/admin/index.html': '/admin/'
     };
     const tisztaUtvonal = tisztaUtvonalak[window.location.pathname];
 
@@ -47,7 +50,8 @@ function helyiTisztaLinkekBekotese() {
     const helyiFallbackok = {
         '/arlista/': '/arlista.html',
         '/galeria/': '/galeria.html',
-        '/foglalas/': '/foglalas.html'
+        '/foglalas/': '/foglalas.html',
+        '/admin/': '/admin.html'
     };
 
     document.addEventListener('click', event => {
@@ -69,7 +73,7 @@ function helyiTisztaLinkekBekotese() {
 }
 
 function fejlecBetoltese() {
-    fetch('/header.html')
+    return fetch('/header.html')
         .then(response => response.text())
         .then(data => {
             const fejlecHelye = document.getElementById('fejlec-helye');
@@ -81,21 +85,23 @@ function fejlecBetoltese() {
             fejlecHelye.innerHTML = data;
             menuEsemenyekBekotese();
             aktivMenuJelolese();
-        });
+        })
+        .catch(() => {});
 }
 
 function lablecBetoltese() {
     const lablecHelye = document.getElementById('lablec-helye');
 
     if (!lablecHelye) {
-        return;
+        return Promise.resolve();
     }
 
-    fetch('/footer.html')
+    return fetch('/footer.html')
         .then(response => response.text())
         .then(data => {
             lablecHelye.innerHTML = data;
-        });
+        })
+        .catch(() => {});
 }
 
 function menuEsemenyekBekotese() {
@@ -160,10 +166,398 @@ function normalizaltUtvonal(utvonal) {
         '/galeria.html': '/galeria/',
         '/galeria/index.html': '/galeria/',
         '/foglalas.html': '/foglalas/',
-        '/foglalas/index.html': '/foglalas/'
+        '/foglalas/index.html': '/foglalas/',
+        '/admin.html': '/admin/',
+        '/admin/index.html': '/admin/'
     };
 
     return htmlOldalak[utvonal] || utvonal;
+}
+
+function adatokBetoltese() {
+    return fetch('/adatok.json', { cache: 'no-cache' })
+        .then(response => response.ok ? response.json() : null)
+        .catch(() => null);
+}
+
+function oldalAdatokAlkalmazasa(adatok) {
+    if (!adatok) {
+        return;
+    }
+
+    window.lumiAdatok = adatok;
+    fooldalAdatokAlkalmazasa(adatok.fooldal);
+    arlistaAdatokAlkalmazasa(adatok.arlista);
+    foglalasAdatokAlkalmazasa(adatok.foglalas, adatok.arlista);
+    lablecAdatokAlkalmazasa(adatok);
+}
+
+function szovegBeallitasa(selector, ertek, gyoker = document) {
+    const elem = gyoker.querySelector(selector);
+
+    if (elem && ertek !== undefined && ertek !== null) {
+        elem.textContent = ertek;
+    }
+}
+
+function htmlSzovegBeallitasa(selector, ertek, gyoker = document) {
+    const elem = gyoker.querySelector(selector);
+
+    if (elem && ertek !== undefined && ertek !== null) {
+        elem.innerHTML = sortoresesSzoveg(ertek);
+    }
+}
+
+function sortoresesSzoveg(ertek) {
+    const div = document.createElement('div');
+    div.textContent = ertek;
+    return div.innerHTML.replace(/\n/g, '<br>');
+}
+
+function fooldalAdatokAlkalmazasa(fooldal) {
+    if (!fooldal) {
+        return;
+    }
+
+    szovegBeallitasa('.hero-kicker', fooldal.hero?.kicker);
+    szovegBeallitasa('.hero-content h1', fooldal.hero?.cim);
+    szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
+
+    szovegBeallitasa('.bemutatkozas-szoveg h2', fooldal.bemutatkozas?.cim);
+    bekezdesekRenderelese('.bemutatkozas-szoveg', fooldal.bemutatkozas?.bekezdesek);
+    kepBeallitasa('.bemutatkozas-kep img', fooldal.bemutatkozas?.kep, fooldal.bemutatkozas?.kepAlt);
+
+    szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
+    galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto);
+    foglalasAtvezetoAlkalmazasa(fooldal.foglalasAtvezeto);
+}
+
+function bekezdesekRenderelese(selector, bekezdesek) {
+    const kontener = document.querySelector(selector);
+    const cim = kontener?.querySelector('h2');
+
+    if (!kontener || !Array.isArray(bekezdesek)) {
+        return;
+    }
+
+    kontener.querySelectorAll('p').forEach(p => p.remove());
+    bekezdesek.forEach(szoveg => {
+        const p = document.createElement('p');
+        p.textContent = szoveg;
+        kontener.appendChild(p);
+    });
+
+    if (cim && cim.parentElement !== kontener) {
+        kontener.prepend(cim);
+    }
+}
+
+function kepBeallitasa(selector, src, alt) {
+    const kep = document.querySelector(selector);
+
+    if (!kep) {
+        return;
+    }
+
+    if (src) kep.src = src;
+    if (alt) kep.alt = alt;
+}
+
+function szolgaltatasKartyakRenderelese(szolgaltatasok) {
+    const szekcio = document.getElementById('szolgaltatasok');
+    const racs = szekcio?.querySelector('.bento-racs');
+
+    if (!szekcio || !racs || !Array.isArray(szolgaltatasok?.kartyak)) {
+        return;
+    }
+
+    szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
+    racs.innerHTML = '';
+
+    szolgaltatasok.kartyak.forEach(kartya => {
+        const doboz = document.createElement('div');
+        doboz.className = `bento-kartya${kartya.szeles ? ' szeles' : ''}`;
+
+        const cim = document.createElement('h3');
+        cim.textContent = kartya.cim || '';
+
+        const leiras = document.createElement('p');
+        leiras.innerHTML = sortoresesSzoveg(kartya.leiras || '');
+
+        doboz.append(cim, leiras);
+        racs.appendChild(doboz);
+    });
+}
+
+function galeriaAtvezetoAlkalmazasa(galeria) {
+    const szekcio = document.getElementById('galeria-atvezeto');
+
+    if (!szekcio || !galeria) {
+        return;
+    }
+
+    szovegBeallitasa('.galeria-atvezeto-szoveg h2', galeria.cim);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-leiras', galeria.leiras);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg);
+
+    const kepek = szekcio.querySelectorAll('.galeria-atvezeto-kepek img');
+    (galeria.kepek || []).forEach((kep, index) => {
+        if (!kepek[index]) {
+            return;
+        }
+
+        if (kep.src) kepek[index].src = kep.src;
+        if (kep.alt) kepek[index].alt = kep.alt;
+    });
+}
+
+function foglalasAtvezetoAlkalmazasa(foglalasAtvezeto) {
+    const szekcio = document.getElementById('kapcsolat');
+
+    if (!szekcio || !foglalasAtvezeto) {
+        return;
+    }
+
+    szovegBeallitasa('h2', foglalasAtvezeto.cim, szekcio);
+    szovegBeallitasa('.szekcio-leiras', foglalasAtvezeto.leiras, szekcio);
+    szovegBeallitasa('.gomb', foglalasAtvezeto.gombSzoveg, szekcio);
+}
+
+function arlistaAdatokAlkalmazasa(arlista) {
+    const szekcio = document.querySelector('.arlista-oldal');
+    const panel = szekcio?.querySelector('.arlista-panel');
+
+    if (!szekcio || !panel || !Array.isArray(arlista?.csoportok)) {
+        return;
+    }
+
+    szovegBeallitasa('h2', arlista.cim, szekcio);
+    szovegBeallitasa('.szekcio-leiras', arlista.leiras, szekcio);
+    panel.innerHTML = '';
+
+    const felsoCsoportok = arlista.csoportok.slice(0, 2);
+    const alsoCsoportok = arlista.csoportok.slice(2);
+
+    if (felsoCsoportok.length) {
+        const ketOszlop = document.createElement('div');
+        ketOszlop.className = 'arlista-ket-oszlop';
+        felsoCsoportok.forEach(csoport => ketOszlop.appendChild(arlistaCsoportLetrehozasa(csoport)));
+        panel.appendChild(ketOszlop);
+    }
+
+    alsoCsoportok.forEach(csoport => panel.appendChild(arlistaCsoportLetrehozasa(csoport)));
+
+    if (arlista.megjegyzes) {
+        const megjegyzes = document.createElement('p');
+        megjegyzes.className = 'arlista-megjegyzes';
+        megjegyzes.textContent = arlista.megjegyzes;
+        panel.appendChild(megjegyzes);
+    }
+}
+
+function arlistaCsoportLetrehozasa(csoport) {
+    const doboz = document.createElement('div');
+    doboz.className = 'arlista-csoport';
+
+    const cim = document.createElement('h3');
+    cim.textContent = csoport.cim || '';
+    doboz.appendChild(cim);
+
+    (csoport.tetelek || []).forEach(tetel => {
+        const sor = document.createElement('div');
+        sor.className = 'arlista-sor';
+
+        const nev = document.createElement('span');
+        nev.textContent = tetel.nev || '';
+
+        const reszlet = document.createElement('strong');
+        const ar = document.createElement('span');
+        ar.className = 'arlista-ar';
+        ar.textContent = tetel.ar || '';
+
+        reszlet.appendChild(ar);
+
+        const idoSzoveg = idoMegjelenitese(tetel);
+
+        if (idoSzoveg) {
+            const ido = document.createElement('span');
+            ido.className = 'arlista-ido';
+            ido.textContent = idoSzoveg;
+            reszlet.appendChild(ido);
+        }
+
+        sor.append(nev, reszlet);
+        doboz.appendChild(sor);
+    });
+
+    return doboz;
+}
+
+function foglalasAdatokAlkalmazasa(foglalas, arlista) {
+    if (!foglalas) {
+        return;
+    }
+
+    const urlap = document.querySelector('.urlap-kontener');
+    const supabaseFoglalas = document.body.dataset.bookingMode === 'supabase';
+
+    if (urlap) {
+        const szekcio = urlap.closest('section');
+
+        if (!supabaseFoglalas) {
+            szovegBeallitasa('h2', foglalas.cim, szekcio);
+            szovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
+            szovegBeallitasa('#foglalas-kuldes', foglalas.kuldesGomb, szekcio);
+            szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
+            szovegBeallitasa('.popup-gomb[href*="ig.me"]', foglalas.popup?.instagramGomb);
+            szovegBeallitasa('#popup-bezaras', foglalas.popup?.bezarasGomb);
+            foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
+        }
+    }
+
+    szovegBeallitasa('#lebego-foglalas-gomb', foglalas.lebegoGomb);
+}
+
+function arlistaSzolgaltatasokLetrehozasa(arlista) {
+    if (!Array.isArray(arlista?.csoportok)) {
+        return [];
+    }
+
+    return arlista.csoportok.flatMap(csoport => {
+        return (csoport.tetelek || [])
+            .filter(tetel => tetel.foglalasban !== false)
+            .map(tetel => ({
+                nev: `${csoport.cim} - ${tetel.nev}`,
+                ido: idoMegjelenitese(tetel)
+            }));
+    });
+}
+
+function idoMegjelenitese(tetel) {
+    const { ora, perc, vanIdo } = idoSzamok(tetel);
+
+    if (!vanIdo) {
+        return '';
+    }
+
+    const reszek = [];
+
+    if (ora > 0) {
+        reszek.push(`${ora} óra`);
+    }
+
+    if (perc > 0) {
+        reszek.push(`${perc} perc`);
+    }
+
+    return reszek.join(' ');
+}
+
+function idoSzamok(tetel) {
+    if (tetel.idoOra !== undefined || tetel.idoPerc !== undefined) {
+        const oraUres = tetel.idoOra === '' || tetel.idoOra === null || tetel.idoOra === undefined;
+        const percUres = tetel.idoPerc === '' || tetel.idoPerc === null || tetel.idoPerc === undefined;
+        return {
+            ora: pozitivEgesz(tetel.idoOra),
+            perc: pozitivEgesz(tetel.idoPerc),
+            vanIdo: !oraUres || !percUres
+        };
+    }
+
+    if (!tetel.ido || !tetel.ido.trim()) {
+        return { ora: 0, perc: 0, vanIdo: false };
+    }
+
+    return {
+        ora: pozitivEgesz((tetel.ido.match(/(\d+)\s*óra/i) || [])[1]),
+        perc: pozitivEgesz((tetel.ido.match(/(\d+)\s*perc/i) || [])[1]),
+        vanIdo: true
+    };
+}
+
+function pozitivEgesz(ertek) {
+    const szam = Number.parseInt(ertek, 10);
+    return Number.isFinite(szam) && szam > 0 ? szam : 0;
+}
+
+function foglalasiSzolgaltatasokRenderelese(szolgaltatasok) {
+    const select = document.getElementById('foglalas-szolgatatas');
+
+    if (!select || !Array.isArray(szolgaltatasok)) {
+        return;
+    }
+
+    select.innerHTML = '';
+
+    const alap = document.createElement('option');
+    alap.value = '';
+    alap.disabled = true;
+    alap.selected = true;
+    alap.textContent = 'Válassz szolgáltatást...';
+    select.appendChild(alap);
+
+    szolgaltatasok.forEach(szolgaltatas => {
+        const option = document.createElement('option');
+        const ido = szolgaltatas.ido ? ` - ${szolgaltatas.ido}` : '';
+        option.value = `${szolgaltatas.nev}${ido}`;
+        option.textContent = `${szolgaltatas.nev}${ido}`;
+        select.appendChild(option);
+    });
+}
+
+function lablecAdatokAlkalmazasa(adatok) {
+    const kapcsolat = adatok.kapcsolat;
+    const marka = adatok.marka;
+
+    if (!kapcsolat && !marka) {
+        return;
+    }
+
+    szovegBeallitasa('.footer-logo', marka?.nev);
+    szovegBeallitasa('.footer-brand p', marka?.rovidLeiras);
+    szovegBeallitasa('.footer-kapcsolat h3', kapcsolat?.cimke);
+
+    const cimLink = document.querySelector('.footer-kapcsolat a[href*="google.com/maps"]');
+    const telefonLink = document.querySelector('.footer-kapcsolat a[href^="tel:"]');
+    const emailLink = document.querySelector('.footer-kapcsolat a[href^="mailto:"]');
+    const instagramLink = document.querySelector('.social-gomb[href*="instagram"]');
+    const facebookLink = document.querySelector('.social-gomb[href*="facebook"]');
+    const messengerPopup = document.querySelector('.popup-gomb[href*="m.me"]');
+    const instagramPopup = document.querySelector('.popup-gomb[href*="ig.me"]');
+
+    if (cimLink && kapcsolat?.cim) {
+        cimLink.textContent = kapcsolat.cim;
+        cimLink.href = kapcsolat.terkepUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(kapcsolat.cim)}`;
+    }
+
+    if (telefonLink && kapcsolat?.telefon) {
+        const telefonLathato = kapcsolat.telefonLathato !== false;
+        telefonLink.textContent = kapcsolat.telefon;
+        telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
+        telefonLink.hidden = !telefonLathato;
+        telefonLink.style.display = telefonLathato ? '' : 'none';
+    }
+
+    if (emailLink && kapcsolat?.email) {
+        emailLink.textContent = kapcsolat.email;
+        emailLink.href = `mailto:${kapcsolat.email}`;
+    }
+
+    if (instagramLink && kapcsolat?.instagram) {
+        instagramLink.href = kapcsolat.instagram;
+    }
+
+    if (facebookLink && kapcsolat?.facebook) {
+        facebookLink.href = kapcsolat.facebook;
+    }
+
+    if (messengerPopup && kapcsolat?.messenger) {
+        messengerPopup.href = kapcsolat.messenger;
+    }
+
+    if (instagramPopup && kapcsolat?.instagramUzenet) {
+        instagramPopup.href = kapcsolat.instagramUzenet;
+    }
 }
 
 document.addEventListener('click', function (event) {
@@ -200,7 +594,7 @@ function csakSzamokatEnged(input) {
 function idopontokGeneralasa() {
     const idoValaszto = document.getElementById('foglalas-ido');
 
-    if (!idoValaszto) {
+    if (!idoValaszto || document.body.dataset.bookingMode === 'supabase') {
         return;
     }
 
@@ -246,12 +640,13 @@ function foglalasiUrlapBekotese() {
     const telefonMezo = document.getElementById('foglalas-tel');
     const kuldesGomb = document.getElementById('foglalas-kuldes');
     const popupBezarasGomb = document.getElementById('popup-bezaras');
+    const supabaseFoglalas = document.body.dataset.bookingMode === 'supabase';
 
     if (telefonMezo) {
         telefonMezo.addEventListener('input', () => csakSzamokatEnged(telefonMezo));
     }
 
-    if (kuldesGomb) {
+    if (kuldesGomb && !supabaseFoglalas) {
         kuldesGomb.addEventListener('click', foglalasInditasa);
     }
 
@@ -261,7 +656,7 @@ function foglalasiUrlapBekotese() {
 }
 
 function lebegoFoglalasLetrehozasa() {
-    if (foglalasOldal() || document.getElementById('lebego-foglalas-gomb')) {
+    if (foglalasOldal() || adminOldal() || document.getElementById('lebego-foglalas-gomb')) {
         return;
     }
 
@@ -276,6 +671,11 @@ function lebegoFoglalasLetrehozasa() {
 function foglalasOldal() {
     const utvonal = window.location.pathname.toLowerCase();
     return utvonal === '/foglalas/' || utvonal.endsWith('/foglalas.html') || utvonal.endsWith('/foglalas/index.html');
+}
+
+function adminOldal() {
+    const utvonal = window.location.pathname.toLowerCase();
+    return utvonal === '/admin/' || utvonal.endsWith('/admin.html') || utvonal.endsWith('/admin/index.html');
 }
 
 function galeriaBekotese() {
@@ -503,15 +903,16 @@ function popupMegnyitasa(sikeresMasolas, uzenet) {
     const popupCim = popup.querySelector('.popup-cim');
     const popupSzoveg = popup.querySelector('.popup-szoveg');
     const popupUzenet = document.getElementById('popup-uzenet');
+    const popupAdatok = window.lumiAdatok?.foglalas?.popup || {};
 
     if (sikeresMasolas) {
-        popupCim.textContent = 'Adatok másolva! ✓';
-        popupSzoveg.innerHTML = 'A foglalásod szövegét vágólapra másoltuk. Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a <b>Beillesztés</b> (Paste) gombra a chaten!';
+        popupCim.textContent = popupAdatok.sikeresCim || 'Adatok másolva!';
+        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.sikeresSzoveg || 'A foglalásod szövegét vágólapra másoltuk. Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a Beillesztés gombra a chaten!');
         popupUzenet.classList.remove('lathato');
         popupUzenet.value = '';
     } else {
-        popupCim.textContent = 'Adatok előkészítve';
-        popupSzoveg.innerHTML = 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.';
+        popupCim.textContent = popupAdatok.tartalekCim || 'Adatok előkészítve';
+        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.tartalekSzoveg || 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.');
         popupUzenet.value = uzenet;
         popupUzenet.classList.add('lathato');
         setTimeout(() => popupUzenet.select(), 100);

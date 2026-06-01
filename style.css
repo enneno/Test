@@ -522,6 +522,30 @@ select.urlap-mezo:invalid {
     background-color: var(--akcentus-vilagos);
 }
 
+.urlap-kuldes-gomb:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
+.urlap-status {
+    min-height: 22px;
+    margin: 0;
+    color: var(--barna);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.urlap-status.hiba {
+    color: #9b3434;
+}
+
+.urlap-mezo:disabled,
+.tel-csoport:has(.urlap-mezo:disabled) {
+    opacity: 0.68;
+}
+
 .lebego-foglalas-gomb {
     position: fixed;
     right: 28px;
@@ -622,6 +646,7 @@ select.urlap-mezo:invalid {
 
 .popup-gomb-sor {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
     margin-top: 25px;
@@ -1006,6 +1031,523 @@ select.urlap-mezo:invalid {
             4. MOBIL NÉZET
             ========================================= */
 
+.admin-body {
+    color: var(--tinta);
+}
+
+.admin-oldal {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 20px 20px;
+    box-sizing: border-box;
+}
+
+.admin-fejlec {
+    max-width: 980px;
+    padding: 34px;
+    background: rgba(255, 250, 244, 0.84);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 24px;
+    box-shadow: 0 18px 46px rgba(78, 54, 48, 0.08);
+}
+
+.admin-eyebrow {
+    margin: 0 0 8px;
+    color: var(--akcentus);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.admin-cim {
+    margin: 0;
+    color: var(--tinta);
+    font-size: clamp(48px, 8vw, 86px);
+    line-height: 0.95;
+    text-align: left;
+}
+
+.admin-leiras {
+    max-width: 700px;
+    margin: 18px 0 0;
+    color: var(--szoveg);
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.admin-akciok {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.admin-gomb {
+    margin: 0;
+    background-color: var(--akcentus);
+    color: #fffaf4;
+}
+
+.admin-fajl-gomb input {
+    display: none;
+}
+
+.admin-status {
+    min-height: 22px;
+    margin: 18px 0 0;
+    color: var(--barna);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.admin-status.hiba {
+    color: #9b3434;
+}
+
+.admin-info {
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    color: var(--barna);
+    background: rgba(185, 133, 143, 0.08);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.admin-form {
+    display: grid;
+    gap: 24px;
+    margin-top: 28px;
+}
+
+.admin-auth-panel {
+    margin: 0 auto;
+}
+
+.admin-login-form {
+    display: grid;
+    gap: 14px;
+    max-width: 420px;
+    margin-top: 24px;
+}
+
+.admin-login-form .gomb {
+    width: 100%;
+    margin: 4px 0 0;
+}
+
+.admin-vedett[hidden],
+.admin-db-panel {
+    display: none;
+}
+
+.admin-db-panel.aktiv {
+    display: block;
+}
+
+.admin-panel {
+    max-width: 100%;
+    margin: 0;
+    padding: 28px;
+    background: rgba(255, 250, 244, 0.9);
+    border: 1px solid rgba(185, 133, 143, 0.2);
+    border-radius: 22px;
+    box-shadow: 0 16px 42px rgba(78, 54, 48, 0.07);
+}
+
+.admin-panel-fej {
+    margin-bottom: 22px;
+}
+
+.admin-panel h2 {
+    margin: 0;
+    color: var(--akcentus);
+    font-size: 34px;
+    text-align: left;
+    text-transform: none;
+}
+
+.admin-panel-fej p {
+    margin: 8px 0 0;
+    color: var(--szoveg);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.admin-live-panel {
+    margin-top: 28px;
+}
+
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.admin-tab {
+    min-height: 40px;
+    padding: 0 16px;
+    color: var(--tinta);
+    background: rgba(185, 133, 143, 0.08);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.admin-tab.aktiv,
+.admin-tab:hover {
+    color: #fffaf4;
+    background: var(--akcentus);
+}
+
+.admin-panel-akciok {
+    margin: 16px 0;
+}
+
+.admin-db-lista {
+    display: grid;
+    gap: 14px;
+}
+
+.admin-db-kartya {
+    padding: 18px;
+    color: var(--szoveg);
+    background: rgba(241, 222, 217, 0.18);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 16px;
+}
+
+.admin-db-kartya h3 {
+    margin: 0;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.admin-db-kartya p {
+    margin: 8px 0 0;
+    line-height: 1.55;
+}
+
+.admin-db-kartya a {
+    color: var(--tinta);
+}
+
+.admin-db-kartya-fej {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.admin-db-statusz,
+.admin-db-grid select,
+.admin-db-grid input,
+.admin-db-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    color: var(--tinta);
+    background: #fffdf8;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+}
+
+.admin-db-statusz {
+    width: min(190px, 46vw);
+}
+
+.admin-db-grid,
+.admin-db-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.admin-db-form-nagy {
+    margin-bottom: 20px;
+    padding: 18px;
+    background: rgba(185, 133, 143, 0.06);
+    border: 1px solid rgba(185, 133, 143, 0.16);
+    border-radius: 16px;
+}
+
+.admin-napok {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.admin-napok legend {
+    margin-bottom: 8px;
+}
+
+.admin-napok label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 12px 10px 0;
+    color: var(--barna);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-napok input {
+    width: 18px;
+    height: 18px;
+}
+
+.admin-naptar-blokk {
+    margin-bottom: 20px;
+    padding: 18px;
+    background: rgba(185, 133, 143, 0.06);
+    border: 1px solid rgba(185, 133, 143, 0.16);
+    border-radius: 16px;
+}
+
+.admin-naptar-fej,
+.admin-naptar-tomeges,
+.admin-naptar-lista-fej {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.admin-naptar-tomeges {
+    align-items: end;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}
+
+.admin-naptar-akciok {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-naptar-napnevek,
+.admin-naptar-racs {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.admin-naptar-napnevek {
+    margin-bottom: 8px;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.admin-naptar-nap {
+    min-height: 48px;
+    color: var(--tinta);
+    background: #fffdf8;
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.admin-naptar-nap:hover {
+    border-color: rgba(185, 133, 143, 0.42);
+    background: rgba(185, 133, 143, 0.08);
+}
+
+.admin-naptar-nap.kijelolt {
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-color: var(--akcentus);
+}
+
+.admin-naptar-ures {
+    min-height: 48px;
+}
+
+.admin-naptar-lista-fej {
+    align-items: center;
+    margin-top: 18px;
+}
+
+.admin-naptar-lista-fej h3 {
+    margin: 0;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.admin-naptar-kijelolt-lista {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.admin-naptar-sor {
+    display: grid;
+    grid-template-columns: minmax(130px, 1fr) minmax(96px, 0.8fr) minmax(96px, 0.8fr) minmax(88px, 0.6fr) auto;
+    align-items: end;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(255, 250, 244, 0.78);
+    border: 1px solid rgba(185, 133, 143, 0.16);
+    border-radius: 14px;
+}
+
+.admin-naptar-datum {
+    color: var(--barna);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.admin-db-akciok {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.admin-ures {
+    margin: 0;
+    color: var(--szoveg);
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admin-mezo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--barna);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-mezo-szeles {
+    grid-column: 1 / -1;
+}
+
+.admin-mezo input,
+.admin-mezo textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    color: var(--tinta);
+    background: #fffdf8;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.admin-mezo textarea {
+    resize: vertical;
+}
+
+.admin-mezo input:focus,
+.admin-mezo textarea:focus {
+    border-color: var(--akcentus);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(185, 133, 143, 0.12);
+}
+
+.admin-checkbox {
+    flex-direction: row;
+    align-items: center;
+}
+
+.admin-checkbox input {
+    width: 20px;
+    height: 20px;
+}
+
+.admin-lista {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.admin-lista-elem {
+    padding: 18px;
+    background: rgba(241, 222, 217, 0.18);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 16px;
+}
+
+.admin-lista-fej {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.admin-lista-fej h3 {
+    margin: 0;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.admin-arlista-sor {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(120px, 0.6fr) minmax(82px, 0.32fr) minmax(82px, 0.32fr) minmax(150px, 0.58fr) auto;
+    align-items: end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.admin-arlista-sor .admin-checkbox {
+    align-self: center;
+}
+
+.admin-hozzaadas,
+.admin-kis-gomb {
+    min-height: 38px;
+    padding: 0 14px;
+    color: var(--tinta);
+    background: rgba(185, 133, 143, 0.08);
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-hozzaadas {
+    width: fit-content;
+    margin-top: 16px;
+}
+
+.admin-hozzaadas:hover,
+.admin-kis-gomb:hover {
+    color: #fffaf4;
+    background: var(--akcentus);
+}
+
 /* A HAMBURGER GOMB */
 .hamburger {
     display: none;
@@ -1144,6 +1686,77 @@ select.urlap-mezo:invalid {
 
     .hamburger {
         display: block !important;
+    }
+
+    .admin-oldal {
+        padding: 16px 12px 12px;
+    }
+
+    .admin-fejlec,
+    .admin-panel {
+        padding: 22px;
+        border-radius: 18px;
+    }
+
+    .admin-grid,
+    .admin-arlista-sor,
+    .admin-db-grid,
+    .admin-db-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-cim {
+        font-size: clamp(42px, 13vw, 58px);
+    }
+
+    .admin-akciok {
+        flex-direction: column;
+    }
+
+    .admin-gomb,
+    .admin-hozzaadas,
+    .admin-db-statusz {
+        width: 100%;
+    }
+
+    .admin-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-lista-fej {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-db-kartya-fej {
+        flex-direction: column;
+    }
+
+    .admin-naptar-fej,
+    .admin-naptar-tomeges,
+    .admin-naptar-lista-fej {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-naptar-akciok {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-naptar-racs,
+    .admin-naptar-napnevek {
+        gap: 5px;
+    }
+
+    .admin-naptar-nap,
+    .admin-naptar-ures {
+        min-height: 42px;
+    }
+
+    .admin-naptar-sor {
+        grid-template-columns: 1fr;
     }
 
     .lebego-foglalas-gomb {

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin - Lumi Nails</title>
+    <link rel="icon" type="image/svg+xml" href="/kepek/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/kepek/favicon-32.png">
+    <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="admin-body">
+    <div id="fejlec-helye"></div>
+
+    <main class="admin-oldal">
+        <section id="admin-bejelentkezes-panel" class="admin-fejlec admin-auth-panel">
+            <p class="admin-eyebrow">Lumi Nails admin</p>
+            <h1 class="admin-cim">Bejelentkezés</h1>
+            <p class="admin-leiras">Az online foglalások és idősávok kezeléséhez jelentkezz be a Supabase-ben létrehozott admin fiókkal.</p>
+
+            <form id="admin-login-form" class="admin-login-form">
+                <input type="email" id="admin-email" class="urlap-mezo" placeholder="Admin email" autocomplete="email" required>
+                <input type="password" id="admin-jelszo" class="urlap-mezo" placeholder="Jelszó" autocomplete="current-password" required>
+                <button type="submit" class="gomb admin-gomb">Belépés</button>
+            </form>
+
+            <p id="admin-auth-status" class="admin-status" aria-live="polite"></p>
+        </section>
+
+        <div id="admin-tartalom" class="admin-vedett" hidden>
+            <section class="admin-fejlec">
+                <p class="admin-eyebrow">Lumi Nails szerkesztő</p>
+                <h1 class="admin-cim">Admin felület</h1>
+                <p class="admin-leiras">Itt átírhatod az oldal fő szövegeit, elérhetőségeit, árlistáját és foglalási opcióit. A végén töltsd le az új adatfájlt.</p>
+
+                <div class="admin-akciok">
+                    <button type="button" id="admin-kijelentkezes" class="gomb admin-gomb">Kijelentkezés</button>
+                    <button type="button" id="admin-letoltes" class="gomb admin-gomb">Adatok letöltése</button>
+                    <label class="gomb admin-gomb admin-fajl-gomb">
+                        Meglévő JSON betöltése
+                        <input type="file" id="admin-import" accept="application/json,.json">
+                    </label>
+                </div>
+
+                <p id="admin-status" class="admin-status" aria-live="polite"></p>
+            </section>
+
+            <section class="admin-panel admin-live-panel">
+                <div class="admin-panel-fej">
+                    <h2>Online foglalási rendszer</h2>
+                    <p>Itt kezelheted az adatbázisba érkező foglalásokat, a foglalható szolgáltatásokat és a szabad idősávokat.</p>
+                </div>
+
+                <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
+                    <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
+                    <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
+                    <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
+                    <button type="button" class="admin-tab" data-admin-tab="tiltasok">Tiltások</button>
+                </div>
+
+                <p id="admin-online-status" class="admin-status" aria-live="polite"></p>
+
+                <div id="admin-panel-foglalasok" class="admin-db-panel aktiv">
+                    <div class="admin-panel-akciok">
+                        <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas">Foglalások frissítése</button>
+                    </div>
+                    <div id="admin-foglalas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-szolgaltatasok" class="admin-db-panel">
+                    <p class="admin-info">Ez az élő árlista. Amit itt módosítasz, azt használja az árlista oldal és az időpontfoglalás is, így nem kell két helyen átírni.</p>
+                    <div class="admin-panel-akciok">
+                        <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas">Új árlista tétel</button>
+                    </div>
+                    <div id="admin-szolgaltatas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-idosavok" class="admin-db-panel">
+                    <p class="admin-info">Itt konkrét dátumokra tudod megadni, mikor dolgozol. Például egy hónapra előre felveheted a napokat, és a foglalás csak ezeket fogja felajánlani.</p>
+                    <div id="admin-idosav-naptar" class="admin-naptar-blokk">
+                        <div class="admin-naptar-fej">
+                            <label class="admin-mezo">
+                                Hónap
+                                <input type="month" id="admin-naptar-honap">
+                            </label>
+                            <div class="admin-naptar-akciok">
+                                <button type="button" id="admin-naptar-elozo" class="admin-kis-gomb">Előző</button>
+                                <button type="button" id="admin-naptar-kovetkezo" class="admin-kis-gomb">Következő</button>
+                            </div>
+                        </div>
+
+                        <div class="admin-naptar-napnevek" aria-hidden="true">
+                            <span>H</span>
+                            <span>K</span>
+                            <span>Sze</span>
+                            <span>Cs</span>
+                            <span>P</span>
+                            <span>Szo</span>
+                            <span>V</span>
+                        </div>
+                        <div id="admin-naptar-racs" class="admin-naptar-racs"></div>
+
+                        <div class="admin-naptar-tomeges">
+                            <label class="admin-mezo">
+                                Közös kezdés
+                                <input type="time" id="admin-naptar-kozos-kezdes" value="09:00">
+                            </label>
+                            <label class="admin-mezo">
+                                Közös vége
+                                <input type="time" id="admin-naptar-kozos-vege" value="18:00">
+                            </label>
+                            <label class="admin-mezo">
+                                Közös lépés
+                                <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">
+                            </label>
+                            <button type="button" id="admin-naptar-kozos-alkalmazas" class="admin-hozzaadas">Mindegyikre beállítom</button>
+                        </div>
+
+                        <div class="admin-naptar-lista-fej">
+                            <h3>Kijelölt napok</h3>
+                            <button type="button" id="admin-naptar-kijeloles-torles" class="admin-kis-gomb">Kijelölés törlése</button>
+                        </div>
+                        <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista"></div>
+                        <button type="button" id="admin-naptar-mentes" class="admin-hozzaadas">Kijelölt napok mentése</button>
+                    </div>
+
+                    <p class="admin-info">Egyetlen nap gyors felvételéhez használd ezt a rövidebb űrlapot.</p>
+                    <form id="admin-idosav-form" class="admin-db-form">
+                        <label class="admin-mezo">
+                            Dátum
+                            <input type="date" id="admin-idosav-datum" required>
+                        </label>
+                        <label class="admin-mezo">
+                            Kezdés
+                            <input type="time" id="admin-idosav-kezdes" value="09:00" required>
+                        </label>
+                        <label class="admin-mezo">
+                            Vége
+                            <input type="time" id="admin-idosav-vege" value="18:00" required>
+                        </label>
+                        <label class="admin-mezo">
+                            Időpontok lépése
+                            <input type="number" id="admin-idosav-lepes" min="5" step="5" value="30" required>
+                        </label>
+                        <button type="submit" class="admin-hozzaadas">Dátumos sáv hozzáadása</button>
+                    </form>
+                    <div id="admin-idosav-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-tiltasok" class="admin-db-panel">
+                    <form id="admin-tiltas-form" class="admin-db-form">
+                        <label class="admin-mezo">
+                            Kezdés
+                            <input type="datetime-local" id="admin-tiltas-kezdes" required>
+                        </label>
+                        <label class="admin-mezo">
+                            Vége
+                            <input type="datetime-local" id="admin-tiltas-vege" required>
+                        </label>
+                        <label class="admin-mezo admin-mezo-szeles">
+                            Megjegyzés
+                            <input type="text" id="admin-tiltas-ok" placeholder="Pl. szabadság, betegség, privát program">
+                        </label>
+                        <button type="submit" class="admin-hozzaadas">Tiltás hozzáadása</button>
+                    </form>
+                    <div id="admin-tiltas-lista" class="admin-db-lista"></div>
+                </div>
+            </section>
+
+            <form id="admin-form" class="admin-form"></form>
+        </div>
+    </main>
+
+    <div id="lablec-helye"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/supabase-config.js"></script>
+    <script src="/script.js"></script>
+    <script src="/admin-supabase.js"></script>
+    <script src="/admin.js"></script>
+</body>
+
+</html>
