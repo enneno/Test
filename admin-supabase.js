@@ -618,6 +618,7 @@
                 </select>
             </div>
             <p><strong>Szolgáltatás:</strong> ${html(foglalas.services?.name || 'Törölt szolgáltatás')}</p>
+            <p><strong>Foglalás leadva:</strong> ${html(datumIdo(foglalas.created_at))}</p>
             <p><strong>Telefon:</strong> <a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
             <p><strong>Email:</strong> <a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
             ${foglalas.note ? `<p><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}

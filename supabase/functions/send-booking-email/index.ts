@@ -23,7 +23,7 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const ownerEmail = Deno.env.get("OWNER_EMAIL") || "szofipetras087@gmail.com";
-    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <onboarding@resend.dev>";
+    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
 
     if (!supabaseUrl || !serviceRoleKey) {
@@ -48,6 +48,7 @@ serve(async (req) => {
     const serviceName = serviceNameFromRelation(booking.services);
     const startsAt = formatDate(booking.starts_at);
     const endsAt = formatDate(booking.ends_at, true);
+    const submittedAt = formatDate(booking.created_at);
     const appointmentText = `${startsAt} - ${endsAt}`;
     const calendarAttachment = {
       filename: "lumi-nails-foglalas.ics",
@@ -75,6 +76,7 @@ serve(async (req) => {
         ["Email", booking.customer_email],
         ["Szolgáltatás", serviceName],
         ["Időpont", appointmentText],
+        ["Beküldve", submittedAt],
         ["Megjegyzés", booking.note || "-"],
       ])}
       <p class="muted">A foglalás az admin felületen is megjelent. Ott tudod visszaigazolni, készre állítani vagy törölni.</p>
@@ -83,7 +85,7 @@ serve(async (req) => {
     const customerHtml = pageHtml(`
       <h1>Köszönöm a foglalásodat!</h1>
       <p>Szia ${escapeHtml(booking.customer_name)}!</p>
-      <p>Megkaptam az időpontkérésedet. Hamarosan visszajelzek, hogy véglegesítve van-e.</p>
+      <p>Megkaptam az időpontfoglalásodat, az alábbi adatokkal rögzítettük a rendszerben.</p>
       ${detailTable([
         ["Szolgáltatás", serviceName],
         ["Időpont", appointmentText],
@@ -103,6 +105,7 @@ serve(async (req) => {
       `Email: ${booking.customer_email}`,
       `Szolgáltatás: ${serviceName}`,
       `Időpont: ${appointmentText}`,
+      `Beküldve: ${submittedAt}`,
       `Megjegyzés: ${booking.note || "-"}`,
     ].join("\n");
 
@@ -110,7 +113,7 @@ serve(async (req) => {
       `Szia ${booking.customer_name}!`,
       "",
       "Köszönöm a foglalásodat, megkaptam az időpontkérésedet.",
-      "Hamarosan visszajelzek, hogy véglegesítve van-e.",
+      "Az alábbi adatokkal rögzítettük a rendszerben.",
       "",
       `Szolgáltatás: ${serviceName}`,
       `Időpont: ${appointmentText}`,
@@ -122,8 +125,8 @@ serve(async (req) => {
     ].join("\n");
 
     const results = await Promise.allSettled([
-      sendEmail(resendApiKey, fromEmail, ownerEmail, replyToEmail, ownerSubject, ownerHtml, ownerText, [calendarAttachment]),
-      sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, customerSubject, customerHtml, customerText),
+      sendEmailWithRetry(resendApiKey, fromEmail, ownerEmail, replyToEmail, ownerSubject, ownerHtml, ownerText, [calendarAttachment]),
+      sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, customerSubject, customerHtml, customerText),
     ]);
 
     const failed = results
@@ -142,6 +145,34 @@ serve(async (req) => {
     return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
   }
 });
+
+async function sendEmailWithRetry(
+  apiKey: string,
+  from: string,
+  to: string,
+  replyTo: string,
+  subject: string,
+  html: string,
+  text: string,
+  attachments: Array<{ filename: string; content: string }> = [],
+) {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      await sendEmail(apiKey, from, to, replyTo, subject, html, text, attachments);
+      return;
+    } catch (error) {
+      lastError = error;
+
+      if (attempt < 2) {
+        await delay(700);
+      }
+    }
+  }
+
+  throw lastError;
+}
 
 async function sendEmail(
   apiKey: string,
@@ -171,6 +202,10 @@ async function sendEmail(
   if (!response.ok) {
     throw new Error(await response.text());
   }
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function calendarEvent(adatok: {

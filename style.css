@@ -501,6 +501,8 @@ select.urlap-mezo:invalid {
 .gomb {
     display: block;
     width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
     margin: 20px auto;
     padding: 15px 40px;
     background-color: rgba(185, 133, 143, 0.08);
@@ -1411,6 +1413,15 @@ select.urlap-mezo:invalid {
     margin: 16px 0;
 }
 
+.admin-naptar-tomeges > .admin-mezo {
+    flex: 1 1 148px;
+    min-width: 0;
+}
+
+.admin-naptar-tomeges > .admin-mezo-szeles {
+    flex-basis: 260px;
+}
+
 .admin-naptar-akciok {
     display: flex;
     gap: 10px;
@@ -1670,6 +1681,7 @@ select.urlap-mezo:invalid {
 .admin-hozzaadas,
 .admin-kis-gomb {
     min-height: 38px;
+    box-sizing: border-box;
     padding: 0 14px;
     color: var(--tinta);
     background: rgba(185, 133, 143, 0.08);
@@ -1875,7 +1887,7 @@ select.urlap-mezo:invalid {
     }
 
     .admin-json-akcio {
-        display: grid;
+        display: none;
     }
 
     .admin-jelszo-form {
@@ -1886,6 +1898,18 @@ select.urlap-mezo:invalid {
     .admin-hozzaadas,
     .admin-db-statusz {
         width: 100%;
+        max-width: 100%;
+    }
+
+    .admin-naptar-tomeges {
+        width: 100%;
+    }
+
+    .admin-naptar-tomeges > .admin-mezo,
+    .admin-naptar-tomeges > .admin-hozzaadas {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
     }
 
     .admin-lebego-mentes {

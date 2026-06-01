@@ -352,21 +352,39 @@
             return { ok: false, skipped: true };
         }
 
-        try {
-            const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
-                body: { booking_id: bookingId }
-            });
+        let utolsoHiba = null;
 
-            if (error) {
+        for (let probalkozas = 1; probalkozas <= 2; probalkozas += 1) {
+            try {
+                const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
+                    body: { booking_id: bookingId }
+                });
+
+                if (error) {
+                    utolsoHiba = error;
+                    console.warn('Lumi Nails email értesítés hiba:', error);
+                } else if (data?.ok) {
+                    return data;
+                } else {
+                    utolsoHiba = data;
+                }
+            } catch (error) {
+                utolsoHiba = error;
                 console.warn('Lumi Nails email értesítés hiba:', error);
-                return { ok: false, error };
             }
 
-            return data?.ok ? data : { ok: false, data };
-        } catch (error) {
-            console.warn('Lumi Nails email értesítés hiba:', error);
-            return { ok: false, error };
+            if (probalkozas < 2) {
+                await varakozas(700);
+            }
         }
+
+        return { ok: false, error: utolsoHiba };
+    }
+
+    function varakozas(ms) {
+        return new Promise(resolve => {
+            window.setTimeout(resolve, ms);
+        });
     }
 
     function naptarLinkFrissitese(adatok) {
