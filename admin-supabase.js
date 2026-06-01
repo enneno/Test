@@ -57,6 +57,8 @@
         elemek.foglalasLapozo?.addEventListener('click', foglalasLapozoKattintas);
         elemek.szolgaltatasLista?.addEventListener('click', szolgaltatasListaKattintas);
         elemek.idosavLista?.addEventListener('click', idosavListaKattintas);
+        elemek.idosavOsszesTorles?.addEventListener('click', idosavokOsszesTorlese);
+        elemek.idosavLepesOsszes?.addEventListener('click', idosavLepesOsszesAlkalmazasa);
         elemek.tiltasLista?.addEventListener('click', tiltasListaKattintas);
 
         allapot.kliens.auth.onAuthStateChange((_event, session) => {
@@ -90,6 +92,8 @@
             szolgaltatasLista: document.getElementById('admin-szolgaltatas-lista'),
             szolgaltatasHozzaadas: document.getElementById('admin-szolgaltatas-hozzaadas'),
             idosavLista: document.getElementById('admin-idosav-lista'),
+            idosavOsszesTorles: document.getElementById('admin-idosav-osszes-torles'),
+            idosavLepesOsszes: document.getElementById('admin-idosav-lepes-osszes'),
             naptarHonap: document.getElementById('admin-naptar-honap'),
             naptarRacs: document.getElementById('admin-naptar-racs'),
             naptarElozo: document.getElementById('admin-naptar-elozo'),
@@ -242,7 +246,6 @@
                 <div class="admin-naptar-datum">${html(datumFelirat(datum))}</div>
                 <label class="admin-mezo">Kezdés<input type="time" data-naptar-mezo="start_time" value="${attr(ertek.start_time)}"></label>
                 <label class="admin-mezo">Vége<input type="time" data-naptar-mezo="end_time" value="${attr(ertek.end_time)}"></label>
-                <label class="admin-mezo">Lépés<input type="number" min="5" step="5" data-naptar-mezo="slot_step_minutes" value="${Number(ertek.slot_step_minutes) || 30}"></label>
                 <button type="button" class="admin-kis-gomb" data-naptar-torles>Törlés</button>
             `;
             elemek.naptarKijeloltLista.appendChild(sor);
@@ -311,7 +314,7 @@
             work_date: datum,
             start_time: ertek.start_time,
             end_time: ertek.end_time,
-            slot_step_minutes: Number(ertek.slot_step_minutes) || 30,
+            slot_step_minutes: naptarKozosLepesErtek(),
             active: true
         }));
 
@@ -345,7 +348,7 @@
         allapot.naptarKijelolesek.set(sor.dataset.datum, {
             start_time: sor.querySelector('[data-naptar-mezo="start_time"]').value,
             end_time: sor.querySelector('[data-naptar-mezo="end_time"]').value,
-            slot_step_minutes: Number.parseInt(sor.querySelector('[data-naptar-mezo="slot_step_minutes"]').value, 10) || 30
+            slot_step_minutes: naptarKozosLepesErtek()
         });
     }
 
@@ -355,8 +358,15 @@
         return {
             start_time: elemek.naptarKozosKezdes?.value || '09:00',
             end_time: elemek.naptarKozosVege?.value || '18:00',
-            slot_step_minutes: Number.parseInt(elemek.naptarKozosLepes?.value, 10) || 30
+            slot_step_minutes: naptarKozosLepesErtek()
         };
+    }
+
+    function naptarKozosLepesErtek() {
+        const elemek = adminElemek();
+        const ertek = Number.parseInt(elemek.naptarKozosLepes?.value, 10);
+
+        return Number.isFinite(ertek) && ertek > 0 ? ertek : 30;
     }
 
     function naptarHonapLepes(irany) {
@@ -909,19 +919,19 @@
 
     function idosavKartya(idosav) {
         const kartya = document.createElement('article');
-        kartya.className = 'admin-db-kartya';
+        kartya.className = 'admin-db-kartya admin-idosav-kartya';
         kartya.dataset.id = idosav.id;
 
         kartya.innerHTML = `
-            <div class="admin-db-grid">
-                <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
-                <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
-                <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
-                <label class="admin-mezo">Lépés percben<input type="number" min="5" step="5" data-mezo="slot_step_minutes" value="${Number(idosav.slot_step_minutes) || 30}"></label>
-                <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="active" ${idosav.active ? 'checked' : ''}> Aktív</label>
-            </div>
-            <div class="admin-db-akciok">
-                <button type="button" class="admin-kis-gomb" data-idosav-torles>Törlés</button>
+            <div class="admin-idosav-grid">
+                <div class="admin-idosav-datum-sor">
+                    <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
+                </div>
+                <div class="admin-idosav-ido-sor">
+                    <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
+                    <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
+                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-idosav-torles>Nap törlése</button>
+                </div>
             </div>
         `;
 
@@ -936,8 +946,92 @@
         }
 
         if (event.target.closest('[data-idosav-torles]')) {
+            if (!window.confirm('Biztosan törlöd ezt a beállított napot?')) {
+                return;
+            }
+
             await rekordTorlese('availability_windows', kartya.dataset.id, idosavokBetoltese);
         }
+    }
+
+    async function idosavokOsszesTorlese() {
+        if (!window.confirm('Biztosan törlöd az összes beállított foglalható napot? A meglévő foglalásokat ez nem törli.')) {
+            return;
+        }
+
+        onlineStatusz('Összes beállított nap törlése...');
+
+        const { data, error: listaHiba } = await allapot.kliens
+            .from('availability_windows')
+            .select('id');
+
+        if (listaHiba) {
+            onlineStatusz('Nem sikerült lekérni a törlendő napokat.', true);
+            return;
+        }
+
+        const idk = (data || []).map(sor => sor.id);
+
+        if (!idk.length) {
+            onlineStatusz('Nincs törölhető beállított nap.');
+            return;
+        }
+
+        const { error } = await allapot.kliens
+            .from('availability_windows')
+            .delete()
+            .in('id', idk);
+
+        if (error) {
+            onlineStatusz('Nem sikerült törölni az összes beállított napot.', true);
+            return;
+        }
+
+        onlineStatusz('Minden beállított nap törölve.');
+        idosavokBetoltese();
+    }
+
+    async function idosavLepesOsszesAlkalmazasa() {
+        const lepes = naptarKozosLepesErtek();
+
+        onlineStatusz('Lépés alkalmazása minden beállított napra...');
+
+        const { data, error: listaHiba } = await allapot.kliens
+            .from('availability_windows')
+            .select('id');
+
+        if (listaHiba) {
+            onlineStatusz('Nem sikerült lekérni a beállított napokat.', true);
+            return;
+        }
+
+        const idk = (data || []).map(sor => sor.id);
+
+        if (!idk.length) {
+            onlineStatusz('Nincs módosítható beállított nap.');
+            return;
+        }
+
+        const { error } = await allapot.kliens
+            .from('availability_windows')
+            .update({ slot_step_minutes: lepes })
+            .in('id', idk);
+
+        if (error) {
+            onlineStatusz('Nem sikerült alkalmazni a lépést minden napra.', true);
+            return;
+        }
+
+        allapot.naptarKijelolesek.forEach((ertek, datum) => {
+            allapot.naptarKijelolesek.set(datum, {
+                ...ertek,
+                slot_step_minutes: lepes
+            });
+        });
+
+        naptarKijeloltListaRenderelese();
+        onlineStatusz(`A ${lepes} perces lépés minden beállított napra alkalmazva.`);
+        idosavokBetoltese();
     }
 
     async function idosavokMentese() {
@@ -961,8 +1055,7 @@
                     work_date: mezo(kartya, 'work_date').value,
                     start_time: mezo(kartya, 'start_time').value,
                     end_time: mezo(kartya, 'end_time').value,
-                    slot_step_minutes: szamMezo(kartya, 'slot_step_minutes'),
-                    active: mezo(kartya, 'active').checked
+                    active: true
                 })
                 .eq('id', kartya.dataset.id);
 

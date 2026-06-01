@@ -1420,6 +1420,54 @@ select.urlap-mezo:invalid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.admin-idosav-kartya {
+    padding: 12px;
+}
+
+.admin-idosav-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.admin-idosav-datum-sor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: end;
+    gap: 8px;
+}
+
+.admin-idosav-ido-sor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 8px;
+}
+
+.admin-idosav-kartya .admin-mezo {
+    gap: 4px;
+    font-size: 11px;
+}
+
+.admin-idosav-kartya .admin-mezo input {
+    min-width: 0;
+    min-height: 36px;
+    padding: 7px 8px;
+    font-size: 13px;
+}
+
+.admin-idosav-kartya .admin-checkbox {
+    min-height: 36px;
+    padding-bottom: 7px;
+    white-space: nowrap;
+}
+
+.admin-idosav-kartya .admin-veszely-gomb {
+    align-self: end;
+    min-height: 36px;
+    padding: 0 12px;
+    white-space: nowrap;
+}
+
 .admin-ido-par {
     display: grid;
     grid-template-columns: repeat(2, minmax(58px, 1fr));
@@ -1494,6 +1542,42 @@ select.urlap-mezo:invalid {
     flex-basis: 260px;
 }
 
+.admin-kozos-idosav-sor {
+    display: grid;
+    grid-template-columns: minmax(112px, 140px) minmax(112px, 140px) minmax(72px, 86px) auto;
+    align-items: end;
+    justify-content: start;
+    gap: 10px;
+}
+
+.admin-kozos-idosav-sor > .admin-mezo {
+    min-width: 0;
+}
+
+.admin-kozos-idosav-sor .admin-mezo {
+    gap: 5px;
+    font-size: 12px;
+}
+
+.admin-kozos-idosav-sor .admin-mezo input {
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px 10px;
+}
+
+#admin-naptar-kozos-lepes {
+    text-align: center;
+}
+
+.admin-kozos-idosav-sor .admin-hozzaadas {
+    width: auto;
+    min-width: 0;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 13px;
+    white-space: nowrap;
+}
+
 .admin-naptar-akciok {
     display: flex;
     gap: 10px;
@@ -1556,26 +1640,51 @@ select.urlap-mezo:invalid {
 
 .admin-naptar-kijelolt-lista {
     display: grid;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 14px;
 }
 
 .admin-naptar-sor {
     display: grid;
-    grid-template-columns: minmax(130px, 1fr) minmax(96px, 0.8fr) minmax(96px, 0.8fr) minmax(88px, 0.6fr) auto;
+    grid-template-columns: minmax(138px, 1fr) minmax(96px, 0.55fr) minmax(96px, 0.55fr) auto;
     align-items: end;
-    gap: 10px;
-    padding: 12px;
+    gap: 8px;
+    padding: 9px 10px;
     background: rgba(255, 250, 244, 0.78);
     border: 1px solid rgba(185, 133, 143, 0.16);
-    border-radius: 14px;
+    border-radius: 12px;
 }
 
 .admin-naptar-datum {
     color: var(--barna);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
-    line-height: 1.35;
+    line-height: 1.25;
+}
+
+.admin-naptar-sor .admin-mezo {
+    gap: 4px;
+    font-size: 11px;
+}
+
+.admin-naptar-sor .admin-mezo input {
+    min-width: 0;
+    min-height: 36px;
+    padding: 7px 8px;
+    font-size: 13px;
+}
+
+.admin-naptar-sor .admin-kis-gomb {
+    min-height: 36px;
+    padding: 0 12px;
+}
+
+.admin-idosav-lista-akciok {
+    align-items: center;
+}
+
+.admin-idosav-lista-akciok .admin-kis-gomb {
+    min-height: 38px;
 }
 
 .admin-db-akciok {
@@ -1781,6 +1890,17 @@ select.urlap-mezo:invalid {
     background: var(--akcentus);
 }
 
+.admin-veszely-gomb {
+    color: #8f3c48;
+    background: rgba(143, 60, 72, 0.07);
+    border-color: rgba(143, 60, 72, 0.26);
+}
+
+.admin-veszely-gomb:hover {
+    color: #fffaf4;
+    background: #9b4e5c;
+}
+
 .admin-kis-gomb:disabled {
     cursor: default;
     opacity: 0.45;
@@ -1937,7 +2057,7 @@ select.urlap-mezo:invalid {
     }
 
     .admin-oldal {
-        padding: 16px 12px 12px;
+        padding: 16px 12px 96px;
     }
 
     .admin-fejlec,
@@ -1984,6 +2104,47 @@ select.urlap-mezo:invalid {
     .admin-naptar-tomeges > .admin-mezo,
     .admin-naptar-tomeges > .admin-hozzaadas {
         flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(62px, 0.52fr);
+        align-items: end;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor > .admin-mezo,
+    #admin-idosav-naptar .admin-kozos-idosav-sor > .admin-hozzaadas {
+        width: auto;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor .admin-mezo input {
+        width: 100%;
+        min-width: 0;
+        min-height: 38px;
+        padding: 7px 8px;
+        font-size: 13px;
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
+        grid-column: 1 / -1;
+        min-height: 38px;
+        margin-top: 0;
+        padding: 0 12px;
+    }
+
+    .admin-idosav-lista-akciok {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .admin-idosav-lista-akciok .admin-kis-gomb {
         width: 100%;
         max-width: 100%;
     }
@@ -2054,6 +2215,34 @@ select.urlap-mezo:invalid {
         grid-column: 1 / -1;
     }
 
+    .admin-idosav-kartya {
+        padding: 10px;
+    }
+
+    .admin-idosav-datum-sor {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .admin-idosav-ido-sor {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        gap: 7px;
+    }
+
+    .admin-idosav-kartya .admin-mezo input {
+        width: 100%;
+        min-width: 0;
+        min-height: 36px;
+        padding: 6px 7px;
+        font-size: 12.5px;
+    }
+
+    .admin-idosav-kartya .admin-kis-gomb {
+        min-height: 34px;
+        padding: 0 9px;
+        font-size: 11px;
+    }
+
     .admin-naptar-fej,
     .admin-naptar-tomeges,
     .admin-naptar-lista-fej {
@@ -2083,10 +2272,32 @@ select.urlap-mezo:invalid {
 
     .admin-naptar-blokk {
         padding: 12px;
+        overflow: hidden;
     }
 
     .admin-naptar-sor {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 7px;
+        padding: 9px;
+    }
+
+    .admin-naptar-datum {
+        grid-column: 1 / -1;
+        font-size: 12.5px;
+    }
+
+    .admin-naptar-sor .admin-mezo input {
+        width: 100%;
+        min-width: 0;
+        min-height: 36px;
+        padding: 6px 7px;
+        font-size: 12.5px;
+    }
+
+    .admin-naptar-sor .admin-kis-gomb {
+        grid-column: 1 / -1;
+        min-height: 34px;
+        padding: 0 10px;
     }
 
     .lebego-foglalas-gomb {

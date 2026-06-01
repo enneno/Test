@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="/kepek/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/kepek/favicon-32.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=20260612">
+    <link rel="stylesheet" href="/style.css?v=20260617">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&display=swap"
@@ -111,7 +111,7 @@
                         </div>
                         <div id="admin-naptar-racs" class="admin-naptar-racs"></div>
 
-                        <div class="admin-naptar-tomeges">
+                        <div class="admin-naptar-tomeges admin-kozos-idosav-sor">
                             <label class="admin-mezo">
                                 Közös kezdés
                                 <input type="time" id="admin-naptar-kozos-kezdes" value="09:00">
@@ -121,10 +121,10 @@
                                 <input type="time" id="admin-naptar-kozos-vege" value="18:00">
                             </label>
                             <label class="admin-mezo">
-                                Közös lépés
+                                Időpontok sűrűsége
                                 <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">
                             </label>
-                            <button type="button" id="admin-naptar-kozos-alkalmazas" class="admin-hozzaadas">Mindegyikre beállítom</button>
+                            <button type="button" id="admin-naptar-kozos-alkalmazas" class="admin-hozzaadas">Kijelöltekre beállítom</button>
                         </div>
 
                         <div class="admin-naptar-lista-fej">
@@ -134,13 +134,17 @@
                         <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista"></div>
                         <p id="admin-naptar-status" class="admin-status" aria-live="polite"></p>
                     </div>
+                    <div class="admin-panel-akciok admin-idosav-lista-akciok">
+                        <button type="button" id="admin-idosav-lepes-osszes" class="admin-kis-gomb">Lépés alkalmazása minden napra</button>
+                        <button type="button" id="admin-idosav-osszes-torles" class="admin-kis-gomb admin-veszely-gomb">Összes beállított nap törlése</button>
+                    </div>
                     <div id="admin-idosav-lista" class="admin-db-lista"></div>
                 </div>
 
                 <div id="admin-panel-tiltasok" class="admin-db-panel">
                     <p class="admin-info">Ha valaki Instagramon, Messengerben vagy személyesen foglal, itt vedd ki azt az időt. A publikus foglalásból automatikusan eltűnik minden időpont, ami ütközne vele.</p>
                     <form id="admin-tiltas-form" class="admin-naptar-blokk admin-tiltas-blokk">
-                        <div class="admin-naptar-tomeges">
+                        <div class="admin-naptar-tomeges admin-tiltas-sor">
                             <label class="admin-mezo">
                                 Dátum
                                 <input type="date" id="admin-tiltas-datum" required>
@@ -202,7 +206,7 @@
     <script src="/supabase-config.js"></script>
     <script src="/script.js?v=20260612"></script>
     <script src="/admin.js?v=20260608"></script>
-    <script src="/admin-supabase.js?v=20260608"></script>
+    <script src="/admin-supabase.js?v=20260611"></script>
 </body>
 
 </html>
