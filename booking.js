@@ -197,13 +197,16 @@
             return;
         }
 
-        emailErtesitesKuldese(data);
+        gombAllapot(elemek.kuldes, true, 'Visszaigazoló email küldése...');
+        const emailEredmeny = await emailErtesitesKuldese(data);
         naptarLinkFrissitese(adatok);
-        sikeresPopupNyitasa();
+        sikeresPopupNyitasa(emailEredmeny);
         elemek.urlap.reset();
         selectAllapot(elemek.datum, 'Előbb válassz szolgáltatást...');
         selectAllapot(elemek.ido, 'Előbb válassz szolgáltatást és dátumot...');
-        statuszKiirasa(elemek.statusz, 'A foglalás elküldve. Hamarosan kapsz visszajelzést.');
+        statuszKiirasa(elemek.statusz, emailEredmeny.ok
+            ? 'A foglalás elküldve. A visszaigazoló emailt is elküldtük. Kérlek ellenőrizd a spam vagy promóciók mappát is.'
+            : 'A foglalás elküldve. Az email értesítés most nem biztos, hogy elment, de a foglalás bekerült.');
         gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
     }
 
@@ -329,22 +332,41 @@
         gomb.textContent = szoveg;
     }
 
-    function sikeresPopupNyitasa() {
+    function sikeresPopupNyitasa(emailEredmeny = { ok: false }) {
         const popup = document.getElementById('sikeres-popup');
+        const popupSzoveg = popup?.querySelector('.popup-szoveg');
+
+        if (popupSzoveg) {
+            popupSzoveg.textContent = emailEredmeny.ok
+                ? 'Köszönöm, megkaptam a foglalásodat. A részletekről visszaigazoló emailt is küldtünk. Kérlek ellenőrizd a spam vagy promóciók mappát is.'
+                : 'Köszönöm, megkaptam a foglalásodat. A foglalás bekerült a rendszerbe, de az email értesítést még ellenőrizni kell.';
+        }
 
         if (popup) {
             popup.style.display = 'flex';
         }
     }
 
-    function emailErtesitesKuldese(bookingId) {
+    async function emailErtesitesKuldese(bookingId) {
         if (!bookingId || !allapot.kliens.functions?.invoke) {
-            return;
+            return { ok: false, skipped: true };
         }
 
-        allapot.kliens.functions.invoke('send-booking-email', {
-            body: { booking_id: bookingId }
-        }).catch(() => null);
+        try {
+            const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
+                body: { booking_id: bookingId }
+            });
+
+            if (error) {
+                console.warn('Lumi Nails email értesítés hiba:', error);
+                return { ok: false, error };
+            }
+
+            return data?.ok ? data : { ok: false, data };
+        } catch (error) {
+            console.warn('Lumi Nails email értesítés hiba:', error);
+            return { ok: false, error };
+        }
     }
 
     function naptarLinkFrissitese(adatok) {

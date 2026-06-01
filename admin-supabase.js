@@ -377,16 +377,23 @@
     }
 
     async function bejelentkezes(elemek) {
+        const email = adminEmail(elemek);
+
         authStatusz(elemek, 'Belépés...');
 
         const { error } = await allapot.kliens.auth.signInWithPassword({
-            email: ADMIN_EMAIL,
+            email,
             password: elemek.jelszo.value
         });
 
         if (error) {
-            authStatusz(elemek, 'Nem sikerült belépni. Ellenőrizd a jelszót.', true);
+            console.error('Admin belépési hiba:', error);
+            authStatusz(elemek, `Nem sikerült belépni ezzel az emaillel: ${email}. Ellenőrizd a jelszót.`, true);
         }
+    }
+
+    function adminEmail(elemek) {
+        return (elemek.email?.value || ADMIN_EMAIL).trim().toLowerCase();
     }
 
     async function kijelentkezes() {
@@ -455,11 +462,6 @@
         const elemek = adminElemek();
         const tab = allapot.aktivTab;
 
-        if (window.lumiAdminAdatokModositva?.()) {
-            window.lumiAdminAdatokLetoltese?.();
-            return;
-        }
-
         if (tab === 'foglalasok') {
             await foglalasStatuszokMentese();
             return;
@@ -482,6 +484,11 @@
 
         if (tab === 'beallitasok') {
             await beallitasokMentese();
+            return;
+        }
+
+        if (window.lumiAdminAdatokModositva?.()) {
+            window.lumiAdminAdatokLetoltese?.();
             return;
         }
 

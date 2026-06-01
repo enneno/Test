@@ -32,7 +32,7 @@
     async function adatokBetolteseAdminhoz() {
         try {
             jsonStatusz('Adatok betöltése...');
-            const valasz = await fetch('/adatok.json', { cache: 'no-cache' });
+            const valasz = await fetch(`/adatok.json?v=${Date.now()}`, { cache: 'no-store' });
 
             if (!valasz.ok) {
                 throw new Error('Nem elérhető az adatok.json fájl.');
@@ -63,7 +63,6 @@
         szakaszRenderelese(form, 'Elérhetőségek', [
             mezo('kapcsolat.cimke', 'Blokk címe'),
             mezo('kapcsolat.cim', 'Cím'),
-            mezo('kapcsolat.telefonLathato', 'Telefonszám látható', 'checkbox'),
             mezo('kapcsolat.telefon', 'Telefonszám'),
             mezo('kapcsolat.telefonLink', 'Telefon link'),
             mezo('kapcsolat.email', 'Email'),
@@ -112,6 +111,12 @@
             mezo('fooldal.foglalasAtvezeto.gombSzoveg', 'Gomb szövege')
         ]);
 
+        szakaszRenderelese(form, 'Árlista oldal szövegei', [
+            mezo('arlista.cim', 'Oldal címe'),
+            mezo('arlista.leiras', 'Felső leírás', 'textarea', true),
+            mezo('arlista.megjegyzes', 'Alsó megjegyzés', 'textarea', true)
+        ]);
+
         szakaszRenderelese(form, 'Foglalás oldal és felugró ablak', [
             mezo('foglalas.cim', 'Oldal címe'),
             mezo('foglalas.leiras', 'Oldal leírása', 'textarea', true),
@@ -119,8 +124,6 @@
             mezo('foglalas.lebegoGomb', 'Lebegő gomb'),
             mezo('foglalas.popup.sikeresCim', 'Sikeres popup cím'),
             mezo('foglalas.popup.sikeresSzoveg', 'Sikeres popup szöveg', 'textarea', true),
-            mezo('foglalas.popup.tartalekCim', 'Tartalék popup cím'),
-            mezo('foglalas.popup.tartalekSzoveg', 'Tartalék popup szöveg', 'textarea', true),
             mezo('foglalas.popup.messengerGomb', 'Messenger gomb'),
             mezo('foglalas.popup.instagramGomb', 'Instagram gomb'),
             mezo('foglalas.popup.bezarasGomb', 'Bezárás gomb')
@@ -219,8 +222,19 @@
 
     function mezoRenderelese(mezoAdat) {
         const label = document.createElement('label');
-        label.className = mezoAdat.szeles ? 'admin-mezo admin-mezo-szeles' : 'admin-mezo';
-        label.append(document.createTextNode(mezoAdat.cimke));
+        const checkboxMezo = mezoAdat.tipus === 'checkbox';
+        const osztalyok = ['admin-mezo'];
+
+        if (mezoAdat.szeles) {
+            osztalyok.push('admin-mezo-szeles');
+        }
+
+        if (checkboxMezo) {
+            osztalyok.push('admin-checkbox');
+        }
+
+        label.className = osztalyok.join(' ');
+        const cimke = document.createTextNode(mezoAdat.cimke);
 
         const input = mezoAdat.tipus === 'textarea'
             ? document.createElement('textarea')
@@ -241,7 +255,12 @@
             input.value = aktualis ?? '';
         }
 
-        label.appendChild(input);
+        if (checkboxMezo) {
+            label.append(input, cimke);
+        } else {
+            label.append(cimke, input);
+        }
+
         return label;
     }
 

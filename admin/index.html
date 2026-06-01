@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="/kepek/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/kepek/favicon-32.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css?v=20260609">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&display=swap"
@@ -26,7 +26,7 @@
             <p class="admin-leiras">Az online foglalások és idősávok kezeléséhez jelentkezz be a Supabase-ben létrehozott admin fiókkal.</p>
 
             <form id="admin-login-form" class="admin-login-form">
-                <input type="show" id="admin-email" value="llevisimon@gmail.com">
+                <input type="hidden" id="admin-email" value="llevisimon@gmail.com" autocomplete="username">
                 <input type="password" id="admin-jelszo" class="urlap-mezo" placeholder="Jelszó" autocomplete="current-password" required>
                 <button type="submit" class="gomb admin-gomb">Belépés</button>
             </form>
@@ -163,7 +163,7 @@
                 </div>
 
                 <div id="admin-panel-beallitasok" class="admin-db-panel">
-                    <p class="admin-info">Ezek az online beállítások az oldal fájljainak cseréje nélkül módosíthatók.</p>
+                    <p class="admin-info">Ezek az online beállítások az oldal fájljainak cseréje nélkül módosíthatók. A telefonszám láthatóságát itt kezeld, az adatok.json-ban lévő érték csak tartalék.</p>
                     <div class="admin-db-kartya">
                         <label class="admin-mezo admin-checkbox">
                             <input type="checkbox" id="admin-telefon-lathato">
@@ -200,9 +200,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase-config.js"></script>
-    <script src="/script.js?v=20260601"></script>
-    <script src="/admin.js?v=20260602"></script>
-    <script src="/admin-supabase.js?v=20260602"></script>
+    <script src="/script.js?v=20260612"></script>
+    <script src="/admin.js?v=20260608"></script>
+    <script src="/admin-supabase.js?v=20260605"></script>
 </body>
 
 </html>

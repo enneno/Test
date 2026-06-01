@@ -83,7 +83,7 @@
     },
     "arlista": {
         "cim": "Árlista",
-        "leiras": "Az árak tájékoztató jellegűek, a pontos végösszeg az egyedi igényektől és díszítéstől függhet.",
+        "leiras": "Az árak és az idő tájékoztató jellegűek, a pontos végösszeg és idő az egyedi igényektől és díszítéstől függhet.",
         "csoportok": [
             {
                 "cim": "Építés",
@@ -227,12 +227,12 @@
     },
     "foglalas": {
         "cim": "Időpontfoglalás",
-        "leiras": "Válassz szolgáltatást, dátumot és szabad időpontot Online vagy vagy irj üzenetet Instagramon.",
+        "leiras": "Válassz szolgáltatást, dátumot és szabad időpontot \nOnline vagy irj üzenetet Instagramon.",
         "kuldesGomb": "Foglalás elküldése",
         "lebegoGomb": "Időpontfoglalás",
         "popup": {
             "sikeresCim": "Foglalás elküldve",
-            "sikeresSzoveg": "Köszönöm, megkaptam a foglalásodat. Hamarosan visszajelzek a megadott elérhetőségen.",
+            "sikeresSzoveg": "Köszönöm, megkaptam a foglalásodat.\nVárlak szeretettel.",
             "tartalekCim": "Foglalás elküldve",
             "tartalekSzoveg": "Köszönöm, megkaptam a foglalásodat.\nVárlak szeretettel.",
             "messengerGomb": "Messenger",

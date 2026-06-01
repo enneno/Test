@@ -11,7 +11,6 @@ let galeriaHuzasAktiv = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
-    helyiTisztaLinkekBekotese();
     Promise.all([fejlecBetoltese(), lablecBetoltese()])
         .then(() => adatokBetoltese())
         .then(adatok => oldalAdatokAlkalmazasa(adatok));
@@ -40,36 +39,6 @@ function tisztaUrlBeallitasa() {
     if (tisztaUtvonal) {
         window.history.replaceState(null, '', tisztaUtvonal + window.location.search + window.location.hash);
     }
-}
-
-function helyiTisztaLinkekBekotese() {
-    if (!['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
-        return;
-    }
-
-    const helyiFallbackok = {
-        '/arlista/': '/arlista.html',
-        '/galeria/': '/galeria.html',
-        '/foglalas/': '/foglalas.html',
-        '/admin/': '/admin.html'
-    };
-
-    document.addEventListener('click', event => {
-        const link = event.target.closest('a');
-
-        if (!link || link.origin !== window.location.origin) {
-            return;
-        }
-
-        const fallback = helyiFallbackok[link.pathname];
-
-        if (!fallback) {
-            return;
-        }
-
-        event.preventDefault();
-        window.location.href = fallback + link.search + link.hash;
-    });
 }
 
 function fejlecBetoltese() {
@@ -404,13 +373,16 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
     if (urlap) {
         const szekcio = urlap.closest('section');
 
+        szovegBeallitasa('h2', foglalas.cim, szekcio);
+        htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
+        szovegBeallitasa('#foglalas-kuldes', foglalas.kuldesGomb, szekcio);
+        szovegBeallitasa('.popup-cim', foglalas.popup?.sikeresCim);
+        htmlSzovegBeallitasa('.popup-szoveg', foglalas.popup?.sikeresSzoveg);
+        szovegBeallitasa('#popup-bezaras', foglalas.popup?.bezarasGomb);
+
         if (!supabaseFoglalas) {
-            szovegBeallitasa('h2', foglalas.cim, szekcio);
-            szovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
-            szovegBeallitasa('#foglalas-kuldes', foglalas.kuldesGomb, szekcio);
             szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
             szovegBeallitasa('.popup-gomb[href*="ig.me"]', foglalas.popup?.instagramGomb);
-            szovegBeallitasa('#popup-bezaras', foglalas.popup?.bezarasGomb);
             foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
         }
     }

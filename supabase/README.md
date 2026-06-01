@@ -31,11 +31,40 @@ Az admin oldal a Supabase Auth belépést használja, így az adatbázis-művele
 
 ## 3. Email értesítés
 
-A foglalás e-mail nélkül is bekerül az adatbázisba. Az email küldéshez a `supabase/functions/send-booking-email` Edge Function használható.
+A foglalás email nélkül is bekerül az adatbázisba. Az email küldéshez a `supabase/functions/send-booking-email` Edge Function van előkészítve.
+
+Foglalás után két email megy ki:
+- neked egy részletes értesítés az új foglalásról, benne egy `.ics` naptár csatolmánnyal
+- a vendégnek egy visszaigazoló email a foglalás adataival
+
+Az `.ics` csatolmányt iPhone-on a Mail/Naptár általában eseményként tudja megnyitni, így gyorsan fel tudod venni a saját naptáradba.
 
 Szükséges Supabase secrets:
 - `RESEND_API_KEY`
-- `OWNER_EMAIL`
-- `FROM_EMAIL`
+- `OWNER_EMAIL` például `szofipetras087@gmail.com`
+- `FROM_EMAIL` például `Lumi Nails <foglalas@luminails.hu>`
+- `REPLY_TO_EMAIL` például `szofipetras087@gmail.com`
 
 Secret kulcsot soha ne tegyél a frontend fájlokba vagy GitHubra.
+
+Javasolt ingyenes email szolgáltató: Resend.
+
+Éles használathoz a `luminails.hu` domaint érdemes hitelesíteni Resendben. Amíg nincs domain hitelesítés, a `Lumi Nails <onboarding@resend.dev>` feladó leginkább tesztelésre jó, és korlátozott lehet, hogy kinek tud emailt küldeni.
+
+Supabase CLI-vel az élesítés menete:
+
+```bash
+supabase login
+supabase link --project-ref htbpzvmlegapaphsipax
+supabase secrets set RESEND_API_KEY=ide_jon_a_resend_api_kulcs
+supabase secrets set OWNER_EMAIL=szofipetras087@gmail.com
+supabase secrets set FROM_EMAIL="Lumi Nails <foglalas@luminails.hu>"
+supabase secrets set REPLY_TO_EMAIL=szofipetras087@gmail.com
+supabase functions deploy send-booking-email
+```
+
+Ha még nincs Resend domain hitelesítés, ideiglenesen ezt használd:
+
+```bash
+supabase secrets set FROM_EMAIL="Lumi Nails <onboarding@resend.dev>"
+```
