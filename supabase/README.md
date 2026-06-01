@@ -14,6 +14,8 @@ Ez létrehozza:
 
 Az adminban az `Árlista` fül az élő árlista és a foglalási szolgáltatáslista egyszerre. A `Foglalható dátumok` fülön konkrét dátumokra tudod felvenni, mikor dolgozol.
 
+A foglalási oldal a `get_available_dates` függvénnyel csak azokat a dátumokat listázza, ahol az adott szolgáltatáshoz ténylegesen maradt szabad időpont.
+
 ## 2. Admin belépés
 
 Supabase Dashboard > Authentication > Users alatt hozz létre egy admin felhasználót email + jelszóval.
