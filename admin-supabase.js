@@ -27,6 +27,14 @@
         });
 
         elemek.kijelentkezes?.addEventListener('click', kijelentkezes);
+        elemek.jelszoValtasGomb?.addEventListener('click', () => {
+            elemek.jelszoForm.hidden = !elemek.jelszoForm.hidden;
+            jelszoStatusz('');
+        });
+        elemek.jelszoForm?.addEventListener('submit', event => {
+            event.preventDefault();
+            jelszoModositasa();
+        });
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
         idosavAlapertelmezes(elemek);
@@ -67,6 +75,11 @@
             authStatusz: document.getElementById('admin-auth-status'),
             tartalom: document.getElementById('admin-tartalom'),
             kijelentkezes: document.getElementById('admin-kijelentkezes'),
+            jelszoValtasGomb: document.getElementById('admin-jelszo-valtas-gomb'),
+            jelszoForm: document.getElementById('admin-jelszo-form'),
+            ujJelszo: document.getElementById('admin-uj-jelszo'),
+            ujJelszoIsmet: document.getElementById('admin-uj-jelszo-ismet'),
+            jelszoStatusz: document.getElementById('admin-jelszo-status'),
             onlineStatusz: document.getElementById('admin-online-status'),
             foglalasLista: document.getElementById('admin-foglalas-lista'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
@@ -90,6 +103,7 @@
             naptarKijeloltLista: document.getElementById('admin-naptar-kijelolt-lista'),
             naptarMentes: document.getElementById('admin-naptar-mentes'),
             tiltasForm: document.getElementById('admin-tiltas-form'),
+            tiltasDatum: document.getElementById('admin-tiltas-datum'),
             tiltasKezdes: document.getElementById('admin-tiltas-kezdes'),
             tiltasVege: document.getElementById('admin-tiltas-vege'),
             tiltasOk: document.getElementById('admin-tiltas-ok'),
@@ -132,6 +146,18 @@
 
         if (elemek.naptarKozosLepes && !elemek.naptarKozosLepes.value) {
             elemek.naptarKozosLepes.value = '30';
+        }
+
+        if (elemek.tiltasDatum && !elemek.tiltasDatum.value) {
+            elemek.tiltasDatum.value = maiDatum();
+        }
+
+        if (elemek.tiltasKezdes && !elemek.tiltasKezdes.value) {
+            elemek.tiltasKezdes.value = '09:00';
+        }
+
+        if (elemek.tiltasVege && !elemek.tiltasVege.value) {
+            elemek.tiltasVege.value = '10:00';
         }
     }
 
@@ -205,7 +231,7 @@
             allapot.naptarKijelolesek.set(datum, naptarAlapIdosav());
         }
 
-        idosavNaptarRenderelese();
+        gomb.classList.toggle('kijelolt', allapot.naptarKijelolesek.has(datum));
         naptarKijeloltListaRenderelese();
     }
 
@@ -260,7 +286,12 @@
 
         const sor = torlesGomb.closest('.admin-naptar-sor');
         allapot.naptarKijelolesek.delete(sor.dataset.datum);
-        idosavNaptarRenderelese();
+        const naptarGomb = document.querySelector(`.admin-naptar-nap[data-datum="${sor.dataset.datum}"]`);
+
+        if (naptarGomb) {
+            naptarGomb.classList.remove('kijelolt');
+        }
+
         naptarKijeloltListaRenderelese();
     }
 
@@ -371,6 +402,42 @@
 
     async function kijelentkezes() {
         await allapot.kliens.auth.signOut();
+    }
+
+    async function jelszoModositasa() {
+        const elemek = adminElemek();
+        const ujJelszo = elemek.ujJelszo.value;
+        const ujJelszoIsmet = elemek.ujJelszoIsmet.value;
+
+        if (!ujJelszo || !ujJelszoIsmet) {
+            jelszoStatusz('Add meg kétszer az új jelszót.', true);
+            return;
+        }
+
+        if (ujJelszo.length < 8) {
+            jelszoStatusz('A jelszó legyen legalább 8 karakter hosszú.', true);
+            return;
+        }
+
+        if (ujJelszo !== ujJelszoIsmet) {
+            jelszoStatusz('A két jelszó nem egyezik.', true);
+            return;
+        }
+
+        jelszoStatusz('Jelszó mentése...');
+
+        const { error } = await allapot.kliens.auth.updateUser({
+            password: ujJelszo
+        });
+
+        if (error) {
+            jelszoStatusz('Nem sikerült módosítani a jelszót. Lépj be újra, majd próbáld meg ismét.', true);
+            return;
+        }
+
+        elemek.jelszoForm.reset();
+        elemek.jelszoForm.hidden = true;
+        jelszoStatusz('Jelszó módosítva.');
     }
 
     function sessionAllapot(session, elemek) {
@@ -752,14 +819,14 @@
             .limit(80);
 
         if (error) {
-            onlineStatusz('Nem sikerült betölteni a tiltásokat.', true);
+            onlineStatusz('Nem sikerült betölteni a foglalt időket.', true);
             return;
         }
 
         elemek.tiltasLista.innerHTML = '';
 
         if (!data.length) {
-            elemek.tiltasLista.innerHTML = '<p class="admin-ures">Nincs tiltott időszak.</p>';
+            elemek.tiltasLista.innerHTML = '<p class="admin-ures">Nincs külön felvett foglalt idő.</p>';
             return;
         }
 
@@ -778,7 +845,7 @@
                 </div>
                 <button type="button" class="admin-kis-gomb" data-tiltas-torles>Törlés</button>
             </div>
-            ${tiltas.reason ? `<p>${html(tiltas.reason)}</p>` : ''}
+            <p><strong>Ok:</strong> ${html(tiltas.reason || 'Külső foglalás')}</p>
         `;
 
         return kartya;
@@ -787,26 +854,32 @@
     async function tiltasHozzaadas() {
         const elemek = adminElemek();
 
-        if (!elemek.tiltasKezdes.value || !elemek.tiltasVege.value) {
-            onlineStatusz('Add meg a tiltás kezdetét és végét.', true);
+        if (!elemek.tiltasDatum.value || !elemek.tiltasKezdes.value || !elemek.tiltasVege.value) {
+            onlineStatusz('Add meg a dátumot, a kezdést és a végét.', true);
             return;
         }
 
-        onlineStatusz('Tiltás mentése...');
+        if (elemek.tiltasVege.value <= elemek.tiltasKezdes.value) {
+            onlineStatusz('A foglalt idő vége legyen később, mint a kezdés.', true);
+            return;
+        }
+
+        onlineStatusz('Foglalt idő mentése...');
 
         const { error } = await allapot.kliens.from('blocked_times').insert({
-            starts_at: new Date(elemek.tiltasKezdes.value).toISOString(),
-            ends_at: new Date(elemek.tiltasVege.value).toISOString(),
-            reason: elemek.tiltasOk.value.trim()
+            starts_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasKezdes.value),
+            ends_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasVege.value),
+            reason: elemek.tiltasOk.value.trim() || 'Külső foglalás'
         });
 
         if (error) {
-            onlineStatusz('Nem sikerült menteni a tiltást.', true);
+            onlineStatusz('Nem sikerült menteni a foglalt időt.', true);
             return;
         }
 
         elemek.tiltasForm.reset();
-        onlineStatusz('Tiltás mentve.');
+        idosavAlapertelmezes(adminElemek());
+        onlineStatusz('Foglalt idő mentve. Ez az idő már nem lesz foglalható.');
         tiltasokBetoltese();
     }
 
@@ -893,6 +966,12 @@
         return new Date(ev, honap - 1, nap, 12, 0, 0);
     }
 
+    function helyiDatumIdoIso(datumSzovegErtek, idoSzovegErtek) {
+        const [ev, honap, nap] = datumSzovegErtek.split('-').map(Number);
+        const [ora, perc] = idoSzovegErtek.split(':').map(Number);
+        return new Date(ev, honap - 1, nap, ora, perc, 0).toISOString();
+    }
+
     function datumSzoveg(datum) {
         const ev = datum.getFullYear();
         const honap = String(datum.getMonth() + 1).padStart(2, '0');
@@ -934,6 +1013,17 @@
 
     function onlineStatusz(szoveg, hiba = false) {
         const elem = document.getElementById('admin-online-status');
+
+        if (!elem) {
+            return;
+        }
+
+        elem.textContent = szoveg;
+        elem.classList.toggle('hiba', Boolean(hiba));
+    }
+
+    function jelszoStatusz(szoveg, hiba = false) {
+        const elem = document.getElementById('admin-jelszo-status');
 
         if (!elem) {
             return;

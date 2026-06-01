@@ -1138,6 +1138,23 @@ select.urlap-mezo:invalid {
     margin: 4px 0 0;
 }
 
+.admin-jelszo-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    max-width: 760px;
+    margin-top: 18px;
+}
+
+.admin-jelszo-form[hidden] {
+    display: none;
+}
+
+.admin-jelszo-form .gomb {
+    width: 100%;
+    margin: 0;
+}
+
 .admin-vedett[hidden],
 .admin-db-panel {
     display: none;
@@ -1309,7 +1326,7 @@ select.urlap-mezo:invalid {
 
 .admin-naptar-blokk {
     margin-bottom: 20px;
-    padding: 18px;
+    padding: 14px;
     background: rgba(185, 133, 143, 0.06);
     border: 1px solid rgba(185, 133, 143, 0.16);
     border-radius: 16px;
@@ -1713,6 +1730,14 @@ select.urlap-mezo:invalid {
         flex-direction: column;
     }
 
+    .admin-json-akcio {
+        display: none;
+    }
+
+    .admin-jelszo-form {
+        grid-template-columns: 1fr;
+    }
+
     .admin-gomb,
     .admin-hozzaadas,
     .admin-db-statusz {
@@ -1747,12 +1772,21 @@ select.urlap-mezo:invalid {
 
     .admin-naptar-racs,
     .admin-naptar-napnevek {
-        gap: 5px;
+        gap: 4px;
     }
 
     .admin-naptar-nap,
     .admin-naptar-ures {
-        min-height: 42px;
+        min-height: 40px;
+    }
+
+    .admin-naptar-nap {
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .admin-naptar-blokk {
+        padding: 12px;
     }
 
     .admin-naptar-sor {

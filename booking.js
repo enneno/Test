@@ -31,7 +31,7 @@
             foglalasKuldes(elemek);
         });
 
-        elemek.szolgaltatas.addEventListener('change', () => idopontokBetoltese(elemek));
+        elemek.szolgaltatas.addEventListener('change', () => szabadDatumokBetoltese(elemek));
         elemek.datum.addEventListener('change', () => idopontokBetoltese(elemek));
 
         szolgaltatasokBetoltese(elemek);
@@ -54,6 +54,7 @@
 
     async function szolgaltatasokBetoltese(elemek) {
         selectAllapot(elemek.szolgaltatas, 'Szolgáltatások betöltése...');
+        selectAllapot(elemek.datum, 'Előbb válassz szolgáltatást...');
         selectAllapot(elemek.ido, 'Előbb válassz szolgáltatást és dátumot...');
         statuszKiirasa(elemek.statusz, '');
 
@@ -82,6 +83,46 @@
 
         if (allapot.szolgaltatasok.length === 0) {
             selectAllapot(elemek.szolgaltatas, 'Nincs aktív foglalható szolgáltatás');
+        }
+    }
+
+    async function szabadDatumokBetoltese(elemek) {
+        const szolgaltatasId = elemek.szolgaltatas.value;
+
+        selectAllapot(elemek.ido, 'Előbb válassz dátumot...');
+
+        if (!szolgaltatasId) {
+            selectAllapot(elemek.datum, 'Előbb válassz szolgáltatást...');
+            return;
+        }
+
+        selectAllapot(elemek.datum, 'Szabad dátumok betöltése...');
+        statuszKiirasa(elemek.statusz, '');
+
+        const { data, error } = await allapot.kliens.rpc('get_available_dates', {
+            p_service_id: szolgaltatasId,
+            p_start_date: maiDatum(),
+            p_days: 90
+        });
+
+        if (error) {
+            statuszKiirasa(elemek.statusz, 'Most nem sikerült lekérni a szabad dátumokat. Futtasd a legfrissebb Supabase SQL-t, majd próbáld újra.', true);
+            selectAllapot(elemek.datum, 'A szabad dátumok nem érhetők el');
+            return;
+        }
+
+        const datumok = Array.isArray(data) ? data : [];
+        elemek.datum.innerHTML = '<option value="" disabled selected>Válassz szabad dátumot...</option>';
+
+        datumok.forEach(datum => {
+            const option = document.createElement('option');
+            option.value = datum.work_date;
+            option.textContent = datum.label || datumFelirat(datum.work_date);
+            elemek.datum.appendChild(option);
+        });
+
+        if (datumok.length === 0) {
+            selectAllapot(elemek.datum, 'Nincs szabad dátum ehhez a szolgáltatáshoz');
         }
     }
 
@@ -160,6 +201,7 @@
         naptarLinkFrissitese(adatok);
         sikeresPopupNyitasa();
         elemek.urlap.reset();
+        selectAllapot(elemek.datum, 'Előbb válassz szolgáltatást...');
         selectAllapot(elemek.ido, 'Előbb válassz szolgáltatást és dátumot...');
         statuszKiirasa(elemek.statusz, 'A foglalás elküldve. Hamarosan kapsz visszajelzést.');
         gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
@@ -253,6 +295,16 @@
         option.selected = true;
         option.textContent = szoveg;
         select.appendChild(option);
+    }
+
+    function datumFelirat(datumSzoveg) {
+        const [ev, honap, nap] = datumSzoveg.split('-').map(Number);
+        return new Intl.DateTimeFormat('hu-HU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            weekday: 'long'
+        }).format(new Date(ev, honap - 1, nap, 12, 0, 0));
     }
 
     function statuszKiirasa(elem, szoveg, hiba = false) {

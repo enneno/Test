@@ -38,18 +38,20 @@
             <section class="admin-fejlec">
                 <p class="admin-eyebrow">Lumi Nails szerkesztő</p>
                 <h1 class="admin-cim">Admin felület</h1>
-                <p class="admin-leiras">Itt átírhatod az oldal fő szövegeit, elérhetőségeit, árlistáját és foglalási opcióit. A végén töltsd le az új adatfájlt.</p>
+                <p class="admin-leiras">Itt kezelheted az online árlistát, foglalható dátumokat, foglalt idősávokat és beérkező foglalásokat.</p>
 
                 <div class="admin-akciok">
                     <button type="button" id="admin-kijelentkezes" class="gomb admin-gomb">Kijelentkezés</button>
-                    <button type="button" id="admin-letoltes" class="gomb admin-gomb">Adatok letöltése</button>
-                    <label class="gomb admin-gomb admin-fajl-gomb">
-                        Meglévő JSON betöltése
-                        <input type="file" id="admin-import" accept="application/json,.json">
-                    </label>
+                    <button type="button" id="admin-jelszo-valtas-gomb" class="gomb admin-gomb">Jelszó csere</button>
                 </div>
 
-                <p id="admin-status" class="admin-status" aria-live="polite"></p>
+                <form id="admin-jelszo-form" class="admin-jelszo-form" hidden>
+                    <input type="password" id="admin-uj-jelszo" class="urlap-mezo" placeholder="Új jelszó" autocomplete="new-password">
+                    <input type="password" id="admin-uj-jelszo-ismet" class="urlap-mezo" placeholder="Új jelszó még egyszer" autocomplete="new-password">
+                    <button type="submit" class="gomb admin-gomb">Jelszó mentése</button>
+                </form>
+
+                <p id="admin-jelszo-status" class="admin-status" aria-live="polite"></p>
             </section>
 
             <section class="admin-panel admin-live-panel">
@@ -62,7 +64,7 @@
                     <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
                     <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
                     <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
-                    <button type="button" class="admin-tab" data-admin-tab="tiltasok">Tiltások</button>
+                    <button type="button" class="admin-tab" data-admin-tab="tiltasok">Foglalt idők</button>
                 </div>
 
                 <p id="admin-online-status" class="admin-status" aria-live="polite"></p>
@@ -155,26 +157,30 @@
                 </div>
 
                 <div id="admin-panel-tiltasok" class="admin-db-panel">
+                    <p class="admin-info">Ha valaki Instagramon, Messengerben vagy személyesen foglal, itt vedd ki azt az időt. A publikus foglalásból automatikusan eltűnik minden időpont, ami ütközne vele.</p>
                     <form id="admin-tiltas-form" class="admin-db-form">
                         <label class="admin-mezo">
+                            Dátum
+                            <input type="date" id="admin-tiltas-datum" required>
+                        </label>
+                        <label class="admin-mezo">
                             Kezdés
-                            <input type="datetime-local" id="admin-tiltas-kezdes" required>
+                            <input type="time" id="admin-tiltas-kezdes" required>
                         </label>
                         <label class="admin-mezo">
                             Vége
-                            <input type="datetime-local" id="admin-tiltas-vege" required>
+                            <input type="time" id="admin-tiltas-vege" required>
                         </label>
                         <label class="admin-mezo admin-mezo-szeles">
                             Megjegyzés
-                            <input type="text" id="admin-tiltas-ok" placeholder="Pl. szabadság, betegség, privát program">
+                            <input type="text" id="admin-tiltas-ok" placeholder="Pl. külső foglalás, Messenger, Instagram">
                         </label>
-                        <button type="submit" class="admin-hozzaadas">Tiltás hozzáadása</button>
+                        <button type="submit" class="admin-hozzaadas">Foglalt idő hozzáadása</button>
                     </form>
                     <div id="admin-tiltas-lista" class="admin-db-lista"></div>
                 </div>
             </section>
 
-            <form id="admin-form" class="admin-form"></form>
         </div>
     </main>
 
@@ -184,7 +190,6 @@
     <script src="/supabase-config.js"></script>
     <script src="/script.js"></script>
     <script src="/admin-supabase.js"></script>
-    <script src="/admin.js"></script>
 </body>
 
 </html>

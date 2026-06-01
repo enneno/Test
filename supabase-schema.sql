@@ -206,6 +206,37 @@ as $$
     order by slots.starts_at;
 $$;
 
+create or replace function public.get_available_dates(
+    p_service_id uuid,
+    p_start_date date default current_date,
+    p_days integer default 90
+)
+returns table(work_date date, label text)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+    with days as (
+        select gs::date as work_date
+        from generate_series(
+            p_start_date,
+            p_start_date + (least(greatest(coalesce(p_days, 90), 1), 180) - 1),
+            interval '1 day'
+        ) as gs
+    )
+    select
+        days.work_date,
+        to_char(days.work_date, 'YYYY. MM. DD.') as label
+    from days
+    where exists (
+        select 1
+        from public.get_available_slots(p_service_id, days.work_date)
+        limit 1
+    )
+    order by days.work_date;
+$$;
+
 create or replace function public.create_booking(
     p_service_id uuid,
     p_customer_name text,
@@ -275,6 +306,7 @@ $$;
 grant usage on schema public to anon, authenticated;
 grant select on public.services to anon, authenticated;
 grant execute on function public.get_available_slots(uuid, date) to anon, authenticated;
+grant execute on function public.get_available_dates(uuid, date, integer) to anon, authenticated;
 grant execute on function public.create_booking(uuid, text, text, text, text, timestamptz) to anon, authenticated;
 grant select, insert, update, delete on public.services to authenticated;
 grant select, insert, update, delete on public.availability_rules to authenticated;
