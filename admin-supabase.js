@@ -926,11 +926,11 @@
             <div class="admin-idosav-grid">
                 <div class="admin-idosav-datum-sor">
                     <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
+                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-idosav-torles>Törlés</button>
                 </div>
                 <div class="admin-idosav-ido-sor">
                     <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
                     <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
-                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-idosav-torles>Nap törlése</button>
                 </div>
             </div>
         `;

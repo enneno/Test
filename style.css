@@ -1445,14 +1445,14 @@ select.urlap-mezo:invalid {
 
 .admin-idosav-datum-sor {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
     gap: 8px;
 }
 
 .admin-idosav-ido-sor {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: end;
     gap: 8px;
 }
@@ -1463,6 +1463,8 @@ select.urlap-mezo:invalid {
 }
 
 .admin-idosav-kartya .admin-mezo input {
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
     min-height: 36px;
     padding: 7px 8px;
@@ -1478,7 +1480,7 @@ select.urlap-mezo:invalid {
 .admin-idosav-kartya .admin-veszely-gomb {
     align-self: end;
     min-height: 36px;
-    padding: 0 12px;
+    padding: 0 11px;
     white-space: nowrap;
 }
 
@@ -2277,7 +2279,7 @@ select.urlap-mezo:invalid {
     }
 
     .admin-idosav-datum-sor {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 8px;
     }
 
@@ -2288,10 +2290,28 @@ select.urlap-mezo:invalid {
 
     .admin-idosav-kartya .admin-mezo input {
         width: 100%;
+        inline-size: 100%;
+        max-inline-size: 100%;
         min-width: 0;
         min-height: 36px;
         padding: 6px 7px;
         font-size: 12.5px;
+    }
+
+    .admin-naptar-fej input[type="month"],
+    .admin-idosav-kartya input[type="date"],
+    .admin-idosav-kartya input[type="time"],
+    #admin-idosav-naptar input[type="month"],
+    #admin-idosav-naptar input[type="time"],
+    #admin-idosav-naptar input[type="number"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        inline-size: 100%;
+        max-width: 100%;
+        max-inline-size: 100%;
+        min-width: 0;
+        min-inline-size: 0;
     }
 
     .admin-idosav-kartya .admin-kis-gomb {
@@ -2301,8 +2321,9 @@ select.urlap-mezo:invalid {
     }
 
     .admin-idosav-kartya .admin-veszely-gomb {
-        grid-column: 1 / -1;
-        width: 100%;
+        width: auto;
+        min-width: 72px;
+        padding-inline: 10px;
     }
 
     .admin-naptar-fej,
@@ -2310,6 +2331,15 @@ select.urlap-mezo:invalid {
     .admin-naptar-lista-fej {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .admin-naptar-fej {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .admin-naptar-fej .admin-mezo {
+        flex: 0 1 auto;
     }
 
     .admin-naptar-akciok {
