@@ -1282,7 +1282,7 @@ select.urlap-mezo:invalid {
 }
 
 .admin-db-kartya {
-    padding: 18px;
+    padding: 14px;
     color: var(--szoveg);
     background: rgba(241, 222, 217, 0.18);
     border: 1px solid rgba(185, 133, 143, 0.18);
@@ -1293,11 +1293,17 @@ select.urlap-mezo:invalid {
     margin: 0;
     color: var(--barna);
     font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
+    font-size: 24px;
+    line-height: 1.05;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .admin-db-kartya p {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     line-height: 1.55;
 }
 
@@ -1305,11 +1311,70 @@ select.urlap-mezo:invalid {
     color: var(--tinta);
 }
 
+.admin-idopont-szerkeszto {
+    display: none;
+    grid-template-columns: minmax(128px, 0.9fr) repeat(2, minmax(88px, 0.55fr)) minmax(150px, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(255, 250, 244, 0.7);
+    border: 1px solid rgba(185, 133, 143, 0.16);
+    border-radius: 14px;
+}
+
+.admin-db-kartya.szerkeszt .admin-idopont-szerkeszto {
+    display: grid;
+}
+
+.admin-idopont-szerkeszto .admin-mezo {
+    gap: 5px;
+    font-size: 12px;
+}
+
+.admin-idopont-szerkeszto .admin-mezo input {
+    min-height: 38px;
+    padding: 8px 10px;
+}
+
 .admin-db-kartya-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-foglalas-fosor {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) auto;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+}
+
+.admin-foglalas-idopont {
+    margin: 0;
+    color: var(--barna);
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.admin-foglalas-vezerlok {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-foglalas-reszletek {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.admin-foglalas-reszletek p {
+    overflow-wrap: anywhere;
 }
 
 .admin-db-statusz,
@@ -1328,7 +1393,14 @@ select.urlap-mezo:invalid {
 }
 
 .admin-db-statusz {
-    width: min(190px, 46vw);
+    width: 150px;
+    min-height: 38px;
+    padding: 8px 10px;
+}
+
+.admin-db-statusz:disabled {
+    opacity: 0.72;
+    cursor: default;
 }
 
 .admin-db-statusz-fix {
@@ -1507,10 +1579,14 @@ select.urlap-mezo:invalid {
 }
 
 .admin-db-akciok {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 14px;
+    margin-top: 12px;
+}
+
+.admin-db-kartya.szerkeszt .admin-db-akciok {
+    display: flex;
 }
 
 .admin-ures {
@@ -1931,7 +2007,51 @@ select.urlap-mezo:invalid {
     }
 
     .admin-db-kartya-fej {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .admin-db-kartya {
+        padding: 12px;
+    }
+
+    .admin-db-kartya h3 {
+        font-size: 22px;
+    }
+
+    .admin-foglalas-fosor {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .admin-foglalas-idopont {
+        font-size: 12px;
+    }
+
+    .admin-foglalas-vezerlok {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        width: 100%;
+    }
+
+    .admin-foglalas-reszletek {
+        grid-template-columns: 1fr;
+        font-size: 12.5px;
+    }
+
+    .admin-db-statusz {
+        width: 100%;
+    }
+
+    .admin-idopont-szerkeszto {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .admin-idopont-szerkeszto .admin-mezo-szeles {
+        grid-column: 1 / -1;
     }
 
     .admin-naptar-fej,

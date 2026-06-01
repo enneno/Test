@@ -606,22 +606,32 @@
 
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
-                <div>
+                <div class="admin-foglalas-fosor">
                     <h3>${html(foglalas.customer_name)}</h3>
-                    <p>${html(datumIdo(foglalas.starts_at))} - ${html(datumIdo(foglalas.ends_at, true))}</p>
+                    <p class="admin-foglalas-idopont">${html(datumIdo(foglalas.starts_at))} - ${html(datumIdo(foglalas.ends_at, true))}</p>
                 </div>
-                <select class="admin-db-statusz" data-foglalas-statusz>
-                    ${statuszOption('pending', 'Függőben', foglalas.status)}
-                    ${statuszOption('confirmed', 'Visszaigazolva', foglalas.status)}
-                    ${statuszOption('done', 'Kész', foglalas.status)}
-                    ${statuszOption('cancelled', 'Lemondva', foglalas.status)}
-                </select>
+                <div class="admin-foglalas-vezerlok">
+                    <select class="admin-db-statusz" data-foglalas-statusz disabled>
+                        ${statuszOption('pending', 'Függőben', foglalas.status)}
+                        ${statuszOption('confirmed', 'Visszaigazolva', foglalas.status)}
+                        ${statuszOption('done', 'Kész', foglalas.status)}
+                        ${statuszOption('cancelled', 'Lemondva', foglalas.status)}
+                    </select>
+                    <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
+                </div>
             </div>
-            <p><strong>Szolgáltatás:</strong> ${html(foglalas.services?.name || 'Törölt szolgáltatás')}</p>
-            <p><strong>Foglalás leadva:</strong> ${html(datumIdo(foglalas.created_at))}</p>
-            <p><strong>Telefon:</strong> <a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
-            <p><strong>Email:</strong> <a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
-            ${foglalas.note ? `<p><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}
+            <div class="admin-foglalas-reszletek">
+                <p><strong>Szolgáltatás:</strong> ${html(foglalas.services?.name || 'Törölt szolgáltatás')}</p>
+                <p><strong>Leadva:</strong> ${html(datumIdo(foglalas.created_at))}</p>
+                <p><strong>Telefon:</strong> <a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
+                <p><strong>Email:</strong> <a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
+                ${foglalas.note ? `<p><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}
+            </div>
+            <div class="admin-idopont-szerkeszto">
+                <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
+                <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(foglalas.starts_at))}" disabled></label>
+                <label class="admin-mezo">Vége<input type="time" data-idopont-mezo="end_time" value="${attr(idoInputErtek(foglalas.ends_at))}" disabled></label>
+            </div>
             <div class="admin-db-akciok">
                 <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
             </div>
@@ -637,13 +647,21 @@
         kartya.dataset.tipus = 'blocked';
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
-                <div>
+                <div class="admin-foglalas-fosor">
                     <h3>Kézzel felvett foglalt idő</h3>
-                    <p>${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
+                    <p class="admin-foglalas-idopont">${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
                 </div>
-                <span class="admin-db-statusz admin-db-statusz-fix">Foglalt</span>
+                <div class="admin-foglalas-vezerlok">
+                    <span class="admin-db-statusz admin-db-statusz-fix">Foglalt</span>
+                    <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
+                </div>
             </div>
-            <p><strong>Ok:</strong> ${html(tiltas.reason || 'Külső foglalás')}</p>
+            <div class="admin-idopont-szerkeszto">
+                <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(tiltas.starts_at))}" disabled></label>
+                <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(tiltas.starts_at))}" disabled></label>
+                <label class="admin-mezo">Vége<input type="time" data-idopont-mezo="end_time" value="${attr(idoInputErtek(tiltas.ends_at))}" disabled></label>
+                <label class="admin-mezo admin-mezo-szeles">Megjegyzés<input type="text" data-idopont-mezo="reason" value="${attr(tiltas.reason || 'Külső foglalás')}" disabled></label>
+            </div>
             <div class="admin-db-akciok">
                 <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
             </div>
@@ -653,34 +671,66 @@
     }
 
     async function foglalasStatuszokMentese() {
-        const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya[data-tipus="booking"]'));
+        const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya'));
 
         if (!kartyak.length) {
-            onlineStatusz('Nincs menthető foglalási státusz ezen az oldalon.');
+            onlineStatusz('Nincs menthető foglalási bejegyzés ezen az oldalon.');
             return;
         }
 
-        onlineStatusz('Foglalási státuszok mentése...');
+        onlineStatusz('Foglalási módosítások mentése...');
 
         for (const kartya of kartyak) {
-            const select = kartya.querySelector('[data-foglalas-statusz]');
+            const adatok = idopontModositasAdatok(kartya);
+
+            if (adatok.hiba) {
+                onlineStatusz(adatok.hiba, true);
+                return;
+            }
+
+            const tabla = kartya.dataset.tipus === 'blocked' ? 'blocked_times' : 'bookings';
+            const modositas = kartya.dataset.tipus === 'blocked'
+                ? {
+                    starts_at: adatok.startsAt,
+                    ends_at: adatok.endsAt,
+                    reason: idopontMezo(kartya, 'reason')?.value.trim() || 'Külső foglalás'
+                }
+                : {
+                    status: kartya.querySelector('[data-foglalas-statusz]').value,
+                    starts_at: adatok.startsAt,
+                    ends_at: adatok.endsAt
+                };
+
+            const utkozesHiba = await idopontUtkozesHiba(kartya, adatok.startsAt, adatok.endsAt, modositas.status);
+
+            if (utkozesHiba) {
+                onlineStatusz(utkozesHiba, true);
+                return;
+            }
+
             const { error } = await allapot.kliens
-                .from('bookings')
-                .update({ status: select.value })
+                .from(tabla)
+                .update(modositas)
                 .eq('id', kartya.dataset.id);
 
             if (error) {
-                onlineStatusz('Nem sikerült menteni az egyik foglalást.', true);
+                onlineStatusz(`Nem sikerült menteni az egyik bejegyzést. ${error.message || ''}`, true);
                 return;
             }
         }
 
-        onlineStatusz('Foglalási státuszok mentve.');
+        onlineStatusz('Foglalási módosítások mentve. A szabad idősávok ehhez igazodnak.');
         foglalasokBetoltese();
     }
 
     async function foglalasListaKattintas(event) {
+        const szerkesztes = event.target.closest('[data-foglalas-szerkesztes]');
         const torles = event.target.closest('[data-foglalas-torles]');
+
+        if (szerkesztes) {
+            foglalasSzerkesztesKapcsolasa(szerkesztes.closest('.admin-db-kartya'));
+            return;
+        }
 
         if (!torles) {
             return;
@@ -699,6 +749,25 @@
         }
 
         await rekordTorlese(tabla, id, foglalasokBetoltese);
+    }
+
+    function foglalasSzerkesztesKapcsolasa(kartya) {
+        if (!kartya) {
+            return;
+        }
+
+        const aktiv = !kartya.classList.contains('szerkeszt');
+        kartya.classList.toggle('szerkeszt', aktiv);
+
+        kartya.querySelectorAll('[data-idopont-mezo], [data-foglalas-statusz]').forEach(mezoElem => {
+            mezoElem.disabled = !aktiv;
+        });
+
+        const gomb = kartya.querySelector('[data-foglalas-szerkesztes]');
+
+        if (gomb) {
+            gomb.textContent = aktiv ? 'Bezárás' : 'Szerkesztés';
+        }
     }
 
     async function szolgaltatasokBetoltese() {
@@ -1066,6 +1135,82 @@
         });
     }
 
+    async function idopontUtkozesHiba(kartya, startsAt, endsAt, statusz) {
+        const aktivFoglalas = kartya.dataset.tipus !== 'booking' || ['pending', 'confirmed'].includes(statusz);
+
+        if (!aktivFoglalas) {
+            return '';
+        }
+
+        const bookingQuery = allapot.kliens
+            .from('bookings')
+            .select('id,customer_name')
+            .in('status', ['pending', 'confirmed'])
+            .lt('starts_at', endsAt)
+            .gt('ends_at', startsAt)
+            .limit(1);
+
+        if (kartya.dataset.tipus === 'booking') {
+            bookingQuery.neq('id', kartya.dataset.id);
+        }
+
+        const { data: foglalasUtkozes, error: foglalasHiba } = await bookingQuery;
+
+        if (foglalasHiba) {
+            return 'Nem sikerült ellenőrizni az időpont ütközést.';
+        }
+
+        if (foglalasUtkozes?.length) {
+            return `Ez az időpont ütközik egy másik foglalással: ${foglalasUtkozes[0].customer_name || 'név nélkül'}.`;
+        }
+
+        const tiltasQuery = allapot.kliens
+            .from('blocked_times')
+            .select('id,reason')
+            .lt('starts_at', endsAt)
+            .gt('ends_at', startsAt)
+            .limit(1);
+
+        if (kartya.dataset.tipus === 'blocked') {
+            tiltasQuery.neq('id', kartya.dataset.id);
+        }
+
+        const { data: tiltasUtkozes, error: tiltasHiba } = await tiltasQuery;
+
+        if (tiltasHiba) {
+            return 'Nem sikerült ellenőrizni a kézzel felvett foglalt időket.';
+        }
+
+        if (tiltasUtkozes?.length) {
+            return `Ez az időpont ütközik egy kézzel felvett foglalt idővel: ${tiltasUtkozes[0].reason || 'külső foglalás'}.`;
+        }
+
+        return '';
+    }
+
+    function idopontModositasAdatok(kartya) {
+        const datum = idopontMezo(kartya, 'date')?.value;
+        const kezdes = idopontMezo(kartya, 'start_time')?.value;
+        const vege = idopontMezo(kartya, 'end_time')?.value;
+
+        if (!datum || !kezdes || !vege) {
+            return { hiba: 'A módosított foglalásnál add meg a dátumot, a kezdést és a végét.' };
+        }
+
+        if (vege <= kezdes) {
+            return { hiba: 'A módosított foglalás vége legyen később, mint a kezdés.' };
+        }
+
+        return {
+            startsAt: helyiDatumIdoIso(datum, kezdes),
+            endsAt: helyiDatumIdoIso(datum, vege)
+        };
+    }
+
+    function idopontMezo(kartya, nev) {
+        return kartya.querySelector(`[data-idopont-mezo="${nev}"]`);
+    }
+
     function statuszOption(ertek, cimke, aktiv) {
         return `<option value="${ertek}" ${ertek === aktiv ? 'selected' : ''}>${cimke}</option>`;
     }
@@ -1110,6 +1255,19 @@
             : { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
 
         return new Intl.DateTimeFormat('hu-HU', opciok).format(datum);
+    }
+
+    function datumInputErtek(ertek) {
+        const datum = new Date(ertek);
+        return datumSzoveg(datum);
+    }
+
+    function idoInputErtek(ertek) {
+        const datum = new Date(ertek);
+        const ora = String(datum.getHours()).padStart(2, '0');
+        const perc = String(datum.getMinutes()).padStart(2, '0');
+
+        return `${ora}:${perc}`;
     }
 
     function maiDatum() {
