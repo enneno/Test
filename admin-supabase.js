@@ -102,6 +102,7 @@
             naptarKijelolesTorles: document.getElementById('admin-naptar-kijeloles-torles'),
             naptarKijeloltLista: document.getElementById('admin-naptar-kijelolt-lista'),
             naptarMentes: document.getElementById('admin-naptar-mentes'),
+            naptarStatusz: document.getElementById('admin-naptar-status'),
             tiltasForm: document.getElementById('admin-tiltas-form'),
             tiltasDatum: document.getElementById('admin-tiltas-datum'),
             tiltasKezdes: document.getElementById('admin-tiltas-kezdes'),
@@ -300,6 +301,7 @@
 
         if (elemek.naptarKozosVege.value <= elemek.naptarKozosKezdes.value) {
             onlineStatusz('A közös végidő legyen később, mint a kezdés.', true);
+            naptarStatusz('A közös végidő legyen később, mint a kezdés.', true);
             return;
         }
 
@@ -309,6 +311,7 @@
 
         naptarKijeloltListaRenderelese();
         onlineStatusz('A közös idő beállítva a kijelölt napokra.');
+        naptarStatusz('A közös idő beállítva a kijelölt napokra.');
     }
 
     async function naptarKijeloltNapokMentese() {
@@ -317,6 +320,7 @@
 
         if (sorok.length === 0) {
             onlineStatusz('Előbb válassz ki napokat a naptárból.', true);
+            naptarStatusz('Előbb válassz ki napokat a naptárból.', true);
             return;
         }
 
@@ -334,10 +338,12 @@
 
         if (hibasSav) {
             onlineStatusz(`${hibasSav.work_date}: a végidő legyen később, mint a kezdés.`, true);
+            naptarStatusz(`${hibasSav.work_date}: a végidő legyen később, mint a kezdés.`, true);
             return;
         }
 
         onlineStatusz(`${savok.length} nap mentése...`);
+        naptarStatusz(`${savok.length} nap mentése...`);
 
         const { error } = await allapot.kliens
             .from('availability_windows')
@@ -345,10 +351,12 @@
 
         if (error) {
             onlineStatusz('Nem sikerült menteni a kijelölt napokat. Futtasd a dátumos Supabase migrációt, majd próbáld újra.', true);
+            naptarStatusz(`Nem sikerült menteni. Valószínűleg a Supabase dátumos migráció hiányzik vagy hibás. Részlet: ${error.message}`, true);
             return;
         }
 
         onlineStatusz(`${savok.length} nap mentve.`);
+        naptarStatusz(`${savok.length} nap mentve. Lent a meglévő dátumok listájában is meg kell jelennie.`);
         idosavokBetoltese();
     }
 
@@ -1013,6 +1021,17 @@
 
     function onlineStatusz(szoveg, hiba = false) {
         const elem = document.getElementById('admin-online-status');
+
+        if (!elem) {
+            return;
+        }
+
+        elem.textContent = szoveg;
+        elem.classList.toggle('hiba', Boolean(hiba));
+    }
+
+    function naptarStatusz(szoveg, hiba = false) {
+        const elem = document.getElementById('admin-naptar-status');
 
         if (!elem) {
             return;

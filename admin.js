@@ -1,455 +1,395 @@
-let adminAdatok = null;
+(function () {
+    const allapot = {
+        adatok: null
+    };
 
-document.addEventListener('DOMContentLoaded', adminInditasa);
-
-async function adminInditasa() {
-    const form = document.getElementById('admin-form');
-
-    if (!form) {
-        return;
-    }
-
-    adminAdatok = await adminAdatokBetoltese();
-    adminAdatokTisztitasa();
-    adminRendereles();
-
-    document.getElementById('admin-letoltes').addEventListener('click', adminLetoltes);
-    document.getElementById('admin-import').addEventListener('change', adminImport);
-}
-
-async function adminAdatokBetoltese() {
-    const response = await fetch('/adatok.json', { cache: 'no-cache' });
-
-    if (!response.ok) {
-        throw new Error('Az adatok.json nem tölthető be.');
-    }
-
-    return response.json();
-}
-
-function adminRendereles() {
-    const form = document.getElementById('admin-form');
-    form.innerHTML = '';
-
-    form.append(
-        adminAltalanosPanel(),
-        adminFooldalPanel(),
-        adminSzolgaltatasPanel(),
-        adminArlistaPanel(),
-        adminFoglalasPanel(),
-        adminPopupPanel(),
-        adminKepekPanel()
-    );
-}
-
-function adminPanel(cim, leiras) {
-    const panel = document.createElement('section');
-    panel.className = 'admin-panel';
-
-    const fej = document.createElement('div');
-    fej.className = 'admin-panel-fej';
-
-    const h2 = document.createElement('h2');
-    h2.textContent = cim;
-
-    const p = document.createElement('p');
-    p.textContent = leiras;
-
-    fej.append(h2, p);
-    panel.appendChild(fej);
-
-    return panel;
-}
-
-function adminMezo(szulo, cimke, utvonal, opciok = {}) {
-    const wrapper = document.createElement('label');
-    wrapper.className = `admin-mezo${opciok.szeles ? ' admin-mezo-szeles' : ''}`;
-
-    const span = document.createElement('span');
-    span.textContent = cimke;
-    wrapper.appendChild(span);
-
-    const ertek = adminErtek(utvonal);
-    const input = opciok.tobbsoros ? document.createElement('textarea') : document.createElement('input');
-
-    input.dataset.adminPath = utvonal;
-
-    if (opciok.checkbox) {
-        input.type = 'checkbox';
-        input.checked = Boolean(ertek);
-        wrapper.classList.add('admin-checkbox');
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adminInditasa);
     } else {
-        input.value = ertek ?? '';
-        input.placeholder = opciok.placeholder || '';
+        adminInditasa();
+    }
 
-        if (opciok.tobbsoros) {
-            input.rows = opciok.sorok || 4;
-        } else {
-            input.type = opciok.tipus || 'text';
+    function adminInditasa() {
+        const form = document.getElementById('admin-json-form');
 
-            if (opciok.tipus === 'number') {
-                input.min = '0';
-                input.step = '1';
-                input.inputMode = 'numeric';
-            }
+        if (!form) {
+            return;
         }
+
+        form.addEventListener('input', jsonMezoValtozas);
+        form.addEventListener('change', jsonMezoValtozas);
+        form.addEventListener('click', jsonListaKattintas);
+
+        document.getElementById('admin-adatok-letoltes')?.addEventListener('click', adatokLetoltese);
+        document.getElementById('admin-adatok-betoltes')?.addEventListener('change', adatokBetolteseFajlbol);
+
+        adatokBetolteseAdminhoz();
     }
 
-    wrapper.appendChild(input);
-    szulo.appendChild(wrapper);
-
-    return input;
-}
-
-function adminAltalanosPanel() {
-    const panel = adminPanel('Általános adatok', 'Név, rövid leírás és elérhetőségek.');
-    const grid = adminGrid();
-
-    adminMezo(grid, 'Márkanév', 'marka.nev');
-    adminMezo(grid, 'Lábléc rövid leírás', 'marka.rovidLeiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Cím', 'kapcsolat.cim');
-    adminMezo(grid, 'Telefonszám megjelenítése', 'kapcsolat.telefonLathato', { checkbox: true });
-    adminMezo(grid, 'Telefon megjelenítve', 'kapcsolat.telefon');
-    adminMezo(grid, 'Telefon linkhez', 'kapcsolat.telefonLink');
-    adminMezo(grid, 'Email', 'kapcsolat.email');
-    adminMezo(grid, 'Instagram link', 'kapcsolat.instagram', { szeles: true });
-    adminMezo(grid, 'Facebook link', 'kapcsolat.facebook', { szeles: true });
-    adminMezo(grid, 'Messenger üzenet link', 'kapcsolat.messenger', { szeles: true });
-    adminMezo(grid, 'Instagram üzenet link', 'kapcsolat.instagramUzenet', { szeles: true });
-    panel.appendChild(grid);
-
-    return panel;
-}
-
-function adminFooldalPanel() {
-    const panel = adminPanel('Főoldal szövegek', 'Hero, bemutatkozás, galéria átvezető és foglalási blokk.');
-    const grid = adminGrid();
-
-    adminMezo(grid, 'Hero felső kis szöveg', 'fooldal.hero.kicker');
-    adminMezo(grid, 'Hero cím', 'fooldal.hero.cim');
-    adminMezo(grid, 'Hero leírás', 'fooldal.hero.leiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Bemutatkozás cím', 'fooldal.bemutatkozas.cim');
-    adminMezo(grid, 'Bemutatkozás 1. bekezdés', 'fooldal.bemutatkozas.bekezdesek.0', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Bemutatkozás 2. bekezdés', 'fooldal.bemutatkozas.bekezdesek.1', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Galéria blokk címe', 'fooldal.galeriaAtvezeto.cim');
-    adminMezo(grid, 'Galéria blokk leírása', 'fooldal.galeriaAtvezeto.leiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Galéria gomb szöveg', 'fooldal.galeriaAtvezeto.gombSzoveg');
-    adminMezo(grid, 'Foglalási blokk cím', 'fooldal.foglalasAtvezeto.cim');
-    adminMezo(grid, 'Foglalási blokk leírás', 'fooldal.foglalasAtvezeto.leiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Foglalási gomb szöveg', 'fooldal.foglalasAtvezeto.gombSzoveg');
-    panel.appendChild(grid);
-
-    return panel;
-}
-
-function adminSzolgaltatasPanel() {
-    const panel = adminPanel('Szolgáltatás kártyák', 'A főoldali szolgáltatás kártyák címei és leírásai.');
-    const grid = adminGrid();
-    adminMezo(grid, 'Szekció címe', 'fooldal.szolgaltatasok.cim');
-    panel.appendChild(grid);
-
-    const lista = document.createElement('div');
-    lista.className = 'admin-lista';
-    panel.appendChild(lista);
-
-    adminAdatok.fooldal.szolgaltatasok.kartyak.forEach((kartya, index) => {
-        const elem = adminListaElem(`Kártya ${index + 1}`, () => {
-            adminMutacio(() => adminAdatok.fooldal.szolgaltatasok.kartyak.splice(index, 1), 'Kártya törölve.');
-        });
-
-        adminMezo(elem, 'Cím', `fooldal.szolgaltatasok.kartyak.${index}.cim`);
-        adminMezo(elem, 'Leírás', `fooldal.szolgaltatasok.kartyak.${index}.leiras`, { tobbsoros: true, szeles: true });
-        adminMezo(elem, 'Széles kártya', `fooldal.szolgaltatasok.kartyak.${index}.szeles`, { checkbox: true });
-        lista.appendChild(elem);
-    });
-
-    panel.appendChild(adminHozzaadasGomb('Új szolgáltatás kártya', () => {
-        adminMutacio(() => {
-            adminAdatok.fooldal.szolgaltatasok.kartyak.push({
-                cim: 'Új szolgáltatás',
-                leiras: 'Rövid leírás',
-                szeles: false
-            });
-        }, 'Új kártya hozzáadva.');
-    }));
-
-    return panel;
-}
-
-function adminArlistaPanel() {
-    const panel = adminPanel('Árlista', 'Árak, időtartamok és árlista megjegyzés.');
-    const grid = adminGrid();
-    adminMezo(grid, 'Árlista cím', 'arlista.cim');
-    adminMezo(grid, 'Árlista leírás', 'arlista.leiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Megjegyzés', 'arlista.megjegyzes', { tobbsoros: true, szeles: true });
-    panel.appendChild(grid);
-
-    const lista = document.createElement('div');
-    lista.className = 'admin-lista';
-    panel.appendChild(lista);
-
-    adminAdatok.arlista.csoportok.forEach((csoport, csoportIndex) => {
-        const csoportElem = adminListaElem(`Árlista csoport ${csoportIndex + 1}`, () => {
-            adminMutacio(() => adminAdatok.arlista.csoportok.splice(csoportIndex, 1), 'Árlista csoport törölve.');
-        });
-
-        adminMezo(csoportElem, 'Csoport címe', `arlista.csoportok.${csoportIndex}.cim`);
-
-        csoport.tetelek.forEach((tetel, tetelIndex) => {
-            const sor = document.createElement('div');
-            sor.className = 'admin-arlista-sor';
-
-            adminMezo(sor, 'Név', `arlista.csoportok.${csoportIndex}.tetelek.${tetelIndex}.nev`);
-            adminMezo(sor, 'Ár', `arlista.csoportok.${csoportIndex}.tetelek.${tetelIndex}.ar`);
-            adminMezo(sor, 'Óra', `arlista.csoportok.${csoportIndex}.tetelek.${tetelIndex}.idoOra`, { tipus: 'number' });
-            adminMezo(sor, 'Perc', `arlista.csoportok.${csoportIndex}.tetelek.${tetelIndex}.idoPerc`, { tipus: 'number' });
-            adminMezo(sor, 'Foglalásban látszik', `arlista.csoportok.${csoportIndex}.tetelek.${tetelIndex}.foglalasban`, { checkbox: true });
-
-            const torles = adminKisGomb('Sor törlése', () => {
-                adminMutacio(() => adminAdatok.arlista.csoportok[csoportIndex].tetelek.splice(tetelIndex, 1), 'Árlista sor törölve.');
-            });
-            sor.appendChild(torles);
-            csoportElem.appendChild(sor);
-        });
-
-        csoportElem.appendChild(adminHozzaadasGomb('Új sor ebbe a csoportba', () => {
-            adminMutacio(() => {
-            adminAdatok.arlista.csoportok[csoportIndex].tetelek.push({
-                nev: 'Új szolgáltatás',
-                ar: '0 Ft',
-                idoOra: 1,
-                idoPerc: 0,
-                foglalasban: true
-            });
-            }, 'Új árlista sor hozzáadva.');
-        }));
-
-        lista.appendChild(csoportElem);
-    });
-
-    panel.appendChild(adminHozzaadasGomb('Új árlista csoport', () => {
-        adminMutacio(() => {
-            adminAdatok.arlista.csoportok.push({
-                cim: 'Új csoport',
-                tetelek: [
-                    {
-                        nev: 'Új szolgáltatás',
-                        ar: '0 Ft',
-                        idoOra: 1,
-                        idoPerc: 0,
-                        foglalasban: true
-                    }
-                ]
-            });
-        }, 'Új árlista csoport hozzáadva.');
-    }));
-
-    return panel;
-}
-
-function adminFoglalasPanel() {
-    const panel = adminPanel('Foglalás oldal', 'A foglalási oldal szövegei. A választható szolgáltatások automatikusan az árlistából jönnek.');
-    const grid = adminGrid();
-    adminMezo(grid, 'Oldal címe', 'foglalas.cim');
-    adminMezo(grid, 'Leírás', 'foglalas.leiras', { tobbsoros: true, szeles: true });
-    adminMezo(grid, 'Küldés gomb szöveg', 'foglalas.kuldesGomb');
-    adminMezo(grid, 'Lebegő gomb szöveg', 'foglalas.lebegoGomb');
-    panel.appendChild(grid);
-
-    const info = document.createElement('p');
-    info.className = 'admin-info';
-    info.textContent = 'A foglalási legördülő listát az Árlista rész tételeiből rakja össze az oldal. Árlista soronként pipálhatod, mi jelenjen meg a foglalásnál. Időhöz csak az óra és perc számát írd be; ha valamelyik 0 vagy üres, azt a weboldal nem írja ki.';
-    panel.appendChild(info);
-
-    return panel;
-}
-
-function adminPopupPanel() {
-    const panel = adminPanel('Felugró ablak', 'A foglalási adatok másolása után megjelenő ablak szövegei és gombfeliratai.');
-    const grid = adminGrid();
-
-    adminMezo(grid, 'Sikeres másolás címe', 'foglalas.popup.sikeresCim');
-    adminMezo(grid, 'Sikeres másolás szövege', 'foglalas.popup.sikeresSzoveg', { tobbsoros: true, szeles: true, sorok: 4 });
-    adminMezo(grid, 'Tartalék cím', 'foglalas.popup.tartalekCim');
-    adminMezo(grid, 'Tartalék szöveg', 'foglalas.popup.tartalekSzoveg', { tobbsoros: true, szeles: true, sorok: 4 });
-    adminMezo(grid, 'Messenger gomb', 'foglalas.popup.messengerGomb');
-    adminMezo(grid, 'Instagram gomb', 'foglalas.popup.instagramGomb');
-    adminMezo(grid, 'Bezárás gomb', 'foglalas.popup.bezarasGomb');
-    panel.appendChild(grid);
-
-    return panel;
-}
-
-function adminKepekPanel() {
-    const panel = adminPanel('Képek útvonalai', 'Itt a főoldali, nem galériás képek fájlneveit tudod átírni.');
-    const grid = adminGrid();
-
-    adminMezo(grid, 'Bemutatkozás kép', 'fooldal.bemutatkozas.kep', { szeles: true });
-    adminMezo(grid, 'Bemutatkozás kép alt szöveg', 'fooldal.bemutatkozas.kepAlt', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 1 kép', 'fooldal.galeriaAtvezeto.kepek.0.src', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 1 alt', 'fooldal.galeriaAtvezeto.kepek.0.alt', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 2 kép', 'fooldal.galeriaAtvezeto.kepek.1.src', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 2 alt', 'fooldal.galeriaAtvezeto.kepek.1.alt', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 3 kép', 'fooldal.galeriaAtvezeto.kepek.2.src', { szeles: true });
-    adminMezo(grid, 'Galéria átvezető 3 alt', 'fooldal.galeriaAtvezeto.kepek.2.alt', { szeles: true });
-    panel.appendChild(grid);
-
-    return panel;
-}
-
-function adminGrid() {
-    const grid = document.createElement('div');
-    grid.className = 'admin-grid';
-    return grid;
-}
-
-function adminListaElem(cim, torlesCallback) {
-    const elem = document.createElement('div');
-    elem.className = 'admin-lista-elem';
-
-    const fej = document.createElement('div');
-    fej.className = 'admin-lista-fej';
-
-    const h3 = document.createElement('h3');
-    h3.textContent = cim;
-
-    fej.append(h3, adminKisGomb('Törlés', torlesCallback));
-    elem.appendChild(fej);
-
-    return elem;
-}
-
-function adminHozzaadasGomb(szoveg, callback) {
-    const gomb = document.createElement('button');
-    gomb.type = 'button';
-    gomb.className = 'admin-hozzaadas';
-    gomb.textContent = szoveg;
-    gomb.addEventListener('click', callback);
-    return gomb;
-}
-
-function adminKisGomb(szoveg, callback) {
-    const gomb = document.createElement('button');
-    gomb.type = 'button';
-    gomb.className = 'admin-kis-gomb';
-    gomb.textContent = szoveg;
-    gomb.addEventListener('click', callback);
-    return gomb;
-}
-
-function adminMutacio(callback, uzenet) {
-    adminAdatokUrlapbol();
-    callback();
-    adminRendereles();
-    adminStatus(uzenet);
-}
-
-function adminAdatokUrlapbol() {
-    document.querySelectorAll('[data-admin-path]').forEach(input => {
-        adminErtekBeallitasa(input.dataset.adminPath, input.type === 'checkbox' ? input.checked : input.value);
-    });
-    adminAdatokTisztitasa();
-}
-
-function adminAdatokTisztitasa() {
-    if (adminAdatok?.foglalas && !adminAdatok.foglalas.popup) {
-        adminAdatok.foglalas.popup = {
-            sikeresCim: 'Adatok másolva!',
-            sikeresSzoveg: 'A foglalásod szövegét vágólapra másoltuk. Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a Beillesztés gombra a chaten!',
-            tartalekCim: 'Adatok előkészítve',
-            tartalekSzoveg: 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.',
-            messengerGomb: 'Messenger',
-            instagramGomb: 'Instagram',
-            bezarasGomb: 'Mégse, visszalépek'
-        };
-    }
-
-    if (adminAdatok?.foglalas?.szolgaltatasok) {
-        delete adminAdatok.foglalas.szolgaltatasok;
-    }
-
-    (adminAdatok?.arlista?.csoportok || []).forEach(csoport => {
-        (csoport.tetelek || []).forEach(tetel => {
-            if (tetel.idoOra === undefined && tetel.idoPerc === undefined) {
-                const ido = adminIdoSzamok(tetel.ido);
-                tetel.idoOra = ido.vanIdo ? ido.ora : '';
-                tetel.idoPerc = ido.vanIdo ? ido.perc : '';
-            }
-
-            if (tetel.foglalasban === undefined) {
-                tetel.foglalasban = true;
-            }
-
-            delete tetel.ido;
-        });
-    });
-}
-
-function adminIdoSzamok(idoSzoveg) {
-    if (!idoSzoveg || !idoSzoveg.trim()) {
-        return { ora: '', perc: '', vanIdo: false };
-    }
-
-    return {
-        ora: adminPozitivEgesz((idoSzoveg.match(/(\d+)\s*óra/i) || [])[1]),
-        perc: adminPozitivEgesz((idoSzoveg.match(/(\d+)\s*perc/i) || [])[1]),
-        vanIdo: true
-    };
-}
-
-function adminPozitivEgesz(ertek) {
-    const szam = Number.parseInt(ertek, 10);
-    return Number.isFinite(szam) && szam > 0 ? szam : 0;
-}
-
-function adminLetoltes() {
-    adminAdatokUrlapbol();
-
-    const json = JSON.stringify(adminAdatok, null, 4);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = 'adatok.json';
-    link.click();
-    URL.revokeObjectURL(url);
-    adminStatus('Az adatok.json letöltve. Ezt töltsd fel GitHubon a fő mappába.');
-}
-
-function adminImport(event) {
-    const fajl = event.target.files[0];
-
-    if (!fajl) {
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
+    async function adatokBetolteseAdminhoz() {
         try {
-            adminAdatok = JSON.parse(reader.result);
-            adminAdatokTisztitasa();
-            adminRendereles();
-            adminStatus('A JSON fájl betöltve.');
+            jsonStatusz('Adatok betöltése...');
+            const valasz = await fetch('/adatok.json', { cache: 'no-cache' });
+
+            if (!valasz.ok) {
+                throw new Error('Nem elérhető az adatok.json fájl.');
+            }
+
+            allapot.adatok = await valasz.json();
+            adminJsonRenderelese();
+            jsonStatusz('Az oldal szövegei betöltve.');
         } catch (error) {
-            adminStatus('Nem sikerült beolvasni a JSON fájlt.');
+            jsonStatusz(`Nem sikerült betölteni az adatokat. ${error.message}`, true);
         }
-    };
-    reader.readAsText(fajl);
-}
+    }
 
-function adminStatus(uzenet) {
-    const status = document.getElementById('admin-status');
-    status.textContent = uzenet;
-}
+    function adminJsonRenderelese() {
+        const form = document.getElementById('admin-json-form');
 
-function adminErtek(utvonal) {
-    return utvonal.split('.').reduce((aktualis, kulcs) => aktualis?.[kulcs], adminAdatok);
-}
+        if (!form || !allapot.adatok) {
+            return;
+        }
 
-function adminErtekBeallitasa(utvonal, ertek) {
-    const kulcsok = utvonal.split('.');
-    const utolsoKulcs = kulcsok.pop();
-    const cel = kulcsok.reduce((aktualis, kulcs) => aktualis[kulcs], adminAdatok);
-    cel[utolsoKulcs] = ertek;
-}
+        form.innerHTML = '';
+
+        szakaszRenderelese(form, 'Márka', [
+            mezo('marka.nev', 'Márkanév'),
+            mezo('marka.rovidLeiras', 'Rövid leírás', 'textarea', true)
+        ]);
+
+        szakaszRenderelese(form, 'Elérhetőségek', [
+            mezo('kapcsolat.cimke', 'Blokk címe'),
+            mezo('kapcsolat.cim', 'Cím'),
+            mezo('kapcsolat.telefonLathato', 'Telefonszám látható', 'checkbox'),
+            mezo('kapcsolat.telefon', 'Telefonszám'),
+            mezo('kapcsolat.telefonLink', 'Telefon link'),
+            mezo('kapcsolat.email', 'Email'),
+            mezo('kapcsolat.instagram', 'Instagram link'),
+            mezo('kapcsolat.instagramUzenet', 'Instagram üzenet link'),
+            mezo('kapcsolat.facebook', 'Facebook link'),
+            mezo('kapcsolat.messenger', 'Messenger link'),
+            mezo('kapcsolat.terkepUrl', 'Térkép link', 'text', true)
+        ]);
+
+        szakaszRenderelese(form, 'Főoldal hero', [
+            mezo('fooldal.hero.kicker', 'Kis felirat'),
+            mezo('fooldal.hero.cim', 'Főcím'),
+            mezo('fooldal.hero.leiras', 'Leírás', 'textarea', true)
+        ]);
+
+        szakaszRenderelese(form, 'Bemutatkozás', [
+            mezo('fooldal.bemutatkozas.cim', 'Cím'),
+            mezo('fooldal.bemutatkozas.kep', 'Kép útvonala'),
+            mezo('fooldal.bemutatkozas.kepAlt', 'Kép leírása')
+        ]);
+        szovegListaRenderelese(form, 'Bemutatkozás bekezdései', 'fooldal.bemutatkozas.bekezdesek');
+
+        szakaszRenderelese(form, 'Szolgáltatások főoldali blokk', [
+            mezo('fooldal.szolgaltatasok.cim', 'Szekció címe')
+        ]);
+        objektumListaRenderelese(form, 'Szolgáltatás kártyák', 'fooldal.szolgaltatasok.kartyak', 'szolgaltatasKartya', [
+            mezo('cim', 'Cím'),
+            mezo('leiras', 'Leírás', 'textarea', true),
+            mezo('szeles', 'Széles kártya', 'checkbox')
+        ]);
+
+        szakaszRenderelese(form, 'Galéria átvezető', [
+            mezo('fooldal.galeriaAtvezeto.cim', 'Cím'),
+            mezo('fooldal.galeriaAtvezeto.leiras', 'Leírás', 'textarea', true),
+            mezo('fooldal.galeriaAtvezeto.gombSzoveg', 'Gomb szövege')
+        ]);
+        objektumListaRenderelese(form, 'Galéria átvezető képei', 'fooldal.galeriaAtvezeto.kepek', 'galeriaKep', [
+            mezo('src', 'Kép útvonala'),
+            mezo('alt', 'Kép leírása')
+        ]);
+
+        szakaszRenderelese(form, 'Foglalás átvezető', [
+            mezo('fooldal.foglalasAtvezeto.cim', 'Cím'),
+            mezo('fooldal.foglalasAtvezeto.leiras', 'Leírás', 'textarea', true),
+            mezo('fooldal.foglalasAtvezeto.gombSzoveg', 'Gomb szövege')
+        ]);
+
+        szakaszRenderelese(form, 'Foglalás oldal és felugró ablak', [
+            mezo('foglalas.cim', 'Oldal címe'),
+            mezo('foglalas.leiras', 'Oldal leírása', 'textarea', true),
+            mezo('foglalas.kuldesGomb', 'Küldés gomb'),
+            mezo('foglalas.lebegoGomb', 'Lebegő gomb'),
+            mezo('foglalas.popup.sikeresCim', 'Sikeres popup cím'),
+            mezo('foglalas.popup.sikeresSzoveg', 'Sikeres popup szöveg', 'textarea', true),
+            mezo('foglalas.popup.tartalekCim', 'Tartalék popup cím'),
+            mezo('foglalas.popup.tartalekSzoveg', 'Tartalék popup szöveg', 'textarea', true),
+            mezo('foglalas.popup.messengerGomb', 'Messenger gomb'),
+            mezo('foglalas.popup.instagramGomb', 'Instagram gomb'),
+            mezo('foglalas.popup.bezarasGomb', 'Bezárás gomb')
+        ]);
+    }
+
+    function szakaszRenderelese(form, cim, mezok) {
+        const szakasz = document.createElement('section');
+        szakasz.className = 'admin-lista-elem';
+
+        const fej = document.createElement('div');
+        fej.className = 'admin-lista-fej';
+        const h3 = document.createElement('h3');
+        h3.textContent = cim;
+        fej.appendChild(h3);
+        szakasz.appendChild(fej);
+
+        const grid = document.createElement('div');
+        grid.className = 'admin-grid';
+        mezok.forEach(mezoAdat => grid.appendChild(mezoRenderelese(mezoAdat)));
+        szakasz.appendChild(grid);
+        form.appendChild(szakasz);
+    }
+
+    function szovegListaRenderelese(form, cim, utvonal) {
+        const szakasz = listaSzakasz(cim);
+        const lista = szakasz.querySelector('.admin-lista');
+        const elemek = ertek(utvonal) || [];
+
+        elemek.forEach((_szoveg, index) => {
+            const kartya = document.createElement('div');
+            kartya.className = 'admin-db-kartya';
+            kartya.appendChild(mezoRenderelese(mezo(`${utvonal}.${index}`, `Bekezdés ${index + 1}`, 'textarea', true)));
+            kartya.appendChild(torlesGomb(utvonal, index));
+            lista.appendChild(kartya);
+        });
+
+        szakasz.appendChild(hozzaadasGomb(utvonal, 'bekezdes', 'Új bekezdés'));
+        form.appendChild(szakasz);
+    }
+
+    function objektumListaRenderelese(form, cim, utvonal, tipus, mezok) {
+        const szakasz = listaSzakasz(cim);
+        const lista = szakasz.querySelector('.admin-lista');
+        const elemek = ertek(utvonal) || [];
+
+        elemek.forEach((_elem, index) => {
+            const kartya = document.createElement('div');
+            kartya.className = 'admin-db-kartya';
+
+            const fej = document.createElement('div');
+            fej.className = 'admin-db-kartya-fej';
+            const h3 = document.createElement('h3');
+            h3.textContent = `${cim.slice(0, -1)} ${index + 1}`;
+            fej.appendChild(h3);
+            fej.appendChild(torlesGomb(utvonal, index));
+            kartya.appendChild(fej);
+
+            const grid = document.createElement('div');
+            grid.className = 'admin-grid';
+            mezok.forEach(mezoAdat => {
+                grid.appendChild(mezoRenderelese({
+                    ...mezoAdat,
+                    utvonal: `${utvonal}.${index}.${mezoAdat.utvonal}`
+                }));
+            });
+            kartya.appendChild(grid);
+            lista.appendChild(kartya);
+        });
+
+        szakasz.appendChild(hozzaadasGomb(utvonal, tipus, 'Új elem'));
+        form.appendChild(szakasz);
+    }
+
+    function listaSzakasz(cim) {
+        const szakasz = document.createElement('section');
+        szakasz.className = 'admin-lista-elem';
+
+        const fej = document.createElement('div');
+        fej.className = 'admin-lista-fej';
+        const h3 = document.createElement('h3');
+        h3.textContent = cim;
+        fej.appendChild(h3);
+        szakasz.appendChild(fej);
+
+        const lista = document.createElement('div');
+        lista.className = 'admin-lista';
+        szakasz.appendChild(lista);
+
+        return szakasz;
+    }
+
+    function mezo(utvonal, cimke, tipus = 'text', szeles = false) {
+        return { utvonal, cimke, tipus, szeles };
+    }
+
+    function mezoRenderelese(mezoAdat) {
+        const label = document.createElement('label');
+        label.className = mezoAdat.szeles ? 'admin-mezo admin-mezo-szeles' : 'admin-mezo';
+        label.append(document.createTextNode(mezoAdat.cimke));
+
+        const input = mezoAdat.tipus === 'textarea'
+            ? document.createElement('textarea')
+            : document.createElement('input');
+
+        if (mezoAdat.tipus === 'textarea') {
+            input.rows = 4;
+        } else {
+            input.type = mezoAdat.tipus === 'checkbox' ? 'checkbox' : 'text';
+        }
+
+        input.dataset.jsonPath = mezoAdat.utvonal;
+        const aktualis = ertek(mezoAdat.utvonal);
+
+        if (mezoAdat.tipus === 'checkbox') {
+            input.checked = Boolean(aktualis);
+        } else {
+            input.value = aktualis ?? '';
+        }
+
+        label.appendChild(input);
+        return label;
+    }
+
+    function hozzaadasGomb(utvonal, tipus, szoveg) {
+        const gomb = document.createElement('button');
+        gomb.type = 'button';
+        gomb.className = 'admin-hozzaadas';
+        gomb.textContent = szoveg;
+        gomb.dataset.jsonArrayAdd = utvonal;
+        gomb.dataset.jsonArrayType = tipus;
+        return gomb;
+    }
+
+    function torlesGomb(utvonal, index) {
+        const gomb = document.createElement('button');
+        gomb.type = 'button';
+        gomb.className = 'admin-kis-gomb';
+        gomb.textContent = 'Törlés';
+        gomb.dataset.jsonArrayRemove = utvonal;
+        gomb.dataset.jsonArrayIndex = String(index);
+        return gomb;
+    }
+
+    function jsonMezoValtozas(event) {
+        const mezoElem = event.target.closest('[data-json-path]');
+
+        if (!mezoElem || !allapot.adatok) {
+            return;
+        }
+
+        const ujErtek = mezoElem.type === 'checkbox' ? mezoElem.checked : mezoElem.value;
+        ertekBeallitasa(mezoElem.dataset.jsonPath, ujErtek);
+        jsonStatusz('Módosítás rögzítve az admin felületen. Élesítéshez töltsd le az adatok.json fájlt.');
+    }
+
+    function jsonListaKattintas(event) {
+        const hozzaadas = event.target.closest('[data-json-array-add]');
+        const torles = event.target.closest('[data-json-array-remove]');
+
+        if (hozzaadas) {
+            const lista = ertek(hozzaadas.dataset.jsonArrayAdd);
+
+            if (Array.isArray(lista)) {
+                lista.push(alapElem(hozzaadas.dataset.jsonArrayType));
+                adminJsonRenderelese();
+                jsonStatusz('Új elem hozzáadva. Élesítéshez töltsd le az adatok.json fájlt.');
+            }
+        }
+
+        if (torles) {
+            const lista = ertek(torles.dataset.jsonArrayRemove);
+            const index = Number.parseInt(torles.dataset.jsonArrayIndex, 10);
+
+            if (Array.isArray(lista) && Number.isFinite(index)) {
+                lista.splice(index, 1);
+                adminJsonRenderelese();
+                jsonStatusz('Elem törölve. Élesítéshez töltsd le az adatok.json fájlt.');
+            }
+        }
+    }
+
+    function alapElem(tipus) {
+        if (tipus === 'szolgaltatasKartya') {
+            return { cim: 'Új szolgáltatás', leiras: '', szeles: false };
+        }
+
+        if (tipus === 'galeriaKep') {
+            return { src: '', alt: '' };
+        }
+
+        return '';
+    }
+
+    function adatokLetoltese() {
+        if (!allapot.adatok) {
+            jsonStatusz('Nincs letölthető adat.', true);
+            return;
+        }
+
+        const blob = new Blob([`${JSON.stringify(allapot.adatok, null, 4)}\n`], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'adatok.json';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
+        jsonStatusz('Az adatok.json letöltve. Ezt a fájlt töltsd fel GitHubra a régi helyére.');
+    }
+
+    function adatokBetolteseFajlbol(event) {
+        const fajl = event.target.files?.[0];
+
+        if (!fajl) {
+            return;
+        }
+
+        const olvaso = new FileReader();
+        olvaso.addEventListener('load', () => {
+            try {
+                allapot.adatok = JSON.parse(String(olvaso.result || '{}'));
+                adminJsonRenderelese();
+                jsonStatusz('JSON betöltve. Módosítás után töltsd le újra az adatok.json fájlt.');
+            } catch (error) {
+                jsonStatusz(`Nem sikerült beolvasni a JSON fájlt. ${error.message}`, true);
+            }
+        });
+        olvaso.readAsText(fajl);
+    }
+
+    function ertek(utvonal) {
+        return utvonalReszei(utvonal).reduce((aktualis, kulcs) => {
+            if (aktualis == null) {
+                return undefined;
+            }
+
+            return aktualis[kulcs];
+        }, allapot.adatok);
+    }
+
+    function ertekBeallitasa(utvonal, ujErtek) {
+        const reszek = utvonalReszei(utvonal);
+        const utolso = reszek.pop();
+        let aktualis = allapot.adatok;
+
+        reszek.forEach(kulcs => {
+            if (aktualis[kulcs] == null) {
+                aktualis[kulcs] = {};
+            }
+
+            aktualis = aktualis[kulcs];
+        });
+
+        aktualis[utolso] = ujErtek;
+    }
+
+    function utvonalReszei(utvonal) {
+        return String(utvonal).split('.').map(resz => {
+            const szam = Number.parseInt(resz, 10);
+            return String(szam) === resz ? szam : resz;
+        });
+    }
+
+    function jsonStatusz(szoveg, hiba = false) {
+        const statusz = document.getElementById('admin-json-status');
+
+        if (!statusz) {
+            return;
+        }
+
+        statusz.textContent = szoveg;
+        statusz.classList.toggle('hiba', hiba);
+    }
+})();

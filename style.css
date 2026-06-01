@@ -1122,6 +1122,17 @@ select.urlap-mezo:invalid {
     margin-top: 28px;
 }
 
+.admin-json-panel {
+    margin-top: 28px;
+}
+
+.admin-json-akcio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
 .admin-auth-panel {
     margin: 0 auto;
 }
@@ -1731,7 +1742,7 @@ select.urlap-mezo:invalid {
     }
 
     .admin-json-akcio {
-        display: none;
+        display: grid;
     }
 
     .admin-jelszo-form {
