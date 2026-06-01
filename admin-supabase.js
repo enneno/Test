@@ -1,5 +1,5 @@
 (function () {
-    const ADMIN_EMAIL = 'llevisimon@mail.com';
+    const ADMIN_EMAIL = 'llevisimon@gmail.com';
     const FOGLALAS_OLDAL_MERET = 10;
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
