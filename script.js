@@ -175,7 +175,7 @@ function normalizaltUtvonal(utvonal) {
 }
 
 function adatokBetoltese() {
-    return fetch('/adatok.json', { cache: 'no-cache' })
+    return fetch(`/adatok.json?v=${Date.now()}`, { cache: 'no-store' })
         .then(response => response.ok ? response.json() : null)
         .catch(() => null);
 }
@@ -557,6 +557,37 @@ function lablecAdatokAlkalmazasa(adatok) {
 
     if (instagramPopup && kapcsolat?.instagramUzenet) {
         instagramPopup.href = kapcsolat.instagramUzenet;
+    }
+
+    onlineTelefonLathatosagAlkalmazasa();
+}
+
+async function onlineTelefonLathatosagAlkalmazasa() {
+    const telefonLink = document.querySelector('.footer-kapcsolat a[href^="tel:"]');
+    const config = window.LUMI_SUPABASE;
+    const supabaseLib = window.supabase;
+
+    if (!telefonLink || !config?.url || !config?.publishableKey || !supabaseLib?.createClient) {
+        return;
+    }
+
+    try {
+        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const { data, error } = await kliens
+            .from('site_settings')
+            .select('value')
+            .eq('key', 'telefon_lathato')
+            .maybeSingle();
+
+        if (error || !data) {
+            return;
+        }
+
+        const lathato = data.value?.visible !== false;
+        telefonLink.hidden = !lathato;
+        telefonLink.style.display = lathato ? '' : 'none';
+    } catch (_error) {
+        // Ha az online beallitas meg nincs elesitve, a JSON szerinti alapertek marad.
     }
 }
 

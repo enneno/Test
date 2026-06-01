@@ -58,9 +58,15 @@ create table if not exists public.bookings (
     note text default '',
     starts_at timestamptz not null,
     ends_at timestamptz not null,
-    status text not null default 'pending' check (status in ('pending', 'confirmed', 'cancelled')),
+    status text not null default 'pending' check (status in ('pending', 'confirmed', 'done', 'cancelled')),
     created_at timestamptz not null default now(),
     check (ends_at > starts_at)
+);
+
+create table if not exists public.site_settings (
+    key text primary key,
+    value jsonb not null default '{}'::jsonb,
+    updated_at timestamptz not null default now()
 );
 
 do $$
@@ -107,17 +113,28 @@ begin
     end if;
 end $$;
 
+do $$
+begin
+    alter table public.bookings
+        drop constraint if exists bookings_status_check;
+
+    alter table public.bookings
+        add constraint bookings_status_check
+        check (status in ('pending', 'confirmed', 'done', 'cancelled'));
+end $$;
+
 alter table public.services enable row level security;
 alter table public.availability_rules enable row level security;
 alter table public.availability_windows enable row level security;
 alter table public.blocked_times enable row level security;
 alter table public.bookings enable row level security;
+alter table public.site_settings enable row level security;
 
 drop policy if exists "public can read active services" on public.services;
 create policy "public can read active services"
     on public.services for select
     to anon
-    using (active = true and booking_enabled = true);
+    using (active = true);
 
 drop policy if exists "admin can manage services" on public.services;
 create policy "admin can manage services"
@@ -150,6 +167,19 @@ create policy "admin can manage blocked times"
 drop policy if exists "admin can manage bookings" on public.bookings;
 create policy "admin can manage bookings"
     on public.bookings for all
+    to authenticated
+    using (true)
+    with check (true);
+
+drop policy if exists "public can read site settings" on public.site_settings;
+create policy "public can read site settings"
+    on public.site_settings for select
+    to anon, authenticated
+    using (true);
+
+drop policy if exists "admin can manage site settings" on public.site_settings;
+create policy "admin can manage site settings"
+    on public.site_settings for all
     to authenticated
     using (true)
     with check (true);
@@ -313,6 +343,8 @@ grant select, insert, update, delete on public.availability_rules to authenticat
 grant select, insert, update, delete on public.availability_windows to authenticated;
 grant select, insert, update, delete on public.blocked_times to authenticated;
 grant select, insert, update, delete on public.bookings to authenticated;
+grant select on public.site_settings to anon, authenticated;
+grant insert, update, delete on public.site_settings to authenticated;
 
 insert into public.services (name, price_text, duration_minutes, booking_enabled, active, sort_order)
 values
@@ -338,3 +370,7 @@ on conflict (name) do update set
     booking_enabled = excluded.booking_enabled,
     active = excluded.active,
     sort_order = excluded.sort_order;
+
+insert into public.site_settings (key, value)
+values ('telefon_lathato', '{"visible": true}'::jsonb)
+on conflict (key) do nothing;

@@ -27,9 +27,46 @@ end $$;
 
 alter table public.availability_windows enable row level security;
 
+create table if not exists public.site_settings (
+    key text primary key,
+    value jsonb not null default '{}'::jsonb,
+    updated_at timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;
+
+drop policy if exists "public can read active services" on public.services;
+create policy "public can read active services"
+    on public.services for select
+    to anon
+    using (active = true);
+
+do $$
+begin
+    alter table public.bookings
+        drop constraint if exists bookings_status_check;
+
+    alter table public.bookings
+        add constraint bookings_status_check
+        check (status in ('pending', 'confirmed', 'done', 'cancelled'));
+end $$;
+
 drop policy if exists "admin can manage availability windows" on public.availability_windows;
 create policy "admin can manage availability windows"
     on public.availability_windows for all
+    to authenticated
+    using (true)
+    with check (true);
+
+drop policy if exists "public can read site settings" on public.site_settings;
+create policy "public can read site settings"
+    on public.site_settings for select
+    to anon, authenticated
+    using (true);
+
+drop policy if exists "admin can manage site settings" on public.site_settings;
+create policy "admin can manage site settings"
+    on public.site_settings for all
     to authenticated
     using (true)
     with check (true);
@@ -118,5 +155,11 @@ as $$
 $$;
 
 grant select, insert, update, delete on public.availability_windows to authenticated;
+grant select on public.site_settings to anon, authenticated;
+grant insert, update, delete on public.site_settings to authenticated;
 grant execute on function public.get_available_slots(uuid, date) to anon, authenticated;
 grant execute on function public.get_available_dates(uuid, date, integer) to anon, authenticated;
+
+insert into public.site_settings (key, value)
+values ('telefon_lathato', '{"visible": true}'::jsonb)
+on conflict (key) do nothing;

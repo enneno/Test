@@ -9,12 +9,15 @@ Ez létrehozza:
 - dátumhoz kötött foglalható idősávok
 - tiltott időszakok
 - foglalások
+- online oldalbeállítások, például a telefonszám láthatósága
 - átfedés elleni védelem
 - publikus foglalási függvények
 
 Az adminban az `Árlista` fül az élő árlista és a foglalási szolgáltatáslista egyszerre. A `Foglalható dátumok` fülön konkrét dátumokra tudod felvenni, mikor dolgozol.
 
 A foglalási oldal a `get_available_dates` függvénnyel csak azokat a dátumokat listázza, ahol az adott szolgáltatáshoz ténylegesen maradt szabad időpont.
+
+Ha a régi adatbázis már fut, elég a gyökérben lévő `supabase-date-availability-migration.sql` friss tartalmát újra futtatni. Ez hozzáadja a `Kész` foglalási státuszt és az online telefonszám láthatóság beállítását is.
 
 ## 2. Admin belépés
 

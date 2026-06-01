@@ -60,7 +60,7 @@
 
         const { data, error } = await allapot.kliens
             .from('services')
-            .select('id,name,price_text,duration_minutes')
+            .select('id,name,description,price_text,duration_minutes')
             .eq('active', true)
             .eq('booking_enabled', true)
             .order('sort_order', { ascending: true });
@@ -117,7 +117,7 @@
         datumok.forEach(datum => {
             const option = document.createElement('option');
             option.value = datum.work_date;
-            option.textContent = datum.label || datumFelirat(datum.work_date);
+            option.textContent = datumFelirat(datum.work_date);
             elemek.datum.appendChild(option);
         });
 
@@ -242,7 +242,7 @@
     }
 
     function szolgaltatasFelirat(szolgaltatas) {
-        const reszek = [szolgaltatas.name];
+        const reszek = [szolgaltatas.description?.trim() || szolgaltatas.name];
 
         if (szolgaltatas.price_text) {
             reszek.push(szolgaltatas.price_text);

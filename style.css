@@ -108,17 +108,17 @@ header {
  2. KEZDŐLAP ELEMEI (Kártyák, stb.)
 ========================================= */
 #hero {
-    width: min(1400px, calc(100% - 40px));
-    margin: 12px auto 0;
+    width: min(1240px, calc(100% - 48px));
+    margin: 4px auto 0;
     background-image: linear-gradient(90deg, rgba(43, 37, 33, 0.04) 0%, rgba(43, 37, 33, 0.12) 42%, rgba(43, 37, 33, 0.74) 100%), url('kepek/hatter2.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    aspect-ratio: 1179 / 500;
+    aspect-ratio: 1179 / 420;
     position: relative;
     padding: 0;
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 28px;
+    border-radius: 24px;
     box-shadow: 0 24px 58px rgba(78, 54, 48, 0.14);
     overflow: hidden;
 }
@@ -147,7 +147,7 @@ header {
 
 .hero-content h1 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(38px, 7.2vw, 104px);
+    font-size: clamp(36px, 6vw, 84px);
     font-weight: 700;
     text-align: right;
     color: white;
@@ -159,7 +159,7 @@ header {
 
 .hero-content p {
     max-width: 460px;
-    font-size: clamp(14px, 1.65vw, 24px);
+    font-size: clamp(13px, 1.35vw, 20px);
     font-weight: 400;
     text-align: right;
     line-height: 1.45;
@@ -191,7 +191,7 @@ body {
 }
 
 section {
-    padding: 30px 20px 40px;
+    padding: 24px 20px 34px;
     max-width: 1400px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -212,18 +212,18 @@ h1 {
 h2 {
     font-family: 'Cormorant Garamond', serif;
     color: var(--akcentus);
-    font-size: 2.8em;
+    font-size: 2.45em;
     font-weight: 700;
     text-align: center;
     margin-top: 0;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
     letter-spacing: 1.2px;
     text-transform: uppercase;
 }
 
 .szekcio-leiras {
     max-width: 620px;
-    margin: 0 auto 50px;
+    margin: 0 auto 34px;
     color: rgba(23, 19, 13, 0.62);
     font-size: 17px;
     font-weight: 400;
@@ -255,7 +255,7 @@ h2 {
 }
 
 .bemutatkozas {
-    padding-top: 46px;
+    padding-top: 32px;
 }
 
 .bemutatkozas-belso {
@@ -265,7 +265,7 @@ h2 {
     gap: clamp(28px, 5vw, 70px);
     max-width: 1120px;
     margin: 0 auto;
-    padding: 34px;
+    padding: 28px;
     background: rgba(255, 250, 244, 0.74);
     border: 1px solid rgba(185, 133, 143, 0.18);
     border-radius: 24px;
@@ -360,8 +360,8 @@ h2 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     /* Létrehoz 3 egyenlő oszlopot */
-    gap: 30px;
-    max-width: 1400px;
+    gap: 22px;
+    max-width: 1160px;
     margin: 0 auto;
     padding: 0;
     width: 95%;
@@ -373,7 +373,7 @@ h2 {
     background-color: var(--kartya);
     border: 1px solid rgba(185, 133, 143, 0.16);
     border-radius: 20px;
-    padding: 40px;
+    padding: 30px;
     box-shadow: 0 18px 45px rgba(78, 54, 48, 0.07);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
@@ -400,7 +400,7 @@ h2 {
 /* Kártyán belüli betűstílusok */
 .bento-kartya h3 {
     color: var(--barna);
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: 15px;
@@ -409,7 +409,7 @@ h2 {
 
 .bento-kartya p {
     color: var(--szoveg);
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 300;
     letter-spacing: 1.1px;
     line-height: 1.6;
@@ -1208,6 +1208,30 @@ select.urlap-mezo:invalid {
     margin-top: 28px;
 }
 
+.admin-lebego-mentes {
+    position: fixed;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    z-index: 1100;
+    min-height: 48px;
+    padding: 0 28px;
+    color: #fffaf4;
+    background: var(--akcentus);
+    border: 1px solid rgba(255, 250, 244, 0.36);
+    border-radius: 999px;
+    box-shadow: 0 10px 24px rgba(78, 54, 48, 0.18);
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.admin-lebego-mentes[hidden] {
+    display: none;
+}
+
 .admin-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -1295,11 +1319,27 @@ select.urlap-mezo:invalid {
     width: min(190px, 46vw);
 }
 
+.admin-db-statusz-fix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .admin-db-grid,
 .admin-db-form {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
+}
+
+.admin-db-grid-szolgaltatas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-ido-par {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(58px, 1fr));
+    gap: 8px;
 }
 
 .admin-db-form-nagy {
@@ -1471,6 +1511,12 @@ select.urlap-mezo:invalid {
     font-weight: 700;
 }
 
+.admin-mezo span {
+    color: rgba(93, 77, 70, 0.62);
+    font-size: 11px;
+    font-weight: 600;
+}
+
 .admin-mezo-szeles {
     grid-column: 1 / -1;
 }
@@ -1574,6 +1620,21 @@ select.urlap-mezo:invalid {
 .admin-kis-gomb:hover {
     color: #fffaf4;
     background: var(--akcentus);
+}
+
+.admin-kis-gomb:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.admin-lapozo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+    color: var(--barna);
+    font-weight: 800;
 }
 
 /* A HAMBURGER GOMB */
@@ -1729,6 +1790,7 @@ select.urlap-mezo:invalid {
     .admin-grid,
     .admin-arlista-sor,
     .admin-db-grid,
+    .admin-db-grid-szolgaltatas,
     .admin-db-form {
         grid-template-columns: 1fr;
     }
@@ -1753,6 +1815,14 @@ select.urlap-mezo:invalid {
     .admin-hozzaadas,
     .admin-db-statusz {
         width: 100%;
+    }
+
+    .admin-lebego-mentes {
+        right: 50%;
+        bottom: calc(16px + env(safe-area-inset-bottom));
+        min-height: 46px;
+        width: min(260px, calc(100% - 32px));
+        transform: translateX(50%);
     }
 
     .admin-tabs {
@@ -1825,8 +1895,9 @@ select.urlap-mezo:invalid {
 
     #hero {
         width: calc(100% - 24px);
-        margin-top: 8px;
+        margin-top: 0;
         border-radius: 22px;
+        aspect-ratio: 1179 / 460;
     }
 
     .hero-content {
@@ -1848,7 +1919,8 @@ select.urlap-mezo:invalid {
 
     .bento-racs {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 14px;
+        width: min(92%, 560px);
     }
 
     /* 2. A széles kártyák "visszavágása" */
@@ -1858,7 +1930,7 @@ select.urlap-mezo:invalid {
 
     /* 3. Kártyák belső terének szűkítése */
     .bento-kartya {
-        padding: 25px;
+        padding: 22px;
     }
 
     /* 4. Betűméretek finomhangolása mobilra */

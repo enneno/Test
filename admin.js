@@ -1,6 +1,7 @@
 (function () {
     const allapot = {
-        adatok: null
+        adatok: null,
+        modositva: false
     };
 
     if (document.readyState === 'loading') {
@@ -22,6 +23,8 @@
 
         document.getElementById('admin-adatok-letoltes')?.addEventListener('click', adatokLetoltese);
         document.getElementById('admin-adatok-betoltes')?.addEventListener('change', adatokBetolteseFajlbol);
+        window.lumiAdminAdatokLetoltese = adatokLetoltese;
+        window.lumiAdminAdatokModositva = () => allapot.modositva;
 
         adatokBetolteseAdminhoz();
     }
@@ -271,6 +274,7 @@
 
         const ujErtek = mezoElem.type === 'checkbox' ? mezoElem.checked : mezoElem.value;
         ertekBeallitasa(mezoElem.dataset.jsonPath, ujErtek);
+        allapot.modositva = true;
         jsonStatusz('Módosítás rögzítve az admin felületen. Élesítéshez töltsd le az adatok.json fájlt.');
     }
 
@@ -283,6 +287,7 @@
 
             if (Array.isArray(lista)) {
                 lista.push(alapElem(hozzaadas.dataset.jsonArrayType));
+                allapot.modositva = true;
                 adminJsonRenderelese();
                 jsonStatusz('Új elem hozzáadva. Élesítéshez töltsd le az adatok.json fájlt.');
             }
@@ -294,6 +299,7 @@
 
             if (Array.isArray(lista) && Number.isFinite(index)) {
                 lista.splice(index, 1);
+                allapot.modositva = true;
                 adminJsonRenderelese();
                 jsonStatusz('Elem törölve. Élesítéshez töltsd le az adatok.json fájlt.');
             }
@@ -326,6 +332,7 @@
         link.click();
         link.remove();
         URL.revokeObjectURL(link.href);
+        allapot.modositva = false;
         jsonStatusz('Az adatok.json letöltve. Ezt a fájlt töltsd fel GitHubra a régi helyére.');
     }
 
@@ -340,6 +347,7 @@
         olvaso.addEventListener('load', () => {
             try {
                 allapot.adatok = JSON.parse(String(olvaso.result || '{}'));
+                allapot.modositva = false;
                 adminJsonRenderelese();
                 jsonStatusz('JSON betöltve. Módosítás után töltsd le újra az adatok.json fájlt.');
             } catch (error) {
