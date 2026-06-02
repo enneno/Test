@@ -629,6 +629,10 @@
         kartya.className = 'admin-db-kartya';
         kartya.dataset.id = foglalas.id;
         kartya.dataset.tipus = 'booking';
+        kartya.dataset.eredetiStatusz = foglalas.status || '';
+        kartya.dataset.eredetiDatum = datumInputErtek(foglalas.starts_at);
+        kartya.dataset.eredetiKezdes = idoInputErtek(foglalas.starts_at);
+        kartya.dataset.eredetiVege = idoInputErtek(foglalas.ends_at);
 
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
@@ -657,6 +661,7 @@
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Vége<input type="time" data-idopont-mezo="end_time" value="${attr(idoInputErtek(foglalas.ends_at))}" disabled></label>
+                <label class="admin-mezo admin-mezo-szeles">Üzenet az emailhez<textarea data-idopont-mezo="admin_message" placeholder="Opcionális. Lemondásnál vagy időpontmódosításnál bekerül a vendég emailjébe." disabled></textarea></label>
             </div>
             <div class="admin-db-akciok">
                 <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
@@ -707,6 +712,9 @@
 
         onlineStatusz('Foglalási módosítások mentése...');
 
+        let emailKuldesek = 0;
+        let emailHibak = 0;
+
         for (const kartya of kartyak) {
             const adatok = idopontModositasAdatok(kartya);
 
@@ -744,10 +752,86 @@
                 onlineStatusz(`Nem sikerült menteni az egyik bejegyzést. ${error.message || ''}`, true);
                 return;
             }
+
+            if (kartya.dataset.tipus === 'booking') {
+                const emailModositas = foglalasEmailModositas(kartya, modositas);
+
+                if (emailModositas) {
+                    const emailEredmeny = await foglalasModositasEmailKuldese(kartya.dataset.id, emailModositas);
+                    emailKuldesek += 1;
+
+                    if (!emailEredmeny.ok) {
+                        emailHibak += 1;
+                    }
+                }
+            }
         }
 
-        onlineStatusz('Foglalási módosítások mentve. A szabad idősávok ehhez igazodnak.');
+        if (emailHibak > 0) {
+            onlineStatusz(`Foglalási módosítások mentve, de ${emailHibak} email értesítés nem ment ki.`, true);
+        } else if (emailKuldesek > 0) {
+            onlineStatusz(`Foglalási módosítások mentve, ${emailKuldesek} email értesítés elküldve.`);
+        } else {
+            onlineStatusz('Foglalási módosítások mentve. A szabad idősávok ehhez igazodnak.');
+        }
+
         foglalasokBetoltese();
+    }
+
+    function foglalasEmailModositas(kartya, modositas) {
+        const statuszValtozott = kartya.dataset.eredetiStatusz !== modositas.status;
+        const idopontValtozott = kartya.dataset.eredetiDatum !== idopontMezo(kartya, 'date')?.value
+            || kartya.dataset.eredetiKezdes !== idopontMezo(kartya, 'start_time')?.value
+            || kartya.dataset.eredetiVege !== idopontMezo(kartya, 'end_time')?.value;
+
+        if (!statuszValtozott && !idopontValtozott) {
+            return null;
+        }
+
+        if (statuszValtozott && modositas.status === 'done' && !idopontValtozott) {
+            return null;
+        }
+
+        return {
+            status_changed: statuszValtozott,
+            time_changed: idopontValtozott,
+            status: modositas.status,
+            message: idopontMezo(kartya, 'admin_message')?.value.trim() || ''
+        };
+    }
+
+    async function foglalasModositasEmailKuldese(bookingId, modositas) {
+        if (!bookingId || !allapot.kliens.functions?.invoke) {
+            return { ok: false, skipped: true };
+        }
+
+        try {
+            const invokeOptions = {
+                body: {
+                    booking_id: bookingId,
+                    mode: 'admin_update',
+                    notification: modositas
+                }
+            };
+
+            if (allapot.session?.access_token) {
+                invokeOptions.headers = {
+                    Authorization: `Bearer ${allapot.session.access_token}`
+                };
+            }
+
+            const { data, error } = await allapot.kliens.functions.invoke('send-booking-update-email', invokeOptions);
+
+            if (error) {
+                console.warn('Lumi Nails módosítás email hiba:', error);
+                return { ok: false, error };
+            }
+
+            return data || { ok: false };
+        } catch (error) {
+            console.warn('Lumi Nails módosítás email hiba:', error);
+            return { ok: false, error };
+        }
     }
 
     async function foglalasListaKattintas(event) {

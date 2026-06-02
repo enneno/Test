@@ -14,6 +14,10 @@ serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const bookingId = String(body.booking_id || "").trim();
+    const mode = String(body.mode || "new_booking").trim();
+    const notification = body.notification && typeof body.notification === "object"
+      ? body.notification as Record<string, unknown>
+      : {};
 
     if (!bookingId) {
       return json({ ok: false, error: "Missing booking_id" }, 400);
@@ -25,6 +29,7 @@ serve(async (req) => {
     const ownerEmail = Deno.env.get("OWNER_EMAIL") || "szofipetras087@gmail.com";
     const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
 
     if (!supabaseUrl || !serviceRoleKey) {
       return json({ ok: false, error: "Missing Supabase environment variables" }, 500);
@@ -35,9 +40,17 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
+    if (mode === "admin_update") {
+      const adminOk = await isAdminRequest(req, supabase, adminEmail);
+
+      if (!adminOk) {
+        return json({ ok: false, error: "not_authorized" }, 401);
+      }
+    }
+
     const { data: booking, error } = await supabase
       .from("bookings")
-      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,services(name,price_text)")
+      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,services(name,price_text)")
       .eq("id", bookingId)
       .single();
 
@@ -67,6 +80,50 @@ serve(async (req) => {
     const ownerSubject = `Új Lumi Nails foglalás - ${booking.customer_name}`;
     const customerSubject = "Lumi Nails foglalásod beérkezett";
     const instagramUrl = "https://www.instagram.com/luminails.xx/";
+
+    if (mode === "admin_update") {
+      const statusChanged = Boolean(notification.status_changed);
+      const timeChanged = Boolean(notification.time_changed);
+      const status = String(notification.status || booking.status || "");
+      const update = adminUpdateMessage(status, statusChanged, timeChanged);
+
+      if (!update) {
+        return json({ ok: true, email: "skipped" });
+      }
+
+      const customerHtml = pageHtml(`
+        <h1>${escapeHtml(update.title)}</h1>
+        <p>Szia ${escapeHtml(booking.customer_name)}!</p>
+        <p>${escapeHtml(update.message)}</p>
+        ${detailTable([
+          ["Szolgáltatás", serviceName],
+          ["Időpont", appointmentText],
+          ["Helyszín", "2800 Tatabánya, Kós Károly út"],
+        ])}
+        <p class="muted">Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
+        <p style="margin:22px 0;">
+          <a href="${instagramUrl}" style="display:inline-block;padding:12px 18px;background:#b9858f;color:#fffaf4;border-radius:999px;text-decoration:none;font-weight:700;">Instagram üzenet</a>
+        </p>
+        <p>Lumi Nails</p>
+      `);
+
+      const customerText = [
+        `Szia ${booking.customer_name}!`,
+        "",
+        update.message,
+        "",
+        `Szolgáltatás: ${serviceName}`,
+        `Időpont: ${appointmentText}`,
+        "Helyszín: 2800 Tatabánya, Kós Károly út",
+        "",
+        `Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
+        "",
+        "Lumi Nails",
+      ].join("\n");
+
+      await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText);
+      return json({ ok: true, email: "admin_update_sent" });
+    }
 
     const ownerHtml = pageHtml(`
       <h1>Új foglalás érkezett</h1>
@@ -206,6 +263,61 @@ async function sendEmail(
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function isAdminRequest(req: Request, supabase: ReturnType<typeof createClient>, adminEmail: string) {
+  const authHeader = req.headers.get("Authorization") || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+
+  if (!token) {
+    return false;
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data.user?.email) {
+    return false;
+  }
+
+  return data.user.email.toLowerCase() === adminEmail.toLowerCase();
+}
+
+function adminUpdateMessage(status: string, statusChanged: boolean, timeChanged: boolean) {
+  if (status === "cancelled") {
+    return {
+      subject: "Lumi Nails időpontod lemondva",
+      title: "Időpont lemondva",
+      message: "A foglalásod lemondásra került. Ha új időpontot szeretnél egyeztetni, kérlek írj Instagramon.",
+    };
+  }
+
+  if (status === "confirmed") {
+    return {
+      subject: timeChanged ? "Lumi Nails időpontod visszaigazolva és módosítva" : "Lumi Nails időpontod visszaigazolva",
+      title: timeChanged ? "Időpont visszaigazolva és módosítva" : "Időpont visszaigazolva",
+      message: timeChanged
+        ? "A foglalásod vissza lett igazolva, és az időpont adatai módosultak. Az aktuális részleteket lent találod."
+        : "A foglalásod vissza lett igazolva. Az aktuális részleteket lent találod.",
+    };
+  }
+
+  if (timeChanged) {
+    return {
+      subject: "Lumi Nails időpontod módosult",
+      title: "Időpont módosítva",
+      message: "Az időpontod adatai módosultak. Az aktuális részleteket lent találod.",
+    };
+  }
+
+  if (statusChanged && status === "pending") {
+    return {
+      subject: "Lumi Nails foglalásod státusza módosult",
+      title: "Foglalás státusza módosult",
+      message: "A foglalásod státusza módosult. Az aktuális részleteket lent találod.",
+    };
+  }
+
+  return null;
 }
 
 function calendarEvent(adatok: {

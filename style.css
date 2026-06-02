@@ -1359,11 +1359,17 @@ select.urlap-mezo:invalid {
     font-size: 12px;
 }
 
-.admin-idopont-szerkeszto .admin-mezo input {
+.admin-idopont-szerkeszto .admin-mezo input,
+.admin-idopont-szerkeszto .admin-mezo textarea {
     width: 100%;
     min-width: 0;
     min-height: 38px;
     padding: 8px 10px;
+}
+
+.admin-idopont-szerkeszto .admin-mezo textarea {
+    min-height: 72px;
+    resize: vertical;
 }
 
 .admin-idopont-szerkeszto .admin-mezo-szeles {
@@ -2449,7 +2455,8 @@ select.urlap-mezo:invalid {
         grid-column: 1 / -1;
     }
 
-    .admin-idopont-szerkeszto .admin-mezo input {
+    .admin-idopont-szerkeszto .admin-mezo input,
+    .admin-idopont-szerkeszto .admin-mezo textarea {
         width: 100%;
         inline-size: 100%;
         max-inline-size: 100%;
@@ -2457,6 +2464,10 @@ select.urlap-mezo:invalid {
         min-height: 36px;
         padding: 6px 7px;
         font-size: 12.5px;
+    }
+
+    .admin-idopont-szerkeszto .admin-mezo textarea {
+        min-height: 64px;
     }
 
     .admin-idosav-kartya {

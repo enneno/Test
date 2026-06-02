@@ -37,6 +37,8 @@ Foglalás után két email megy ki:
 - neked egy részletes értesítés az új foglalásról, benne egy `.ics` naptár csatolmánnyal
 - a vendégnek egy visszaigazoló email a foglalás adataival
 
+Admin módosítás után a vendég automatikus emailt kap, ha a foglalás vissza lett igazolva, le lett mondva, vagy az időpont dátuma/kezdése/vége módosult. A `Kész` státusz önmagában nem küld emailt.
+
 Az `.ics` csatolmányt iPhone-on a Mail/Naptár általában eseményként tudja megnyitni, így gyorsan fel tudod venni a saját naptáradba.
 
 Szükséges Supabase secrets:
@@ -61,6 +63,7 @@ supabase secrets set OWNER_EMAIL=szofipetras087@gmail.com
 supabase secrets set FROM_EMAIL="Lumi Nails <foglalas@luminails.hu>"
 supabase secrets set REPLY_TO_EMAIL=szofipetras087@gmail.com
 supabase functions deploy send-booking-email
+supabase functions deploy send-booking-update-email
 ```
 
 Ha még nincs Resend domain hitelesítés, ideiglenesen ezt használd:
