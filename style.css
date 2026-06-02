@@ -1438,33 +1438,40 @@ select.urlap-mezo:invalid {
 }
 
 .admin-db-grid-szolgaltatas {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(96px, 0.34fr) minmax(88px, 0.3fr);
     gap: 10px;
 }
 
-.admin-szolgaltatas-nev {
+.admin-szolgaltatas-nev,
+.admin-szolgaltatas-foglalasi-nev,
+.admin-sorrend-mezo {
     min-width: 0;
 }
 
-.admin-szolgaltatas-szamok,
-.admin-szolgaltatas-opciok {
+.admin-szolgaltatas-fej-opciok,
+.admin-szolgaltatas-szamok {
     display: grid;
-    grid-column: 1 / -1;
     align-items: end;
     gap: 8px;
 }
 
+.admin-szolgaltatas-fej-opciok {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-self: end;
+    grid-column: 2 / -1;
+}
+
+.admin-szolgaltatas-foglalasi-nev {
+    grid-column: 1 / 3;
+}
+
 .admin-szolgaltatas-szamok {
+    grid-column: 1 / -1;
     grid-template-columns: minmax(118px, 1fr) minmax(64px, 0.38fr) minmax(64px, 0.38fr);
 }
 
-.admin-szolgaltatas-opciok {
-    grid-template-columns: minmax(76px, 0.42fr) minmax(120px, 0.55fr) minmax(100px, 0.48fr);
-    align-items: center;
-}
-
 .admin-szolgaltatas-szamok .admin-mezo,
-.admin-szolgaltatas-opciok .admin-mezo {
+.admin-szolgaltatas-fej-opciok .admin-mezo {
     min-width: 0;
 }
 
@@ -1473,7 +1480,7 @@ select.urlap-mezo:invalid {
     text-align: center;
 }
 
-.admin-szolgaltatas-opciok .admin-checkbox {
+.admin-szolgaltatas-fej-opciok .admin-checkbox {
     white-space: nowrap;
 }
 
@@ -2237,33 +2244,50 @@ select.urlap-mezo:invalid {
     }
 
     .admin-db-grid-szolgaltatas {
+        grid-template-columns: minmax(0, 1fr) minmax(96px, 0.38fr);
         gap: 8px;
     }
 
+    .admin-szolgaltatas-nev {
+        grid-column: 1;
+    }
+
+    .admin-szolgaltatas-fej-opciok {
+        grid-column: 2;
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .admin-szolgaltatas-foglalasi-nev {
+        grid-column: 1;
+    }
+
+    .admin-sorrend-mezo {
+        grid-column: 2;
+    }
+
     .admin-szolgaltatas-szamok {
+        grid-column: 1 / -1;
         grid-template-columns: minmax(0, 1fr) minmax(50px, 0.34fr) minmax(50px, 0.34fr);
         gap: 6px;
     }
 
-    .admin-szolgaltatas-opciok {
-        grid-template-columns: minmax(56px, 0.42fr) minmax(0, 1fr) minmax(0, 0.8fr);
-        gap: 6px;
-    }
-
     .admin-szolgaltatas-szamok .admin-mezo input,
-    .admin-szolgaltatas-opciok .admin-mezo input {
+    .admin-szolgaltatas-fej-opciok .admin-mezo input,
+    .admin-sorrend-mezo input {
         min-height: 36px;
         padding: 7px 8px;
     }
 
-    .admin-szolgaltatas-opciok .admin-checkbox {
-        gap: 7px;
-        min-height: 36px;
-        font-size: 11.5px;
+    .admin-szolgaltatas-fej-opciok .admin-checkbox {
+        gap: 5px;
+        min-height: 28px;
+        padding: 5px 6px;
+        font-size: 10.5px;
         white-space: nowrap;
     }
 
-    .admin-szolgaltatas-opciok .admin-checkbox input[type="checkbox"] {
+    .admin-szolgaltatas-fej-opciok .admin-checkbox input[type="checkbox"] {
         flex-basis: 17px;
         width: 17px;
         height: 17px;
@@ -2853,6 +2877,12 @@ select.urlap-mezo:invalid {
 
     .social-linkek {
         justify-content: center;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+        font-size: 16px !important;
     }
 
 }
