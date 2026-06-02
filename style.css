@@ -1327,7 +1327,8 @@ select.urlap-mezo:invalid {
 
 .admin-idopont-szerkeszto {
     display: none;
-    grid-template-columns: minmax(128px, 0.9fr) repeat(2, minmax(88px, 0.55fr)) minmax(150px, 1fr);
+    grid-template-columns: minmax(132px, 1fr) repeat(2, minmax(86px, 0.52fr));
+    align-items: end;
     gap: 10px;
     margin-top: 12px;
     padding: 12px;
@@ -1346,8 +1347,14 @@ select.urlap-mezo:invalid {
 }
 
 .admin-idopont-szerkeszto .admin-mezo input {
+    width: 100%;
+    min-width: 0;
     min-height: 38px;
     padding: 8px 10px;
+}
+
+.admin-idopont-szerkeszto .admin-mezo-szeles {
+    grid-column: 1 / -1;
 }
 
 .admin-db-kartya-fej {
@@ -1432,6 +1439,42 @@ select.urlap-mezo:invalid {
 
 .admin-db-grid-szolgaltatas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.admin-szolgaltatas-nev {
+    min-width: 0;
+}
+
+.admin-szolgaltatas-szamok,
+.admin-szolgaltatas-opciok {
+    display: grid;
+    grid-column: 1 / -1;
+    align-items: end;
+    gap: 8px;
+}
+
+.admin-szolgaltatas-szamok {
+    grid-template-columns: minmax(118px, 1fr) minmax(64px, 0.38fr) minmax(64px, 0.38fr);
+}
+
+.admin-szolgaltatas-opciok {
+    grid-template-columns: minmax(76px, 0.42fr) minmax(120px, 0.55fr) minmax(100px, 0.48fr);
+    align-items: center;
+}
+
+.admin-szolgaltatas-szamok .admin-mezo,
+.admin-szolgaltatas-opciok .admin-mezo {
+    min-width: 0;
+}
+
+.admin-sorrend-mezo input,
+.admin-szolgaltatas-szamok input[type="number"] {
+    text-align: center;
+}
+
+.admin-szolgaltatas-opciok .admin-checkbox {
+    white-space: nowrap;
 }
 
 .admin-idosav-kartya {
@@ -1567,6 +1610,22 @@ select.urlap-mezo:invalid {
 
 .admin-naptar-tomeges > .admin-mezo-szeles {
     flex-basis: 260px;
+}
+
+.admin-tiltas-sor {
+    display: grid;
+    grid-template-columns: minmax(132px, 1fr) repeat(2, minmax(86px, 0.52fr));
+    align-items: end;
+    gap: 10px;
+}
+
+.admin-tiltas-sor > .admin-mezo {
+    width: auto;
+    min-width: 0;
+}
+
+.admin-tiltas-sor > .admin-mezo-szeles {
+    grid-column: 1 / -1;
 }
 
 .admin-kozos-idosav-sor {
@@ -2120,7 +2179,42 @@ select.urlap-mezo:invalid {
     }
 
     .admin-cim {
-        font-size: clamp(42px, 13vw, 58px);
+        font-size: clamp(36px, 11vw, 50px);
+    }
+
+    .admin-panel h2 {
+        font-size: 28px;
+    }
+
+    .admin-panel-fej p,
+    .admin-leiras,
+    .admin-info,
+    .admin-status,
+    .admin-db-kartya p,
+    .admin-foglalas-reszletek {
+        font-size: 12.5px;
+    }
+
+    .admin-mezo,
+    .admin-idopont-szerkeszto .admin-mezo,
+    .admin-kozos-idosav-sor .admin-mezo,
+    .admin-naptar-sor .admin-mezo,
+    .admin-idosav-kartya .admin-mezo {
+        font-size: 11.5px;
+    }
+
+    .admin-mezo input,
+    .admin-mezo textarea,
+    .admin-db-grid input,
+    .admin-db-grid select,
+    .admin-db-form input,
+    .admin-json-panel .admin-mezo input,
+    .admin-json-panel .admin-mezo textarea {
+        font-size: 13px;
+    }
+
+    .admin-db-lista {
+        gap: 10px;
     }
 
     .admin-akciok {
@@ -2140,6 +2234,44 @@ select.urlap-mezo:invalid {
     .admin-db-statusz {
         width: 100%;
         max-width: 100%;
+    }
+
+    .admin-db-grid-szolgaltatas {
+        gap: 8px;
+    }
+
+    .admin-szolgaltatas-szamok {
+        grid-template-columns: minmax(0, 1fr) minmax(50px, 0.34fr) minmax(50px, 0.34fr);
+        gap: 6px;
+    }
+
+    .admin-szolgaltatas-opciok {
+        grid-template-columns: minmax(56px, 0.42fr) minmax(0, 1fr) minmax(0, 0.8fr);
+        gap: 6px;
+    }
+
+    .admin-szolgaltatas-szamok .admin-mezo input,
+    .admin-szolgaltatas-opciok .admin-mezo input {
+        min-height: 36px;
+        padding: 7px 8px;
+    }
+
+    .admin-szolgaltatas-opciok .admin-checkbox {
+        gap: 7px;
+        min-height: 36px;
+        font-size: 11.5px;
+        white-space: nowrap;
+    }
+
+    .admin-szolgaltatas-opciok .admin-checkbox input[type="checkbox"] {
+        flex-basis: 17px;
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        min-height: 17px;
+        max-width: 17px;
+        max-height: 17px;
+        padding: 0;
     }
 
     .admin-panel-akciok {
@@ -2266,12 +2398,23 @@ select.urlap-mezo:invalid {
 
     .admin-idopont-szerkeszto {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        padding: 12px;
+        padding: 10px;
         gap: 8px;
     }
 
+    .admin-idopont-szerkeszto .admin-mezo:first-child,
     .admin-idopont-szerkeszto .admin-mezo-szeles {
         grid-column: 1 / -1;
+    }
+
+    .admin-idopont-szerkeszto .admin-mezo input {
+        width: 100%;
+        inline-size: 100%;
+        max-inline-size: 100%;
+        min-width: 0;
+        min-height: 36px;
+        padding: 6px 7px;
+        font-size: 12.5px;
     }
 
     .admin-idosav-kartya {
@@ -2301,6 +2444,10 @@ select.urlap-mezo:invalid {
     .admin-naptar-fej input[type="month"],
     .admin-idosav-kartya input[type="date"],
     .admin-idosav-kartya input[type="time"],
+    .admin-idopont-szerkeszto input[type="date"],
+    .admin-idopont-szerkeszto input[type="time"],
+    .admin-tiltas-sor input[type="date"],
+    .admin-tiltas-sor input[type="time"],
     #admin-idosav-naptar input[type="month"],
     #admin-idosav-naptar input[type="time"],
     #admin-idosav-naptar input[type="number"] {
@@ -2331,6 +2478,33 @@ select.urlap-mezo:invalid {
     .admin-naptar-lista-fej {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .admin-tiltas-sor {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0;
+    }
+
+    .admin-tiltas-sor > .admin-mezo {
+        width: auto;
+        max-width: 100%;
+    }
+
+    .admin-tiltas-sor > .admin-mezo:first-child,
+    .admin-tiltas-sor > .admin-mezo-szeles {
+        grid-column: 1 / -1;
+    }
+
+    .admin-tiltas-sor .admin-mezo input {
+        width: 100%;
+        inline-size: 100%;
+        max-inline-size: 100%;
+        min-width: 0;
+        min-height: 36px;
+        padding: 6px 7px;
+        font-size: 12.5px;
     }
 
     .admin-naptar-fej {

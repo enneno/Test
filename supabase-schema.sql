@@ -197,7 +197,6 @@ as $$
         where id = p_service_id
             and active = true
             and booking_enabled = true
-            and duration_minutes > 0
     ),
     windows as (
         select *
@@ -208,12 +207,18 @@ as $$
     slots as (
         select
             gs as starts_at,
-            gs + make_interval(mins => svc.duration_minutes) as ends_at
+            gs + make_interval(mins => duration.effective_minutes) as ends_at
         from svc
         cross join windows
+        cross join lateral (
+            select case
+                when svc.duration_minutes > 0 then svc.duration_minutes
+                else windows.slot_step_minutes
+            end as effective_minutes
+        ) duration
         cross join lateral generate_series(
             ((p_date::text || ' ' || windows.start_time::text)::timestamp at time zone 'Europe/Budapest'),
-            ((p_date::text || ' ' || windows.end_time::text)::timestamp at time zone 'Europe/Budapest') - make_interval(mins => svc.duration_minutes),
+            ((p_date::text || ' ' || windows.end_time::text)::timestamp at time zone 'Europe/Budapest') - make_interval(mins => duration.effective_minutes),
             make_interval(mins => windows.slot_step_minutes)
         ) as gs
     )
@@ -294,6 +299,18 @@ begin
 
     if v_duration is null then
         raise exception 'Ez a szolgáltatás jelenleg nem foglalható.';
+    end if;
+
+    if v_duration = 0 then
+        select aw.slot_step_minutes
+        into v_duration
+        from public.availability_windows aw
+        where aw.active = true
+            and aw.work_date = (p_starts_at at time zone 'Europe/Budapest')::date
+            and p_starts_at >= (((p_starts_at at time zone 'Europe/Budapest')::date::text || ' ' || aw.start_time::text)::timestamp at time zone 'Europe/Budapest')
+            and p_starts_at < (((p_starts_at at time zone 'Europe/Budapest')::date::text || ' ' || aw.end_time::text)::timestamp at time zone 'Europe/Budapest')
+        order by aw.start_time
+        limit 1;
     end if;
 
     v_ends_at := p_starts_at + make_interval(mins => v_duration);

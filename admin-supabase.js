@@ -655,10 +655,11 @@
         kartya.className = 'admin-db-kartya admin-db-kartya-tiltas';
         kartya.dataset.id = tiltas.id;
         kartya.dataset.tipus = 'blocked';
+        const megjegyzes = tiltas.reason?.trim() || 'Kézi foglalás';
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
-                    <h3>Kézzel felvett foglalt idő</h3>
+                    <h3>${html(megjegyzes)}</h3>
                     <p class="admin-foglalas-idopont">${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
                 </div>
                 <div class="admin-foglalas-vezerlok">
@@ -670,7 +671,7 @@
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(tiltas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(tiltas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Vége<input type="time" data-idopont-mezo="end_time" value="${attr(idoInputErtek(tiltas.ends_at))}" disabled></label>
-                <label class="admin-mezo admin-mezo-szeles">Megjegyzés<input type="text" data-idopont-mezo="reason" value="${attr(tiltas.reason || 'Külső foglalás')}" disabled></label>
+                <label class="admin-mezo admin-mezo-szeles">Név / megjegyzés<input type="text" data-idopont-mezo="reason" value="${attr(megjegyzes)}" required disabled></label>
             </div>
             <div class="admin-db-akciok">
                 <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
@@ -703,7 +704,7 @@
                 ? {
                     starts_at: adatok.startsAt,
                     ends_at: adatok.endsAt,
-                    reason: idopontMezo(kartya, 'reason')?.value.trim() || 'Külső foglalás'
+                    reason: idopontMezo(kartya, 'reason')?.value.trim()
                 }
                 : {
                     status: kartya.querySelector('[data-foglalas-statusz]').value,
@@ -805,16 +806,18 @@
 
         kartya.innerHTML = `
             <div class="admin-db-grid admin-db-grid-szolgaltatas">
-                <label class="admin-mezo">Név<input type="text" data-mezo="name" value="${attr(szolgaltatas.name)}"></label>
-                <label class="admin-mezo">Foglalási név<input type="text" data-mezo="description" value="${attr(szolgaltatas.description || '')}" placeholder="Ha üres, a teljes név látszik"></label>
-                <label class="admin-mezo">Ár<input type="text" data-mezo="price_text" value="${attr(szolgaltatas.price_text || '')}"></label>
-                <div class="admin-ido-par">
+                <label class="admin-mezo admin-szolgaltatas-nev">Név<input type="text" data-mezo="name" value="${attr(szolgaltatas.name)}"></label>
+                <label class="admin-mezo admin-szolgaltatas-nev">Foglalási név<input type="text" data-mezo="description" value="${attr(szolgaltatas.description || '')}" placeholder="Ha üres, a teljes név látszik"></label>
+                <div class="admin-szolgaltatas-szamok">
+                    <label class="admin-mezo">Ár<input type="text" data-mezo="price_text" value="${attr(szolgaltatas.price_text || '')}"></label>
                     <label class="admin-mezo">Óra<input type="number" min="0" step="1" data-mezo="ora" value="${ora}"></label>
                     <label class="admin-mezo">Perc<input type="number" min="0" max="59" step="1" data-mezo="perc" value="${perc}"></label>
                 </div>
-                <label class="admin-mezo">Sorrend <span>kisebb szám előrébb</span><input type="number" step="1" data-mezo="sort_order" value="${Number(szolgaltatas.sort_order) || 0}"></label>
-                <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="booking_enabled" ${szolgaltatas.booking_enabled ? 'checked' : ''}> Foglalható</label>
-                <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="active" ${szolgaltatas.active ? 'checked' : ''}> Látható</label>
+                <div class="admin-szolgaltatas-opciok">
+                    <label class="admin-mezo admin-sorrend-mezo">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(szolgaltatas.sort_order) || 0}"></label>
+                    <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="booking_enabled" ${szolgaltatas.booking_enabled ? 'checked' : ''}> Foglalható</label>
+                    <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="active" ${szolgaltatas.active ? 'checked' : ''}> Látható</label>
+                </div>
             </div>
             <div class="admin-db-akciok">
                 <button type="button" class="admin-kis-gomb" data-szolgaltatas-torles>Törlés</button>
@@ -1138,15 +1141,15 @@
         const kartya = document.createElement('article');
         kartya.className = 'admin-db-kartya';
         kartya.dataset.id = tiltas.id;
+        const megjegyzes = tiltas.reason?.trim() || 'Kézi foglalás';
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div>
-                    <h3>${html(datumIdo(tiltas.starts_at))}</h3>
-                    <p>Vége: ${html(datumIdo(tiltas.ends_at))}</p>
+                    <h3>${html(megjegyzes)}</h3>
+                    <p>${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
                 </div>
                 <button type="button" class="admin-kis-gomb" data-tiltas-torles>Törlés</button>
             </div>
-            <p><strong>Ok:</strong> ${html(tiltas.reason || 'Külső foglalás')}</p>
         `;
 
         return kartya;
@@ -1155,8 +1158,10 @@
     async function tiltasHozzaadas() {
         const elemek = adminElemek();
 
-        if (!elemek.tiltasDatum.value || !elemek.tiltasKezdes.value || !elemek.tiltasVege.value) {
-            onlineStatusz('Add meg a dátumot, a kezdést és a végét.', true);
+        const megjegyzes = elemek.tiltasOk.value.trim();
+
+        if (!elemek.tiltasDatum.value || !elemek.tiltasKezdes.value || !elemek.tiltasVege.value || !megjegyzes) {
+            onlineStatusz('Add meg a dátumot, a kezdést, a végét és a név / megjegyzés mezőt.', true);
             return;
         }
 
@@ -1170,7 +1175,7 @@
         const { error } = await allapot.kliens.from('blocked_times').insert({
             starts_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasKezdes.value),
             ends_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasVege.value),
-            reason: elemek.tiltasOk.value.trim() || 'Külső foglalás'
+            reason: megjegyzes
         });
 
         if (error) {
@@ -1292,6 +1297,10 @@
 
         if (vege <= kezdes) {
             return { hiba: 'A módosított foglalás vége legyen később, mint a kezdés.' };
+        }
+
+        if (kartya.dataset.tipus === 'blocked' && !idopontMezo(kartya, 'reason')?.value.trim()) {
+            return { hiba: 'A kézzel felvett foglalt időnél a név / megjegyzés mező kötelező.' };
         }
 
         return {

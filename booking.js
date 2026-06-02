@@ -395,7 +395,8 @@
         }
 
         const kezdes = new Date(adatok.startsAt);
-        const vege = new Date(kezdes.getTime() + (adatok.szolgaltatas.duration_minutes || 60) * 60000);
+        const idotartamPerc = adatok.szolgaltatas.duration_minutes > 0 ? adatok.szolgaltatas.duration_minutes : 30;
+        const vege = new Date(kezdes.getTime() + idotartamPerc * 60000);
         const cim = `Lumi Nails - ${adatok.szolgaltatas.name}`;
         const leiras = `Foglalás: ${adatok.szolgaltatas.name}
 Név: ${adatok.nev}
