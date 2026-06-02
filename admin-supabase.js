@@ -157,6 +157,7 @@
         elemek.naptarHonap.addEventListener('change', idosavNaptarRenderelese);
         elemek.naptarElozo?.addEventListener('click', () => naptarHonapLepes(-1));
         elemek.naptarKovetkezo?.addEventListener('click', () => naptarHonapLepes(1));
+        elemek.naptarRacs.addEventListener('touchend', naptarNapErintes, { passive: false });
         elemek.naptarRacs.addEventListener('click', naptarNapKattintas);
         elemek.naptarKijeloltLista?.addEventListener('input', naptarSorValtozas);
         elemek.naptarKijeloltLista?.addEventListener('click', naptarListaKattintas);
@@ -209,6 +210,21 @@
             return;
         }
 
+        naptarNapValtasa(gomb);
+    }
+
+    function naptarNapErintes(event) {
+        const gomb = event.target.closest('.admin-naptar-nap');
+
+        if (!gomb) {
+            return;
+        }
+
+        event.preventDefault();
+        naptarNapValtasa(gomb);
+    }
+
+    function naptarNapValtasa(gomb) {
         const datum = gomb.dataset.datum;
 
         if (allapot.naptarKijelolesek.has(datum)) {

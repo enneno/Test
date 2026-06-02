@@ -10,6 +10,18 @@
     --zsalyaszurke: #a7b7a1;
 }
 
+html,
+body,
+a,
+button,
+label,
+input,
+select,
+textarea,
+[role="button"] {
+    touch-action: manipulation;
+}
+
 /* ===================================
             1. FEJLÉC ÉS MENÜ (Header, Hamburger)
             ===================================== */
@@ -863,7 +875,7 @@ select.urlap-mezo:invalid {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y pinch-zoom;
     transition: opacity 0.22s ease, visibility 0.22s ease;
 }
 
@@ -881,6 +893,7 @@ select.urlap-mezo:invalid {
     border-radius: 22px;
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
     user-select: none;
+    touch-action: pan-x pan-y pinch-zoom;
 }
 
 .galeria-lightbox button {
@@ -1681,6 +1694,7 @@ select.urlap-mezo:invalid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 8px;
+    touch-action: manipulation;
 }
 
 .admin-naptar-napnevek {
@@ -1702,6 +1716,10 @@ select.urlap-mezo:invalid {
     font-size: 14px;
     font-weight: 800;
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .admin-naptar-nap:hover {
@@ -2879,10 +2897,27 @@ select.urlap-mezo:invalid {
         justify-content: center;
     }
 
-    input:not([type="checkbox"]):not([type="radio"]),
-    select,
-    textarea {
-        font-size: 16px !important;
+    .admin-body header,
+    .admin-body .mobile-menu {
+        backdrop-filter: none;
+    }
+
+    .admin-body .admin-fejlec,
+    .admin-body .admin-panel,
+    .admin-body .admin-db-kartya,
+    .admin-body .admin-naptar-blokk,
+    .admin-body .admin-lebego-mentes {
+        box-shadow: none;
+    }
+
+    .admin-body #admin-idosav-naptar,
+    .admin-body .admin-naptar-racs,
+    .admin-body .admin-naptar-kijelolt-lista {
+        contain: layout paint;
+    }
+
+    .admin-body .admin-naptar-nap {
+        transition: none;
     }
 
 }
