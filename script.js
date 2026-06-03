@@ -202,7 +202,7 @@ function lablecBetoltese() {
                         </a>
                         <a class="social-gomb" href="https://www.facebook.com/profile.php?id=61576508698202" target="_blank" rel="noopener" aria-label="Lumi Nails Facebook" title="Facebook">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v6h3v-6h2.4l.6-3h-3v-1.5a.5.5 0 0 1 .5-.5H17V8z"></path>
+                                <path d="M13.7 21v-8h2.7l.4-3h-3.1V8.2c0-.9.3-1.5 1.6-1.5H17V3.1C16.2 3 15.5 3 14.7 3c-2.5 0-4.2 1.5-4.2 4.2V10H8v3h2.5v8h3.2z"></path>
                             </svg>
                         </a>
                     </div>

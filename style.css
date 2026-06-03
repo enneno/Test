@@ -1072,10 +1072,12 @@ select.urlap-mezo:invalid {
 }
 
 .social-gomb[href*="facebook"] svg {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     fill: currentColor;
     stroke: none;
+    transform: translateX(1px);
+    transform-origin: center;
 }
 
 /* =========================================
@@ -2963,8 +2965,9 @@ select.urlap-mezo:invalid {
     }
 
     .social-gomb[href*="facebook"] svg {
-        width: 23px;
-        height: 23px;
+        width: 27px;
+        height: 27px;
+        transform: translateX(1px);
     }
 
     .admin-body header,
