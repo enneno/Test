@@ -957,7 +957,7 @@ select.urlap-mezo:invalid {
 .site-footer {
     max-width: 1400px;
     margin: 36px auto 0;
-    padding: 0 20px 34px;
+    padding: 0 20px 72px;
     box-sizing: border-box;
 }
 
@@ -965,9 +965,9 @@ select.urlap-mezo:invalid {
     display: grid;
     grid-template-columns: minmax(260px, 540px) auto;
     justify-content: start;
-    gap: 12px 22px;
-    align-items: center;
-    padding: 28px 30px;
+    gap: 8px 18px;
+    align-items: end;
+    padding: 24px 28px 22px;
     background: rgba(255, 250, 244, 0.86);
     border: 1px solid rgba(185, 133, 143, 0.2);
     border-radius: 20px;
@@ -988,8 +988,8 @@ select.urlap-mezo:invalid {
     grid-column: 2;
     grid-row: 2;
     justify-self: start;
-    align-self: start;
-    padding-top: 32px;
+    align-self: end;
+    padding-bottom: 2px;
 }
 
 .footer-logo {
@@ -1003,7 +1003,7 @@ select.urlap-mezo:invalid {
 
 .footer-brand p,
 .footer-kapcsolat address {
-    margin: 10px 0 0;
+    margin: 8px 0 0;
     color: var(--szoveg);
     font-size: 15px;
     font-style: normal;
@@ -1021,8 +1021,10 @@ select.urlap-mezo:invalid {
 .footer-kapcsolat a {
     display: block;
     width: fit-content;
+    max-width: 100%;
     color: var(--tinta);
     text-decoration: none;
+    overflow-wrap: anywhere;
     transition: color 0.2s ease;
 }
 
@@ -1033,8 +1035,8 @@ select.urlap-mezo:invalid {
 
 .social-linkek {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     gap: 10px;
 }
 
@@ -1067,6 +1069,13 @@ select.urlap-mezo:invalid {
     stroke-width: 1.9;
     stroke-linecap: round;
     stroke-linejoin: round;
+}
+
+.social-gomb[href*="facebook"] svg {
+    width: 25px;
+    height: 25px;
+    fill: currentColor;
+    stroke: none;
 }
 
 /* =========================================
@@ -2906,13 +2915,13 @@ select.urlap-mezo:invalid {
 
     .site-footer {
         margin-top: 24px;
-        padding: 0 12px 28px;
+        padding: 0 12px 82px;
     }
 
     .footer-belso {
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 14px 14px;
-        padding: 24px 20px;
+        gap: 10px 12px;
+        padding: 20px 18px 18px;
         text-align: left;
         border-radius: 20px;
     }
@@ -2929,8 +2938,8 @@ select.urlap-mezo:invalid {
         grid-column: 2;
         grid-row: 2;
         justify-self: start;
-        align-self: start;
-        padding-top: 32px;
+        align-self: end;
+        padding-bottom: 2px;
     }
 
     .footer-kapcsolat a {
@@ -2939,7 +2948,23 @@ select.urlap-mezo:invalid {
 
     .social-linkek {
         justify-content: flex-start;
-        flex-direction: column;
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .social-gomb {
+        width: 40px;
+        height: 40px;
+    }
+
+    .social-gomb svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .social-gomb[href*="facebook"] svg {
+        width: 23px;
+        height: 23px;
     }
 
     .admin-body header,

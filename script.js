@@ -1159,19 +1159,30 @@ function lebegoFoglalasFigyeles() {
     const lebegoGomb = document.getElementById('lebego-foglalas-gomb');
     const foglalasGombok = Array.from(document.querySelectorAll('a.gomb[href*="foglalas"]'))
         .filter(gomb => gomb.id !== 'lebego-foglalas-gomb');
+    const footer = document.querySelector('.site-footer');
+    const figyeltElemek = footer ? [...foglalasGombok, footer] : foglalasGombok;
 
-    if (!lebegoGomb || foglalasGombok.length === 0) {
+    if (!lebegoGomb || figyeltElemek.length === 0) {
         return;
     }
 
+    const lathatoElemek = new Set();
     const lathatosagFigyelo = new IntersectionObserver(function (entries) {
-        const alsoGombLatszik = entries.some(entry => entry.isIntersecting);
-        lebegoGomb.classList.toggle('rejtve', alsoGombLatszik);
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                lathatoElemek.add(entry.target);
+            } else {
+                lathatoElemek.delete(entry.target);
+            }
+        });
+
+        lebegoGomb.classList.toggle('rejtve', lathatoElemek.size > 0);
     }, {
-        threshold: 0.25
+        rootMargin: '0px 0px 96px 0px',
+        threshold: 0.01
     });
 
-    foglalasGombok.forEach(gomb => lathatosagFigyelo.observe(gomb));
+    figyeltElemek.forEach(elem => lathatosagFigyelo.observe(elem));
 }
 
 function foglalasInditasa() {
