@@ -12,6 +12,10 @@ let galeriaHuzasAktiv = false;
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
     Promise.all([fejlecBetoltese(), lablecBetoltese()])
+        .then(() => {
+            onlineTelefonLathatosagAlkalmazasa();
+            onlineArlistaBetoltese();
+        })
         .then(() => adatokBetoltese())
         .then(adatok => oldalAdatokAlkalmazasa(adatok));
     idopontokGeneralasa();
@@ -42,20 +46,43 @@ function tisztaUrlBeallitasa() {
 }
 
 function fejlecBetoltese() {
-    return fetch('/header.html')
-        .then(response => response.text())
-        .then(data => {
-            const fejlecHelye = document.getElementById('fejlec-helye');
+    const fejlecHelye = document.getElementById('fejlec-helye');
 
-            if (!fejlecHelye) {
-                return;
-            }
+    if (!fejlecHelye) {
+        return Promise.resolve();
+    }
 
-            fejlecHelye.innerHTML = data;
-            menuEsemenyekBekotese();
-            aktivMenuJelolese();
-        })
-        .catch(() => {});
+    fejlecHelye.innerHTML = `
+        <header>
+            <a href="/" class="logo" aria-label="Lumi Nails kezdőlap">Lumi Nails</a>
+
+            <nav class="menu-pontok" aria-label="Fő navigáció">
+                <a href="/">Kezdőlap</a>
+                <a href="/#szolgaltatasok">Szolgáltatások</a>
+                <a href="/arlista/">Árlista</a>
+                <a href="/galeria/">Galéria</a>
+                <a href="/foglalas/">Foglalás</a>
+            </nav>
+
+            <button type="button" class="hamburger" aria-label="Menü megnyitása">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </header>
+
+        <nav id="mobil-nav" class="mobile-menu" aria-label="Mobil navigáció">
+            <a href="/">Kezdőlap</a>
+            <a href="/#szolgaltatasok">Szolgáltatások</a>
+            <a href="/arlista/">Árlista</a>
+            <a href="/galeria/">Galéria</a>
+            <a href="/foglalas/">Foglalás</a>
+        </nav>
+    `;
+
+    menuEsemenyekBekotese();
+    aktivMenuJelolese();
+    return Promise.resolve();
 }
 
 function lablecBetoltese() {
@@ -65,12 +92,47 @@ function lablecBetoltese() {
         return Promise.resolve();
     }
 
-    return fetch('/footer.html')
-        .then(response => response.text())
-        .then(data => {
-            lablecHelye.innerHTML = data;
-        })
-        .catch(() => {});
+    lablecHelye.innerHTML = `
+        <footer class="site-footer">
+            <div class="footer-belso">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">Lumi Nails</a>
+                    <p>Letisztult, nőies körmök Tatabányán, személyes figyelemmel és precíz részletekkel.</p>
+                </div>
+
+                <div class="footer-kapcsolat">
+                    <h3>Elérhetőség</h3>
+                    <address>
+                        <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
+                        <a href="tel:+36205636494">+36 20 563 6494</a>
+                        <a href="mailto:szofipetras087@gmail.com">szofipetras087@gmail.com</a>
+                    </address>
+                </div>
+
+                <div class="footer-social">
+                    <h3>Közösségi oldalak</h3>
+                    <div class="social-linkek">
+                        <a class="social-gomb" href="https://www.instagram.com/luminails.xx/" target="_blank" rel="noopener" aria-label="Lumi Nails Instagram">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <circle cx="17.5" cy="6.5" r="1"></circle>
+                            </svg>
+                            Instagram
+                        </a>
+                        <a class="social-gomb" href="https://www.facebook.com/profile.php?id=61576508698202" target="_blank" rel="noopener" aria-label="Lumi Nails Facebook">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v6h3v-6h2.4l.6-3h-3v-1.5a.5.5 0 0 1 .5-.5H17V8z"></path>
+                            </svg>
+                            Facebook
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    `;
+
+    return Promise.resolve();
 }
 
 function menuEsemenyekBekotese() {
@@ -475,6 +537,140 @@ function foglalasiSzolgaltatasokRenderelese(szolgaltatasok) {
         option.textContent = `${szolgaltatas.nev}${ido}`;
         select.appendChild(option);
     });
+}
+
+async function onlineArlistaBetoltese() {
+    const panel = document.querySelector('.arlista-oldal .arlista-panel');
+    const config = window.LUMI_SUPABASE;
+    const supabaseLib = window.supabase;
+
+    if (!panel || !config?.url || !config?.publishableKey || !supabaseLib?.createClient) {
+        return;
+    }
+
+    try {
+        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const { data, error } = await kliens
+            .from('services')
+            .select('name,price_text,duration_minutes,active,sort_order')
+            .eq('active', true)
+            .order('sort_order', { ascending: true });
+
+        if (error || !Array.isArray(data) || data.length === 0) {
+            return;
+        }
+
+        arlistaSzolgaltatasokRenderelese(data);
+    } catch (_error) {
+        // Ha a Supabase nem elerheto, a statikus arlista marad lathato.
+    }
+}
+
+function arlistaSzolgaltatasokRenderelese(szolgaltatasok) {
+    const panel = document.querySelector('.arlista-oldal .arlista-panel');
+
+    if (!panel) {
+        return;
+    }
+
+    const csoportok = new Map();
+
+    szolgaltatasok.forEach(szolgaltatas => {
+        const { csoport, nev } = arlistaNevBontasa(szolgaltatas.name || '');
+
+        if (!csoportok.has(csoport)) {
+            csoportok.set(csoport, []);
+        }
+
+        csoportok.get(csoport).push({
+            nev,
+            ar: szolgaltatas.price_text || '',
+            ido: szolgaltatas.duration_minutes > 0 ? idotartamSzoveg(szolgaltatas.duration_minutes) : ''
+        });
+    });
+
+    panel.innerHTML = '';
+
+    const felsoCsoportNevek = Array.from(csoportok.keys()).slice(0, 2);
+    const alsoCsoportNevek = Array.from(csoportok.keys()).slice(2);
+
+    if (felsoCsoportNevek.length) {
+        const ketOszlop = document.createElement('div');
+        ketOszlop.className = 'arlista-ket-oszlop';
+        felsoCsoportNevek.forEach(csoportNev => {
+            ketOszlop.appendChild(onlineArlistaCsoportLetrehozasa(csoportNev, csoportok.get(csoportNev)));
+        });
+        panel.appendChild(ketOszlop);
+    }
+
+    alsoCsoportNevek.forEach(csoportNev => {
+        panel.appendChild(onlineArlistaCsoportLetrehozasa(csoportNev, csoportok.get(csoportNev)));
+    });
+}
+
+function arlistaNevBontasa(teljesNev) {
+    const reszek = teljesNev.split(' - ');
+
+    if (reszek.length < 2) {
+        return { csoport: 'Szolgáltatások', nev: teljesNev };
+    }
+
+    return {
+        csoport: reszek[0],
+        nev: reszek.slice(1).join(' - ')
+    };
+}
+
+function onlineArlistaCsoportLetrehozasa(cim, tetelek) {
+    const doboz = document.createElement('div');
+    doboz.className = 'arlista-csoport';
+
+    const cimsor = document.createElement('h3');
+    cimsor.textContent = cim;
+    doboz.appendChild(cimsor);
+
+    tetelek.forEach(tetel => {
+        const sor = document.createElement('div');
+        sor.className = 'arlista-sor';
+
+        const nev = document.createElement('span');
+        nev.textContent = tetel.nev;
+
+        const reszlet = document.createElement('strong');
+        const ar = document.createElement('span');
+        ar.className = 'arlista-ar';
+        ar.textContent = tetel.ar;
+        reszlet.appendChild(ar);
+
+        if (tetel.ido) {
+            const ido = document.createElement('span');
+            ido.className = 'arlista-ido';
+            ido.textContent = tetel.ido;
+            reszlet.appendChild(ido);
+        }
+
+        sor.append(nev, reszlet);
+        doboz.appendChild(sor);
+    });
+
+    return doboz;
+}
+
+function idotartamSzoveg(percek) {
+    const osszesPerc = Number(percek) || 0;
+    const ora = Math.floor(osszesPerc / 60);
+    const perc = osszesPerc % 60;
+    const reszek = [];
+
+    if (ora > 0) {
+        reszek.push(`${ora} óra`);
+    }
+
+    if (perc > 0) {
+        reszek.push(`${perc} perc`);
+    }
+
+    return reszek.join(' ');
 }
 
 function lablecAdatokAlkalmazasa(adatok) {
