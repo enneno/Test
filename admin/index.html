@@ -69,6 +69,7 @@
                     <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
                     <button type="button" class="admin-tab" data-admin-tab="tiltasok">Foglalt idők</button>
                     <button type="button" class="admin-tab" data-admin-tab="beallitasok">Beállítások</button>
+                    <button type="button" class="admin-tab" data-admin-tab="szovegek">Oldal szövegek</button>
                 </div>
 
                 <p id="admin-online-status" class="admin-status" aria-live="polite"></p>
@@ -170,7 +171,7 @@
                 </div>
 
                 <div id="admin-panel-beallitasok" class="admin-db-panel">
-                    <p class="admin-info">Ezek az online beállítások az oldal fájljainak cseréje nélkül módosíthatók. A telefonszám láthatóságát itt kezeld, az adatok.json-ban lévő érték csak tartalék.</p>
+                    <p class="admin-info">Ezek az online beállítások az oldal fájljainak cseréje nélkül módosíthatók. A telefonszám láthatóságát itt kezeld.</p>
                     <div class="admin-db-kartya">
                         <label class="admin-mezo admin-checkbox">
                             <input type="checkbox" id="admin-telefon-lathato">
@@ -180,18 +181,10 @@
                 </div>
             </section>
 
-            <section class="admin-panel admin-json-panel" hidden>
+            <section id="admin-panel-szovegek" class="admin-panel admin-db-panel admin-json-panel">
                 <div class="admin-panel-fej">
                     <h2>Oldal szövegek és elérhetőségek</h2>
-                    <p>Itt a weboldal statikus szövegeit, képeit, elérhetőségeit és a foglalási felugró ablak szövegeit tudod szerkeszteni. Az árlista tételei külön, az online árlista fülön vannak.</p>
-                </div>
-
-                <div class="admin-json-akcio">
-                    <button type="button" id="admin-adatok-letoltes" class="gomb admin-gomb">Adatok letöltése</button>
-                    <label class="gomb admin-gomb admin-fajl-gomb">
-                        Meglévő JSON betöltése
-                        <input type="file" id="admin-adatok-betoltes" accept="application/json,.json">
-                    </label>
+                    <p>Itt a weboldal szövegeit, képeit, elérhetőségeit és a foglalási felugró ablak szövegeit tudod szerkeszteni. A mentés online történik, nem kell JSON fájlt feltölteni.</p>
                 </div>
 
                 <p id="admin-json-status" class="admin-status" aria-live="polite"></p>
@@ -207,8 +200,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase-config.js"></script>
-    <script src="/script.js?v=20260629"></script>
-    <script src="/admin-supabase.js?v=20260619"></script>
+    <script src="/script.js?v=20260630"></script>
+    <script src="/admin-supabase.js?v=20260630"></script>
 </body>
 
 </html>

@@ -12,12 +12,12 @@ let galeriaHuzasAktiv = false;
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
     Promise.all([fejlecBetoltese(), lablecBetoltese()])
-        .then(() => {
+        .then(() => adatokBetoltese())
+        .then(adatok => {
+            oldalAdatokAlkalmazasa(adatok);
             onlineTelefonLathatosagAlkalmazasa();
             onlineArlistaBetoltese();
-        })
-        .then(() => adatokBetoltese())
-        .then(adatok => oldalAdatokAlkalmazasa(adatok));
+        });
     idopontokGeneralasa();
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
@@ -25,6 +25,88 @@ document.addEventListener('DOMContentLoaded', function () {
     lebegoFoglalasLetrehozasa();
     lebegoFoglalasFigyeles();
 });
+
+function lumiAlapOldalAdatok() {
+    return {
+        marka: {
+            nev: 'Lumi Nails',
+            rovidLeiras: 'Letisztult, nőies körmök Tatabányán, személyes figyelemmel és precíz részletekkel.'
+        },
+        kapcsolat: {
+            cimke: 'Elérhetőség',
+            cim: '2800 Tatabánya, Kós Károly út',
+            terkepUrl: 'https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt',
+            telefon: '+36 20 563 6494',
+            telefonLink: '+36205636494',
+            email: 'szofipetras087@gmail.com',
+            instagram: 'https://www.instagram.com/luminails.xx/',
+            facebook: 'https://www.facebook.com/profile.php?id=61576508698202',
+            messenger: 'https://m.me/61576508698202',
+            instagramUzenet: 'https://ig.me/m/luminails.xx'
+        },
+        fooldal: {
+            hero: {
+                kicker: 'Körmös Tatabánya',
+                cim: 'Lumi Nails',
+                leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.'
+            },
+            bemutatkozas: {
+                cim: 'Bemutatkozás',
+                bekezdesek: [
+                    'Szia, Szofi vagyok, a Lumi Nails mögött álló körmös. Munka mellett, nagyjából egy éve foglalkozom körmökkel, és minden vendégnél arra figyelek, hogy a végeredmény igényes, hordható és a saját stílusához passzoló legyen.',
+                    'A célom, hogy idővel főállásban is ezzel foglalkozhassak, ezért minden elkészült szett számomra fejlődés, figyelem és egy kis lépés afelé, amit igazán szeretek csinálni.'
+                ],
+                kep: '/kepek/bemutatkozas-kep.jpg',
+                kepAlt: 'Lumi Nails köröm munka részlete'
+            },
+            szolgaltatasok: {
+                cim: 'SZOLGÁLTATÁSOK',
+                kartyak: [
+                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', szeles: true },
+                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', szeles: false },
+                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.', szeles: false },
+                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.', szeles: true }
+                ]
+            },
+            galeriaAtvezeto: {
+                cim: 'Galéria',
+                leiras: 'Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.',
+                gombSzoveg: 'Galéria megnyitása',
+                kepek: [
+                    { src: '/kepek/galeria-atvezeto-1.jpg', alt: 'Lumi Nails köröm munka' },
+                    { src: '/kepek/galeria-atvezeto-2.jpg', alt: 'Lumi Nails díszített köröm' },
+                    { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' }
+                ]
+            },
+            foglalasAtvezeto: {
+                cim: 'Időpontfoglalás',
+                leiras: 'Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.',
+                gombSzoveg: 'Online Időpontfoglalás'
+            }
+        },
+        arlista: {
+            cim: 'Árlista',
+            leiras: 'Az árak tájékoztató jellegűek, a pontos végösszeg az egyedi igényektől és díszítéstől függhet.'
+        },
+        foglalas: {
+            cim: 'Időpontfoglalás',
+            leiras: 'Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.',
+            kuldesGomb: 'Foglalás elküldése',
+            lebegoGomb: 'Időpontfoglalás',
+            popup: {
+                sikeresCim: 'Foglalás elküldve',
+                sikeresSzoveg: 'Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldjük, kérlek ellenőrizd a spam mappát is.',
+                tartalekCim: 'Adatok előkészítve',
+                tartalekSzoveg: 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.',
+                bezarasGomb: 'Bezárás',
+                messengerGomb: 'Messenger',
+                instagramGomb: 'Instagram'
+            }
+        }
+    };
+}
+
+window.lumiAlapOldalAdatok = lumiAlapOldalAdatok;
 
 function tisztaUrlBeallitasa() {
     const tisztaUtvonalak = {
@@ -206,9 +288,64 @@ function normalizaltUtvonal(utvonal) {
 }
 
 function adatokBetoltese() {
-    return fetch(`/adatok.json?v=${Date.now()}`, { cache: 'no-store' })
-        .then(response => response.ok ? response.json() : null)
-        .catch(() => null);
+    const alap = lumiAlapOldalAdatok();
+
+    return onlineOldalAdatokBetoltese()
+        .then(onlineAdatok => {
+            if (onlineAdatok) {
+                return melyOsszefesules(alap, onlineAdatok);
+            }
+
+            return fetch(`/adatok.json?v=${Date.now()}`, { cache: 'no-store' })
+                .then(response => response.ok ? response.json() : null)
+                .then(jsonAdatok => jsonAdatok ? melyOsszefesules(alap, jsonAdatok) : alap)
+                .catch(() => alap);
+        });
+}
+
+async function onlineOldalAdatokBetoltese() {
+    const config = window.LUMI_SUPABASE;
+    const supabaseLib = window.supabase;
+
+    if (!config?.url || !config?.publishableKey || !supabaseLib?.createClient) {
+        return null;
+    }
+
+    try {
+        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const { data, error } = await kliens
+            .from('site_settings')
+            .select('value')
+            .eq('key', 'site_content')
+            .maybeSingle();
+
+        if (error || !data?.value) {
+            return null;
+        }
+
+        return data.value;
+    } catch (_error) {
+        return null;
+    }
+}
+
+function melyOsszefesules(alap, feluliras) {
+    if (Array.isArray(alap)) {
+        return Array.isArray(feluliras) ? feluliras : alap;
+    }
+
+    if (!alap || typeof alap !== 'object') {
+        return feluliras ?? alap;
+    }
+
+    const eredmeny = { ...alap };
+    const plusz = feluliras && typeof feluliras === 'object' ? feluliras : {};
+
+    Object.keys(plusz).forEach(kulcs => {
+        eredmeny[kulcs] = melyOsszefesules(alap[kulcs], plusz[kulcs]);
+    });
+
+    return eredmeny;
 }
 
 function oldalAdatokAlkalmazasa(adatok) {
@@ -358,12 +495,17 @@ function arlistaAdatokAlkalmazasa(arlista) {
     const szekcio = document.querySelector('.arlista-oldal');
     const panel = szekcio?.querySelector('.arlista-panel');
 
-    if (!szekcio || !panel || !Array.isArray(arlista?.csoportok)) {
+    if (!szekcio || !arlista) {
         return;
     }
 
     szovegBeallitasa('h2', arlista.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', arlista.leiras, szekcio);
+
+    if (!panel || !Array.isArray(arlista.csoportok)) {
+        return;
+    }
+
     panel.innerHTML = '';
 
     const felsoCsoportok = arlista.csoportok.slice(0, 2);
