@@ -963,13 +963,25 @@ select.urlap-mezo:invalid {
 
 .footer-belso {
     display: grid;
-    grid-template-columns: minmax(240px, 1.1fr) minmax(240px, 0.9fr) minmax(240px, 0.9fr);
-    gap: 30px;
-    padding: 34px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 34px;
+    align-items: center;
+    padding: 28px 30px;
     background: rgba(255, 250, 244, 0.86);
     border: 1px solid rgba(185, 133, 143, 0.2);
-    border-radius: 24px;
-    box-shadow: 0 18px 44px rgba(78, 54, 48, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(78, 54, 48, 0.07);
+}
+
+.footer-brand,
+.footer-kapcsolat {
+    grid-column: 1;
+}
+
+.footer-social {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
 }
 
 .footer-logo {
@@ -983,16 +995,15 @@ select.urlap-mezo:invalid {
 
 .footer-brand p,
 .footer-kapcsolat address {
-    margin: 14px 0 0;
+    margin: 10px 0 0;
     color: var(--szoveg);
     font-size: 15px;
     font-style: normal;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-.footer-kapcsolat h3,
-.footer-social h3 {
-    margin: 0 0 14px;
+.footer-kapcsolat h3 {
+    margin: 4px 0 0;
     color: var(--akcentus);
     font-family: 'Cormorant Garamond', serif;
     font-size: 28px;
@@ -1015,24 +1026,22 @@ select.urlap-mezo:invalid {
 .social-linkek {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .social-gomb {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 0 16px;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
     color: var(--tinta);
     background: rgba(185, 133, 143, 0.08);
     border: 1px solid rgba(185, 133, 143, 0.24);
     border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
     text-decoration: none;
-    text-transform: uppercase;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
@@ -1043,8 +1052,8 @@ select.urlap-mezo:invalid {
 }
 
 .social-gomb svg {
-    width: 19px;
-    height: 19px;
+    width: 21px;
+    height: 21px;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.9;
@@ -2894,18 +2903,29 @@ select.urlap-mezo:invalid {
 
     .footer-belso {
         grid-template-columns: 1fr;
-        gap: 24px;
-        padding: 26px 22px;
-        text-align: center;
+        gap: 18px;
+        padding: 24px 20px;
+        text-align: left;
         border-radius: 20px;
     }
 
+    .footer-brand,
+    .footer-kapcsolat,
+    .footer-social {
+        grid-column: 1;
+    }
+
+    .footer-social {
+        grid-row: auto;
+        justify-self: start;
+    }
+
     .footer-kapcsolat a {
-        width: auto;
+        width: fit-content;
     }
 
     .social-linkek {
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .admin-body header,

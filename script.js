@@ -192,21 +192,18 @@ function lablecBetoltese() {
                 </div>
 
                 <div class="footer-social">
-                    <h3>Közösségi oldalak</h3>
                     <div class="social-linkek">
-                        <a class="social-gomb" href="https://www.instagram.com/luminails.xx/" target="_blank" rel="noopener" aria-label="Lumi Nails Instagram">
+                        <a class="social-gomb" href="https://www.instagram.com/luminails.xx/" target="_blank" rel="noopener" aria-label="Lumi Nails Instagram" title="Instagram">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <rect x="3" y="3" width="18" height="18" rx="5"></rect>
                                 <circle cx="12" cy="12" r="4"></circle>
                                 <circle cx="17.5" cy="6.5" r="1"></circle>
                             </svg>
-                            Instagram
                         </a>
-                        <a class="social-gomb" href="https://www.facebook.com/profile.php?id=61576508698202" target="_blank" rel="noopener" aria-label="Lumi Nails Facebook">
+                        <a class="social-gomb" href="https://www.facebook.com/profile.php?id=61576508698202" target="_blank" rel="noopener" aria-label="Lumi Nails Facebook" title="Facebook">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v6h3v-6h2.4l.6-3h-3v-1.5a.5.5 0 0 1 .5-.5H17V8z"></path>
                             </svg>
-                            Facebook
                         </a>
                     </div>
                 </div>
