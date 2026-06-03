@@ -963,8 +963,9 @@ select.urlap-mezo:invalid {
 
 .footer-belso {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 12px 34px;
+    grid-template-columns: minmax(260px, 540px) auto;
+    justify-content: start;
+    gap: 12px 22px;
     align-items: center;
     padding: 28px 30px;
     background: rgba(255, 250, 244, 0.86);
@@ -978,10 +979,17 @@ select.urlap-mezo:invalid {
     grid-column: 1;
 }
 
+.footer-brand {
+    grid-column: 1 / -1;
+    max-width: 620px;
+}
+
 .footer-social {
     grid-column: 2;
-    grid-row: 1 / span 2;
-    justify-self: end;
+    grid-row: 2;
+    justify-self: start;
+    align-self: start;
+    padding-top: 32px;
 }
 
 .footer-logo {
@@ -2902,22 +2910,27 @@ select.urlap-mezo:invalid {
     }
 
     .footer-belso {
-        grid-template-columns: 1fr;
-        gap: 18px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px 14px;
         padding: 24px 20px;
         text-align: left;
         border-radius: 20px;
     }
 
-    .footer-brand,
-    .footer-kapcsolat,
-    .footer-social {
+    .footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    .footer-kapcsolat {
         grid-column: 1;
     }
 
     .footer-social {
-        grid-row: auto;
+        grid-column: 2;
+        grid-row: 2;
         justify-self: start;
+        align-self: start;
+        padding-top: 32px;
     }
 
     .footer-kapcsolat a {
@@ -2926,6 +2939,7 @@ select.urlap-mezo:invalid {
 
     .social-linkek {
         justify-content: flex-start;
+        flex-direction: column;
     }
 
     .admin-body header,
