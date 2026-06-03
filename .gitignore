@@ -1,0 +1,5 @@
+*.log
+server.err.log
+server.out.log
+lan-server.log
+lan-server-error.log
