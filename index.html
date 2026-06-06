@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Lumi Nails - Körmös Tatabánya</title>
-    <meta name="description" content="Lumi Nails - körmös Tatabányán: elegáns manikűr, körömépítés, gél lakk és nail art időpontfoglalással.">
-    <meta property="og:title" content="Lumi Nails - Körmös Tatabánya">
-    <meta property="og:description" content="Elegáns manikűr, körömépítés és gél lakk Tatabányán.">
+    <title>Lumi Nails - Körmös és manikűr Tatabánya</title>
+    <meta name="description" content="Lumi Nails Tatabányán: manikűr, gél lakk, körömépítés, töltés és díszítés online időpontfoglalással. Igényes körmök személyes figyelemmel.">
+    <meta property="og:title" content="Lumi Nails - Körmös és manikűr Tatabánya">
+    <meta property="og:description" content="Manikűr, gél lakk, körömépítés, töltés és díszítés Tatabányán online időpontfoglalással.">
     <meta property="og:site_name" content="Lumi Nails">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://luminails.hu/">
@@ -31,11 +31,12 @@
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
-            "@type": "BeautySalon",
+            "@type": ["NailSalon", "BeautySalon"],
+            "@id": "https://luminails.hu/#lumi-nails",
             "name": "Lumi Nails",
             "url": "https://luminails.hu/",
             "image": "https://luminails.hu/kepek/social-preview.jpg",
-            "description": "Elegáns manikűr, körömépítés, gél lakk és nail art Tatabányán.",
+            "description": "Manikűr, gél lakk, körömépítés, töltés és díszítés Tatabányán online időpontfoglalással.",
             "telephone": "+36205636494",
             "email": "szofipetras087@gmail.com",
             "address": {
@@ -46,7 +47,21 @@
                 "addressCountry": "HU"
             },
             "areaServed": "Tatabánya",
+            "hasMap": "https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt",
             "priceRange": "Ft",
+            "knowsAbout": ["manikűr", "gél lakk", "körömépítés", "köröm töltés", "köröm díszítés", "nail art"],
+            "makesOffer": [
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Manikűr" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Gél lakk" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Körömépítés" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Köröm töltés" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Köröm díszítés" } }
+            ],
+            "potentialAction": {
+                "@type": "ReserveAction",
+                "target": "https://luminails.hu/foglalas/",
+                "name": "Időpontfoglalás"
+            },
             "sameAs": [
                 "https://www.instagram.com/luminails.xx/",
                 "https://www.facebook.com/profile.php?id=61576508698202"
