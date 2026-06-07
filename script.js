@@ -188,6 +188,7 @@ function lablecBetoltese() {
                         <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
                         <a href="tel:+36205636494">+36 20 563 6494</a>
                         <a href="mailto:szofipetras087@gmail.com">szofipetras087@gmail.com</a>
+                        <a class="footer-jogi-link" href="/adatkezeles/">Adatkezelési tájékoztató</a>
                     </address>
                 </div>
 
