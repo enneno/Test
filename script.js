@@ -38,6 +38,7 @@ function lumiAlapOldalAdatok() {
             terkepUrl: 'https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt',
             telefon: '+36 20 563 6494',
             telefonLink: '+36205636494',
+            telefonLathato: false,
             email: 'szofipetras087@gmail.com',
             instagram: 'https://www.instagram.com/luminails.xx/',
             facebook: 'https://www.facebook.com/profile.php?id=61576508698202',
@@ -186,7 +187,7 @@ function lablecBetoltese() {
                     <h3>Elérhetőség</h3>
                     <address>
                         <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
-                        <a href="tel:+36205636494">+36 20 563 6494</a>
+                        <a href="tel:+36205636494" hidden style="display: none;">+36 20 563 6494</a>
                         <a href="mailto:szofipetras087@gmail.com">szofipetras087@gmail.com</a>
                         <a class="footer-jogi-link" href="/adatkezeles/">Adatkezelési tájékoztató</a>
                     </address>
