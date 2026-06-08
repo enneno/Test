@@ -36,6 +36,7 @@ serve(async (req) => {
     }
 
     if (!resendApiKey) {
+      console.error("send-booking-email missing RESEND_API_KEY", { bookingId, mode });
       return json({ ok: false, email: "missing_resend_api_key" });
     }
 
@@ -55,8 +56,16 @@ serve(async (req) => {
       .single();
 
     if (error || !booking) {
+      console.error("send-booking-email booking not found", { bookingId, mode });
       return json({ ok: false, error: "Booking not found" }, 404);
     }
+
+    console.log("send-booking-email booking loaded", {
+      bookingId,
+      mode,
+      status: booking.status,
+      startsAt: booking.starts_at,
+    });
 
     const serviceName = serviceNameFromRelation(booking.services);
     const startsAt = formatDate(booking.starts_at);
@@ -122,6 +131,7 @@ serve(async (req) => {
       ].join("\n");
 
       await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText);
+      console.log("send-booking-email admin_update sent", { bookingId, target: "customer" });
       return json({ ok: true, email: "admin_update_sent" });
     }
 
@@ -186,19 +196,33 @@ serve(async (req) => {
       sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, customerSubject, customerHtml, customerText),
     ]);
 
-    const failed = results
-      .map((result, index) => ({ result, target: index === 0 ? "owner" : "customer" }))
-      .filter((item) => item.result.status === "rejected");
+    const delivery = results.map((result, index) => {
+      const target = index === 0 ? "owner" : "customer";
+
+      if (result.status === "fulfilled") {
+        return { target, ok: true };
+      }
+
+      return { target, ok: false, error: errorMessage(result.reason) };
+    });
+
+    console.log("send-booking-email new_booking delivery", { bookingId, delivery });
+
+    const failed = delivery.filter((item) => !item.ok);
 
     if (failed.length > 0) {
+      console.error("send-booking-email new_booking failed", { bookingId, failed });
       return json({
         ok: false,
-        error: failed.map((item) => `${item.target}: ${String((item.result as PromiseRejectedResult).reason)}`),
+        email: "partial_or_failed",
+        delivery,
+        error: failed.map((item) => `${item.target}: ${item.error}`),
       }, 500);
     }
 
-    return json({ ok: true, email: "sent" });
+    return json({ ok: true, email: "sent", delivery });
   } catch (error) {
+    console.error("send-booking-email unexpected error", errorMessage(error));
     return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
   }
 });
@@ -263,6 +287,14 @@ async function sendEmail(
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function errorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return String(error);
 }
 
 async function isAdminRequest(req: Request, supabase: ReturnType<typeof createClient>, adminEmail: string) {

@@ -364,9 +364,11 @@
                     utolsoHiba = error;
                     console.warn('Lumi Nails email értesítés hiba:', error);
                 } else if (data?.ok) {
+                    console.info('Lumi Nails email notification result:', data);
                     return data;
                 } else {
-                    utolsoHiba = data;
+                    utolsoHiba = data || { error: 'empty_function_response' };
+                    console.warn('Lumi Nails email notification was not confirmed:', utolsoHiba);
                 }
             } catch (error) {
                 utolsoHiba = error;
