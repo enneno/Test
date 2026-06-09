@@ -178,27 +178,19 @@
             return;
         }
 
-        gombAllapot(elemek.kuldes, true, 'Foglalás küldése...');
+        gombAllapot(elemek.kuldes, true, 'Foglalás és visszaigazolás küldése...');
         statuszKiirasa(elemek.statusz, '');
 
-        const { data, error } = await allapot.kliens.rpc('create_booking', {
-            p_service_id: adatok.szolgaltatasId,
-            p_customer_name: adatok.nev,
-            p_customer_phone: adatok.telefon,
-            p_customer_email: adatok.email,
-            p_note: adatok.megjegyzes,
-            p_starts_at: adatok.startsAt
-        });
+        const eredmeny = await foglalasMenteseEmaillel(adatok);
 
-        if (error) {
-            statuszKiirasa(elemek.statusz, supabaseHiba(error), true);
+        if (!eredmeny.ok) {
+            statuszKiirasa(elemek.statusz, supabaseHiba(eredmeny.error), true);
             gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             idopontokBetoltese(elemek);
             return;
         }
 
-        gombAllapot(elemek.kuldes, true, 'Visszaigazoló email küldése...');
-        const emailEredmeny = await emailErtesitesKuldese(data);
+        const emailEredmeny = eredmeny.email || { ok: false, error: 'missing_email_result' };
         naptarLinkFrissitese(adatok);
         sikeresPopupNyitasa(emailEredmeny);
         elemek.urlap.reset();
@@ -208,6 +200,41 @@
             ? 'A foglalás elküldve. A visszaigazoló emailt is elküldtük. Kérlek ellenőrizd a spam vagy promóciók mappát is.'
             : 'A foglalás elküldve. Az email értesítés most nem biztos, hogy elment, de a foglalás bekerült.');
         gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
+    }
+
+    async function foglalasMenteseEmaillel(adatok) {
+        if (!allapot.kliens.functions?.invoke) {
+            return { ok: false, error: { message: 'Az online foglalási kapcsolat most nem érhető el.' } };
+        }
+
+        try {
+            const { data, error } = await allapot.kliens.functions.invoke('create-booking-with-email', {
+                body: {
+                    service_id: adatok.szolgaltatasId,
+                    customer_name: adatok.nev,
+                    customer_phone: adatok.telefon,
+                    customer_email: adatok.email,
+                    note: adatok.megjegyzes,
+                    starts_at: adatok.startsAt
+                }
+            });
+
+            if (error) {
+                console.warn('Lumi Nails foglalás function hiba:', error);
+                return { ok: false, error };
+            }
+
+            if (!data?.ok || !data?.booking_id) {
+                console.warn('Lumi Nails foglalás function nem igazolta vissza a mentést:', data);
+                return { ok: false, error: data || { message: 'A foglalás mentése nem lett visszaigazolva.' } };
+            }
+
+            console.info('Lumi Nails booking function result:', data);
+            return data;
+        } catch (error) {
+            console.warn('Lumi Nails foglalás function hiba:', error);
+            return { ok: false, error };
+        }
     }
 
     function foglalasAdatok(elemek) {
@@ -347,48 +374,6 @@
         }
     }
 
-    async function emailErtesitesKuldese(bookingId) {
-        if (!bookingId || !allapot.kliens.functions?.invoke) {
-            return { ok: false, skipped: true };
-        }
-
-        let utolsoHiba = null;
-
-        for (let probalkozas = 1; probalkozas <= 2; probalkozas += 1) {
-            try {
-                const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
-                    body: { booking_id: bookingId }
-                });
-
-                if (error) {
-                    utolsoHiba = error;
-                    console.warn('Lumi Nails email értesítés hiba:', error);
-                } else if (data?.ok) {
-                    console.info('Lumi Nails email notification result:', data);
-                    return data;
-                } else {
-                    utolsoHiba = data || { error: 'empty_function_response' };
-                    console.warn('Lumi Nails email notification was not confirmed:', utolsoHiba);
-                }
-            } catch (error) {
-                utolsoHiba = error;
-                console.warn('Lumi Nails email értesítés hiba:', error);
-            }
-
-            if (probalkozas < 2) {
-                await varakozas(700);
-            }
-        }
-
-        return { ok: false, error: utolsoHiba };
-    }
-
-    function varakozas(ms) {
-        return new Promise(resolve => {
-            window.setTimeout(resolve, ms);
-        });
-    }
-
     function naptarLinkFrissitese(adatok) {
         const link = document.getElementById('naptar-link');
 
@@ -446,10 +431,18 @@ Telefon: ${adatok.telefon}`;
     }
 
     function supabaseHiba(error) {
+        if (typeof error === 'string' && error.trim()) {
+            return error.trim();
+        }
+
         const uzenet = error?.message || '';
 
         if (uzenet) {
             return uzenet;
+        }
+
+        if (typeof error?.error === 'string' && error.error.trim()) {
+            return error.error.trim();
         }
 
         return 'Most nem sikerült elküldeni a foglalást. Kérlek próbáld újra.';
