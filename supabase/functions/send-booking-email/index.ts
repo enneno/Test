@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-internal-secret",
 };
 const EMAIL_RETRY_ATTEMPTS = 5;
 
@@ -32,6 +32,7 @@ serve(async (req) => {
     const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
     const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
+    const internalSecret = req.headers.get("x-lumi-internal-secret") || "";
 
     if (!supabaseUrl || !serviceRoleKey) {
       return json({ ok: false, error: "Missing Supabase environment variables" }, 500);
@@ -49,6 +50,9 @@ serve(async (req) => {
       if (!adminOk) {
         return json({ ok: false, error: "not_authorized" }, 401);
       }
+    } else if (internalSecret !== serviceRoleKey) {
+      console.warn("send-booking-email rejected non-internal request", { bookingId, mode });
+      return json({ ok: false, error: "not_authorized" }, 401);
     }
 
     const { data: booking, error } = await supabase

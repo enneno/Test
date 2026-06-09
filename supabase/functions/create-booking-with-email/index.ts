@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-internal-secret",
 };
 const EMAIL_FUNCTION_RETRY_ATTEMPTS = 5;
 
@@ -83,6 +83,7 @@ async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, boo
         headers: {
           Authorization: `Bearer ${serviceRoleKey}`,
           apikey: serviceRoleKey,
+          "x-lumi-internal-secret": serviceRoleKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ booking_id: bookingId }),
