@@ -203,37 +203,78 @@
     }
 
     async function foglalasMenteseEmaillel(adatok) {
-        if (!allapot.kliens.functions?.invoke) {
-            return { ok: false, error: { message: 'Az online foglalási kapcsolat most nem érhető el.' } };
+        if (allapot.kliens.functions?.invoke) {
+            try {
+                const { data, error } = await allapot.kliens.functions.invoke('create-booking-with-email', {
+                    body: {
+                        service_id: adatok.szolgaltatasId,
+                        customer_name: adatok.nev,
+                        customer_phone: adatok.telefon,
+                        customer_email: adatok.email,
+                        note: adatok.megjegyzes,
+                        starts_at: adatok.startsAt
+                    }
+                });
+
+                if (!error && data?.ok && data?.booking_id) {
+                    console.info('Lumi Nails booking function result:', data);
+                    return data;
+                }
+
+                console.warn('Lumi Nails foglalás function nem futott végig, tartalék mentés indul:', error || data);
+            } catch (error) {
+                console.warn('Lumi Nails foglalás function hiba, tartalék mentés indul:', error);
+            }
+        }
+
+        return foglalasMenteseKozvetlenul(adatok);
+    }
+
+    async function foglalasMenteseKozvetlenul(adatok) {
+        const { data, error } = await allapot.kliens.rpc('create_booking', {
+            p_service_id: adatok.szolgaltatasId,
+            p_customer_name: adatok.nev,
+            p_customer_phone: adatok.telefon,
+            p_customer_email: adatok.email,
+            p_note: adatok.megjegyzes,
+            p_starts_at: adatok.startsAt
+        });
+
+        if (error) {
+            return { ok: false, error };
+        }
+
+        console.info('Lumi Nails booking saved with fallback RPC:', data);
+
+        return {
+            ok: true,
+            booking_id: data,
+            fallback: true,
+            email: await emailKuldesFoglalashoz(data)
+        };
+    }
+
+    async function emailKuldesFoglalashoz(bookingId) {
+        if (!bookingId || !allapot.kliens.functions?.invoke) {
+            return { ok: false, skipped: true, fallback: true };
         }
 
         try {
-            const { data, error } = await allapot.kliens.functions.invoke('create-booking-with-email', {
-                body: {
-                    service_id: adatok.szolgaltatasId,
-                    customer_name: adatok.nev,
-                    customer_phone: adatok.telefon,
-                    customer_email: adatok.email,
-                    note: adatok.megjegyzes,
-                    starts_at: adatok.startsAt
-                }
+            const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
+                body: { booking_id: bookingId }
             });
 
             if (error) {
-                console.warn('Lumi Nails foglalás function hiba:', error);
-                return { ok: false, error };
+                console.warn('Lumi Nails tartalék email hiba:', error);
+                return { ok: false, error, fallback: true };
             }
 
-            if (!data?.ok || !data?.booking_id) {
-                console.warn('Lumi Nails foglalás function nem igazolta vissza a mentést:', data);
-                return { ok: false, error: data || { message: 'A foglalás mentése nem lett visszaigazolva.' } };
-            }
-
-            console.info('Lumi Nails booking function result:', data);
-            return data;
+            return data?.ok
+                ? data
+                : { ok: false, error: data || { message: 'Az emailküldés nem lett visszaigazolva.' }, fallback: true };
         } catch (error) {
-            console.warn('Lumi Nails foglalás function hiba:', error);
-            return { ok: false, error };
+            console.warn('Lumi Nails tartalék email hiba:', error);
+            return { ok: false, error, fallback: true };
         }
     }
 
