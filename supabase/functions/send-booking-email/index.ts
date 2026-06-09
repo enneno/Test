@@ -5,6 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+const EMAIL_RETRY_ATTEMPTS = 5;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -239,14 +240,21 @@ async function sendEmailWithRetry(
 ) {
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= EMAIL_RETRY_ATTEMPTS; attempt += 1) {
     try {
       await sendEmail(apiKey, from, to, replyTo, subject, html, text, attachments);
       return;
     } catch (error) {
       lastError = error;
+      console.warn("send-booking-email resend attempt failed", {
+        to,
+        subject,
+        attempt,
+        maxAttempts: EMAIL_RETRY_ATTEMPTS,
+        error: errorMessage(error),
+      });
 
-      if (attempt < 2) {
+      if (attempt < EMAIL_RETRY_ATTEMPTS) {
         await delay(700);
       }
     }

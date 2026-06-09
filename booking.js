@@ -10,6 +10,7 @@
         kliens: null,
         szolgaltatasok: []
     };
+    const EMAIL_FUNCTION_RETRY_ATTEMPTS = 5;
 
     document.addEventListener('DOMContentLoaded', () => {
         const elemek = urlapElemek();
@@ -259,23 +260,45 @@
             return { ok: false, skipped: true, fallback: true };
         }
 
-        try {
-            const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
-                body: { booking_id: bookingId }
-            });
+        let utolsoHiba = null;
 
-            if (error) {
-                console.warn('Lumi Nails tartalék email hiba:', error);
-                return { ok: false, error, fallback: true };
+        for (let probalkozas = 1; probalkozas <= EMAIL_FUNCTION_RETRY_ATTEMPTS; probalkozas += 1) {
+            try {
+                const { data, error } = await allapot.kliens.functions.invoke('send-booking-email', {
+                    body: { booking_id: bookingId }
+                });
+
+                if (!error && data?.ok) {
+                    return data;
+                }
+
+                utolsoHiba = error || data || { message: 'Az emailküldés nem lett visszaigazolva.' };
+                console.warn('Lumi Nails tartalék email próbálkozás nem sikerült:', {
+                    probalkozas,
+                    max: EMAIL_FUNCTION_RETRY_ATTEMPTS,
+                    hiba: utolsoHiba
+                });
+            } catch (error) {
+                utolsoHiba = error;
+                console.warn('Lumi Nails tartalék email próbálkozás hiba:', {
+                    probalkozas,
+                    max: EMAIL_FUNCTION_RETRY_ATTEMPTS,
+                    hiba: error
+                });
             }
 
-            return data?.ok
-                ? data
-                : { ok: false, error: data || { message: 'Az emailküldés nem lett visszaigazolva.' }, fallback: true };
-        } catch (error) {
-            console.warn('Lumi Nails tartalék email hiba:', error);
-            return { ok: false, error, fallback: true };
+            if (probalkozas < EMAIL_FUNCTION_RETRY_ATTEMPTS) {
+                await varakozas(700);
+            }
         }
+
+        return { ok: false, error: utolsoHiba, fallback: true };
+    }
+
+    function varakozas(ms) {
+        return new Promise(resolve => {
+            window.setTimeout(resolve, ms);
+        });
     }
 
     function foglalasAdatok(elemek) {

@@ -5,6 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+const EMAIL_FUNCTION_RETRY_ATTEMPTS = 5;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -74,7 +75,7 @@ serve(async (req) => {
 async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, bookingId: string) {
   let lastResult: unknown = null;
 
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= EMAIL_FUNCTION_RETRY_ATTEMPTS; attempt += 1) {
     try {
       const response = await fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
         method: "POST",
@@ -96,11 +97,23 @@ async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, boo
         status: response.status,
         data,
       };
+      console.warn("create-booking-with-email email function attempt failed", {
+        bookingId,
+        attempt,
+        maxAttempts: EMAIL_FUNCTION_RETRY_ATTEMPTS,
+        result: lastResult,
+      });
     } catch (error) {
       lastResult = errorMessage(error);
+      console.warn("create-booking-with-email email function attempt failed", {
+        bookingId,
+        attempt,
+        maxAttempts: EMAIL_FUNCTION_RETRY_ATTEMPTS,
+        error: lastResult,
+      });
     }
 
-    if (attempt < 2) {
+    if (attempt < EMAIL_FUNCTION_RETRY_ATTEMPTS) {
       await delay(700);
     }
   }
