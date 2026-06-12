@@ -13,11 +13,15 @@ document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
     Promise.all([fejlecBetoltese(), lablecBetoltese()])
         .then(() => adatokBetoltese())
-        .then(adatok => {
+        .then(async adatok => {
             oldalAdatokAlkalmazasa(adatok);
-            onlineTelefonLathatosagAlkalmazasa();
-            onlineArlistaBetoltese();
-        });
+            await onlineTelefonLathatosagAlkalmazasa();
+            await onlineArlistaBetoltese();
+        })
+        .catch(error => {
+            console.warn('Lumi Nails tartalom betöltési hiba:', error);
+        })
+        .finally(() => oldalTartalomMegjelenitese());
     idopontokGeneralasa();
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
@@ -36,10 +40,10 @@ function lumiAlapOldalAdatok() {
             cimke: 'Elérhetőség',
             cim: '2800 Tatabánya, Kós Károly út',
             terkepUrl: 'https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt',
-            telefon: '+36 20 563 6494',
-            telefonLink: '+36205636494',
+            telefon: '',
+            telefonLink: '',
             telefonLathato: false,
-            email: 'szofipetras087@gmail.com',
+            email: '',
             instagram: 'https://www.instagram.com/luminails.xx/',
             facebook: 'https://www.facebook.com/profile.php?id=61576508698202',
             messenger: 'https://m.me/61576508698202',
@@ -187,8 +191,8 @@ function lablecBetoltese() {
                     <h3>Elérhetőség</h3>
                     <address>
                         <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
-                        <a href="tel:+36205636494" hidden style="display: none;">+36 20 563 6494</a>
-                        <a href="mailto:szofipetras087@gmail.com">szofipetras087@gmail.com</a>
+                        <a data-footer-phone href="#" hidden style="display: none;"></a>
+                        <a data-footer-email href="#" hidden style="display: none;"></a>
                         <a class="footer-jogi-link" href="/adatkezeles/">Adatkezelési tájékoztató</a>
                     </address>
                 </div>
@@ -213,7 +217,21 @@ function lablecBetoltese() {
         </footer>
     `;
 
+    const kezdoCimLink = lablecHelye.querySelector('.footer-kapcsolat address a:not(.footer-jogi-link)');
+
+    if (kezdoCimLink) {
+        kezdoCimLink.dataset.footerAddress = '';
+        kezdoCimLink.textContent = '';
+        kezdoCimLink.href = '#';
+        kezdoCimLink.hidden = true;
+        kezdoCimLink.style.display = 'none';
+    }
+
     return Promise.resolve();
+}
+
+function oldalTartalomMegjelenitese() {
+    document.body.classList.remove('tartalom-toltes');
 }
 
 function menuEsemenyekBekotese() {
@@ -826,9 +844,9 @@ function lablecAdatokAlkalmazasa(adatok) {
     szovegBeallitasa('.footer-brand p', marka?.rovidLeiras);
     szovegBeallitasa('.footer-kapcsolat h3', kapcsolat?.cimke);
 
-    const cimLink = document.querySelector('.footer-kapcsolat a[href*="google.com/maps"]');
-    const telefonLink = document.querySelector('.footer-kapcsolat a[href^="tel:"]');
-    const emailLink = document.querySelector('.footer-kapcsolat a[href^="mailto:"]');
+    const cimLink = document.querySelector('[data-footer-address]');
+    const telefonLink = document.querySelector('[data-footer-phone]');
+    const emailLink = document.querySelector('[data-footer-email]');
     const instagramLink = document.querySelector('.social-gomb[href*="instagram"]');
     const facebookLink = document.querySelector('.social-gomb[href*="facebook"]');
     const messengerPopup = document.querySelector('.popup-gomb[href*="m.me"]');
@@ -837,6 +855,8 @@ function lablecAdatokAlkalmazasa(adatok) {
     if (cimLink && kapcsolat?.cim) {
         cimLink.textContent = kapcsolat.cim;
         cimLink.href = kapcsolat.terkepUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(kapcsolat.cim)}`;
+        cimLink.hidden = false;
+        cimLink.style.display = '';
     }
 
     if (telefonLink && kapcsolat?.telefon) {
@@ -850,6 +870,8 @@ function lablecAdatokAlkalmazasa(adatok) {
     if (emailLink && kapcsolat?.email) {
         emailLink.textContent = kapcsolat.email;
         emailLink.href = `mailto:${kapcsolat.email}`;
+        emailLink.hidden = false;
+        emailLink.style.display = '';
     }
 
     if (instagramLink && kapcsolat?.instagram) {
@@ -867,12 +889,10 @@ function lablecAdatokAlkalmazasa(adatok) {
     if (instagramPopup && kapcsolat?.instagramUzenet) {
         instagramPopup.href = kapcsolat.instagramUzenet;
     }
-
-    onlineTelefonLathatosagAlkalmazasa();
 }
 
 async function onlineTelefonLathatosagAlkalmazasa() {
-    const telefonLink = document.querySelector('.footer-kapcsolat a[href^="tel:"]');
+    const telefonLink = document.querySelector('[data-footer-phone]');
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
 

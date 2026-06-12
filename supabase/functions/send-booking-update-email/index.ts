@@ -26,7 +26,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "szofipetras087@gmail.com";
+    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "";
     const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
     const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
@@ -35,8 +35,8 @@ serve(async (req) => {
       return json({ ok: false, error: "Missing Supabase environment variables" }, 500);
     }
 
-    if (!resendApiKey) {
-      return json({ ok: false, email: "missing_resend_api_key" });
+    if (!resendApiKey || !ownerEmail) {
+      return json({ ok: false, email: "missing_email_environment" });
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);

@@ -22,6 +22,23 @@ textarea,
     touch-action: manipulation;
 }
 
+.lumi-js body.tartalom-toltes > section,
+.lumi-js body.tartalom-toltes > main,
+.lumi-js body.tartalom-toltes #lablec-helye,
+.lumi-js body.tartalom-toltes #lebego-foglalas-gomb {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.lumi-js body.tartalom-toltes::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: var(--krem);
+    pointer-events: none;
+}
+
 /* ===================================
             1. FEJLÉC ÉS MENÜ (Header, Hamburger)
             ===================================== */

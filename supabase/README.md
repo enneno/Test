@@ -43,9 +43,9 @@ Az `.ics` csatolmányt iPhone-on a Mail/Naptár általában eseményként tudja 
 
 Szükséges Supabase secrets:
 - `RESEND_API_KEY`
-- `OWNER_EMAIL` például `szofipetras087@gmail.com`
+- `OWNER_EMAIL` például `sajat-email@example.com`
 - `FROM_EMAIL` például `Lumi Nails <foglalas@luminails.hu>`
-- `REPLY_TO_EMAIL` például `szofipetras087@gmail.com`
+- `REPLY_TO_EMAIL` például `sajat-email@example.com`
 
 Secret kulcsot soha ne tegyél a frontend fájlokba vagy GitHubra.
 
@@ -59,9 +59,9 @@ Supabase CLI-vel az élesítés menete:
 supabase login
 supabase link --project-ref htbpzvmlegapaphsipax
 supabase secrets set RESEND_API_KEY=ide_jon_a_resend_api_kulcs
-supabase secrets set OWNER_EMAIL=szofipetras087@gmail.com
+supabase secrets set OWNER_EMAIL=sajat-email@example.com
 supabase secrets set FROM_EMAIL="Lumi Nails <foglalas@luminails.hu>"
-supabase secrets set REPLY_TO_EMAIL=szofipetras087@gmail.com
+supabase secrets set REPLY_TO_EMAIL=sajat-email@example.com
 supabase functions deploy send-booking-email
 supabase functions deploy send-booking-update-email
 ```
