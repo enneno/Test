@@ -63,6 +63,18 @@ create table if not exists public.bookings (
     check (ends_at > starts_at)
 );
 
+create table if not exists public.booking_events (
+    id uuid primary key default gen_random_uuid(),
+    booking_id uuid references public.bookings(id) on delete set null,
+    event_type text not null,
+    channel text default '',
+    status text not null default 'info' check (status in ('info', 'success', 'warning', 'error')),
+    title text not null default '',
+    message text default '',
+    metadata jsonb not null default '{}'::jsonb,
+    created_at timestamptz not null default now()
+);
+
 create table if not exists public.site_settings (
     key text primary key,
     value jsonb not null default '{}'::jsonb,
@@ -128,6 +140,7 @@ alter table public.availability_rules enable row level security;
 alter table public.availability_windows enable row level security;
 alter table public.blocked_times enable row level security;
 alter table public.bookings enable row level security;
+alter table public.booking_events enable row level security;
 alter table public.site_settings enable row level security;
 
 drop policy if exists "public can read active services" on public.services;
@@ -167,6 +180,19 @@ create policy "admin can manage blocked times"
 drop policy if exists "admin can manage bookings" on public.bookings;
 create policy "admin can manage bookings"
     on public.bookings for all
+    to authenticated
+    using (true)
+    with check (true);
+
+drop policy if exists "admin can read booking events" on public.booking_events;
+create policy "admin can read booking events"
+    on public.booking_events for select
+    to authenticated
+    using (true);
+
+drop policy if exists "admin can manage booking events" on public.booking_events;
+create policy "admin can manage booking events"
+    on public.booking_events for all
     to authenticated
     using (true)
     with check (true);
@@ -343,6 +369,30 @@ begin
     )
     returning id into v_booking_id;
 
+    insert into public.booking_events (
+        booking_id,
+        event_type,
+        channel,
+        status,
+        title,
+        message,
+        metadata
+    )
+    values (
+        v_booking_id,
+        'booking_created',
+        'booking',
+        'success',
+        'Foglalás rögzítve',
+        'A vendég foglalása bekerült az adatbázisba.',
+        jsonb_build_object(
+            'service_id', p_service_id,
+            'starts_at', p_starts_at,
+            'ends_at', v_ends_at,
+            'customer_email', lower(trim(p_customer_email))
+        )
+    );
+
     return v_booking_id;
 exception
     when exclusion_violation then
@@ -360,6 +410,7 @@ grant select, insert, update, delete on public.availability_rules to authenticat
 grant select, insert, update, delete on public.availability_windows to authenticated;
 grant select, insert, update, delete on public.blocked_times to authenticated;
 grant select, insert, update, delete on public.bookings to authenticated;
+grant select, insert, update, delete on public.booking_events to authenticated;
 grant select on public.site_settings to anon, authenticated;
 grant insert, update, delete on public.site_settings to authenticated;
 

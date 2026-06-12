@@ -106,11 +106,35 @@ serve(async (req) => {
     ].join("\n");
 
     await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText);
+    await logBookingEvent(supabase, {
+      booking_id: bookingId,
+      event_type: "admin_update_email",
+      channel: "email",
+      status: "success",
+      title: "Modositas email elkuldve",
+      message: "A vendeg ertesito emailt kapott az adminban vegzett modositasrol.",
+      metadata: {
+        status,
+        status_changed: statusChanged,
+        time_changed: timeChanged,
+        admin_message: adminMessage || null,
+      },
+    });
     return json({ ok: true, email: "admin_update_sent" });
   } catch (error) {
     return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
   }
 });
+
+async function logBookingEvent(supabase: any, row: Record<string, unknown>) {
+  const { error } = await supabase
+    .from("booking_events")
+    .insert(row);
+
+  if (error) {
+    console.warn("send-booking-update-email event log failed", error.message);
+  }
+}
 
 async function isAdminRequest(req: Request, supabase: any, adminEmail: string) {
   const authHeader = req.headers.get("Authorization") || "";

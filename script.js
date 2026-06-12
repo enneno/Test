@@ -83,6 +83,31 @@ function lumiAlapOldalAdatok() {
                     { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' }
                 ]
             },
+            kiemeltStilusok: {
+                cimke: 'Inspiráció',
+                cim: 'Kiemelt stílusok',
+                leiras: 'Letisztult, nőies és hordható körmök, amelyek közelről is szépen mutatnak.',
+                kartyak: [
+                    {
+                        cim: 'Finom fények',
+                        leiras: 'Elegáns, visszafogott hatás a mindennapokra.',
+                        kep: '/kepek/galeria-atvezeto-1.jpg',
+                        kepAlt: 'Fényes Lumi Nails köröm részlet'
+                    },
+                    {
+                        cim: 'Apró részletek',
+                        leiras: 'Díszítés akkor, ha valami különlegesebb kell.',
+                        kep: '/kepek/galeria-atvezeto-2.jpg',
+                        kepAlt: 'Díszített Lumi Nails köröm részlet'
+                    },
+                    {
+                        cim: 'Természetes forma',
+                        leiras: 'Nőies, tiszta összhatás kényelmes hosszal.',
+                        kep: '/kepek/galeria-atvezeto-3.jpg',
+                        kepAlt: 'Elegáns Lumi Nails manikűr részlet'
+                    }
+                ]
+            },
             foglalasAtvezeto: {
                 cim: 'Időpontfoglalás',
                 leiras: 'Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.',
@@ -399,6 +424,16 @@ function sortoresesSzoveg(ertek) {
     return div.innerHTML.replace(/\n/g, '<br>');
 }
 
+function html(ertek) {
+    const div = document.createElement('div');
+    div.textContent = ertek ?? '';
+    return div.innerHTML;
+}
+
+function attr(ertek) {
+    return html(ertek).replace(/"/g, '&quot;');
+}
+
 function fooldalAdatokAlkalmazasa(fooldal) {
     if (!fooldal) {
         return;
@@ -413,6 +448,7 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     kepBeallitasa('.bemutatkozas-kep img', fooldal.bemutatkozas?.kep, fooldal.bemutatkozas?.kepAlt);
 
     szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
+    kiemeltStilusokRenderelese(fooldal.kiemeltStilusok);
     galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto);
     foglalasAtvezetoAlkalmazasa(fooldal.foglalasAtvezeto);
 }
@@ -471,6 +507,35 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
 
         doboz.append(cim, leiras);
         racs.appendChild(doboz);
+    });
+}
+
+function kiemeltStilusokRenderelese(stilusok) {
+    const szekcio = document.getElementById('kiemelt-stilusok');
+    const racs = szekcio?.querySelector('.kiemelt-stilusok-racs');
+
+    if (!szekcio || !racs || !stilusok) {
+        return;
+    }
+
+    szovegBeallitasa('.kiemelt-stilusok-cimke', stilusok.cimke, szekcio);
+    szovegBeallitasa('h2', stilusok.cim, szekcio);
+    szovegBeallitasa('.szekcio-leiras', stilusok.leiras, szekcio);
+    racs.innerHTML = '';
+
+    (stilusok.kartyak || []).forEach((kartya, index) => {
+        const elem = document.createElement('article');
+        elem.className = 'kiemelt-stilus-kartya';
+        elem.innerHTML = `
+            <img src="${attr(kartya.kep || '')}" alt="${attr(kartya.kepAlt || kartya.cim || 'Lumi Nails köröm részlet')}" loading="lazy">
+            <div>
+                <span>${String(index + 1).padStart(2, '0')}</span>
+                <h3>${html(kartya.cim || '')}</h3>
+                <p>${html(kartya.leiras || '')}</p>
+            </div>
+        `;
+
+        racs.appendChild(elem);
     });
 }
 

@@ -218,6 +218,7 @@ serve(async (req) => {
     });
 
     console.log("send-booking-email new_booking delivery", { bookingId, delivery });
+    await logEmailDeliveryEvents(supabase, bookingId, delivery);
 
     const failed = delivery.filter((item) => !item.ok);
 
@@ -237,6 +238,38 @@ serve(async (req) => {
     return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
   }
 });
+
+async function logEmailDeliveryEvents(
+  supabase: any,
+  bookingId: string,
+  delivery: Array<{ target: string; ok: boolean; error?: string }>,
+) {
+  const rows = delivery.map((item) => ({
+    booking_id: bookingId,
+    event_type: item.target === "owner" ? "owner_email" : "customer_email",
+    channel: "email",
+    status: item.ok ? "success" : "error",
+    title: item.target === "owner"
+      ? (item.ok ? "Tulaj email elkuldve" : "Tulaj email hiba")
+      : (item.ok ? "Vendeg email elkuldve" : "Vendeg email hiba"),
+    message: item.ok
+      ? "Az automatikus email sikeresen atadasra kerult a kuldo szolgaltatonak."
+      : `Az automatikus email nem ment ki: ${item.error || "ismeretlen hiba"}`,
+    metadata: {
+      target: item.target,
+      ok: item.ok,
+      error: item.error || null,
+    },
+  }));
+
+  const { error } = await supabase
+    .from("booking_events")
+    .insert(rows);
+
+  if (error) {
+    console.warn("send-booking-email event log failed", error.message);
+  }
+}
 
 async function sendEmailWithRetry(
   apiKey: string,

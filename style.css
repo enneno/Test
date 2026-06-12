@@ -343,6 +343,118 @@ h2 {
     object-fit: cover;
 }
 
+#kiemelt-stilusok {
+    padding-top: 34px;
+    padding-bottom: 34px;
+}
+
+.kiemelt-stilusok-fej {
+    max-width: 720px;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.kiemelt-stilusok-cimke {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 14px;
+    color: var(--akcentus);
+    background: rgba(185, 133, 143, 0.09);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.kiemelt-stilusok-fej h2 {
+    margin: 16px 0 12px;
+}
+
+.kiemelt-stilusok-fej .szekcio-leiras {
+    margin-bottom: 0;
+}
+
+.kiemelt-stilusok-racs {
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr 1.08fr;
+    gap: 14px;
+    width: min(92%, 1080px);
+    margin: 0 auto;
+}
+
+.kiemelt-stilus-kartya {
+    position: relative;
+    min-height: 420px;
+    overflow: hidden;
+    color: #fffaf4;
+    background: var(--barna);
+    border: 1px solid rgba(185, 133, 143, 0.2);
+    border-radius: 22px;
+    box-shadow: 0 18px 42px rgba(78, 54, 48, 0.12);
+}
+
+.kiemelt-stilus-kartya:nth-child(2) {
+    margin-top: 32px;
+}
+
+.kiemelt-stilus-kartya img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    object-fit: cover;
+    transform: scale(1.02);
+    transition: transform 0.45s ease;
+}
+
+.kiemelt-stilus-kartya:hover img {
+    transform: scale(1.07);
+}
+
+.kiemelt-stilus-kartya::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 34%, rgba(43, 37, 33, 0.78));
+}
+
+.kiemelt-stilus-kartya div {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    left: 18px;
+    z-index: 1;
+}
+
+.kiemelt-stilus-kartya span {
+    color: rgba(255, 250, 244, 0.74);
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.kiemelt-stilus-kartya h3 {
+    margin: 8px 0 8px;
+    color: #fffaf4;
+    font-size: 30px;
+    line-height: 1;
+    text-align: left;
+}
+
+.kiemelt-stilus-kartya p {
+    max-width: 280px;
+    margin: 0;
+    color: rgba(255, 250, 244, 0.86);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
 #galeria-atvezeto {
     padding-top: 34px;
 }
@@ -1556,6 +1668,56 @@ select.urlap-mezo:invalid {
 
 .admin-foglalas-reszletek p {
     overflow-wrap: anywhere;
+}
+
+.admin-esemeny-kartya {
+    border-left: 4px solid rgba(185, 133, 143, 0.35);
+}
+
+.admin-esemeny-success {
+    border-left-color: #6f9f7a;
+}
+
+.admin-esemeny-warning {
+    border-left-color: #c99a52;
+}
+
+.admin-esemeny-error {
+    border-left-color: #b45454;
+}
+
+.admin-esemeny-idopont {
+    margin: 0 0 4px;
+    color: rgba(83, 67, 59, 0.72);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.admin-esemeny-statusz {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 12px;
+    color: var(--tinta);
+    background: rgba(255, 250, 244, 0.82);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.admin-esemeny-reszletek {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.admin-esemeny-meta {
+    color: rgba(83, 67, 59, 0.62);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .admin-db-statusz,
@@ -2887,6 +3049,47 @@ select.urlap-mezo:invalid {
     .bemutatkozas-kep,
     .bemutatkozas-kep img {
         min-height: 240px;
+    }
+
+    #kiemelt-stilusok {
+        padding-top: 28px;
+        padding-bottom: 28px;
+    }
+
+    .kiemelt-stilusok-fej {
+        width: min(90%, 520px);
+        margin-bottom: 22px;
+    }
+
+    .kiemelt-stilusok-fej h2 {
+        margin-top: 12px;
+    }
+
+    .kiemelt-stilusok-racs {
+        grid-template-columns: 1fr;
+        width: min(90%, 520px);
+        gap: 12px;
+    }
+
+    .kiemelt-stilus-kartya,
+    .kiemelt-stilus-kartya img {
+        min-height: 260px;
+    }
+
+    .kiemelt-stilus-kartya {
+        border-radius: 18px;
+    }
+
+    .kiemelt-stilus-kartya:nth-child(2) {
+        margin-top: 0;
+    }
+
+    .kiemelt-stilus-kartya h3 {
+        font-size: 26px;
+    }
+
+    .kiemelt-stilus-kartya p {
+        font-size: 13.5px;
     }
 
     #galeria-atvezeto {

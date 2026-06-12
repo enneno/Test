@@ -9,6 +9,7 @@
         aktivTab: 'foglalasok',
         foglalasOldal: 1,
         foglalasElemek: [],
+        esemenynaploElemek: [],
         naptarKijelolesek: new Map(),
         oldalSzovegek: null
     };
@@ -58,6 +59,26 @@
                 ['fooldal.galeriaAtvezeto.kepek.1.alt', '2. kép leírása'],
                 ['fooldal.galeriaAtvezeto.kepek.2.src', '3. kép útvonala'],
                 ['fooldal.galeriaAtvezeto.kepek.2.alt', '3. kép leírása']
+            ]
+        },
+        {
+            cim: 'Kiemelt stílusok',
+            mezok: [
+                ['fooldal.kiemeltStilusok.cimke', 'Kis felső szöveg'],
+                ['fooldal.kiemeltStilusok.cim', 'Cím'],
+                ['fooldal.kiemeltStilusok.leiras', 'Leírás', 'textarea'],
+                ['fooldal.kiemeltStilusok.kartyak.0.cim', '1. kártya címe'],
+                ['fooldal.kiemeltStilusok.kartyak.0.leiras', '1. kártya szövege', 'textarea'],
+                ['fooldal.kiemeltStilusok.kartyak.0.kep', '1. kép útvonala'],
+                ['fooldal.kiemeltStilusok.kartyak.0.kepAlt', '1. kép leírása'],
+                ['fooldal.kiemeltStilusok.kartyak.1.cim', '2. kártya címe'],
+                ['fooldal.kiemeltStilusok.kartyak.1.leiras', '2. kártya szövege', 'textarea'],
+                ['fooldal.kiemeltStilusok.kartyak.1.kep', '2. kép útvonala'],
+                ['fooldal.kiemeltStilusok.kartyak.1.kepAlt', '2. kép leírása'],
+                ['fooldal.kiemeltStilusok.kartyak.2.cim', '3. kártya címe'],
+                ['fooldal.kiemeltStilusok.kartyak.2.leiras', '3. kártya szövege', 'textarea'],
+                ['fooldal.kiemeltStilusok.kartyak.2.kep', '3. kép útvonala'],
+                ['fooldal.kiemeltStilusok.kartyak.2.kepAlt', '3. kép leírása']
             ]
         },
         {
@@ -137,6 +158,7 @@
             jelszoModositasa();
         });
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
+        elemek.esemenynaploFrissites?.addEventListener('click', esemenynaploBetoltese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
         elemek.lebegoMentes?.addEventListener('click', lebegoMentes);
         idosavAlapertelmezes(elemek);
@@ -185,6 +207,8 @@
             foglalasLista: document.getElementById('admin-foglalas-lista'),
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
+            esemenynaploLista: document.getElementById('admin-esemenynaplo-lista'),
+            esemenynaploFrissites: document.getElementById('admin-esemenynaplo-frissites'),
             szolgaltatasLista: document.getElementById('admin-szolgaltatas-lista'),
             szolgaltatasHozzaadas: document.getElementById('admin-szolgaltatas-hozzaadas'),
             idosavLista: document.getElementById('admin-idosav-lista'),
@@ -576,6 +600,7 @@
 
     function adatokFrissitese() {
         foglalasokBetoltese();
+        esemenynaploBetoltese();
         szolgaltatasokBetoltese();
         idosavokBetoltese();
         tiltasokBetoltese();
@@ -604,6 +629,11 @@
 
         if (tab === 'tiltasok') {
             await tiltasHozzaadas();
+            return;
+        }
+
+        if (tab === 'esemenynaplo') {
+            await esemenynaploBetoltese();
             return;
         }
 
@@ -721,6 +751,88 @@
         allapot.foglalasOldal += gomb.dataset.foglalasOldal === 'kovetkezo' ? 1 : -1;
         allapot.foglalasOldal = Math.min(Math.max(allapot.foglalasOldal, 1), foglalasOsszesOldal());
         foglalasListaRenderelese();
+    }
+
+    async function esemenynaploBetoltese() {
+        const elemek = adminElemek();
+
+        if (!elemek.esemenynaploLista) {
+            return;
+        }
+
+        elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">Eseménynapló betöltése...</p>';
+
+        const { data, error } = await allapot.kliens
+            .from('booking_events')
+            .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at,bookings(customer_name,starts_at)')
+            .order('created_at', { ascending: false })
+            .limit(80);
+
+        if (error) {
+            elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">Az eseménynapló még nem érhető el. Futtasd a booking_events SQL-t Supabase-ben.</p>';
+            return;
+        }
+
+        allapot.esemenynaploElemek = Array.isArray(data) ? data : [];
+        esemenynaploRenderelese();
+    }
+
+    function esemenynaploRenderelese() {
+        const elemek = adminElemek();
+
+        if (!elemek.esemenynaploLista) {
+            return;
+        }
+
+        elemek.esemenynaploLista.innerHTML = '';
+
+        if (!allapot.esemenynaploElemek.length) {
+            elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">Még nincs naplózott foglalási esemény.</p>';
+            return;
+        }
+
+        allapot.esemenynaploElemek.forEach(esemeny => {
+            const kartya = document.createElement('article');
+            kartya.className = `admin-db-kartya admin-esemeny-kartya admin-esemeny-${html(esemeny.status || 'info')}`;
+            const foglalasNev = esemeny.bookings?.customer_name || '';
+            const foglalasIdo = esemeny.bookings?.starts_at ? datumIdo(esemeny.bookings.starts_at) : '';
+
+            kartya.innerHTML = `
+                <div class="admin-db-kartya-fej">
+                    <div>
+                        <p class="admin-esemeny-idopont">${html(datumIdo(esemeny.created_at))}</p>
+                        <h3>${html(esemeny.title || esemenyTipusFelirat(esemeny.event_type))}</h3>
+                    </div>
+                    <span class="admin-esemeny-statusz">${html(esemenyStatuszFelirat(esemeny.status))}</span>
+                </div>
+                <div class="admin-esemeny-reszletek">
+                    ${foglalasNev ? `<p><strong>Foglalás:</strong> ${html(foglalasNev)}${foglalasIdo ? ` - ${html(foglalasIdo)}` : ''}</p>` : ''}
+                    ${esemeny.message ? `<p>${html(esemeny.message)}</p>` : ''}
+                    <p class="admin-esemeny-meta">${html([esemeny.channel, esemeny.event_type].filter(Boolean).join(' / '))}</p>
+                </div>
+            `;
+
+            elemek.esemenynaploLista.appendChild(kartya);
+        });
+    }
+
+    function esemenyStatuszFelirat(statusz) {
+        return {
+            success: 'Sikeres',
+            warning: 'Figyelmeztetés',
+            error: 'Hiba',
+            info: 'Infó'
+        }[statusz] || 'Infó';
+    }
+
+    function esemenyTipusFelirat(tipus) {
+        return {
+            booking_created: 'Foglalás rögzítve',
+            owner_email: 'Tulaj email',
+            customer_email: 'Vendég email',
+            email_flow_failed: 'Email folyamat hiba',
+            admin_update_email: 'Módosítás email'
+        }[tipus] || 'Esemény';
     }
 
     function foglalasKartya(foglalas) {
@@ -856,6 +968,15 @@
                 const emailModositas = foglalasEmailModositas(kartya, modositas);
 
                 if (emailModositas) {
+                    await foglalasEsemenyRogzitese(kartya.dataset.id, {
+                        event_type: 'admin_booking_updated',
+                        channel: 'admin',
+                        status: 'info',
+                        title: 'Admin módosítás mentve',
+                        message: 'A foglalás adatai az admin felületen módosultak.',
+                        metadata: emailModositas
+                    });
+
                     const emailEredmeny = await foglalasModositasEmailKuldese(kartya.dataset.id, emailModositas);
                     emailKuldesek += 1;
 
@@ -875,6 +996,7 @@
         }
 
         foglalasokBetoltese();
+        esemenynaploBetoltese();
     }
 
     function foglalasEmailModositas(kartya, modositas) {
@@ -897,6 +1019,28 @@
             status: modositas.status,
             message: idopontMezo(kartya, 'admin_message')?.value.trim() || ''
         };
+    }
+
+    async function foglalasEsemenyRogzitese(bookingId, esemeny) {
+        if (!bookingId) {
+            return;
+        }
+
+        const { error } = await allapot.kliens
+            .from('booking_events')
+            .insert({
+                booking_id: bookingId,
+                event_type: esemeny.event_type,
+                channel: esemeny.channel || 'admin',
+                status: esemeny.status || 'info',
+                title: esemeny.title || 'Admin esemény',
+                message: esemeny.message || '',
+                metadata: esemeny.metadata || {}
+            });
+
+        if (error) {
+            console.warn('Lumi Nails eseménynapló mentési hiba:', error);
+        }
     }
 
     async function foglalasModositasEmailKuldese(bookingId, modositas) {

@@ -58,6 +58,15 @@ serve(async (req) => {
 
     if (!email.ok) {
       console.error("create-booking-with-email email failed", { bookingId, email });
+      await logBookingEvent(supabase, {
+        booking_id: bookingId,
+        event_type: "email_flow_failed",
+        channel: "email",
+        status: "warning",
+        title: "Email folyamat hiba",
+        message: "A foglalas bekerult, de az emailkuldo folyamat nem futott vegig.",
+        metadata: { email },
+      });
     } else {
       console.log("create-booking-with-email email sent", { bookingId, email });
     }
@@ -72,6 +81,16 @@ serve(async (req) => {
     return json({ ok: false, error: errorMessage(error) }, 500);
   }
 });
+
+async function logBookingEvent(supabase: any, row: Record<string, unknown>) {
+  const { error } = await supabase
+    .from("booking_events")
+    .insert(row);
+
+  if (error) {
+    console.warn("create-booking-with-email event log failed", error.message);
+  }
+}
 
 async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, bookingId: string) {
   let lastResult: unknown = null;
