@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             oldalAdatokAlkalmazasa(adatok);
             await onlineTelefonLathatosagAlkalmazasa();
             await onlineArlistaBetoltese();
+            galeriaBekotese();
         })
         .catch(error => {
             console.warn('Lumi Nails tartalom betöltési hiba:', error);
@@ -36,6 +37,22 @@ function lumiAlapOldalAdatok() {
             nev: 'Lumi Nails',
             rovidLeiras: 'Letisztult, nőies körmök Tatabányán, személyes figyelemmel és precíz részletekkel.'
         },
+        navigacio: {
+            kezdolap: 'Kezdőlap',
+            szolgaltatasok: 'Szolgáltatások',
+            arlista: 'Árlista',
+            galeria: 'Galéria',
+            foglalas: 'Foglalás'
+        },
+        lablec: {
+            jogiLink: 'Adatkezelési tájékoztató',
+            jogok: '© Lumi Nails. Minden jog fenntartva.'
+        },
+        seo: {
+            fooldalCim: 'Lumi Nails - Körmös és manikűr Tatabánya',
+            fooldalLeiras: 'Lumi Nails Tatabányán: manikűr, gél lakk, körömépítés, töltés és díszítés online időpontfoglalással.',
+            megosztasiKep: '/kepek/social-preview.jpg'
+        },
         kapcsolat: {
             cimke: 'Elérhetőség',
             cim: '2800 Tatabánya, Kós Károly út',
@@ -53,7 +70,9 @@ function lumiAlapOldalAdatok() {
             hero: {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
-                leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.'
+                leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
+                kep: '/kepek/hatter2.jpg',
+                kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
                 cim: 'Bemutatkozás',
@@ -66,6 +85,7 @@ function lumiAlapOldalAdatok() {
             },
             szolgaltatasok: {
                 cim: 'SZOLGÁLTATÁSOK',
+                arlistaGomb: 'Árlista megtekintése',
                 kartyak: [
                     { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', szeles: true },
                     { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', szeles: false },
@@ -118,9 +138,33 @@ function lumiAlapOldalAdatok() {
             cim: 'Árlista',
             leiras: 'Az árak tájékoztató jellegűek, a pontos végösszeg az egyedi igényektől és díszítéstől függhet.'
         },
+        galeria: {
+            cim: 'Galéria',
+            leiras: 'Finom részletek, letisztult formák és visszafogottan elegáns díszítések egy helyen.',
+            foglalasGomb: 'Időpontfoglalás',
+            elemek: [
+                { kep: '/galeria/optimized/large/image3.jpg', eloKep: '/galeria/optimized/thumbs/image3.jpg', kepAlt: 'Lumi Nails köröm munka', magas: true },
+                { kep: '/galeria/optimized/large/image8.jpg', eloKep: '/galeria/optimized/thumbs/image8.jpg', kepAlt: 'Lumi Nails díszített köröm', magas: true },
+                { kep: '/galeria/optimized/large/image6.jpg', eloKep: '/galeria/optimized/thumbs/image6.jpg', kepAlt: 'Lumi Nails elegáns manikűr', magas: true },
+                { kep: '/galeria/optimized/large/image0.jpg', eloKep: '/galeria/optimized/thumbs/image0.jpg', kepAlt: 'Lumi Nails köröm inspiráció', magas: false },
+                { kep: '/galeria/optimized/large/image1.jpg', eloKep: '/galeria/optimized/thumbs/image1.jpg', kepAlt: 'Lumi Nails gél lakk munka', magas: false },
+                { kep: '/galeria/optimized/large/image2.jpg', eloKep: '/galeria/optimized/thumbs/image2.jpg', kepAlt: 'Lumi Nails körömdíszítés', magas: false },
+                { kep: '/galeria/optimized/large/image4.jpg', eloKep: '/galeria/optimized/thumbs/image4.jpg', kepAlt: 'Lumi Nails manikűr részlet', magas: false },
+                { kep: '/galeria/optimized/large/image5.jpg', eloKep: '/galeria/optimized/thumbs/image5.jpg', kepAlt: 'Lumi Nails letisztult köröm', magas: false },
+                { kep: '/galeria/optimized/large/image7.jpg', eloKep: '/galeria/optimized/thumbs/image7.jpg', kepAlt: 'Lumi Nails szalonmunka', magas: false },
+                { kep: '/galeria/optimized/large/image9.jpg', eloKep: '/galeria/optimized/thumbs/image9.jpg', kepAlt: 'Lumi Nails köröm szín', magas: false },
+                { kep: '/galeria/optimized/large/image10.jpg', eloKep: '/galeria/optimized/thumbs/image10.jpg', kepAlt: 'Lumi Nails elegáns köröm', magas: false },
+                { kep: '/galeria/optimized/large/image11.jpg', eloKep: '/galeria/optimized/thumbs/image11.jpg', kepAlt: 'Lumi Nails köröm forma', magas: false },
+                { kep: '/galeria/optimized/large/image12.jpg', eloKep: '/galeria/optimized/thumbs/image12.jpg', kepAlt: 'Lumi Nails nail art', magas: false }
+            ]
+        },
         foglalas: {
             cim: 'Időpontfoglalás',
             leiras: 'Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.',
+            nevPlaceholder: 'Teljes neved',
+            telefonPlaceholder: '201234567',
+            emailPlaceholder: 'Email címed',
+            megjegyzesPlaceholder: 'Megjegyzés, egyedi kérés (opcionális)',
             kuldesGomb: 'Foglalás elküldése',
             lebegoGomb: 'Időpontfoglalás',
             popup: {
@@ -128,6 +172,9 @@ function lumiAlapOldalAdatok() {
                 sikeresSzoveg: 'Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldjük, kérlek ellenőrizd a spam mappát is.',
                 tartalekCim: 'Adatok előkészítve',
                 tartalekSzoveg: 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.',
+                kezdolapGomb: 'Kezdőlap',
+                galeriaGomb: 'Galéria',
+                naptarGomb: 'Naptárba mentés',
                 bezarasGomb: 'Bezárás',
                 messengerGomb: 'Messenger',
                 instagramGomb: 'Instagram'
@@ -239,6 +286,7 @@ function lablecBetoltese() {
                     </div>
                 </div>
             </div>
+            <p class="footer-jogok">© Lumi Nails. Minden jog fenntartva.</p>
         </footer>
     `;
 
@@ -396,10 +444,77 @@ function oldalAdatokAlkalmazasa(adatok) {
     }
 
     window.lumiAdatok = adatok;
+    fejlecAdatokAlkalmazasa(adatok);
     fooldalAdatokAlkalmazasa(adatok.fooldal);
     arlistaAdatokAlkalmazasa(adatok.arlista);
+    galeriaAdatokAlkalmazasa(adatok.galeria);
     foglalasAdatokAlkalmazasa(adatok.foglalas, adatok.arlista);
     lablecAdatokAlkalmazasa(adatok);
+    seoAdatokAlkalmazasa(adatok.seo);
+}
+
+function fejlecAdatokAlkalmazasa(adatok) {
+    const marka = adatok?.marka;
+    const navigacio = adatok?.navigacio;
+    szovegBeallitasa('header .logo', marka?.nev);
+    document.querySelectorAll('header .logo').forEach(link => {
+        link.setAttribute('aria-label', `${marka?.nev || 'Lumi Nails'} kezdőlap`);
+    });
+
+    const linkek = [
+        ['a[href="/"]', navigacio?.kezdolap],
+        ['a[href="/#szolgaltatasok"]', navigacio?.szolgaltatasok],
+        ['a[href="/arlista/"]', navigacio?.arlista],
+        ['a[href="/galeria/"]', navigacio?.galeria],
+        ['a[href="/foglalas/"]', navigacio?.foglalas]
+    ];
+    ['header .menu-pontok', '#mobil-nav'].forEach(gyokerSelector => {
+        const gyoker = document.querySelector(gyokerSelector);
+        if (!gyoker) return;
+        linkek.forEach(([selector, felirat]) => szovegBeallitasa(selector, felirat, gyoker));
+    });
+}
+
+function galeriaAdatokAlkalmazasa(galeria) {
+    const szekcio = document.querySelector('.galeria-oldal');
+    const racs = szekcio?.querySelector('.galeria-racs');
+    if (!szekcio || !galeria || !racs) return;
+
+    szovegBeallitasa('h2', galeria.cim, szekcio);
+    szovegBeallitasa('.szekcio-leiras', galeria.leiras, szekcio);
+    szovegBeallitasa('a.gomb[href*="foglalas"]', galeria.foglalasGomb, szekcio);
+
+    if (!Array.isArray(galeria.elemek)) return;
+    racs.innerHTML = '';
+    galeria.elemek.filter(elem => elem?.kep).forEach(elem => {
+        const gomb = document.createElement('button');
+        gomb.type = 'button';
+        gomb.className = `galeria-kep-gomb${elem.magas ? ' magas' : ''}`;
+        gomb.dataset.src = elem.kep;
+        gomb.dataset.alt = elem.kepAlt || 'Lumi Nails köröm munka';
+        const kep = document.createElement('img');
+        kep.src = elem.eloKep || elem.kep;
+        kep.alt = elem.kepAlt || 'Lumi Nails köröm munka';
+        kep.loading = 'lazy';
+        gomb.appendChild(kep);
+        racs.appendChild(gomb);
+    });
+}
+
+function seoAdatokAlkalmazasa(seo) {
+    if (!seo || window.location.pathname !== '/' && !window.location.pathname.endsWith('/index.html')) return;
+    if (seo.fooldalCim) document.title = seo.fooldalCim;
+    const description = document.querySelector('meta[name="description"]');
+    if (description && seo.fooldalLeiras) description.content = seo.fooldalLeiras;
+    document.querySelectorAll('meta[property="og:title"]').forEach(meta => {
+        if (seo.fooldalCim) meta.content = seo.fooldalCim;
+    });
+    document.querySelectorAll('meta[property="og:description"]').forEach(meta => {
+        if (seo.fooldalLeiras) meta.content = seo.fooldalLeiras;
+    });
+    document.querySelectorAll('meta[property="og:image"], meta[name="twitter:image"]').forEach(meta => {
+        if (seo.megosztasiKep) meta.content = new URL(seo.megosztasiKep, window.location.origin).href;
+    });
 }
 
 function szovegBeallitasa(selector, ertek, gyoker = document) {
@@ -442,6 +557,12 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     szovegBeallitasa('.hero-kicker', fooldal.hero?.kicker);
     szovegBeallitasa('.hero-content h1', fooldal.hero?.cim);
     szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
+    const hero = document.getElementById('hero');
+    if (hero && fooldal.hero?.kep) {
+        hero.style.backgroundImage = `linear-gradient(90deg, rgba(43, 37, 33, 0.04) 0%, rgba(43, 37, 33, 0.12) 42%, rgba(43, 37, 33, 0.74) 100%), url("${fooldal.hero.kep.replace(/"/g, '%22')}")`;
+        if (fooldal.hero.kepAlt) hero.setAttribute('aria-label', fooldal.hero.kepAlt);
+        hero.setAttribute('role', 'img');
+    }
 
     szovegBeallitasa('.bemutatkozas-szoveg h2', fooldal.bemutatkozas?.cim);
     bekezdesekRenderelese('.bemutatkozas-szoveg', fooldal.bemutatkozas?.bekezdesek);
@@ -493,6 +614,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     }
 
     szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
+    szovegBeallitasa('.szolgaltatas-arlista-gomb', szolgaltatasok.arlistaGomb, szekcio);
     racs.innerHTML = '';
 
     szolgaltatasok.kartyak.forEach(kartya => {
@@ -662,9 +784,20 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         szovegBeallitasa('h2', foglalas.cim, szekcio);
         htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
         szovegBeallitasa('#foglalas-kuldes', foglalas.kuldesGomb, szekcio);
+        const nevMezo = szekcio.querySelector('#foglalas-nev');
+        const telefonMezo = szekcio.querySelector('#foglalas-tel');
+        const emailMezo = szekcio.querySelector('#foglalas-email');
+        const megjegyzesMezo = szekcio.querySelector('#foglalas-komment');
+        if (nevMezo && foglalas.nevPlaceholder) nevMezo.placeholder = foglalas.nevPlaceholder;
+        if (telefonMezo && foglalas.telefonPlaceholder) telefonMezo.placeholder = foglalas.telefonPlaceholder;
+        if (emailMezo && foglalas.emailPlaceholder) emailMezo.placeholder = foglalas.emailPlaceholder;
+        if (megjegyzesMezo && foglalas.megjegyzesPlaceholder) megjegyzesMezo.placeholder = foglalas.megjegyzesPlaceholder;
         szovegBeallitasa('.popup-cim', foglalas.popup?.sikeresCim);
         htmlSzovegBeallitasa('.popup-szoveg', foglalas.popup?.sikeresSzoveg);
         szovegBeallitasa('#popup-bezaras', foglalas.popup?.bezarasGomb);
+        szovegBeallitasa('.popup-gomb[href="/"]', foglalas.popup?.kezdolapGomb);
+        szovegBeallitasa('.popup-gomb[href="/galeria/"]', foglalas.popup?.galeriaGomb);
+        szovegBeallitasa('#naptar-link', foglalas.popup?.naptarGomb);
 
         if (!supabaseFoglalas) {
             szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
@@ -908,6 +1041,8 @@ function lablecAdatokAlkalmazasa(adatok) {
     szovegBeallitasa('.footer-logo', marka?.nev);
     szovegBeallitasa('.footer-brand p', marka?.rovidLeiras);
     szovegBeallitasa('.footer-kapcsolat h3', kapcsolat?.cimke);
+    szovegBeallitasa('.footer-jogi-link', adatok.lablec?.jogiLink);
+    szovegBeallitasa('.footer-jogok', adatok.lablec?.jogok);
 
     const cimLink = document.querySelector('[data-footer-address]');
     const telefonLink = document.querySelector('[data-footer-phone]');

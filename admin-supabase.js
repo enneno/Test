@@ -1163,7 +1163,9 @@
                 </div>
             </div>
             <div class="admin-db-akciok">
-                <button type="button" class="admin-kis-gomb" data-szolgaltatas-torles>Törlés</button>
+                <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="fel" aria-label="Tétel feljebb">↑ Feljebb</button>
+                <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="le" aria-label="Tétel lejjebb">↓ Lejjebb</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-szolgaltatas-torles>Törlés</button>
             </div>
         `;
 
@@ -1198,9 +1200,31 @@
             return;
         }
 
+        const mozgatas = event.target.closest('[data-szolgaltatas-mozgat]');
+        if (mozgatas) {
+            szolgaltatasMozgatasa(kartya, mozgatas.dataset.szolgaltatasMozgat);
+            return;
+        }
+
         if (event.target.closest('[data-szolgaltatas-torles]')) {
+            if (!window.confirm('Biztosan törlöd ezt az árlista tételt? A hozzá tartozó korábbi foglalások miatt a törlés sikertelen lehet.')) return;
             await rekordTorlese('services', kartya.dataset.id, szolgaltatasokBetoltese);
         }
+    }
+
+    function szolgaltatasMozgatasa(kartya, irany) {
+        const lista = kartya.parentElement;
+        const csere = irany === 'fel' ? kartya.previousElementSibling : kartya.nextElementSibling;
+        if (!lista || !csere || !csere.classList.contains('admin-db-kartya')) return;
+
+        if (irany === 'fel') lista.insertBefore(kartya, csere);
+        else lista.insertBefore(csere, kartya);
+
+        Array.from(lista.querySelectorAll('.admin-db-kartya')).forEach((elem, index) => {
+            const sorrend = mezo(elem, 'sort_order');
+            if (sorrend) sorrend.value = String((index + 1) * 10);
+        });
+        onlineStatusz('A sorrend módosult. A véglegesítéshez nyomd meg a Mentés gombot.');
     }
 
     async function szolgaltatasokMentese() {

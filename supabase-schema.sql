@@ -442,3 +442,46 @@ on conflict (name) do update set
 insert into public.site_settings (key, value)
 values ('telefon_lathato', '{"visible": true}'::jsonb)
 on conflict (key) do nothing;
+
+-- Weboldal tartalom és Supabase Storage alapú képfeltöltés
+insert into public.site_settings (key, value)
+values ('site_content', '{}'::jsonb)
+on conflict (key) do nothing;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+    'site-media',
+    'site-media',
+    true,
+    12582912,
+    array['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif']
+)
+on conflict (id) do update set
+    public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "public can view site media" on storage.objects;
+create policy "public can view site media"
+    on storage.objects for select
+    to anon, authenticated
+    using (bucket_id = 'site-media');
+
+drop policy if exists "admin can upload site media" on storage.objects;
+create policy "admin can upload site media"
+    on storage.objects for insert
+    to authenticated
+    with check (bucket_id = 'site-media');
+
+drop policy if exists "admin can update site media" on storage.objects;
+create policy "admin can update site media"
+    on storage.objects for update
+    to authenticated
+    using (bucket_id = 'site-media')
+    with check (bucket_id = 'site-media');
+
+drop policy if exists "admin can delete site media" on storage.objects;
+create policy "admin can delete site media"
+    on storage.objects for delete
+    to authenticated
+    using (bucket_id = 'site-media');

@@ -3353,3 +3353,159 @@ select.urlap-mezo:invalid {
         margin-top: clamp(6px, 2.2vw, 10px);
     }
 }
+
+/* Tartalom- és médiakezelő */
+.admin-cms-panel {
+    width: min(100%, 1180px);
+    margin-inline: auto;
+}
+.admin-cms-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+.admin-cms-heading h2,
+.cms-gallery-header h3 {
+    margin: 0 0 8px;
+    color: var(--tinta);
+    font-family: 'Cormorant Garamond', serif;
+}
+.admin-cms-heading p { margin-bottom: 0; }
+.admin-cms-main-actions,
+.cms-gallery-header,
+.cms-gallery-actions,
+.cms-image-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.cms-section { border-top: 1px solid rgba(185, 133, 143, 0.25); }
+.cms-section:last-child { border-bottom: 1px solid rgba(185, 133, 143, 0.25); }
+.cms-section-toggle {
+    width: 100%;
+    min-height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    color: var(--tinta);
+    font-family: 'Manrope', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.cms-section-toggle > span:last-child {
+    color: var(--akcentus);
+    font-size: 26px;
+    font-weight: 400;
+}
+.cms-section-body { padding: 6px 0 30px; }
+.cms-field-grid { align-items: start; }
+.cms-field-label { color: var(--barna); }
+.cms-checkbox { align-self: center; min-height: 48px; }
+.cms-image-field {
+    padding: 16px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 18px;
+    background: rgba(255, 250, 244, 0.72);
+}
+.cms-image-preview {
+    width: min(100%, 420px);
+    min-height: 150px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 14px;
+    background: var(--krem);
+    color: var(--szoveg);
+}
+.cms-image-preview img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+}
+.cms-image-preview img + span { display: none; }
+.cms-upload-button {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.cms-upload-button input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+.cms-image-url { font-size: 13px; }
+.cms-gallery-editor {
+    margin-top: 26px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(185, 133, 143, 0.25);
+}
+.cms-gallery-header {
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.cms-gallery-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.cms-gallery-item {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 20px;
+    background: rgba(255, 250, 244, 0.72);
+}
+.cms-gallery-item h4 {
+    margin: 0 0 14px;
+    color: var(--akcentus);
+    font-size: 16px;
+}
+.cms-gallery-item .cms-image-field {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+.cms-gallery-item > .admin-mezo { margin-top: 12px; }
+.cms-gallery-actions {
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+.cms-gallery-actions .admin-kis-gomb { min-width: 50px; padding-inline: 14px; }
+#admin-cms-status { margin: 18px 0; }
+.footer-jogok {
+    margin: 0;
+    padding: 0 20px 24px;
+    color: var(--szoveg);
+    font-size: 12px;
+    text-align: center;
+}
+
+@media screen and (max-width: 760px) {
+    .admin-cms-heading { align-items: stretch; flex-direction: column; }
+    .admin-cms-main-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .admin-cms-main-actions button { width: 100%; padding-inline: 12px; }
+    .cms-gallery-list { grid-template-columns: 1fr; }
+    .cms-section-toggle { min-height: 58px; font-size: 16px; }
+    .cms-section-body { padding-bottom: 22px; }
+    .cms-image-field,
+    .cms-gallery-item { padding: 14px; }
+    .cms-image-controls { display: grid; grid-template-columns: 1fr 1fr; }
+    .cms-image-controls > * { width: 100%; padding-inline: 10px; }
+    .cms-image-preview { min-height: 120px; }
+    .cms-gallery-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .cms-gallery-actions .admin-veszely-gomb { grid-column: 1 / -1; }
+}
