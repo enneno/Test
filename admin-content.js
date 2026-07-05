@@ -60,17 +60,6 @@
             ]
         },
         {
-            title: 'Főoldali kiemelt stílusok',
-            fields: [
-                field('fooldal.kiemeltStilusok.cimke', 'Kis felső szöveg'),
-                field('fooldal.kiemeltStilusok.cim', 'Cím'),
-                field('fooldal.kiemeltStilusok.leiras', 'Leírás', 'textarea'),
-                ...styleCardFields(0),
-                ...styleCardFields(1),
-                ...styleCardFields(2)
-            ]
-        },
-        {
             title: 'Főoldali foglalási blokk',
             fields: [
                 field('fooldal.foglalasAtvezeto.cim', 'Cím'),
@@ -180,15 +169,6 @@
     }
     function imageWithAlt(base, label) {
         return [image(`${base}.src`, label), field(`${base}.alt`, `${label} leírása`)];
-    }
-    function styleCardFields(index) {
-        const base = `fooldal.kiemeltStilusok.kartyak.${index}`;
-        return [
-            image(`${base}.kep`, `${index + 1}. kártya képe`),
-            field(`${base}.kepAlt`, `${index + 1}. kép leírása`),
-            field(`${base}.cim`, `${index + 1}. kártya címe`),
-            field(`${base}.leiras`, `${index + 1}. kártya szövege`, 'textarea')
-        ];
     }
 
     async function loadContent() {
