@@ -94,14 +94,37 @@
                 field('foglalas.megjegyzesPlaceholder', 'Megjegyzés mező felirata'),
                 field('foglalas.kuldesGomb', 'Küldés gomb'),
                 field('foglalas.lebegoGomb', 'Lebegő gomb'),
-                field('foglalas.popup.sikeresCim', 'Sikeres ablak címe'),
-                field('foglalas.popup.sikeresSzoveg', 'Sikeres ablak szövege', 'textarea'),
-                field('foglalas.popup.tartalekCim', 'Emailhiba ablak címe'),
-                field('foglalas.popup.tartalekSzoveg', 'Emailhiba ablak szövege', 'textarea'),
+                field('foglalas.popup.emailSikeresCim', 'Popup címe, ha az email is elment'),
+                field('foglalas.popup.emailSikeresSzoveg', 'Popup szövege, ha az email is elment', 'textarea'),
+                field('foglalas.popup.emailHibaCim', 'Popup címe, ha a foglalás megvan, de az email hibás'),
+                field('foglalas.popup.emailHibaSzoveg', 'Popup szövege, ha a foglalás megvan, de az email hibás', 'textarea'),
                 field('foglalas.popup.kezdolapGomb', 'Kezdőlap gomb'),
                 field('foglalas.popup.galeriaGomb', 'Galéria gomb'),
                 field('foglalas.popup.naptarGomb', 'Naptár gomb'),
                 field('foglalas.popup.bezarasGomb', 'Bezárás gomb')
+            ]
+        },
+        {
+            title: 'Automatikus vendégemailek',
+            fields: [
+                field('email.ujFoglalas.targy', 'Új foglalás – email tárgya'),
+                field('email.ujFoglalas.cim', 'Új foglalás – email címe'),
+                field('email.ujFoglalas.szoveg', 'Új foglalás – email szövege ({nev}, {szolgaltatas}, {idopont}, {helyszin})', 'textarea'),
+                field('email.visszaigazolas.targy', 'Visszaigazolás – email tárgya'),
+                field('email.visszaigazolas.cim', 'Visszaigazolás – email címe'),
+                field('email.visszaigazolas.szoveg', 'Visszaigazolás – email szövege', 'textarea'),
+                field('email.visszaigazolasModositva.targy', 'Visszaigazolva és módosítva – tárgy'),
+                field('email.visszaigazolasModositva.cim', 'Visszaigazolva és módosítva – cím'),
+                field('email.visszaigazolasModositva.szoveg', 'Visszaigazolva és módosítva – szöveg', 'textarea'),
+                field('email.idopontModositva.targy', 'Időpontmódosítás – email tárgya'),
+                field('email.idopontModositva.cim', 'Időpontmódosítás – email címe'),
+                field('email.idopontModositva.szoveg', 'Időpontmódosítás – email szövege', 'textarea'),
+                field('email.lemondas.targy', 'Lemondás – email tárgya'),
+                field('email.lemondas.cim', 'Lemondás – email címe'),
+                field('email.lemondas.szoveg', 'Lemondás – email szövege', 'textarea'),
+                field('email.fuggoben.targy', 'Függőben státusz – email tárgya'),
+                field('email.fuggoben.cim', 'Függőben státusz – email címe'),
+                field('email.fuggoben.szoveg', 'Függőben státusz – email szövege', 'textarea')
             ]
         },
         {

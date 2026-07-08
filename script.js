@@ -143,16 +143,48 @@ function lumiAlapOldalAdatok() {
             kuldesGomb: 'Foglalás elküldése',
             lebegoGomb: 'Időpontfoglalás',
             popup: {
-                sikeresCim: 'Foglalás elküldve',
-                sikeresSzoveg: 'Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldjük, kérlek ellenőrizd a spam mappát is.',
-                tartalekCim: 'Adatok előkészítve',
-                tartalekSzoveg: 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.',
+                emailSikeresCim: 'Foglalás elküldve',
+                emailSikeresSzoveg: 'Köszönöm, megkaptam a foglalásodat. A részletekről visszaigazoló emailt is küldtünk. Kérlek ellenőrizd a spam vagy promóciók mappát is.',
+                emailHibaCim: 'Foglalás rögzítve',
+                emailHibaSzoveg: 'Köszönöm, a foglalásod bekerült a rendszerbe, de a visszaigazoló email most nem biztos, hogy elment. Ha nem érkezik meg, kérlek írj üzenetet.',
                 kezdolapGomb: 'Kezdőlap',
                 galeriaGomb: 'Galéria',
                 naptarGomb: 'Naptárba mentés',
                 bezarasGomb: 'Bezárás',
                 messengerGomb: 'Messenger',
                 instagramGomb: 'Instagram'
+            }
+        },
+        email: {
+            ujFoglalas: {
+                targy: 'Lumi Nails foglalásod beérkezett',
+                cim: 'Köszönöm a foglalásodat!',
+                szoveg: 'Szia {nev}!\n\nMegkaptam az időpontfoglalásodat, az alábbi adatokkal rögzítettük a rendszerben.'
+            },
+            visszaigazolas: {
+                targy: 'Lumi Nails időpontod visszaigazolva',
+                cim: 'Időpont visszaigazolva',
+                szoveg: 'Szia {nev}!\n\nA foglalásod vissza lett igazolva. Az aktuális részleteket lent találod.'
+            },
+            visszaigazolasModositva: {
+                targy: 'Lumi Nails időpontod visszaigazolva és módosítva',
+                cim: 'Időpont visszaigazolva és módosítva',
+                szoveg: 'Szia {nev}!\n\nA foglalásod vissza lett igazolva, és az időpont adatai módosultak. Az aktuális részleteket lent találod.'
+            },
+            idopontModositva: {
+                targy: 'Lumi Nails időpontod módosult',
+                cim: 'Időpont módosítva',
+                szoveg: 'Szia {nev}!\n\nAz időpontod adatai módosultak. Az aktuális részleteket lent találod.'
+            },
+            lemondas: {
+                targy: 'Lumi Nails időpontod lemondva',
+                cim: 'Időpont lemondva',
+                szoveg: 'Szia {nev}!\n\nA foglalásod lemondásra került. Ha új időpontot szeretnél egyeztetni, kérlek írj üzenetet.'
+            },
+            fuggoben: {
+                targy: 'Lumi Nails foglalásod státusza módosult',
+                cim: 'Foglalás státusza módosult',
+                szoveg: 'Szia {nev}!\n\nA foglalásod státusza módosult. Az aktuális részleteket lent találod.'
             }
         }
     };
@@ -737,8 +769,8 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         if (telefonMezo && foglalas.telefonPlaceholder) telefonMezo.placeholder = foglalas.telefonPlaceholder;
         if (emailMezo && foglalas.emailPlaceholder) emailMezo.placeholder = foglalas.emailPlaceholder;
         if (megjegyzesMezo && foglalas.megjegyzesPlaceholder) megjegyzesMezo.placeholder = foglalas.megjegyzesPlaceholder;
-        szovegBeallitasa('.popup-cim', foglalas.popup?.sikeresCim);
-        htmlSzovegBeallitasa('.popup-szoveg', foglalas.popup?.sikeresSzoveg);
+        szovegBeallitasa('.popup-cim', foglalas.popup?.emailSikeresCim);
+        htmlSzovegBeallitasa('.popup-szoveg', foglalas.popup?.emailSikeresSzoveg);
         szovegBeallitasa('#popup-bezaras', foglalas.popup?.bezarasGomb);
         szovegBeallitasa('.popup-gomb[href="/"]', foglalas.popup?.kezdolapGomb);
         szovegBeallitasa('.popup-gomb[href="/galeria/"]', foglalas.popup?.galeriaGomb);
@@ -1422,13 +1454,13 @@ function popupMegnyitasa(sikeresMasolas, uzenet) {
     const popupAdatok = window.lumiAdatok?.foglalas?.popup || {};
 
     if (sikeresMasolas) {
-        popupCim.textContent = popupAdatok.sikeresCim || 'Adatok másolva!';
-        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.sikeresSzoveg || 'A foglalásod szövegét vágólapra másoltuk. Válaszd ki, hol szeretnéd elküldeni nekem, majd nyomj a Beillesztés gombra a chaten!');
+        popupCim.textContent = popupAdatok.emailSikeresCim || 'Adatok másolva!';
+        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.emailSikeresSzoveg || 'A foglalás adatai előkészítve.');
         popupUzenet.classList.remove('lathato');
         popupUzenet.value = '';
     } else {
-        popupCim.textContent = popupAdatok.tartalekCim || 'Adatok előkészítve';
-        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.tartalekSzoveg || 'A böngésződ most nem engedte az automatikus másolást. Jelöld ki az alábbi szöveget, másold ki, majd küldd el üzenetben.');
+        popupCim.textContent = popupAdatok.emailHibaCim || 'Foglalás rögzítve';
+        popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.emailHibaSzoveg || 'A foglalás bekerült a rendszerbe, de az email értesítést ellenőrizni kell.');
         popupUzenet.value = uzenet;
         popupUzenet.classList.add('lathato');
         setTimeout(() => popupUzenet.select(), 100);

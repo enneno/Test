@@ -60,23 +60,30 @@ serve(async (req) => {
     const timeChanged = Boolean(notification.time_changed);
     const status = String(notification.status || booking.status || "");
     const adminMessage = String(notification.message || "").trim();
-    const update = adminUpdateMessage(status, statusChanged, timeChanged);
+    const serviceName = serviceNameFromRelation(booking.services);
+    const appointmentText = `${formatDate(booking.starts_at)} - ${formatDate(booking.ends_at, true)}`;
+    const siteContent = await loadSiteContent(supabase);
+    const location = String(siteContent?.kapcsolat?.cim || "2800 Tatabánya, Kós Károly út");
+    const instagramUrl = String(siteContent?.kapcsolat?.instagram || "https://www.instagram.com/luminails.xx/");
+    const variables = {
+      nev: booking.customer_name,
+      szolgaltatas: serviceName,
+      idopont: appointmentText,
+      helyszin: location,
+    };
+    const update = adminUpdateMessage(status, statusChanged, timeChanged, siteContent?.email || {}, variables);
 
     if (!update) {
       return json({ ok: true, email: "skipped" });
     }
 
-    const serviceName = serviceNameFromRelation(booking.services);
-    const appointmentText = `${formatDate(booking.starts_at)} - ${formatDate(booking.ends_at, true)}`;
-    const instagramUrl = "https://www.instagram.com/luminails.xx/";
     const customerHtml = pageHtml(`
       <h1>${escapeHtml(update.title)}</h1>
-      <p>Szia ${escapeHtml(booking.customer_name)}!</p>
-      <p>${escapeHtml(update.message)}</p>
+      ${paragraphsHtml(update.message)}
       ${detailTable([
         ["Szolgáltatás", serviceName],
         ["Időpont", appointmentText],
-        ["Helyszín", "2800 Tatabánya, Kós Károly út"],
+        ["Helyszín", location],
       ])}
       ${adminMessage ? `
         <div style="margin:20px 0;padding:14px 16px;background:#fdf4e2;border:1px solid #ead4cf;border-radius:14px;">
@@ -91,13 +98,11 @@ serve(async (req) => {
       <p>Lumi Nails</p>
     `);
     const customerText = [
-      `Szia ${booking.customer_name}!`,
-      "",
       update.message,
       "",
       `Szolgáltatás: ${serviceName}`,
       `Időpont: ${appointmentText}`,
-      "Helyszín: 2800 Tatabánya, Kós Károly út",
+      `Helyszín: ${location}`,
       ...(adminMessage ? ["", `Üzenet: ${adminMessage}`] : []),
       "",
       `Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
@@ -153,44 +158,86 @@ async function isAdminRequest(req: Request, supabase: any, adminEmail: string) {
   return data.user.email.toLowerCase() === adminEmail.toLowerCase();
 }
 
-function adminUpdateMessage(status: string, statusChanged: boolean, timeChanged: boolean) {
+function adminUpdateMessage(
+  status: string,
+  statusChanged: boolean,
+  timeChanged: boolean,
+  templates: Record<string, any>,
+  variables: Record<string, string>,
+) {
   if (status === "cancelled") {
-    return {
-      subject: "Lumi Nails időpontod lemondva",
-      title: "Időpont lemondva",
-      message: "A foglalásod lemondásra került. Ha új időpontot szeretnél egyeztetni, kérlek írj Instagramon.",
-    };
+    return emailTemplate(templates.lemondas, {
+      targy: "Lumi Nails időpontod lemondva",
+      cim: "Időpont lemondva",
+      szoveg: "Szia {nev}!\n\nA foglalásod lemondásra került. Ha új időpontot szeretnél egyeztetni, kérlek írj üzenetet.",
+    }, variables);
   }
 
   if (status === "confirmed") {
-    return {
-      subject: timeChanged ? "Lumi Nails időpontod visszaigazolva és módosítva" : "Lumi Nails időpontod visszaigazolva",
-      title: timeChanged ? "Időpont visszaigazolva és módosítva" : "Időpont visszaigazolva",
-      message: timeChanged
-        ? "A foglalásod vissza lett igazolva, és az időpont adatai módosultak. Az aktuális részleteket lent találod."
-        : "A foglalásod vissza lett igazolva. Az aktuális részleteket lent találod.",
-    };
+    const key = timeChanged ? "visszaigazolasModositva" : "visszaigazolas";
+    return emailTemplate(templates[key], timeChanged ? {
+      targy: "Lumi Nails időpontod visszaigazolva és módosítva",
+      cim: "Időpont visszaigazolva és módosítva",
+      szoveg: "Szia {nev}!\n\nA foglalásod vissza lett igazolva, és az időpont adatai módosultak. Az aktuális részleteket lent találod.",
+    } : {
+      targy: "Lumi Nails időpontod visszaigazolva",
+      cim: "Időpont visszaigazolva",
+      szoveg: "Szia {nev}!\n\nA foglalásod vissza lett igazolva. Az aktuális részleteket lent találod.",
+    }, variables);
   }
 
   if (timeChanged) {
-    return {
-      subject: "Lumi Nails időpontod módosult",
-      title: "Időpont módosítva",
-      message: "Az időpontod adatai módosultak. Az aktuális részleteket lent találod.",
-    };
+    return emailTemplate(templates.idopontModositva, {
+      targy: "Lumi Nails időpontod módosult",
+      cim: "Időpont módosítva",
+      szoveg: "Szia {nev}!\n\nAz időpontod adatai módosultak. Az aktuális részleteket lent találod.",
+    }, variables);
   }
 
   if (statusChanged && status === "pending") {
-    return {
-      subject: "Lumi Nails foglalásod státusza módosult",
-      title: "Foglalás státusza módosult",
-      message: "A foglalásod státusza módosult. Az aktuális részleteket lent találod.",
-    };
+    return emailTemplate(templates.fuggoben, {
+      targy: "Lumi Nails foglalásod státusza módosult",
+      cim: "Foglalás státusza módosult",
+      szoveg: "Szia {nev}!\n\nA foglalásod státusza módosult. Az aktuális részleteket lent találod.",
+    }, variables);
   }
 
   return null;
 }
 
+async function loadSiteContent(supabase: any) {
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "site_content")
+    .maybeSingle();
+
+  if (error) {
+    console.warn("send-booking-update-email site content load failed", error.message);
+    return {};
+  }
+
+  return data?.value && typeof data.value === "object" ? data.value : {};
+}
+
+function emailTemplate(source: any, fallback: any, variables: Record<string, string>) {
+  return {
+    subject: applyVariables(source?.targy || fallback.targy, variables),
+    title: applyVariables(source?.cim || fallback.cim, variables),
+    message: applyVariables(source?.szoveg || fallback.szoveg, variables),
+  };
+}
+
+function applyVariables(value: unknown, variables: Record<string, string>) {
+  return String(value || "").replace(/\{(nev|szolgaltatas|idopont|helyszin)\}/g, (_match, key) => variables[key] || "");
+}
+
+function paragraphsHtml(value: string) {
+  return String(value || "")
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
 async function sendEmailWithRetry(
   apiKey: string,
   from: string,

@@ -383,19 +383,27 @@
 
     function sikeresPopupNyitasa(emailEredmeny = { ok: false }) {
         const popup = document.getElementById('sikeres-popup');
+        const popupCim = popup?.querySelector('.popup-cim');
         const popupSzoveg = popup?.querySelector('.popup-szoveg');
+        const popupAdatok = window.lumiAdatok?.foglalas?.popup || {};
+        const emailSikerult = Boolean(emailEredmeny.ok);
+
+        if (popupCim) {
+            popupCim.textContent = emailSikerult
+                ? (popupAdatok.emailSikeresCim || 'Foglalás elküldve')
+                : (popupAdatok.emailHibaCim || 'Foglalás rögzítve');
+        }
 
         if (popupSzoveg) {
-            popupSzoveg.textContent = emailEredmeny.ok
-                ? 'Köszönöm, megkaptam a foglalásodat. A részletekről visszaigazoló emailt is küldtünk. Kérlek ellenőrizd a spam vagy promóciók mappát is.'
-                : 'Köszönöm, megkaptam a foglalásodat. A foglalás bekerült a rendszerbe, de az email értesítést még ellenőrizni kell.';
+            popupSzoveg.textContent = emailSikerult
+                ? (popupAdatok.emailSikeresSzoveg || 'Köszönöm, megkaptam a foglalásodat. A visszaigazoló emailt is elküldtük.')
+                : (popupAdatok.emailHibaSzoveg || 'A foglalásod bekerült a rendszerbe, de a visszaigazoló email most nem biztos, hogy elment.');
         }
 
         if (popup) {
             popup.style.display = 'flex';
         }
     }
-
     function naptarLinkFrissitese(adatok) {
         const link = document.getElementById('naptar-link');
 
