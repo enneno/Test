@@ -178,6 +178,7 @@
                 field('kapcsolat.instagram', 'Instagram link', 'url'),
                 field('kapcsolat.facebook', 'Facebook link', 'url'),
                 field('kapcsolat.messenger', 'Messenger link', 'url'),
+                field('kapcsolat.smsUzenet', 'SMS link', 'url'),
                 field('kapcsolat.instagramUzenet', 'Instagram üzenet link', 'url'),
                 field('lablec.jogiLink', 'Adatkezelési link szövege'),
                 field('lablec.jogok', 'Szerzői jogi sor')

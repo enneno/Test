@@ -236,7 +236,6 @@ h1 {
     text-align: center;
 }
 
-
 /* SZOLGÁLTATÁSOK STÍLUSA */
 h2 {
     font-family: 'Cormorant Garamond', serif;
@@ -1403,17 +1402,6 @@ select.urlap-mezo:invalid {
     margin-top: 28px;
 }
 
-.admin-json-panel {
-    margin-top: 28px;
-}
-
-.admin-json-akcio {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 18px;
-}
-
 .admin-auth-panel {
     margin: 0 auto;
 }
@@ -2169,49 +2157,6 @@ select.urlap-mezo:invalid {
     resize: vertical;
 }
 
-.admin-json-panel .admin-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-}
-
-.admin-json-panel .admin-lista {
-    grid-template-columns: 1fr;
-}
-
-.admin-json-panel .admin-lista-elem {
-    padding: 22px;
-    overflow: hidden;
-}
-
-.admin-json-panel > .admin-lista-elem,
-.admin-json-panel .admin-db-kartya {
-    max-width: none;
-}
-
-.admin-json-panel .admin-lista-elem {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.admin-json-panel .admin-mezo {
-    font-size: 14px;
-}
-
-.admin-json-panel .admin-mezo input,
-.admin-json-panel .admin-mezo textarea {
-    min-height: 48px;
-    padding: 15px 16px;
-    font-size: 15px;
-}
-
-.admin-json-panel .admin-mezo textarea {
-    min-height: 132px;
-}
-
-.admin-json-panel .admin-mezo-szeles {
-    grid-column: 1 / -1;
-}
-
 .admin-mezo input:focus,
 .admin-mezo textarea:focus {
     border-color: var(--akcentus);
@@ -2237,7 +2182,6 @@ select.urlap-mezo:invalid {
 
 .admin-mezo input[type="checkbox"],
 .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-json-panel .admin-mezo.admin-checkbox input[type="checkbox"],
 .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"] {
     flex: 0 0 18px;
     width: 18px;
@@ -2541,9 +2485,7 @@ select.urlap-mezo:invalid {
     .admin-mezo textarea,
     .admin-db-grid input,
     .admin-db-grid select,
-    .admin-db-form input,
-    .admin-json-panel .admin-mezo input,
-    .admin-json-panel .admin-mezo textarea {
+    .admin-db-form input {
         font-size: 13px;
     }
 
@@ -2553,10 +2495,6 @@ select.urlap-mezo:invalid {
 
     .admin-akciok {
         flex-direction: column;
-    }
-
-    .admin-json-akcio {
-        display: none;
     }
 
     .admin-jelszo-form {
