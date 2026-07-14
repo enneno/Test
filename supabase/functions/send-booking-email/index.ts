@@ -31,7 +31,7 @@ serve(async (req) => {
     const ownerEmail = Deno.env.get("OWNER_EMAIL") || "luminails.xx@gmail.com";
     const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <luminails.xx@gmail.com>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || "luminails.xx@gmail.com";
-    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "luminails.xx@gmail.com";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
     const internalSecret = req.headers.get("x-lumi-internal-secret") || "";
 
     if (!supabaseUrl || !serviceRoleKey) {

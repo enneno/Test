@@ -46,7 +46,7 @@ Szükséges Supabase secrets:
 - `OWNER_EMAIL` például `luminails.xx@gmail.com`
 - `FROM_EMAIL` például `Lumi Nails <luminails.xx@gmail.com>`
 - `REPLY_TO_EMAIL` például `luminails.xx@gmail.com`
-- `ADMIN_EMAIL` például `luminails.xx@gmail.com`
+- `ADMIN_EMAIL` például `llevisimon@gmail.com`
 
 Secret kulcsot soha ne tegyél a frontend fájlokba vagy GitHubra.
 
@@ -63,7 +63,7 @@ supabase secrets set RESEND_API_KEY=ide_jon_a_resend_api_kulcs
 supabase secrets set OWNER_EMAIL=luminails.xx@gmail.com
 supabase secrets set FROM_EMAIL="Lumi Nails <luminails.xx@gmail.com>"
 supabase secrets set REPLY_TO_EMAIL=luminails.xx@gmail.com
-supabase secrets set ADMIN_EMAIL=luminails.xx@gmail.com
+supabase secrets set ADMIN_EMAIL=llevisimon@gmail.com
 supabase functions deploy send-booking-email
 supabase functions deploy send-booking-update-email
 ```
