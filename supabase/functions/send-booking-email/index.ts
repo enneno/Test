@@ -28,10 +28,10 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "";
-    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
-    const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
-    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
+    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "luminails.xx@gmail.com";
+    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <luminails.xx@gmail.com>";
+    const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || "luminails.xx@gmail.com";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "luminails.xx@gmail.com";
     const internalSecret = req.headers.get("x-lumi-internal-secret") || "";
 
     if (!supabaseUrl || !serviceRoleKey) {

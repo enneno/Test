@@ -60,7 +60,7 @@ function lumiAlapOldalAdatok() {
             telefon: '+36 20 563 6494',
             telefonLink: '+36205636494',
             telefonLathato: false,
-            email: '',
+            email: 'luminails.xx@gmail.com',
             instagram: 'https://www.instagram.com/luminails.xx/',
             facebook: 'https://www.facebook.com/profile.php?id=61576508698202',
             messenger: 'https://m.me/petras.szofi',
@@ -483,6 +483,7 @@ function kapcsolatGyorsLinkekNormalizalasa(adatok) {
 
     if (!kapcsolat.telefon) kapcsolat.telefon = '+36 20 563 6494';
     if (!kapcsolat.telefonLink) kapcsolat.telefonLink = '+36205636494';
+    if (!kapcsolat.email || /@luminails\.hu$/i.test(kapcsolat.email)) kapcsolat.email = 'luminails.xx@gmail.com';
     if (!kapcsolat.smsUzenet) kapcsolat.smsUzenet = 'sms:+36205636494';
     if (!kapcsolat.messenger || kapcsolat.messenger.includes('61576508698202')) {
         kapcsolat.messenger = 'https://m.me/petras.szofi';
