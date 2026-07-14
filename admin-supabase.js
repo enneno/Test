@@ -10,169 +10,9 @@
         foglalasOldal: 1,
         foglalasElemek: [],
         esemenynaploElemek: [],
-        naptarKijelolesek: new Map(),
-        oldalSzovegek: null
+        naptarKijelolesek: new Map()
     };
 
-    const OLDAL_SZOVEG_CSOPORTOK = [
-        {
-            cim: 'Főoldal hero',
-            mezok: [
-                ['fooldal.hero.kicker', 'Kis felső szöveg'],
-                ['fooldal.hero.cim', 'Főcím'],
-                ['fooldal.hero.leiras', 'Leírás', 'textarea']
-            ]
-        },
-        {
-            cim: 'Bemutatkozás',
-            mezok: [
-                ['fooldal.bemutatkozas.cim', 'Cím'],
-                ['fooldal.bemutatkozas.bekezdesek.0', 'Első bekezdés', 'textarea'],
-                ['fooldal.bemutatkozas.bekezdesek.1', 'Második bekezdés', 'textarea'],
-                ['fooldal.bemutatkozas.kep', 'Kép útvonala'],
-                ['fooldal.bemutatkozas.kepAlt', 'Kép leírása']
-            ]
-        },
-        {
-            cim: 'Szolgáltatás kártyák',
-            mezok: [
-                ['fooldal.szolgaltatasok.cim', 'Szekció címe'],
-                ['fooldal.szolgaltatasok.kartyak.0.cim', '1. kártya címe'],
-                ['fooldal.szolgaltatasok.kartyak.0.leiras', '1. kártya szövege', 'textarea'],
-                ['fooldal.szolgaltatasok.kartyak.1.cim', '2. kártya címe'],
-                ['fooldal.szolgaltatasok.kartyak.1.leiras', '2. kártya szövege', 'textarea'],
-                ['fooldal.szolgaltatasok.kartyak.2.cim', '3. kártya címe'],
-                ['fooldal.szolgaltatasok.kartyak.2.leiras', '3. kártya szövege', 'textarea'],
-                ['fooldal.szolgaltatasok.kartyak.3.cim', '4. kártya címe'],
-                ['fooldal.szolgaltatasok.kartyak.3.leiras', '4. kártya szövege', 'textarea']
-            ]
-        },
-        {
-            cim: 'Galéria átvezető',
-            mezok: [
-                ['fooldal.galeriaAtvezeto.cim', 'Cím'],
-                ['fooldal.galeriaAtvezeto.leiras', 'Leírás', 'textarea'],
-                ['fooldal.galeriaAtvezeto.gombSzoveg', 'Gomb szövege'],
-                ['fooldal.galeriaAtvezeto.kepek.0.src', '1. kép útvonala'],
-                ['fooldal.galeriaAtvezeto.kepek.0.alt', '1. kép leírása'],
-                ['fooldal.galeriaAtvezeto.kepek.1.src', '2. kép útvonala'],
-                ['fooldal.galeriaAtvezeto.kepek.1.alt', '2. kép leírása'],
-                ['fooldal.galeriaAtvezeto.kepek.2.src', '3. kép útvonala'],
-                ['fooldal.galeriaAtvezeto.kepek.2.alt', '3. kép leírása']
-            ]
-        },
-        {
-            cim: 'Kiemelt stílusok',
-            mezok: [
-                ['fooldal.kiemeltStilusok.cimke', 'Kis felső szöveg'],
-                ['fooldal.kiemeltStilusok.cim', 'Cím'],
-                ['fooldal.kiemeltStilusok.leiras', 'Leírás', 'textarea'],
-                ['fooldal.kiemeltStilusok.kartyak.0.cim', '1. kártya címe'],
-                ['fooldal.kiemeltStilusok.kartyak.0.leiras', '1. kártya szövege', 'textarea'],
-                ['fooldal.kiemeltStilusok.kartyak.0.kep', '1. kép útvonala'],
-                ['fooldal.kiemeltStilusok.kartyak.0.kepAlt', '1. kép leírása'],
-                ['fooldal.kiemeltStilusok.kartyak.1.cim', '2. kártya címe'],
-                ['fooldal.kiemeltStilusok.kartyak.1.leiras', '2. kártya szövege', 'textarea'],
-                ['fooldal.kiemeltStilusok.kartyak.1.kep', '2. kép útvonala'],
-                ['fooldal.kiemeltStilusok.kartyak.1.kepAlt', '2. kép leírása'],
-                ['fooldal.kiemeltStilusok.kartyak.2.cim', '3. kártya címe'],
-                ['fooldal.kiemeltStilusok.kartyak.2.leiras', '3. kártya szövege', 'textarea'],
-                ['fooldal.kiemeltStilusok.kartyak.2.kep', '3. kép útvonala'],
-                ['fooldal.kiemeltStilusok.kartyak.2.kepAlt', '3. kép leírása']
-            ]
-        },
-        {
-            cim: 'Főoldali foglalás átvezető',
-            mezok: [
-                ['fooldal.foglalasAtvezeto.cim', 'Cím'],
-                ['fooldal.foglalasAtvezeto.leiras', 'Leírás', 'textarea'],
-                ['fooldal.foglalasAtvezeto.gombSzoveg', 'Gomb szövege']
-            ]
-        },
-        {
-            cim: 'Árlista oldal',
-            mezok: [
-                ['arlista.cim', 'Cím'],
-                ['arlista.leiras', 'Leírás', 'textarea']
-            ]
-        },
-        {
-            cim: 'Foglalás oldal és popup',
-            mezok: [
-                ['foglalas.oldal.nyitoKicker', 'Nyitó kis szöveg'],
-                ['foglalas.oldal.nyitoCim', 'Nyitó cím'],
-                ['foglalas.oldal.nyitoLeiras', 'Nyitó leírás', 'textarea'],
-                ['foglalas.oldal.utak.instagram.cim', 'Instagram kártya címe'],
-                ['foglalas.oldal.utak.instagram.leiras', 'Instagram kártya szövege', 'textarea'],
-                ['foglalas.oldal.utak.instagram.gomb', 'Instagram gomb'],
-                ['foglalas.oldal.utak.messenger.cim', 'Messenger kártya címe'],
-                ['foglalas.oldal.utak.messenger.leiras', 'Messenger kártya szövege', 'textarea'],
-                ['foglalas.oldal.utak.messenger.gomb', 'Messenger gomb'],
-                ['foglalas.oldal.utak.sms.cim', 'SMS kártya címe'],
-                ['foglalas.oldal.utak.sms.leiras', 'SMS kártya szövege', 'textarea'],
-                ['foglalas.oldal.utak.sms.gomb', 'SMS gomb'],
-                ['foglalas.oldal.utak.online.cim', 'Online kártya címe'],
-                ['foglalas.oldal.utak.online.leiras', 'Online kártya szövege', 'textarea'],
-                ['foglalas.oldal.utak.online.gomb', 'Online kártya gomb'],
-                ['foglalas.oldal.onlineKicker', 'Online rész kis szöveg'],
-                ['foglalas.oldal.onlineCim', 'Online rész címe'],
-                ['foglalas.oldal.onlineLeiras', 'Online rész leírása', 'textarea'],
-                ['foglalas.oldal.lepesek.0.cim', '1. lépés címe'],
-                ['foglalas.oldal.lepesek.0.leiras', '1. lépés szövege', 'textarea'],
-                ['foglalas.oldal.lepesek.1.cim', '2. lépés címe'],
-                ['foglalas.oldal.lepesek.1.leiras', '2. lépés szövege', 'textarea'],
-                ['foglalas.oldal.stilusok.0.cim', 'Egyszerű stílus címe'],
-                ['foglalas.oldal.stilusok.0.leiras', 'Egyszerű stílus szövege'],
-                ['foglalas.oldal.stilusok.1.cim', 'Francia stílus címe'],
-                ['foglalas.oldal.stilusok.1.leiras', 'Francia stílus szövege'],
-                ['foglalas.oldal.stilusok.2.cim', 'Díszítés stílus címe'],
-                ['foglalas.oldal.stilusok.2.leiras', 'Díszítés stílus szövege'],
-                ['foglalas.oldal.stilusTipp', 'Stílus tipp szövege', 'textarea'],
-                ['foglalas.oldal.lepesek.2.cim', '3. lépés címe'],
-                ['foglalas.oldal.lepesek.2.leiras', '3. lépés szövege', 'textarea'],
-                ['foglalas.oldal.lepesek.3.cim', '4. lépés címe'],
-                ['foglalas.oldal.lepesek.3.leiras', '4. lépés szövege', 'textarea'],
-                ['foglalas.oldal.kepFeltoltesCim', 'Képfeltöltés címe'],
-                ['foglalas.oldal.kepFeltoltesLeiras', 'Képfeltöltés leírása', 'textarea'],
-                ['foglalas.megjegyzesPlaceholder', 'Megjegyzés mező placeholder', 'textarea'],
-                ['foglalas.oldal.lepesek.4.cim', '5. lépés címe'],
-                ['foglalas.oldal.lepesek.4.leiras', '5. lépés szövege', 'textarea'],
-                ['foglalas.nevPlaceholder', 'Név mező placeholder'],
-                ['foglalas.telefonPlaceholder', 'Telefon mező placeholder'],
-                ['foglalas.emailPlaceholder', 'Email mező placeholder'],
-                ['foglalas.oldal.osszefoglaloCim', 'Összefoglaló címe'],
-                ['foglalas.oldal.osszefoglaloUres', 'Összefoglaló üres szövege', 'textarea'],
-                ['foglalas.kuldesGomb', 'Küldés gomb'],
-                ['foglalas.lebegoGomb', 'Lebegő gomb'],
-                ['foglalas.popup.emailSikeresCim', 'Sikeres popup címe'],
-                ['foglalas.popup.emailSikeresSzoveg', 'Sikeres popup szövege', 'textarea'],
-                ['foglalas.popup.emailHibaCim', 'Emailhiba popup címe'],
-                ['foglalas.popup.emailHibaSzoveg', 'Emailhiba popup szövege', 'textarea'],
-                ['foglalas.popup.kezdolapGomb', 'Popup kezdőlap gomb'],
-                ['foglalas.popup.galeriaGomb', 'Popup galéria gomb'],
-                ['foglalas.popup.naptarGomb', 'Popup naptár gomb'],
-                ['foglalas.popup.bezarasGomb', 'Bezárás gomb']
-            ]
-        },
-        {
-            cim: 'Footer és elérhetőségek',
-            mezok: [
-                ['marka.nev', 'Márkanév'],
-                ['marka.rovidLeiras', 'Rövid leírás', 'textarea'],
-                ['kapcsolat.cimke', 'Blokk címe'],
-                ['kapcsolat.cim', 'Cím'],
-                ['kapcsolat.terkepUrl', 'Térkép link'],
-                ['kapcsolat.telefon', 'Telefonszám'],
-                ['kapcsolat.telefonLink', 'Telefon link'],
-                ['kapcsolat.email', 'Email'],
-                ['kapcsolat.instagram', 'Instagram link'],
-                ['kapcsolat.facebook', 'Facebook link'],
-                ['kapcsolat.messenger', 'Messenger link'],
-                ['kapcsolat.smsUzenet', 'SMS link'],
-                ['kapcsolat.instagramUzenet', 'Instagram üzenet link']
-            ]
-        }
-    ];
 
     document.addEventListener('DOMContentLoaded', () => {
         const elemek = adminElemek();
@@ -276,9 +116,7 @@
             tiltasVege: document.getElementById('admin-tiltas-vege'),
             tiltasOk: document.getElementById('admin-tiltas-ok'),
             tiltasLista: document.getElementById('admin-tiltas-lista'),
-            telefonLathato: document.getElementById('admin-telefon-lathato'),
-            oldalSzovegForm: document.getElementById('admin-json-form'),
-            oldalSzovegStatusz: document.getElementById('admin-json-status')
+            telefonLathato: document.getElementById('admin-telefon-lathato')
         };
     }
 
@@ -655,7 +493,6 @@
         idosavokBetoltese();
         tiltasokBetoltese();
         beallitasokBetoltese();
-        oldalSzovegekBetoltese();
     }
 
     async function lebegoMentes() {
@@ -693,7 +530,6 @@
         }
 
         if (tab === 'szovegek') {
-            await oldalSzovegekMentese();
             return;
         }
 
@@ -1696,176 +1532,6 @@
             }, { onConflict: 'key' });
 
         onlineStatusz(error ? 'Nem sikerült menteni az online beállításokat. Futtasd a friss Supabase SQL-t.' : 'Online beállítások mentve.', Boolean(error));
-    }
-
-    async function oldalSzovegekBetoltese() {
-        const elemek = adminElemek();
-
-        if (!elemek.oldalSzovegForm) {
-            return;
-        }
-
-        oldalSzovegStatusz('Oldal szövegek betöltése...');
-
-        const alap = window.lumiAlapOldalAdatok?.() || {};
-        const { data, error } = await allapot.kliens
-            .from('site_settings')
-            .select('value')
-            .eq('key', 'site_content')
-            .maybeSingle();
-
-        if (error) {
-            allapot.oldalSzovegek = alap;
-            oldalSzovegekRenderelese(alap);
-            oldalSzovegStatusz('Az online szövegbeállítások még nem érhetők el. Az alap szövegeket töltöttem be.', true);
-            return;
-        }
-
-        allapot.oldalSzovegek = melyOsszefesules(alap, data?.value || {});
-        oldalSzovegekRenderelese(allapot.oldalSzovegek);
-        oldalSzovegStatusz('');
-    }
-
-    function oldalSzovegekRenderelese(adatok) {
-        const elemek = adminElemek();
-
-        if (!elemek.oldalSzovegForm) {
-            return;
-        }
-
-        elemek.oldalSzovegForm.innerHTML = '';
-
-        OLDAL_SZOVEG_CSOPORTOK.forEach(csoport => {
-            const kartya = document.createElement('div');
-            kartya.className = 'admin-db-kartya admin-lista-elem';
-
-            const cim = document.createElement('h3');
-            cim.textContent = csoport.cim;
-            kartya.appendChild(cim);
-
-            const racs = document.createElement('div');
-            racs.className = 'admin-grid';
-
-            csoport.mezok.forEach(([utvonal, felirat, tipus]) => {
-                const label = document.createElement('label');
-                label.className = `admin-mezo${tipus === 'textarea' ? ' admin-mezo-szeles' : ''}`;
-                label.textContent = felirat;
-
-                const mezo = document.createElement(tipus === 'textarea' ? 'textarea' : 'input');
-                mezo.dataset.oldalSzoveg = utvonal;
-                mezo.value = ertekUtvonalon(adatok, utvonal) ?? '';
-
-                label.appendChild(mezo);
-                racs.appendChild(label);
-            });
-
-            kartya.appendChild(racs);
-            elemek.oldalSzovegForm.appendChild(kartya);
-        });
-    }
-
-    async function oldalSzovegekMentese() {
-        const elemek = adminElemek();
-
-        if (!elemek.oldalSzovegForm) {
-            return;
-        }
-
-        const mentendo = melyMasolat(allapot.oldalSzovegek || window.lumiAlapOldalAdatok?.() || {});
-
-        elemek.oldalSzovegForm.querySelectorAll('[data-oldal-szoveg]').forEach(mezo => {
-            ertekBeallitasaUtvonalon(mentendo, mezo.dataset.oldalSzoveg, mezo.value);
-        });
-
-        oldalSzovegStatusz('Oldal szövegek mentése...');
-
-        const { error } = await allapot.kliens
-            .from('site_settings')
-            .upsert({
-                key: 'site_content',
-                value: mentendo,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'key' });
-
-        if (error) {
-            oldalSzovegStatusz('Nem sikerült menteni az oldal szövegeit. Futtasd a friss Supabase SQL-t, ha még nincs site_settings tábla.', true);
-            return;
-        }
-
-        allapot.oldalSzovegek = mentendo;
-        oldalSzovegStatusz('Oldal szövegek mentve.');
-    }
-
-    function oldalSzovegStatusz(uzenet, hiba = false) {
-        const elemek = adminElemek();
-
-        if (!elemek.oldalSzovegStatusz) {
-            return;
-        }
-
-        elemek.oldalSzovegStatusz.textContent = uzenet || '';
-        elemek.oldalSzovegStatusz.classList.toggle('hiba', Boolean(hiba));
-    }
-
-    function ertekUtvonalon(adat, utvonal) {
-        return utvonal.split('.').reduce((aktualis, kulcs) => {
-            if (aktualis === undefined || aktualis === null) {
-                return undefined;
-            }
-
-            return aktualis[indexKulcs(kulcs)];
-        }, adat);
-    }
-
-    function ertekBeallitasaUtvonalon(adat, utvonal, ertek) {
-        const kulcsok = utvonal.split('.');
-        let aktualis = adat;
-
-        kulcsok.forEach((kulcs, index) => {
-            const valosKulcs = indexKulcs(kulcs);
-
-            if (index === kulcsok.length - 1) {
-                aktualis[valosKulcs] = ertek;
-                return;
-            }
-
-            if (aktualis[valosKulcs] === undefined || aktualis[valosKulcs] === null) {
-                aktualis[valosKulcs] = szamKulcs(kulcsok[index + 1]) ? [] : {};
-            }
-
-            aktualis = aktualis[valosKulcs];
-        });
-    }
-
-    function indexKulcs(kulcs) {
-        return szamKulcs(kulcs) ? Number(kulcs) : kulcs;
-    }
-
-    function szamKulcs(kulcs) {
-        return /^\d+$/.test(kulcs);
-    }
-
-    function melyMasolat(adat) {
-        return JSON.parse(JSON.stringify(adat));
-    }
-
-    function melyOsszefesules(alap, feluliras) {
-        if (Array.isArray(alap)) {
-            return Array.isArray(feluliras) ? feluliras : alap;
-        }
-
-        if (!alap || typeof alap !== 'object') {
-            return feluliras ?? alap;
-        }
-
-        const eredmeny = { ...alap };
-        const plusz = feluliras && typeof feluliras === 'object' ? feluliras : {};
-
-        Object.keys(plusz).forEach(kulcs => {
-            eredmeny[kulcs] = melyOsszefesules(alap[kulcs], plusz[kulcs]);
-        });
-
-        return eredmeny;
     }
 
     async function tiltasokBetoltese() {
