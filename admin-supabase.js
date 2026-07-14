@@ -984,6 +984,21 @@
         }
     }
 
+    function inspiracioKepStoragePath(kep) {
+        if (kep?.path) return kep.path;
+        if (!kep?.url) return '';
+
+        try {
+            const url = new URL(kep.url, window.location.origin);
+            const marker = '/storage/v1/object/public/site-media/';
+            const index = url.pathname.indexOf(marker);
+            if (index === -1) return '';
+            return decodeURIComponent(url.pathname.slice(index + marker.length));
+        } catch (_error) {
+            return '';
+        }
+    }
+
     function inspiracioModalNyitasa(kartya) {
         const kepek = inspiracioKepekKartyan(kartya);
         if (!kepek.length) return;
@@ -1141,20 +1156,31 @@
         esemenynaploBetoltese();
     }
 
-    async function foglalasInspiraciokTorlese(kartya) {
+    async function foglalasInspiraciokTorlese(kartya, opciok = {}) {
         const kepek = inspiracioKepekKartyan(kartya);
-        const paths = kepek.map(kep => kep.path).filter(Boolean);
+        const paths = Array.from(new Set(kepek.map(inspiracioKepStoragePath).filter(Boolean)));
+        const mezokUritese = opciok.mezokUritese !== false;
 
-        if (!kepek.length) return;
+        if (!kepek.length) return true;
 
-        if (paths.length) {
-            const { error: torlesHiba } = await allapot.kliens.storage
-                .from('site-media')
-                .remove(paths);
+        if (!paths.length) {
+            console.warn('Inspirációs kép van a foglaláson, de nincs törölhető Storage path.');
+            return false;
+        }
 
-            if (torlesHiba) {
-                console.warn('Inspirációs képek Storage törlése nem sikerült:', torlesHiba);
-            }
+        const { error: torlesHiba } = await allapot.kliens.storage
+            .from('site-media')
+            .remove(paths);
+
+        if (torlesHiba) {
+            console.warn('Inspirációs képek Storage törlése nem sikerült:', torlesHiba);
+            return false;
+        }
+
+        if (!mezokUritese) {
+            kartya.dataset.inspiracioKepek = '[]';
+            kartya.querySelector('[data-inspiracio-megnyitas]')?.closest('p')?.remove();
+            return true;
         }
 
         try {
@@ -1164,13 +1190,15 @@
 
             if (error) {
                 console.warn('Inspirációs képmezők ürítése nem sikerült:', error);
-                return;
+                return false;
             }
 
             kartya.dataset.inspiracioKepek = '[]';
             kartya.querySelector('[data-inspiracio-megnyitas]')?.closest('p')?.remove();
+            return true;
         } catch (error) {
             console.warn('Inspirációs képtakarítás hiba:', error);
+            return false;
         }
     }
 
@@ -1281,6 +1309,18 @@
 
         if (!window.confirm('Biztosan eltávolítod ezt a foglalási bejegyzést?')) {
             return;
+        }
+
+        if (kartya?.dataset.tipus === 'booking') {
+            const kepek = inspiracioKepekKartyan(kartya);
+            if (kepek.length) {
+                onlineStatusz('Foglaláshoz tartozó képek törlése...');
+                const kepekTorolve = await foglalasInspiraciokTorlese(kartya, { mezokUritese: false });
+                if (!kepekTorolve) {
+                    onlineStatusz('A foglaláshoz tartozó kép törlése nem sikerült, ezért a foglalást nem töröltem. Kérlek próbáld újra, vagy ellenőrizd a Supabase Storage jogosultságot.', true);
+                    return;
+                }
+            }
         }
 
         await rekordTorlese(tabla, id, foglalasokBetoltese);
