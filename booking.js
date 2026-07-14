@@ -6,6 +6,7 @@
     const MEDIA_BUCKET = 'site-media';
     const INSPIRATION_FOLDER = 'booking-inspirations';
     const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
+    const MAX_IMAGE_COUNT = 5;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
 
     if (!document.body || document.body.dataset.bookingMode !== 'supabase') {
@@ -40,7 +41,12 @@
 
         elemek.urlap.addEventListener('submit', event => {
             event.preventDefault();
-            foglalasKuldes(elemek);
+            foglalasKuldes(elemek).catch(error => {
+                console.error('Lumi Nails foglalás beküldési hiba:', error);
+                statuszKiirasa(elemek.statusz, supabaseHiba(error), true);
+                kovetkezoReszhezGordit(elemek.statusz, 0);
+                gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
+            });
         });
 
         elemek.szolgaltatas.addEventListener('change', () => szabadDatumokBetoltese(elemek));
@@ -93,10 +99,14 @@
         });
 
         [elemek.nev, elemek.telefon, elemek.email, elemek.komment].filter(Boolean).forEach(mezo => {
-            mezo.addEventListener('input', () => osszefoglaloFrissitese(elemek));
+            mezo.addEventListener('input', () => {
+                hibakTorlese(elemek);
+                osszefoglaloFrissitese(elemek);
+            });
         });
 
         elemek.kepInput?.addEventListener('change', () => {
+            hibakTorlese(elemek);
             kepEloNezetFrissitese(elemek);
             osszefoglaloFrissitese(elemek);
             if (elemek.kepInput.files?.length) kovetkezoReszhezGordit('[data-step="5"]', 260);
@@ -345,12 +355,14 @@
     }
     async function foglalasKuldes(elemek) {
         const adatok = foglalasAdatok(elemek);
-        const hiba = foglalasHiba(adatok);
+        const hiba = foglalasHiba(adatok, elemek);
 
         if (hiba) {
-            statuszKiirasa(elemek.statusz, hiba, true);
+            foglalasHibaMutatasa(elemek, hiba);
             return;
         }
+
+        hibakTorlese(elemek);
 
         let inspiraciok = [];
 
@@ -374,6 +386,7 @@
 
         if (!eredmeny.ok) {
             statuszKiirasa(elemek.statusz, supabaseHiba(eredmeny.error), true);
+            kovetkezoReszhezGordit(elemek.statusz, 0);
             gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             idopontokBetoltese(elemek);
             return;
@@ -562,37 +575,88 @@
         return sorok.join('\n');
     }
 
-    function foglalasHiba(adatok) {
-        if (!adatok.nev || !adatok.telefonSzamok || !adatok.email || !adatok.szolgaltatasId || !adatok.datum || !adatok.startsAt) {
-            return 'Kérlek válassz szolgáltatást, dátumot, időpontot, és add meg az elérhetőségeidet.';
+    function foglalasHiba(adatok, elemek) {
+        if (!adatok.szolgaltatasId) {
+            return hibaAdat('Kérlek válassz szolgáltatást.', '[data-step="1"]', elemek.szolgaltatasKartyak);
         }
 
         if (!adatok.koromStilus) {
-            return 'Kérlek jelöld, hogy egyszerű, francia vagy festett/díszített körmöt szeretnél.';
+            return hibaAdat('Kérlek jelöld, hogy egyszerű, francia vagy festett/díszített körmöt szeretnél.', '[data-step="2"]', document.getElementById('foglalas-stilus-racs'));
+        }
+
+        if (!adatok.datum) {
+            return hibaAdat('Kérlek válassz dátumot.', '[data-step="3"]', elemek.datumKartyak);
+        }
+
+        if (!adatok.startsAt) {
+            return hibaAdat('Kérlek válassz időpontot.', '[data-step="3"]', elemek.idoKartyak);
+        }
+
+        if (!adatok.nev) {
+            return hibaAdat('Kérlek add meg a neved.', '[data-step="5"]', elemek.nev, elemek.nev);
+        }
+
+        if (!adatok.telefonSzamok) {
+            return hibaAdat('Kérlek add meg a telefonszámod.', '[data-step="5"]', elemek.telefon.closest('.tel-csoport') || elemek.telefon, elemek.telefon);
         }
 
         if (adatok.telefonSzamok.length !== 9) {
-            return 'Kérlek 9 számjegyű magyar mobilszámot adj meg, országkód nélkül. Példa: 301234567';
+            return hibaAdat('Kérlek 9 számjegyű magyar mobilszámot adj meg, országkód nélkül. Példa: 301234567', '[data-step="5"]', elemek.telefon.closest('.tel-csoport') || elemek.telefon, elemek.telefon);
+        }
+
+        if (!adatok.email) {
+            return hibaAdat('Kérlek add meg az email címed.', '[data-step="5"]', elemek.email, elemek.email);
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adatok.email)) {
-            return 'Kérlek valós email címet adj meg.';
+            return hibaAdat('Kérlek valós email címet adj meg.', '[data-step="5"]', elemek.email, elemek.email);
         }
 
         if (adatok.datum < maiDatum()) {
-            return 'Múltbeli dátumra nem lehet időpontot foglalni.';
+            return hibaAdat('Múltbeli dátumra nem lehet időpontot foglalni.', '[data-step="3"]', elemek.datumKartyak);
         }
 
         if (adatok.kepFiles.length > MAX_IMAGE_COUNT) {
-            return `Legfeljebb ${MAX_IMAGE_COUNT} inspirációs képet tölthetsz fel.`;
+            return hibaAdat(`Legfeljebb ${MAX_IMAGE_COUNT} inspirációs képet tölthetsz fel.`, '[data-step="4"]', document.querySelector('.foglalas-kepfeltoltes'), elemek.kepInput);
         }
 
         for (const file of adatok.kepFiles) {
             const kepHiba = kepFajlHiba(file);
-            if (kepHiba) return kepHiba;
+            if (kepHiba) {
+                return hibaAdat(kepHiba, '[data-step="4"]', document.querySelector('.foglalas-kepfeltoltes'), elemek.kepInput);
+            }
         }
 
-        return '';
+        return null;
+    }
+
+    function hibaAdat(uzenet, cel, elem, fokusz) {
+        return { uzenet, cel, elem, fokusz };
+    }
+
+    function foglalasHibaMutatasa(elemek, hiba) {
+        hibakTorlese(elemek);
+        statuszKiirasa(elemek.statusz, hiba.uzenet, true);
+
+        const cel = typeof hiba.cel === 'string' ? document.querySelector(hiba.cel) : hiba.cel;
+        const elem = hiba.elem || cel;
+
+        cel?.classList.add('foglalas-hiba-szekcio');
+        elem?.classList.add('foglalas-hibas-mezo');
+        elem?.setAttribute?.('aria-invalid', 'true');
+
+        kovetkezoReszhezGordit(cel || elem, 0);
+
+        if (hiba.fokusz && typeof hiba.fokusz.focus === 'function') {
+            window.setTimeout(() => hiba.fokusz.focus({ preventScroll: true }), 260);
+        }
+    }
+
+    function hibakTorlese(elemek) {
+        elemek.urlap?.querySelectorAll('.foglalas-hiba-szekcio, .foglalas-hibas-mezo').forEach(elem => {
+            elem.classList.remove('foglalas-hiba-szekcio', 'foglalas-hibas-mezo');
+            elem.removeAttribute('aria-invalid');
+        });
     }
 
     function kepFajlHiba(file) {
@@ -780,6 +844,7 @@
         if (!elem) return;
         elem.textContent = szoveg;
         elem.classList.toggle('hiba', Boolean(hiba));
+        elem.classList.toggle('foglalas-statusz-kiemelt', Boolean(hiba && szoveg));
     }
 
     function mezokTiltasa(elemek, tiltva) {

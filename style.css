@@ -4806,3 +4806,41 @@ body {
         padding: 7px 8px;
     }
 }
+/* =========================================
+   FINOMITASOK 20260714 BOOKING9
+   ========================================= */
+.foglalas-hiba-szekcio {
+    border-color: rgba(155, 52, 52, 0.55) !important;
+    box-shadow: 0 0 0 3px rgba(155, 52, 52, 0.08), 0 12px 28px rgba(155, 52, 52, 0.08);
+}
+
+.foglalas-hibas-mezo {
+    outline: 2px solid rgba(155, 52, 52, 0.72);
+    outline-offset: 4px;
+    border-radius: 18px;
+    scroll-margin-top: 120px;
+}
+
+.urlap-mezo.foglalas-hibas-mezo,
+.tel-csoport.foglalas-hibas-mezo {
+    border-color: rgba(155, 52, 52, 0.72) !important;
+    box-shadow: 0 0 0 4px rgba(155, 52, 52, 0.08);
+}
+
+.foglalas-hibas-mezo .foglalas-kartya-uzenet,
+.foglalas-hiba-szekcio .foglalas-kartya-uzenet {
+    color: #9b3434;
+}
+
+@media screen and (max-width: 760px) {
+    .foglalas-hibas-mezo {
+        outline-offset: 3px;
+        scroll-margin-top: 104px;
+    }
+}
+.urlap-status.foglalas-statusz-kiemelt {
+    border: 1px solid rgba(155, 52, 52, 0.32);
+    border-radius: 18px;
+    background: rgba(155, 52, 52, 0.08);
+    padding: 12px 14px;
+}
