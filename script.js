@@ -57,13 +57,14 @@ function lumiAlapOldalAdatok() {
             cimke: 'Elérhetőség',
             cim: '2800 Tatabánya, Kós Károly út',
             terkepUrl: 'https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt',
-            telefon: '',
-            telefonLink: '',
+            telefon: '+36 20 563 6494',
+            telefonLink: '+36205636494',
             telefonLathato: false,
             email: '',
             instagram: 'https://www.instagram.com/luminails.xx/',
             facebook: 'https://www.facebook.com/profile.php?id=61576508698202',
-            messenger: 'https://m.me/61576508698202',
+            messenger: 'https://m.me/petras.szofi',
+            smsUzenet: 'sms:+36205636494',
             instagramUzenet: 'https://ig.me/m/luminails.xx'
         },
         fooldal: {
@@ -136,6 +137,37 @@ function lumiAlapOldalAdatok() {
         foglalas: {
             cim: 'Időpontfoglalás',
             leiras: 'Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.',
+            oldal: {
+                nyitoKicker: 'Időpontkérés',
+                nyitoCim: 'Írj rám, vagy foglalj online',
+                nyitoLeiras: 'Ha már tudod, mikor jönnél, foglalj online pár lépésben. Ha előbb kérdeznél vagy egyeztetnél, írj rám nyugodtan Instagramon, Messengerben vagy SMS-ben. Inspirációs képet is küldhetsz, ha az segít megmutatni az elképzelésed.',
+                utak: {
+                    instagram: { cim: 'Instagramon írok', leiras: 'Ha Instán kényelmesebb, ott is tudsz írni gyorsan.', gomb: 'Instagram megnyitása' },
+                    messenger: { cim: 'Messengeren írok', leiras: 'Ha előbb átbeszélnéd, mit szeretnél, írj rám nyugodtan Messengerben.', gomb: 'Messenger megnyitása' },
+                    sms: { cim: 'SMS-t küldök', leiras: 'Ha a sima szöveges üzenet kényelmesebb, erre a számra tudsz írni: +36 20 563 6494.', gomb: 'SMS írása' },
+                    online: { cim: 'Online foglalok', leiras: 'Ha már megvan, mit szeretnél, válaszd ki a szabad időpontot pár kattintással.', gomb: 'Online foglalás indítása' }
+                },
+                onlineKicker: 'Online foglalás',
+                onlineCim: 'Online időpontfoglalás',
+                onlineLeiras: 'Pár kattintás az egész: szolgáltatás, stílus, időpont, majd az elérhetőséged. Képet csak akkor tölts fel, ha segítene megmutatni, mire gondoltál.',
+                lepesek: [
+                    { cim: 'Mit szeretnél?', leiras: 'Válassz egy szolgáltatást, és ehhez mutatom a szabad időket.' },
+                    { cim: 'Milyen stílus legyen?', leiras: 'Ezt azért kérem, mert egy francia vagy díszített köröm több időt is kérhet.' },
+                    { cim: 'Mikor jönnél?', leiras: 'Először válassz napot, utána válassz egy szabad időpontot.' },
+                    { cim: 'Mutasd az elképzelést', leiras: 'Ha van inspirációs képed, feltöltheted. Nem kötelező, csak sokat segít.' },
+                    { cim: 'Hova küldhetem a visszaigazolást?', leiras: 'Ezekre az adatokra küldöm a foglalás részleteit, és itt tudlak elérni, ha pontosítani kell.' }
+                ],
+                stilusok: [
+                    { cim: 'Egyszerű / egyszínű', leiras: 'Letisztult, extra díszítés nélkül.' },
+                    { cim: 'Francia', leiras: 'Jelezd, ha klasszikus vagy színes francia lenne.' },
+                    { cim: 'Festés / díszítés', leiras: 'Minta, extra dekor vagy különlegesebb elképzelés.' }
+                ],
+                stilusTipp: 'Ha díszítettebb körmöt szeretnél, írj pár szót róla vagy tölts fel képet, hogy lássam, mire gondolsz.',
+                kepFeltoltesCim: 'Kép feltöltése',
+                kepFeltoltesLeiras: 'Akár több kép is jöhet. JPG, PNG, WebP, AVIF vagy HEIC, képenként legfeljebb 12 MB.',
+                osszefoglaloCim: 'Összefoglaló',
+                osszefoglaloUres: 'Ahogy választasz, itt egyben látod majd a foglalásodat.'
+            },
             nevPlaceholder: 'Teljes neved',
             telefonPlaceholder: '201234567',
             emailPlaceholder: 'Email címed',
@@ -445,11 +477,24 @@ function melyOsszefesules(alap, feluliras) {
     return eredmeny;
 }
 
+function kapcsolatGyorsLinkekNormalizalasa(adatok) {
+    if (!adatok) return;
+    const kapcsolat = adatok.kapcsolat || (adatok.kapcsolat = {});
+
+    if (!kapcsolat.telefon) kapcsolat.telefon = '+36 20 563 6494';
+    if (!kapcsolat.telefonLink) kapcsolat.telefonLink = '+36205636494';
+    if (!kapcsolat.smsUzenet) kapcsolat.smsUzenet = 'sms:+36205636494';
+    if (!kapcsolat.messenger || kapcsolat.messenger.includes('61576508698202')) {
+        kapcsolat.messenger = 'https://m.me/petras.szofi';
+    }
+}
+
 function oldalAdatokAlkalmazasa(adatok) {
     if (!adatok) {
         return;
     }
 
+    kapcsolatGyorsLinkekNormalizalasa(adatok);
     window.lumiAdatok = adatok;
     fejlecAdatokAlkalmazasa(adatok);
     fooldalAdatokAlkalmazasa(adatok.fooldal);
@@ -758,8 +803,16 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
     if (urlap) {
         const szekcio = urlap.closest('section');
 
-        szovegBeallitasa('h2', foglalas.cim, szekcio);
-        htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
+        if (supabaseFoglalas) {
+            supabaseFoglalasSzovegekAlkalmazasa(foglalas);
+        } else {
+            szovegBeallitasa('h2', foglalas.cim, szekcio);
+            htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
+            foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
+            szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
+            szovegBeallitasa('.popup-gomb[href*="ig.me"]', foglalas.popup?.instagramGomb);
+        }
+
         szovegBeallitasa('#foglalas-kuldes', foglalas.kuldesGomb, szekcio);
         const nevMezo = szekcio.querySelector('#foglalas-nev');
         const telefonMezo = szekcio.querySelector('#foglalas-tel');
@@ -775,15 +828,55 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         szovegBeallitasa('.popup-gomb[href="/"]', foglalas.popup?.kezdolapGomb);
         szovegBeallitasa('.popup-gomb[href="/galeria/"]', foglalas.popup?.galeriaGomb);
         szovegBeallitasa('#naptar-link', foglalas.popup?.naptarGomb);
-
-        if (!supabaseFoglalas) {
-            szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
-            szovegBeallitasa('.popup-gomb[href*="ig.me"]', foglalas.popup?.instagramGomb);
-            foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
-        }
     }
 
     szovegBeallitasa('#lebego-foglalas-gomb', foglalas.lebegoGomb);
+}
+
+function supabaseFoglalasSzovegekAlkalmazasa(foglalas) {
+    const oldal = foglalas.oldal || {};
+
+    szovegBeallitasa('.foglalas-nyito .foglalas-kicker', oldal.nyitoKicker);
+    szovegBeallitasa('#foglalas-cim', oldal.nyitoCim);
+    htmlSzovegBeallitasa('.foglalas-nyito .urlap-leiras', oldal.nyitoLeiras);
+
+    foglalasUtSzovegAlkalmazasa('[data-booking-contact="instagram"]', oldal.utak?.instagram);
+    foglalasUtSzovegAlkalmazasa('[data-booking-contact="messenger"]', oldal.utak?.messenger);
+    foglalasUtSzovegAlkalmazasa('[data-booking-contact="sms"]', oldal.utak?.sms);
+    foglalasUtSzovegAlkalmazasa('[data-booking-path="online"]', oldal.utak?.online);
+
+    szovegBeallitasa('.foglalas-asszisztens-fej .foglalas-kicker', oldal.onlineKicker);
+    szovegBeallitasa('#online-foglalas-cim', oldal.onlineCim);
+    htmlSzovegBeallitasa('.foglalas-asszisztens-fej p:not(.foglalas-kicker)', oldal.onlineLeiras);
+
+    (oldal.lepesek || []).forEach((lepes, index) => {
+        const selector = `[data-step="${index + 1}"] .foglalas-lepes-fej`;
+        szovegBeallitasa(`${selector} h3`, lepes?.cim);
+        htmlSzovegBeallitasa(`${selector} p`, lepes?.leiras);
+    });
+
+    document.querySelectorAll('.foglalas-stilus-kartya').forEach((kartya, index) => {
+        const stilus = oldal.stilusok?.[index];
+        if (!stilus) return;
+        szovegBeallitasa('span', stilus.cim, kartya);
+        htmlSzovegBeallitasa('small', stilus.leiras, kartya);
+    });
+
+    htmlSzovegBeallitasa('#foglalas-stilus-tipp', oldal.stilusTipp);
+    szovegBeallitasa('.foglalas-kepfeltoltes strong', oldal.kepFeltoltesCim);
+    htmlSzovegBeallitasa('.foglalas-kepfeltoltes small', oldal.kepFeltoltesLeiras);
+    szovegBeallitasa('#foglalas-osszefoglalo h3', oldal.osszefoglaloCim);
+    htmlSzovegBeallitasa('#foglalas-osszefoglalo p', oldal.osszefoglaloUres);
+}
+
+function foglalasUtSzovegAlkalmazasa(selector, adatok) {
+    if (!adatok) return;
+    const kartya = document.querySelector(selector);
+    if (!kartya) return;
+
+    szovegBeallitasa('.foglalas-ut-cim', adatok.cim, kartya);
+    htmlSzovegBeallitasa('.foglalas-ut-leiras', adatok.leiras, kartya);
+    szovegBeallitasa('.foglalas-ut-gomb', adatok.gomb, kartya);
 }
 
 function arlistaSzolgaltatasokLetrehozasa(arlista) {

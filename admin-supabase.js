@@ -99,14 +99,58 @@
         {
             cim: 'Foglalás oldal és popup',
             mezok: [
-                ['foglalas.cim', 'Cím'],
-                ['foglalas.leiras', 'Leírás', 'textarea'],
+                ['foglalas.oldal.nyitoKicker', 'Nyitó kis szöveg'],
+                ['foglalas.oldal.nyitoCim', 'Nyitó cím'],
+                ['foglalas.oldal.nyitoLeiras', 'Nyitó leírás', 'textarea'],
+                ['foglalas.oldal.utak.instagram.cim', 'Instagram kártya címe'],
+                ['foglalas.oldal.utak.instagram.leiras', 'Instagram kártya szövege', 'textarea'],
+                ['foglalas.oldal.utak.instagram.gomb', 'Instagram gomb'],
+                ['foglalas.oldal.utak.messenger.cim', 'Messenger kártya címe'],
+                ['foglalas.oldal.utak.messenger.leiras', 'Messenger kártya szövege', 'textarea'],
+                ['foglalas.oldal.utak.messenger.gomb', 'Messenger gomb'],
+                ['foglalas.oldal.utak.sms.cim', 'SMS kártya címe'],
+                ['foglalas.oldal.utak.sms.leiras', 'SMS kártya szövege', 'textarea'],
+                ['foglalas.oldal.utak.sms.gomb', 'SMS gomb'],
+                ['foglalas.oldal.utak.online.cim', 'Online kártya címe'],
+                ['foglalas.oldal.utak.online.leiras', 'Online kártya szövege', 'textarea'],
+                ['foglalas.oldal.utak.online.gomb', 'Online kártya gomb'],
+                ['foglalas.oldal.onlineKicker', 'Online rész kis szöveg'],
+                ['foglalas.oldal.onlineCim', 'Online rész címe'],
+                ['foglalas.oldal.onlineLeiras', 'Online rész leírása', 'textarea'],
+                ['foglalas.oldal.lepesek.0.cim', '1. lépés címe'],
+                ['foglalas.oldal.lepesek.0.leiras', '1. lépés szövege', 'textarea'],
+                ['foglalas.oldal.lepesek.1.cim', '2. lépés címe'],
+                ['foglalas.oldal.lepesek.1.leiras', '2. lépés szövege', 'textarea'],
+                ['foglalas.oldal.stilusok.0.cim', 'Egyszerű stílus címe'],
+                ['foglalas.oldal.stilusok.0.leiras', 'Egyszerű stílus szövege'],
+                ['foglalas.oldal.stilusok.1.cim', 'Francia stílus címe'],
+                ['foglalas.oldal.stilusok.1.leiras', 'Francia stílus szövege'],
+                ['foglalas.oldal.stilusok.2.cim', 'Díszítés stílus címe'],
+                ['foglalas.oldal.stilusok.2.leiras', 'Díszítés stílus szövege'],
+                ['foglalas.oldal.stilusTipp', 'Stílus tipp szövege', 'textarea'],
+                ['foglalas.oldal.lepesek.2.cim', '3. lépés címe'],
+                ['foglalas.oldal.lepesek.2.leiras', '3. lépés szövege', 'textarea'],
+                ['foglalas.oldal.lepesek.3.cim', '4. lépés címe'],
+                ['foglalas.oldal.lepesek.3.leiras', '4. lépés szövege', 'textarea'],
+                ['foglalas.oldal.kepFeltoltesCim', 'Képfeltöltés címe'],
+                ['foglalas.oldal.kepFeltoltesLeiras', 'Képfeltöltés leírása', 'textarea'],
+                ['foglalas.megjegyzesPlaceholder', 'Megjegyzés mező placeholder', 'textarea'],
+                ['foglalas.oldal.lepesek.4.cim', '5. lépés címe'],
+                ['foglalas.oldal.lepesek.4.leiras', '5. lépés szövege', 'textarea'],
+                ['foglalas.nevPlaceholder', 'Név mező placeholder'],
+                ['foglalas.telefonPlaceholder', 'Telefon mező placeholder'],
+                ['foglalas.emailPlaceholder', 'Email mező placeholder'],
+                ['foglalas.oldal.osszefoglaloCim', 'Összefoglaló címe'],
+                ['foglalas.oldal.osszefoglaloUres', 'Összefoglaló üres szövege', 'textarea'],
                 ['foglalas.kuldesGomb', 'Küldés gomb'],
                 ['foglalas.lebegoGomb', 'Lebegő gomb'],
-                ['foglalas.popup.sikeresCim', 'Sikeres popup címe'],
-                ['foglalas.popup.sikeresSzoveg', 'Sikeres popup szövege', 'textarea'],
-                ['foglalas.popup.tartalekCim', 'Tartalék popup címe'],
-                ['foglalas.popup.tartalekSzoveg', 'Tartalék popup szövege', 'textarea'],
+                ['foglalas.popup.emailSikeresCim', 'Sikeres popup címe'],
+                ['foglalas.popup.emailSikeresSzoveg', 'Sikeres popup szövege', 'textarea'],
+                ['foglalas.popup.emailHibaCim', 'Emailhiba popup címe'],
+                ['foglalas.popup.emailHibaSzoveg', 'Emailhiba popup szövege', 'textarea'],
+                ['foglalas.popup.kezdolapGomb', 'Popup kezdőlap gomb'],
+                ['foglalas.popup.galeriaGomb', 'Popup galéria gomb'],
+                ['foglalas.popup.naptarGomb', 'Popup naptár gomb'],
                 ['foglalas.popup.bezarasGomb', 'Bezárás gomb']
             ]
         },
@@ -124,6 +168,7 @@
                 ['kapcsolat.instagram', 'Instagram link'],
                 ['kapcsolat.facebook', 'Facebook link'],
                 ['kapcsolat.messenger', 'Messenger link'],
+                ['kapcsolat.smsUzenet', 'SMS link'],
                 ['kapcsolat.instagramUzenet', 'Instagram üzenet link']
             ]
         }
@@ -381,10 +426,10 @@
             sor.className = 'admin-naptar-sor';
             sor.dataset.datum = datum;
             sor.innerHTML = `
-                <div class="admin-naptar-datum">${html(datumFelirat(datum))}</div>
+                <div class="admin-naptar-datum">${html(datumRovid(datum))}</div>
                 <label class="admin-mezo">Kezdés<input type="time" data-naptar-mezo="start_time" value="${attr(ertek.start_time)}"></label>
                 <label class="admin-mezo">Vége<input type="time" data-naptar-mezo="end_time" value="${attr(ertek.end_time)}"></label>
-                <button type="button" class="admin-kis-gomb" data-naptar-torles>Törlés</button>
+                <button type="button" class="admin-kis-gomb admin-naptar-torles-x" data-naptar-torles aria-label="Törlés">×</button>
             `;
             elemek.naptarKijeloltLista.appendChild(sor);
         });
@@ -513,6 +558,11 @@
         const datum = new Date(ev, honap - 1 + irany, 1, 12, 0, 0);
         elemek.naptarHonap.value = `${datum.getFullYear()}-${String(datum.getMonth() + 1).padStart(2, '0')}`;
         idosavNaptarRenderelese();
+    }
+
+    function datumRovid(datumSzovegErtek) {
+        const [ev, honap, nap] = String(datumSzovegErtek || '').split('-');
+        return ev && honap && nap ? `${nap}.${honap}.${String(ev).slice(-2)}` : String(datumSzovegErtek || '');
     }
 
     function datumFelirat(datumSzovegErtek) {
@@ -664,11 +714,21 @@
         const elemek = adminElemek();
         onlineStatusz('Foglalások betöltése...');
 
-        const { data: foglalasok, error: foglalasHiba } = await allapot.kliens
+        const alapSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,services(name,price_text)';
+        const inspiracioSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,inspiration_image_url,inspiration_image_path,inspiration_image_name,inspiration_image_type,inspiration_image_size,inspiration_images,nail_style,nail_style_note,services(name,price_text)';
+        let { data: foglalasok, error: foglalasHiba } = await allapot.kliens
             .from('bookings')
-            .select('id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,services(name,price_text)')
+            .select(inspiracioSelect)
             .order('starts_at', { ascending: false })
             .limit(120);
+
+        if (foglalasHiba && hianyzoInspiracioOszlop(foglalasHiba)) {
+            ({ data: foglalasok, error: foglalasHiba } = await allapot.kliens
+                .from('bookings')
+                .select(alapSelect)
+                .order('starts_at', { ascending: false })
+                .limit(120));
+        }
 
         const { data: tiltasok, error: tiltasHiba } = await allapot.kliens
             .from('blocked_times')
@@ -694,6 +754,10 @@
         onlineStatusz('');
     }
 
+    function hianyzoInspiracioOszlop(error) {
+        const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
+        return uzenet.includes('inspiration_image') || uzenet.includes('nail_style') || uzenet.includes('column') && uzenet.includes('schema cache');
+    }
     function foglalasListaRenderelese() {
         const elemek = adminElemek();
         const kezd = (allapot.foglalasOldal - 1) * FOGLALAS_OLDAL_MERET;
@@ -844,12 +908,14 @@
         kartya.dataset.eredetiDatum = datumInputErtek(foglalas.starts_at);
         kartya.dataset.eredetiKezdes = idoInputErtek(foglalas.starts_at);
         kartya.dataset.eredetiVege = idoInputErtek(foglalas.ends_at);
+        const inspiracioKepek = foglalasInspiracioKepek(foglalas);
+        kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
 
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <h3>${html(foglalas.customer_name)}</h3>
-                    <p class="admin-foglalas-idopont">${html(datumIdo(foglalas.starts_at))} - ${html(datumIdo(foglalas.ends_at, true))}</p>
+                    <p class="admin-foglalas-idopont">${html(datumIdoRovid(foglalas.starts_at))} - ${html(datumIdoRovid(foglalas.ends_at, true))}</p>
                 </div>
                 <div class="admin-foglalas-vezerlok">
                     <select class="admin-db-statusz" data-foglalas-statusz disabled>
@@ -861,14 +927,16 @@
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
-            <div class="admin-foglalas-reszletek">
-                <p><strong>Szolgáltatás:</strong> ${html(foglalas.services?.name || 'Törölt szolgáltatás')}</p>
-                <p><strong>Leadva:</strong> ${html(datumIdo(foglalas.created_at))}</p>
-                <p><strong>Telefon:</strong> <a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
-                <p><strong>Email:</strong> <a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
-                ${foglalas.note ? `<p><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}
-            </div>
-            <div class="admin-idopont-szerkeszto">
+            <div class="admin-foglalas-reszletek admin-foglalas-reszletek-kompakt">
+                <div class="admin-foglalas-meta-grid">
+                    <p><strong>Szolgáltatás</strong><span>${html(foglalas.services?.name || 'Törölt szolgáltatás')}</span></p>
+                    <p><strong>Leadva</strong><span>${html(datumIdoRovid(foglalas.created_at))}</span></p>
+                    <p><strong>Tel</strong><a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
+                    <p><strong>Email</strong><a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
+                </div>
+                ${foglalas.note ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}
+                ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button></p>` : ''}
+            </div>            <div class="admin-idopont-szerkeszto">
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Vége<input type="time" data-idopont-mezo="end_time" value="${attr(idoInputErtek(foglalas.ends_at))}" disabled></label>
@@ -880,6 +948,76 @@
         `;
 
         return kartya;
+    }
+
+    function foglalasInspiracioKepek(foglalas) {
+        const kepek = [];
+        const ujKepek = Array.isArray(foglalas.inspiration_images) ? foglalas.inspiration_images : [];
+
+        ujKepek.forEach(kep => {
+            if (kep?.url) {
+                kepek.push({
+                    url: kep.url,
+                    path: kep.path || '',
+                    name: kep.name || 'Inspirációs kép'
+                });
+            }
+        });
+
+        if (!kepek.length && foglalas.inspiration_image_url) {
+            kepek.push({
+                url: foglalas.inspiration_image_url,
+                path: foglalas.inspiration_image_path || '',
+                name: foglalas.inspiration_image_name || 'Inspirációs kép'
+            });
+        }
+
+        return kepek;
+    }
+
+    function inspiracioKepekKartyan(kartya) {
+        try {
+            const kepek = JSON.parse(kartya?.dataset.inspiracioKepek || '[]');
+            return Array.isArray(kepek) ? kepek : [];
+        } catch (_error) {
+            return [];
+        }
+    }
+
+    function inspiracioModalNyitasa(kartya) {
+        const kepek = inspiracioKepekKartyan(kartya);
+        if (!kepek.length) return;
+
+        let modal = document.getElementById('admin-inspiracio-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'admin-inspiracio-modal';
+            modal.className = 'admin-inspiracio-modal';
+            document.body.appendChild(modal);
+            modal.addEventListener('click', event => {
+                if (event.target === modal || event.target.closest('[data-inspiracio-bezaras]')) {
+                    inspiracioModalBezarasa();
+                }
+            });
+        }
+
+        modal.innerHTML = `
+            <div class="admin-inspiracio-modal-doboz" role="dialog" aria-modal="true" aria-label="Inspirációs képek">
+                <button type="button" class="admin-inspiracio-bezaras" data-inspiracio-bezaras aria-label="Bezárás">×</button>
+                <h3>Inspirációs képek</h3>
+                <div class="admin-inspiracio-modal-racs">
+                    ${kepek.map(kep => `<figure><img src="${attr(kep.url)}" alt="${attr(kep.name || 'Inspirációs kép')}"><figcaption>${html(kep.name || 'Inspirációs kép')}</figcaption></figure>`).join('')}
+                </div>
+            </div>
+        `;
+        modal.hidden = false;
+        document.body.classList.add('admin-modal-nyitva');
+    }
+
+    function inspiracioModalBezarasa() {
+        const modal = document.getElementById('admin-inspiracio-modal');
+        if (modal) modal.hidden = true;
+        document.body.classList.remove('admin-modal-nyitva');
     }
 
     function tiltasFoglalasKartya(tiltas) {
@@ -964,6 +1102,10 @@
                 return;
             }
 
+            if (kartya.dataset.tipus === 'booking' && modositas.status === 'done') {
+                await foglalasInspiraciokTorlese(kartya);
+            }
+
             if (kartya.dataset.tipus === 'booking') {
                 const emailModositas = foglalasEmailModositas(kartya, modositas);
 
@@ -997,6 +1139,39 @@
 
         foglalasokBetoltese();
         esemenynaploBetoltese();
+    }
+
+    async function foglalasInspiraciokTorlese(kartya) {
+        const kepek = inspiracioKepekKartyan(kartya);
+        const paths = kepek.map(kep => kep.path).filter(Boolean);
+
+        if (!kepek.length) return;
+
+        if (paths.length) {
+            const { error: torlesHiba } = await allapot.kliens.storage
+                .from('site-media')
+                .remove(paths);
+
+            if (torlesHiba) {
+                console.warn('Inspirációs képek Storage törlése nem sikerült:', torlesHiba);
+            }
+        }
+
+        try {
+            const { error } = await allapot.kliens.rpc('clear_booking_inspiration', {
+                p_booking_id: kartya.dataset.id
+            });
+
+            if (error) {
+                console.warn('Inspirációs képmezők ürítése nem sikerült:', error);
+                return;
+            }
+
+            kartya.dataset.inspiracioKepek = '[]';
+            kartya.querySelector('[data-inspiracio-megnyitas]')?.closest('p')?.remove();
+        } catch (error) {
+            console.warn('Inspirációs képtakarítás hiba:', error);
+        }
     }
 
     function foglalasEmailModositas(kartya, modositas) {
@@ -1078,8 +1253,14 @@
     }
 
     async function foglalasListaKattintas(event) {
+        const inspiracio = event.target.closest('[data-inspiracio-megnyitas]');
         const szerkesztes = event.target.closest('[data-foglalas-szerkesztes]');
         const torles = event.target.closest('[data-foglalas-torles]');
+
+        if (inspiracio) {
+            inspiracioModalNyitasa(inspiracio.closest('.admin-db-kartya'));
+            return;
+        }
 
         if (szerkesztes) {
             foglalasSzerkesztesKapcsolasa(szerkesztes.closest('.admin-db-kartya'));
@@ -1293,15 +1474,11 @@
         kartya.dataset.id = idosav.id;
 
         kartya.innerHTML = `
-            <div class="admin-idosav-grid">
-                <div class="admin-idosav-datum-sor">
-                    <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
-                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-idosav-torles>Törlés</button>
-                </div>
-                <div class="admin-idosav-ido-sor">
-                    <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
-                    <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
-                </div>
+            <div class="admin-idosav-grid admin-idosav-grid-kompakt">
+                <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
+                <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
+                <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb admin-idosav-torles-x" data-idosav-torles aria-label="Törlés">×</button>
             </div>
         `;
 
@@ -1894,6 +2071,16 @@
             : { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
 
         return new Intl.DateTimeFormat('hu-HU', opciok).format(datum);
+    }
+
+    function datumIdoRovid(ertek, csakIdo = false) {
+        const datum = new Date(ertek);
+        const nap = String(datum.getDate()).padStart(2, '0');
+        const honap = String(datum.getMonth() + 1).padStart(2, '0');
+        const ev = String(datum.getFullYear()).slice(-2);
+        const ora = String(datum.getHours()).padStart(2, '0');
+        const perc = String(datum.getMinutes()).padStart(2, '0');
+        return csakIdo ? `${ora}:${perc}` : `${nap}.${honap}.${ev} ${ora}:${perc}`;
     }
 
     function datumInputErtek(ertek) {

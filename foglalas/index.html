@@ -8,7 +8,7 @@
     <title>Időpontfoglalás - Körmös Tatabánya | Lumi Nails</title>
     <meta name="description" content="Online időpontfoglalás Lumi Nails szolgáltatásokra Tatabányán: manikűr, gél lakk, körömépítés, töltés és díszítés.">
     <meta property="og:title" content="Időpontfoglalás - Körmös Tatabánya | Lumi Nails">
-    <meta property="og:description" content="Válassz szolgáltatást, dátumot és szabad időpontot online Tatabányán.">
+    <meta property="og:description" content="Válassz, hogy Instagramon, Messengerben, SMS-ben vagy online szeretnél időpontot kérni.">
     <meta property="og:site_name" content="Lumi Nails">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://luminails.hu/foglalas/">
@@ -24,7 +24,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=20260705cms3">
+    <link rel="stylesheet" href="/style.css?v=20260714booking7">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,47 +45,173 @@
 <body class="tartalom-toltes" data-booking-mode="supabase">
     <div id="fejlec-helye"></div>
 
-    <section>
-        <h2>Időpontfoglalás</h2>
-        <p class="szekcio-leiras urlap-leiras">Válassz szolgáltatást, dátumot és szabad időpontot. A foglalás után visszaigazoló üzenetet kapsz.</p>
-
-        <form id="foglalas-urlap" class="urlap-kontener">
-            <input type="text" id="foglalas-nev" class="urlap-mezo" placeholder="Teljes neved" autocomplete="name" required>
-
-            <div class="tel-csoport">
-                <span class="tel-prefix">+36</span>
-                <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567" inputmode="numeric"
-                    autocomplete="tel-national" required>
+    <main class="foglalas-oldal">
+        <section class="foglalas-nyito" aria-labelledby="foglalas-cim">
+            <div class="foglalas-nyito-szoveg">
+                <p class="foglalas-kicker">Időpontkérés</p>
+                <h2 id="foglalas-cim">Írj rám, vagy foglalj online</h2>
+                <p class="szekcio-leiras urlap-leiras">Ha már tudod, mikor jönnél, foglalj online pár lépésben. Ha előbb kérdeznél vagy egyeztetnél, írj rám nyugodtan Instagramon, Messengerben vagy SMS-ben. Inspirációs képet is küldhetsz, ha az segít megmutatni az elképzelésed.</p>
             </div>
 
-            <input type="email" id="foglalas-email" class="urlap-mezo" placeholder="Email címed" autocomplete="email" required>
+            <div class="foglalas-utak" aria-label="Időpontkérés módja">
+                <a class="foglalas-ut-kartya" href="https://ig.me/m/luminails.xx" target="_blank" rel="noopener" data-booking-contact="instagram">
+                    <span class="foglalas-ut-ikon">IG</span>
+                    <span class="foglalas-ut-cim">Instagramon írok</span>
+                    <span class="foglalas-ut-leiras">Ha Instán kényelmesebb, ott is tudsz írni gyorsan.</span>
+                    <span class="foglalas-ut-gomb">Instagram megnyitása</span>
+                </a>
 
-            <select id="foglalas-szolgatatas" class="urlap-mezo" required>
-                <option value="" disabled selected>Szolgáltatások betöltése...</option>
-            </select>
+                <a class="foglalas-ut-kartya" href="https://m.me/petras.szofi" target="_blank" rel="noopener" data-booking-contact="messenger">
+                    <span class="foglalas-ut-ikon">◎</span>
+                    <span class="foglalas-ut-cim">Messengeren írok</span>
+                    <span class="foglalas-ut-leiras">Ha előbb átbeszélnéd, mit szeretnél, írj rám nyugodtan Messengerben.</span>
+                    <span class="foglalas-ut-gomb">Messenger megnyitása</span>
+                </a>
 
-            <select id="foglalas-datum" class="urlap-mezo" required>
-                <option value="" disabled selected>Előbb válassz szolgáltatást...</option>
-            </select>
+                <a class="foglalas-ut-kartya" href="sms:+36205636494" data-booking-contact="sms">
+                    <span class="foglalas-ut-ikon">✉</span>
+                    <span class="foglalas-ut-cim">SMS-t küldök</span>
+                    <span class="foglalas-ut-leiras">Ha a sima szöveges üzenet kényelmesebb, erre a számra tudsz írni: +36 20 563 6494.</span>
+                    <span class="foglalas-ut-gomb">SMS írása</span>
+                </a>
 
-            <select id="foglalas-ido" class="urlap-mezo" required>
-                <option value="" disabled selected>Előbb válassz szolgáltatást és dátumot...</option>
-            </select>
+                <a class="foglalas-ut-kartya foglalas-ut-kartya-kiemelt" href="#online-foglalas" data-booking-path="online">
+                    <span class="foglalas-ut-ikon">✓</span>
+                    <span class="foglalas-ut-cim">Online foglalok</span>
+                    <span class="foglalas-ut-leiras">Ha már megvan, mit szeretnél, válaszd ki a szabad időpontot pár kattintással.</span>
+                    <span class="foglalas-ut-gomb">Online foglalás indítása</span>
+                </a>
+            </div>
+        </section>
 
-            <textarea id="foglalas-komment" class="urlap-mezo" rows="3"
-                placeholder="Megjegyzés, egyedi kérés (opcionális)"></textarea>
+        <section id="online-foglalas" class="foglalas-asszisztens-szekcio" aria-labelledby="online-foglalas-cim">
+            <div class="foglalas-asszisztens-fej">
+                <p class="foglalas-kicker">Online foglalás</p>
+                <h2 id="online-foglalas-cim">Online időpontfoglalás</h2>
+                <p>Pár kattintás az egész: szolgáltatás, stílus, időpont, majd az elérhetőséged. Képet csak akkor tölts fel, ha segítene megmutatni, mire gondoltál.</p>
+            </div>
 
-            <button type="submit" id="foglalas-kuldes" class="gomb urlap-kuldes-gomb">Foglalás elküldése</button>
-            <p id="foglalas-status" class="urlap-status" aria-live="polite"></p>
-        </form>
-    </section>
+            <form id="foglalas-urlap" class="foglalas-asszisztens urlap-kontener" novalidate>
+                <div class="foglalas-lepes" data-step="1">
+                    <div class="foglalas-lepes-fej">
+                        <span class="foglalas-lepes-szam">1</span>
+                        <div>
+                            <h3>Mit szeretnél?</h3>
+                            <p>Válassz egy szolgáltatást, és ehhez mutatom a szabad időket.</p>
+                        </div>
+                    </div>
+                    <select id="foglalas-szolgatatas" class="foglalas-technikai-mezo" aria-label="Szolgáltatás választás">
+                        <option value="" disabled selected>Szolgáltatások betöltése...</option>
+                    </select>
+                    <div id="foglalas-szolgaltatas-kartyak" class="foglalas-kartya-racs" aria-live="polite"></div>
+                </div>
+
+                <div class="foglalas-lepes" data-step="2">
+                    <div class="foglalas-lepes-fej">
+                        <span class="foglalas-lepes-szam">2</span>
+                        <div>
+                            <h3>Milyen stílus legyen?</h3>
+                            <p>Ezt azért kérem, mert egy francia vagy díszített köröm több időt is kérhet.</p>
+                        </div>
+                    </div>
+                    <div class="foglalas-stilus-racs" id="foglalas-stilus-racs">
+                        <label class="foglalas-stilus-kartya">
+                            <input type="radio" name="korom-stilus" value="Egyszerű / egyszínű köröm">
+                            <span>Egyszerű / egyszínű</span>
+                            <small>Letisztult, extra díszítés nélkül.</small>
+                        </label>
+                        <label class="foglalas-stilus-kartya">
+                            <input type="radio" name="korom-stilus" value="Francia köröm">
+                            <span>Francia</span>
+                            <small>Jelezd, ha klasszikus vagy színes francia lenne.</small>
+                        </label>
+                        <label class="foglalas-stilus-kartya">
+                            <input type="radio" name="korom-stilus" value="Festés / díszítés">
+                            <span>Festés / díszítés</span>
+                            <small>Minta, extra dekor vagy különlegesebb elképzelés.</small>
+                        </label>
+                    </div>
+                    <p id="foglalas-stilus-tipp" class="foglalas-tipp" hidden>Ha díszítettebb körmöt szeretnél, írj pár szót róla vagy tölts fel képet, hogy lássam, mire gondolsz.</p>
+                </div>
+
+                <div class="foglalas-lepes" data-step="3">
+                    <div class="foglalas-lepes-fej">
+                        <span class="foglalas-lepes-szam">3</span>
+                        <div>
+                            <h3>Mikor jönnél?</h3>
+                            <p>Először válassz napot, utána válassz egy szabad időpontot.</p>
+                        </div>
+                    </div>
+                    <select id="foglalas-datum" class="foglalas-technikai-mezo" aria-label="Szabad dátum választás">
+                        <option value="" disabled selected>Előbb válassz szolgáltatást...</option>
+                    </select>
+                    <div id="foglalas-datum-kartyak" class="foglalas-mini-racs" aria-live="polite"></div>
+
+                    <select id="foglalas-ido" class="foglalas-technikai-mezo" aria-label="Szabad időpont választás">
+                        <option value="" disabled selected>Előbb válassz szolgáltatást és dátumot...</option>
+                    </select>
+                    <div id="foglalas-ido-kartyak" class="foglalas-ido-racs" aria-live="polite"></div>
+                </div>
+
+                <div class="foglalas-lepes" data-step="4">
+                    <div class="foglalas-lepes-fej">
+                        <span class="foglalas-lepes-szam">4</span>
+                        <div>
+                            <h3>Mutasd az elképzelést</h3>
+                            <p>Ha van inspirációs képed, feltöltheted. Nem kötelező, csak sokat segít.</p>
+                        </div>
+                    </div>
+                    <label class="foglalas-kepfeltoltes" for="foglalas-inspiracio-kep">
+                        <input type="file" id="foglalas-inspiracio-kep" accept="image/*" multiple>
+                        <span class="foglalas-kepfeltoltes-ikon">＋</span>
+                        <span>
+                            <strong>Kép feltöltése</strong>
+                            <small>Akár több kép is jöhet. JPG, PNG, WebP, AVIF vagy HEIC, képenként legfeljebb 12 MB.</small>
+                        </span>
+                    </label>
+                    <div id="foglalas-kep-elonezet" class="foglalas-kep-elonezet" hidden>
+                        <img id="foglalas-kep-elonezet-img" alt="Feltöltött inspiráció előnézete">
+                        <div>
+                            <p id="foglalas-kep-nev"></p>
+                            <button type="button" id="foglalas-kep-torles" class="bezaro-link">Kép eltávolítása</button>
+                        </div>
+                    </div>
+                    <textarea id="foglalas-komment" class="urlap-mezo foglalas-megjegyzes" rows="3" placeholder="Írhatsz pár szót is: szín, minta, forma, bármi ami fontos (opcionális)"></textarea>
+                </div>
+
+                <div class="foglalas-lepes" data-step="5">
+                    <div class="foglalas-lepes-fej">
+                        <span class="foglalas-lepes-szam">5</span>
+                        <div>
+                            <h3>Hova küldhetem a visszaigazolást?</h3>
+                            <p>Ezekre az adatokra küldöm a foglalás részleteit, és itt tudlak elérni, ha pontosítani kell.</p>
+                        </div>
+                    </div>
+                    <div class="foglalas-adat-racs">
+                        <input type="text" id="foglalas-nev" class="urlap-mezo" placeholder="Teljes neved" autocomplete="name">
+                        <div class="tel-csoport">
+                            <span class="tel-prefix">+36</span>
+                            <input type="tel" id="foglalas-tel" class="urlap-mezo" placeholder="201234567" inputmode="numeric" autocomplete="tel-national">
+                        </div>
+                        <input type="email" id="foglalas-email" class="urlap-mezo" placeholder="Email címed" autocomplete="email">
+                    </div>
+                    <div id="foglalas-osszefoglalo" class="foglalas-osszefoglalo" aria-live="polite">
+                        <h3>Összefoglaló</h3>
+                        <p>Ahogy választasz, itt egyben látod majd a foglalásodat.</p>
+                    </div>
+                    <button type="submit" id="foglalas-kuldes" class="gomb urlap-kuldes-gomb">Foglalás elküldése</button>
+                    <p id="foglalas-status" class="urlap-status" aria-live="polite"></p>
+                </div>
+            </form>
+        </section>
+    </main>
 
     <div id="lablec-helye"></div>
 
     <div id="sikeres-popup" class="popup-hatter">
         <div class="popup-doboz">
             <h3 class="popup-cim">Foglalás elküldve</h3>
-            <p class="popup-szoveg">Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldjük, kérlek ellenőrizd a spam mappát is.</p>
+            <p class="popup-szoveg">Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldöm, kérlek ellenőrizd a spam mappát is.</p>
 
             <div class="popup-gomb-sor">
                 <a href="/" class="gomb popup-gomb">Kezdőlap</a>
@@ -99,8 +225,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase-config.js"></script>
-    <script src="/script.js?v=20260705cms3"></script>
-    <script src="/booking.js?v=20260705cms3"></script>
+    <script src="/script.js?v=20260714booking7"></script>
+    <script src="/booking.js?v=20260714booking7"></script>
 </body>
 
 </html>

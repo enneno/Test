@@ -3509,3 +3509,1300 @@ select.urlap-mezo:invalid {
     .cms-gallery-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .cms-gallery-actions .admin-veszely-gomb { grid-column: 1 / -1; }
 }
+/* =========================================
+   FOGLALAS ASSZISZTENS 20260714
+   ========================================= */
+.foglalas-oldal {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto 70px;
+}
+
+.foglalas-nyito,
+.foglalas-asszisztens-szekcio {
+    position: relative;
+    overflow: hidden;
+    margin: 34px auto;
+    padding: clamp(24px, 4vw, 42px);
+    background: rgba(255, 250, 244, 0.78);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 32px;
+    box-shadow: 0 18px 42px rgba(78, 54, 48, 0.08);
+}
+
+.foglalas-nyito::before,
+.foglalas-asszisztens-szekcio::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 0%, rgba(209, 145, 158, 0.16), transparent 34%), radial-gradient(circle at 100% 20%, rgba(241, 222, 217, 0.55), transparent 32%);
+    pointer-events: none;
+}
+
+.foglalas-nyito > *,
+.foglalas-asszisztens-szekcio > * {
+    position: relative;
+    z-index: 1;
+}
+
+.foglalas-nyito-szoveg,
+.foglalas-asszisztens-fej {
+    max-width: 760px;
+    margin: 0 auto 28px;
+    text-align: center;
+}
+
+.foglalas-nyito h2,
+.foglalas-asszisztens-fej h2 {
+    margin-bottom: 14px;
+}
+
+.foglalas-kicker {
+    margin: 0 0 8px;
+    color: var(--akcentus);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.foglalas-utak {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.foglalas-ut-kartya {
+    display: flex;
+    min-height: 230px;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px;
+    color: var(--tinta);
+    background: rgba(255, 250, 244, 0.92);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 26px;
+    text-decoration: none;
+    box-shadow: 0 12px 24px rgba(78, 54, 48, 0.07);
+    transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+}
+
+.foglalas-ut-kartya:hover,
+.foglalas-ut-kartya:focus-visible {
+    border-color: rgba(185, 133, 143, 0.52);
+    box-shadow: 0 18px 32px rgba(78, 54, 48, 0.11);
+    transform: translateY(-4px);
+    outline: none;
+}
+
+.foglalas-ut-kartya-kiemelt {
+    background: linear-gradient(155deg, rgba(209, 145, 158, 0.18), rgba(255, 250, 244, 0.96));
+}
+
+.foglalas-ut-ikon {
+    display: inline-flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-radius: 999px;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.foglalas-ut-cim {
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.foglalas-ut-leiras {
+    color: var(--szoveg);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.foglalas-ut-gomb {
+    margin-top: auto;
+    color: var(--akcentus);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.foglalas-asszisztens {
+    display: grid;
+    max-width: 880px;
+    margin: 0 auto;
+    gap: 18px;
+}
+
+.foglalas-lepes {
+    padding: clamp(18px, 3vw, 28px);
+    background: rgba(255, 250, 244, 0.92);
+    border: 1px solid rgba(185, 133, 143, 0.2);
+    border-radius: 26px;
+}
+
+.foglalas-lepes-fej {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    margin-bottom: 18px;
+}
+
+.foglalas-lepes-fej h3 {
+    margin: 0 0 6px;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    line-height: 1.05;
+}
+
+.foglalas-lepes-fej p {
+    margin: 0;
+    color: var(--szoveg);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.foglalas-lepes-szam {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.foglalas-technikai-mezo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+}
+
+.foglalas-kartya-racs,
+.foglalas-stilus-racs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.foglalas-mini-racs,
+.foglalas-ido-racs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.foglalas-valaszto-kartya,
+.foglalas-mini-kartya,
+.foglalas-idopont-gomb,
+.foglalas-stilus-kartya {
+    box-sizing: border-box;
+    color: var(--tinta);
+    background: rgba(241, 222, 217, 0.18);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 18px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+    text-align: left;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.foglalas-valaszto-kartya {
+    display: grid;
+    gap: 6px;
+    min-height: 96px;
+    padding: 16px;
+}
+
+.foglalas-valaszto-kartya:hover,
+.foglalas-mini-kartya:hover,
+.foglalas-idopont-gomb:hover,
+.foglalas-stilus-kartya:hover {
+    border-color: rgba(185, 133, 143, 0.5);
+    transform: translateY(-2px);
+}
+
+.foglalas-valaszto-kartya.aktiv,
+.foglalas-mini-kartya.aktiv,
+.foglalas-idopont-gomb.aktiv,
+.foglalas-stilus-kartya.aktiv {
+    background: rgba(209, 145, 158, 0.18);
+    border-color: var(--akcentus);
+    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.18);
+}
+
+.foglalas-kartya-cim {
+    color: var(--barna);
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.foglalas-kartya-meta {
+    color: rgba(83, 67, 59, 0.72);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.foglalas-mini-kartya,
+.foglalas-idopont-gomb {
+    min-height: 44px;
+    padding: 11px 14px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.foglalas-mini-kartya {
+    flex: 1 1 220px;
+}
+
+.foglalas-idopont-gomb {
+    flex: 0 0 auto;
+    min-width: 92px;
+}
+
+.foglalas-stilus-kartya {
+    display: grid;
+    gap: 5px;
+    min-height: 112px;
+    padding: 16px;
+}
+
+.foglalas-stilus-kartya input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.foglalas-stilus-kartya span {
+    color: var(--barna);
+    font-weight: 800;
+}
+
+.foglalas-stilus-kartya small {
+    color: rgba(83, 67, 59, 0.76);
+    line-height: 1.45;
+}
+
+.foglalas-tipp,
+.foglalas-kartya-uzenet {
+    margin: 12px 0 0;
+    color: var(--barna);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.foglalas-kepfeltoltes {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px;
+    background: rgba(241, 222, 217, 0.18);
+    border: 1px dashed rgba(185, 133, 143, 0.45);
+    border-radius: 22px;
+    cursor: pointer;
+}
+
+.foglalas-kepfeltoltes input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.foglalas-kepfeltoltes-ikon {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-radius: 999px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.foglalas-kepfeltoltes strong,
+.foglalas-kepfeltoltes small {
+    display: block;
+}
+
+.foglalas-kepfeltoltes strong {
+    color: var(--barna);
+}
+
+.foglalas-kepfeltoltes small {
+    margin-top: 2px;
+    color: rgba(83, 67, 59, 0.72);
+    line-height: 1.45;
+}
+
+.foglalas-kep-elonezet {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255, 250, 244, 0.82);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 18px;
+}
+
+.foglalas-kep-elonezet[hidden] {
+    display: none;
+}
+
+.foglalas-kep-elonezet img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+.foglalas-kep-elonezet p {
+    margin: 0 0 8px;
+    color: var(--barna);
+    font-size: 13px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.foglalas-megjegyzes {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.foglalas-adat-racs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.foglalas-adat-racs .urlap-mezo,
+.foglalas-adat-racs .tel-csoport {
+    min-width: 0;
+    border-radius: 16px;
+}
+
+.admin-inspiracio-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+}
+
+@media screen and (max-width: 900px) {
+    .foglalas-utak,
+    .foglalas-adat-racs {
+        grid-template-columns: 1fr;
+    }
+
+    .foglalas-kartya-racs,
+    .foglalas-stilus-racs {
+        grid-template-columns: 1fr;
+    }
+
+    .foglalas-ut-kartya {
+        min-height: 0;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .foglalas-oldal {
+        width: calc(100% - 20px);
+        margin-bottom: 54px;
+    }
+
+    .foglalas-nyito,
+    .foglalas-asszisztens-szekcio {
+        margin: 18px auto;
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .foglalas-lepes {
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .foglalas-lepes-fej {
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .foglalas-lepes-szam {
+        width: 36px;
+        height: 36px;
+    }
+
+    .foglalas-lepes-fej h3 {
+        font-size: 24px;
+    }
+
+    .foglalas-ut-cim {
+        font-size: 25px;
+    }
+
+    .foglalas-mini-kartya,
+    .foglalas-idopont-gomb {
+        flex: 1 1 calc(50% - 8px);
+    }
+
+    .foglalas-kepfeltoltes {
+        align-items: flex-start;
+    }
+}
+/* =========================================
+   FINOMITASOK 20260714 BOOKING2
+   ========================================= */
+.foglalas-osszefoglalo {
+    margin-top: 14px;
+    padding: 16px;
+    background: rgba(241, 222, 217, 0.22);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 20px;
+}
+
+.foglalas-osszefoglalo h3 {
+    margin: 0 0 10px;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.foglalas-osszefoglalo p {
+    margin: 0;
+    color: var(--szoveg);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.foglalas-osszefoglalo dl {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.foglalas-osszefoglalo dl div {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 12px;
+    align-items: baseline;
+}
+
+.foglalas-osszefoglalo dt {
+    color: var(--akcentus);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.foglalas-osszefoglalo dd {
+    margin: 0;
+    color: var(--tinta);
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.foglalas-kep-elonezet {
+    grid-template-columns: 1fr;
+}
+
+.foglalas-kep-elonezet-racs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: 10px;
+}
+
+.foglalas-kep-mini {
+    margin: 0;
+    overflow: hidden;
+    background: rgba(255, 250, 244, 0.9);
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 14px;
+}
+
+.foglalas-kep-mini img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.foglalas-kep-mini figcaption {
+    padding: 7px;
+    color: var(--barna);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.foglalas-kep-mini small {
+    color: rgba(83, 67, 59, 0.68);
+    font-weight: 600;
+}
+
+.admin-foglalas-reszletek-kompakt {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+}
+
+.admin-foglalas-reszlet-sor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: baseline;
+}
+
+.admin-foglalas-reszlet-sor span {
+    display: inline-flex;
+    gap: 5px;
+    align-items: baseline;
+    min-width: min(100%, 220px);
+}
+
+.admin-inspiracio-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 12px;
+    color: var(--akcentus);
+    background: rgba(185, 133, 143, 0.08);
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.admin-inspiracio-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(43, 37, 33, 0.58);
+    backdrop-filter: blur(6px);
+}
+
+.admin-inspiracio-modal[hidden] {
+    display: none;
+}
+
+.admin-inspiracio-modal-doboz {
+    position: relative;
+    width: min(980px, 100%);
+    max-height: min(86vh, 900px);
+    overflow: auto;
+    padding: clamp(18px, 3vw, 28px);
+    background: #fffaf4;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 26px;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24);
+}
+
+.admin-inspiracio-modal-doboz h3 {
+    margin: 0 42px 16px 0;
+    color: var(--barna);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.admin-inspiracio-bezaras {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    color: var(--tinta);
+    background: rgba(241, 222, 217, 0.55);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 999px;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.admin-inspiracio-modal-racs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.admin-inspiracio-modal-racs figure {
+    margin: 0;
+}
+
+.admin-inspiracio-modal-racs img {
+    display: block;
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: rgba(241, 222, 217, 0.22);
+    border-radius: 18px;
+}
+
+.admin-inspiracio-modal-racs figcaption {
+    margin-top: 7px;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+body.admin-modal-nyitva {
+    overflow: hidden;
+}
+
+.admin-naptar-torles-x {
+    min-width: 38px;
+    padding-inline: 0 !important;
+    font-size: 18px;
+    line-height: 1;
+}
+
+@media screen and (max-width: 760px) {
+    .foglalas-osszefoglalo dl div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+
+    .admin-foglalas-reszletek-kompakt {
+        gap: 2px;
+        font-size: 12px;
+    }
+
+    .admin-foglalas-reszlet-sor {
+        gap: 2px 8px;
+        line-height: 1.35;
+    }
+
+    .admin-foglalas-reszlet-sor span {
+        min-width: 0;
+    }
+
+    .admin-foglalas-idopont {
+        font-size: 11.5px;
+        white-space: normal;
+        text-align: right;
+    }
+
+    .admin-naptar-sor {
+        grid-template-columns: minmax(74px, 0.9fr) minmax(70px, 1fr) minmax(70px, 1fr) 38px !important;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .admin-naptar-datum {
+        grid-column: auto !important;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .admin-naptar-sor .admin-mezo {
+        font-size: 0 !important;
+        gap: 0;
+    }
+
+    .admin-naptar-sor .admin-mezo input {
+        min-height: 34px;
+        padding: 5px 4px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .admin-naptar-sor .admin-kis-gomb {
+        grid-column: auto !important;
+        min-height: 34px;
+    }
+
+    .admin-inspiracio-modal {
+        padding: 10px;
+    }
+
+    .admin-inspiracio-modal-racs {
+        grid-template-columns: 1fr;
+    }
+}
+.admin-idosav-grid-kompakt {
+    grid-template-columns: minmax(132px, 1.2fr) minmax(82px, 0.7fr) minmax(82px, 0.7fr) auto;
+    align-items: end;
+}
+
+.admin-idosav-torles-x {
+    min-width: 38px;
+    padding-inline: 0 !important;
+    font-size: 18px !important;
+    line-height: 1;
+}
+
+@media screen and (max-width: 760px) {
+    .admin-idosav-grid-kompakt {
+        grid-template-columns: minmax(104px, 1.3fr) minmax(64px, 0.8fr) minmax(64px, 0.8fr) 38px !important;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .admin-idosav-grid-kompakt .admin-mezo {
+        font-size: 0 !important;
+        gap: 0;
+    }
+
+    .admin-idosav-grid-kompakt .admin-mezo input {
+        min-height: 34px;
+        padding: 5px 4px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .admin-idosav-grid-kompakt .admin-idosav-torles-x {
+        min-height: 34px;
+        min-width: 34px;
+    }
+}
+/* =========================================
+   FINOMITASOK 20260714 BOOKING3
+   ========================================= */
+.foglalas-kartya-racs {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.foglalas-valaszto-kartya {
+    min-height: 78px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    align-content: center;
+}
+
+.foglalas-kartya-cim {
+    font-size: 14px;
+}
+
+.foglalas-kartya-meta {
+    font-size: 12.5px;
+    line-height: 1.35;
+}
+
+.foglalas-datum-csik {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 2px 2px 10px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+}
+
+.foglalas-datum-csik::-webkit-scrollbar {
+    height: 4px;
+}
+
+.foglalas-datum-csik::-webkit-scrollbar-thumb {
+    background: rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+}
+
+.foglalas-datum-chip {
+    display: inline-flex;
+    flex: 0 0 126px;
+    align-items: center;
+    gap: 9px;
+    min-height: 58px;
+    padding: 9px 11px;
+    color: var(--tinta);
+    background: rgba(241, 222, 217, 0.18);
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+    scroll-snap-align: start;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.foglalas-datum-chip:hover {
+    border-color: rgba(185, 133, 143, 0.5);
+    transform: translateY(-1px);
+}
+
+.foglalas-datum-chip.aktiv {
+    background: rgba(209, 145, 158, 0.18);
+    border-color: var(--akcentus);
+    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.16);
+}
+
+.foglalas-datum-chip-nap {
+    display: inline-flex;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.foglalas-datum-chip-resz {
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.15;
+    text-align: left;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 900px) {
+    .foglalas-kartya-racs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .foglalas-valaszto-kartya {
+        min-height: 82px;
+        padding: 11px 10px;
+    }
+
+    .foglalas-kartya-cim {
+        font-size: 12.5px;
+    }
+
+    .foglalas-kartya-meta {
+        font-size: 11.5px;
+    }
+
+    .foglalas-datum-chip {
+        flex-basis: 116px;
+        min-height: 54px;
+        padding: 8px 9px;
+    }
+
+    .foglalas-datum-chip-nap {
+        flex-basis: 31px;
+        width: 31px;
+        height: 31px;
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .admin-foglalas-fosor {
+        grid-template-columns: minmax(0, 1fr) minmax(122px, auto) !important;
+        align-items: start;
+        column-gap: 12px;
+    }
+
+    .admin-foglalas-fosor h3 {
+        min-width: 0;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-foglalas-idopont {
+        justify-self: end;
+        max-width: 152px;
+        text-align: right;
+        white-space: normal;
+        line-height: 1.25;
+    }
+
+    .admin-foglalas-reszlet-sor {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 5px 10px;
+        width: 100%;
+    }
+
+    .admin-foglalas-reszlet-sor > span {
+        justify-content: flex-end;
+        min-width: 0;
+        text-align: right;
+    }
+
+    .admin-foglalas-reszlet-sor a {
+        overflow-wrap: anywhere;
+    }
+
+    .admin-foglalas-reszlet-szeles {
+        display: block;
+    }
+}
+/* =========================================
+   FINOMITASOK 20260714 BOOKING5
+   ========================================= */
+.foglalas-asszisztens-szekcio,
+.foglalas-lepes {
+    scroll-margin-top: 112px;
+}
+
+@media screen and (max-width: 760px) {
+    .foglalas-asszisztens-szekcio,
+    .foglalas-lepes {
+        scroll-margin-top: 104px;
+    }
+}
+/* =========================================
+   FINOMITASOK 20260714 BOOKING6
+   ========================================= */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.foglalas-oldal,
+.foglalas-nyito,
+.foglalas-asszisztens-szekcio,
+.foglalas-asszisztens,
+.foglalas-lepes,
+.foglalas-lepes-fej,
+.foglalas-lepes-fej > div,
+.foglalas-kartya-racs,
+.foglalas-stilus-racs,
+.foglalas-ido-racs,
+.foglalas-datum-csik {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.foglalas-lepes-fej h3,
+.foglalas-lepes-fej p,
+.foglalas-asszisztens-fej p,
+.foglalas-nyito-szoveg p {
+    overflow-wrap: anywhere;
+}
+
+.foglalas-utak {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.foglalas-ut-kartya {
+    min-height: 176px;
+    padding: 17px;
+    border-radius: 22px;
+    gap: 9px;
+}
+
+.foglalas-ut-ikon {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+}
+
+.foglalas-ut-cim {
+    font-size: clamp(20px, 2.3vw, 28px);
+    line-height: 1.02;
+}
+
+.foglalas-ut-leiras {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.foglalas-ut-gomb {
+    margin-top: auto;
+    font-size: 11px;
+    letter-spacing: 0.11em;
+}
+
+.foglalas-kartya-racs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.foglalas-valaszto-kartya {
+    min-height: 92px;
+    padding: 14px;
+}
+
+.foglalas-kartya-cim {
+    font-size: 14px;
+    line-height: 1.25;
+}
+
+.foglalas-kartya-meta {
+    font-size: 12.5px;
+    line-height: 1.35;
+}
+
+.foglalas-datum-csik {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    max-height: 250px;
+    margin-top: 12px;
+    padding: 2px 2px 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: none;
+}
+
+.foglalas-datum-chip {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    flex: none;
+    width: 100%;
+    min-height: 62px;
+    padding: 9px;
+    border-radius: 16px;
+    gap: 8px;
+}
+
+.foglalas-datum-chip-nap {
+    width: 34px;
+    height: 34px;
+    flex-basis: auto;
+    font-size: 12.5px;
+}
+
+.foglalas-datum-chip-resz {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    text-align: left;
+    white-space: normal;
+    text-transform: none;
+}
+
+.foglalas-datum-chip-resz strong {
+    color: var(--barna);
+    font-size: 12px;
+    line-height: 1.05;
+    text-transform: capitalize;
+}
+
+.foglalas-datum-chip-resz small {
+    color: rgba(83, 67, 59, 0.72);
+    font-size: 10.5px;
+    font-weight: 750;
+    line-height: 1.1;
+    text-transform: capitalize;
+}
+
+.admin-foglalas-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px 14px;
+    width: 100%;
+}
+
+.admin-foglalas-meta-grid p {
+    min-width: 0;
+    margin: 0;
+    color: var(--szoveg);
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.admin-foglalas-meta-grid strong {
+    display: block;
+    margin-bottom: 1px;
+    color: var(--barna);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.admin-foglalas-meta-grid span,
+.admin-foglalas-meta-grid a {
+    color: var(--tinta);
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+@media screen and (max-width: 900px) {
+    .foglalas-utak {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
+    }
+
+    .foglalas-kartya-racs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .foglalas-stilus-racs {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .foglalas-nyito,
+    .foglalas-asszisztens-szekcio {
+        overflow: hidden;
+    }
+
+    .foglalas-ut-kartya {
+        min-height: 148px;
+        padding: 13px;
+        border-radius: 20px;
+    }
+
+    .foglalas-ut-ikon {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .foglalas-ut-cim {
+        font-size: 19px;
+    }
+
+    .foglalas-ut-leiras {
+        font-size: 11.5px;
+        line-height: 1.35;
+    }
+
+    .foglalas-ut-gomb {
+        font-size: 9.5px;
+    }
+
+    .foglalas-valaszto-kartya {
+        min-height: 88px;
+        padding: 12px;
+    }
+
+    .foglalas-kartya-cim {
+        font-size: 13.2px;
+    }
+
+    .foglalas-kartya-meta {
+        font-size: 12px;
+    }
+
+    .foglalas-datum-csik {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: 238px;
+        gap: 8px;
+    }
+
+    .foglalas-datum-chip {
+        grid-template-columns: 34px minmax(0, 1fr);
+        min-height: 60px;
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .admin-foglalas-reszlet-sor {
+        display: block;
+        text-align: left;
+    }
+
+    .admin-foglalas-reszlet-sor > span {
+        display: inline;
+        text-align: left;
+    }
+
+    .admin-foglalas-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 10px;
+    }
+
+    .admin-foglalas-meta-grid p {
+        font-size: 12px;
+    }
+
+    .admin-foglalas-meta-grid strong {
+        font-size: 10px;
+    }
+}
+/* =========================================
+   FINOMITASOK 20260714 BOOKING7
+   ========================================= */
+.foglalas-datum-csik {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.foglalas-datum-chip {
+    grid-template-columns: 28px minmax(0, 1fr);
+    min-height: 46px;
+    padding: 7px 8px;
+    gap: 7px;
+    border-radius: 15px;
+}
+
+.foglalas-datum-chip-nap {
+    width: 26px;
+    height: 26px;
+    color: var(--akcentus);
+    background: rgba(255, 250, 244, 0.86);
+    border: 1px solid rgba(185, 133, 143, 0.32);
+    border-radius: 9px;
+    box-shadow: none;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.foglalas-datum-chip-resz {
+    display: block;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.foglalas-datum-chip-resz strong,
+.foglalas-datum-chip-resz small {
+    display: inline;
+    color: inherit;
+    font: inherit;
+    text-transform: inherit;
+}
+
+@media screen and (max-width: 620px) {
+    .foglalas-datum-csik {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: 220px;
+        gap: 7px;
+    }
+
+    .foglalas-datum-chip {
+        grid-template-columns: 28px minmax(0, 1fr);
+        min-height: 46px;
+        padding: 7px 8px;
+    }
+}
