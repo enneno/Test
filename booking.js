@@ -339,7 +339,7 @@
         const [ev, honap, nap] = datumSzoveg.split('-').map(Number);
         const datum = new Date(ev, honap - 1, nap, 12, 0, 0);
         const honapNev = new Intl.DateTimeFormat('hu-HU', { month: 'short' }).format(datum).replace('.', '');
-        const hetnap = new Intl.DateTimeFormat('hu-HU', { weekday: 'short' }).format(datum).replace('.', '');
+        const hetnap = new Intl.DateTimeFormat('hu-HU', { weekday: 'long' }).format(datum);
 
         return `<span class="foglalas-datum-chip-nap">${String(nap).padStart(2, '0')}</span><span class="foglalas-datum-chip-resz">${html(honapNev)} · ${html(hetnap)}</span>`;
     }
