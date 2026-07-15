@@ -612,7 +612,7 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
     const hero = document.getElementById('hero');
     if (hero && fooldal.hero?.kep) {
-        hero.style.backgroundImage = `linear-gradient(90deg, rgba(43, 37, 33, 0.04) 0%, rgba(43, 37, 33, 0.12) 42%, rgba(43, 37, 33, 0.74) 100%), url("${fooldal.hero.kep.replace(/"/g, '%22')}")`;
+        hero.style.backgroundImage = `linear-gradient(90deg, rgba(253, 244, 226, 0.12) 0%, rgba(253, 244, 226, 0.02) 44%, rgba(43, 37, 33, 0.05) 100%), url("/kepek/hero-hullamos.jpg")`;
         if (fooldal.hero.kepAlt) hero.setAttribute('aria-label', fooldal.hero.kepAlt);
         hero.setAttribute('role', 'img');
     }
