@@ -212,10 +212,11 @@ async function sendReviewRequestEmail(options: {
     cim: "Köszönöm a bizalmadat",
     szoveg: "Szia {nev}!\n\nKöszönöm, hogy nálam jártál. Remélem, elégedett vagy a körmeiddel. Ha van egy perced, nagyon sokat segítene, ha írnál egy rövid Google értékelést.\n\nÉrtékelés link: {ertekelesLink}",
   }, variables);
+  const cleanMessage = removeReviewLinkLine(template.message);
 
   const html = pageHtml(`
     <h1>${escapeHtml(template.title)}</h1>
-    ${paragraphsHtml(removeReviewLinkLine(template.message))}
+    ${paragraphsHtml(cleanMessage)}
     <p style="margin:22px 0;">
       <a href="${escapeAttribute(reviewUrl)}" style="display:inline-block;padding:12px 18px;background:#b9858f;color:#fffaf4;border-radius:999px;text-decoration:none;font-weight:700;">Google értékelés írása</a>
     </p>
@@ -231,7 +232,7 @@ async function sendReviewRequestEmail(options: {
   `);
 
   const text = [
-    template.message,
+    cleanMessage,
     "",
     `Google értékelés: ${reviewUrl}`,
     "",
@@ -280,8 +281,10 @@ function notificationVariables(
 
 function normalizeTemplateText(value: unknown) {
   return String(value || "")
-    .replace(/\\n/g, "\n")
-    .replace(/\\r/g, "\r");
+    .replace(/\\\\r/g, "\r")
+    .replace(/\\\\n/g, "\n")
+    .replace(/\\r/g, "\r")
+    .replace(/\\n/g, "\n");
 }
 function emailTemplate(source: any, fallback: any, variables: Record<string, string>) {
   return {
@@ -292,13 +295,27 @@ function emailTemplate(source: any, fallback: any, variables: Record<string, str
 }
 
 function applyVariables(value: unknown, variables: Record<string, string>) {
-  return String(value || "").replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink)\}/g, (_match, key) => variables[key] || "");
+  return String(value || "")
+    .replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink)\}/g, (_match, key) => variables[key] || "")
+    .replace(/\{\s*(https?:\/\/[^}\s]+)\s*\}/g, "$1");
 }
 
 function removeReviewLinkLine(value: string) {
-  return String(value || "")
+  return normalizeTemplateText(value)
     .split("\n")
-    .filter((line) => !/^\s*Értékelés link\s*:/i.test(line.trim()) && !/^\s*Ertekeles link\s*:/i.test(line.trim()))
+    .filter((line) => {
+      const trimmed = line.trim();
+      const normalized = trimmed
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      if (normalized.startsWith("ertekeles link:")) return false;
+      if (/^\s*link\s*:\s*\{?\s*https?:\/\//i.test(trimmed)) return false;
+      if (/^\s*google\s+ertekeles\s*:\s*\{?\s*https?:\/\//i.test(normalized)) return false;
+
+      return true;
+    })
     .join("\n")
     .trim();
 }

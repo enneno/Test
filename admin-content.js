@@ -167,7 +167,7 @@
                 field('email.emlekezteto.szoveg', 'Emlékeztető – email szövege ({nev}, {szolgaltatas}, {idopont}, {helyszin}, {instagram})', 'textarea'),
                 field('email.ertekelesKeres.targy', 'Értékeléskérés – email tárgya'),
                 field('email.ertekelesKeres.cim', 'Értékeléskérés – email címe'),
-                field('email.ertekelesKeres.szoveg', 'Értékeléskérés – email szövege ({nev}, {szolgaltatas}, {idopont}, {ertekelesLink})', 'textarea')
+                field('email.ertekelesKeres.szoveg', 'Értékeléskérés – email szövege ({nev}, {szolgaltatas}, {idopont}) – a Google gomb a külön Google értékelés link mezőt használja', 'textarea')
             ]
         },
         {
@@ -177,7 +177,7 @@
                 field('kapcsolat.cimke', 'Kapcsolati blokk címe'),
                 field('kapcsolat.cim', 'Cím'),
                 field('kapcsolat.terkepUrl', 'Térkép link', 'url'),
-                field('kapcsolat.googleErtekelesUrl', 'Google értékelés link', 'url'),
+                field('kapcsolat.googleErtekelesUrl', 'Google értékelés link (ezt használja az értékeléskérő email gombja)', 'url'),
                 field('kapcsolat.telefon', 'Telefonszám'),
                 field('kapcsolat.telefonLink', 'Telefon hívási formátumban'),
                 checkbox('kapcsolat.telefonLathato', 'Telefonszám megjelenítése'),
