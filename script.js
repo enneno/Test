@@ -57,6 +57,7 @@ function lumiAlapOldalAdatok() {
             cimke: 'Elérhetőség',
             cim: '2800 Tatabánya, Kós Károly út',
             terkepUrl: 'https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt',
+            googleErtekelesUrl: 'https://www.google.com/search?q=Lumi+Nails+Tatab%C3%A1nya+Google+%C3%A9rt%C3%A9kel%C3%A9s',
             telefon: '+36 20 563 6494',
             telefonLink: '+36205636494',
             telefonLathato: false,
@@ -217,6 +218,16 @@ function lumiAlapOldalAdatok() {
                 targy: 'Lumi Nails foglalásod státusza módosult',
                 cim: 'Foglalás státusza módosult',
                 szoveg: 'Szia {nev}!\n\nA foglalásod státusza módosult. Az aktuális részleteket lent találod.'
+            },
+            emlekezteto: {
+                targy: 'Emlékeztető: holnap Lumi Nails időpontod van',
+                cim: 'Holnap várlak az időpontodon',
+                szoveg: 'Szia {nev}!\n\nCsak szeretnélek emlékeztetni, hogy holnap vártalak a foglalt időpontodra. A részleteket lent találod.\n\nHa bármi közbejönne, kérlek írj Instagramon minél hamarabb.'
+            },
+            ertekelesKeres: {
+                targy: 'Köszönöm, hogy nálam jártál',
+                cim: 'Köszönöm a bizalmadat',
+                szoveg: 'Szia {nev}!\n\nKöszönöm, hogy nálam jártál. Remélem, elégedett vagy a körmeiddel. Ha van egy perced, nagyon sokat segítene, ha írnál egy rövid Google értékelést.\n\nÉrtékelés link: {ertekelesLink}'
             }
         }
     };

@@ -37,7 +37,7 @@ Foglalás után két email megy ki:
 - neked egy részletes értesítés az új foglalásról, benne egy `.ics` naptár csatolmánnyal
 - a vendégnek egy visszaigazoló email a foglalás adataival
 
-Admin módosítás után a vendég automatikus emailt kap, ha a foglalás vissza lett igazolva, le lett mondva, vagy az időpont dátuma/kezdése/vége módosult. A `Kész` státusz önmagában nem küld emailt.
+Admin módosítás után a vendég automatikus emailt kap, ha a foglalás vissza lett igazolva, le lett mondva, vagy az időpont dátuma/kezdése/vége módosult. A `Kész` státusz nem küld azonnali módosítási emailt; az automatikus köszönő + értékeléskérő emailt a külön időzített értesítő function küldi 2 nappal később 12:00 körül.
 
 Az `.ics` csatolmányt iPhone-on a Mail/Naptár általában eseményként tudja megnyitni, így gyorsan fel tudod venni a saját naptáradba.
 
@@ -73,3 +73,48 @@ Ha még nincs Resend domain hitelesítés, ideiglenesen ezt használd:
 ```bash
 supabase secrets set FROM_EMAIL="Lumi Nails <onboarding@resend.dev>"
 ```
+## 4. Automatikus emlékeztető és értékeléskérő email
+
+A projektben külön Edge Function kezeli az időzített emaileket:
+
+- `supabase/functions/process-booking-notifications`
+
+Működés:
+
+- ha foglaláskor az időpont több mint 48 órára van, a rendszer az előző nap 12:00-ra ütemez egy emlékeztető emailt;
+- ha adminban a foglalás `Kész` állapotba kerül, a rendszer 2 nappal később 12:00-ra ütemez egy köszönő + Google értékeléskérő emailt;
+- ugyanarra az email címre értékeléskérő email csak egyszer mehet ki;
+- minden küldés eredménye bekerül a `booking_events` naplóba.
+
+Telepítés:
+
+1. Supabase SQL Editorban futtasd a gyökérben lévő `supabase-booking-notifications.sql` fájlt.
+2. Állíts be egy erős titkot Edge Function secretként:
+
+```bash
+supabase secrets set BOOKING_NOTIFICATIONS_SECRET="egy_hosszu_random_titok"
+```
+
+3. Ha van konkrét Google értékelés linked, opcionálisan beállíthatod secretként is:
+
+```bash
+supabase secrets set GOOGLE_REVIEW_URL="https://..."
+```
+
+Ha nincs secret, az adminban szerkeszthető `Google értékelés link` mezőt használja.
+
+4. Deployold az új functiont:
+
+```bash
+supabase functions deploy process-booking-notifications
+```
+
+5. Hozz létre Cron jobot 10 percenkénti futással. Ehhez használhatod a Supabase Dashboard > Integrations > Cron felületét, vagy a gyökérben lévő `supabase-booking-notifications-cron-example.sql` mintát.
+
+A Cron HTTP kérésnél küldeni kell ezt a headert:
+
+```text
+x-lumi-cron-secret: ugyanaz_a_titok_mint_a_BOOKING_NOTIFICATIONS_SECRET
+```
+
+Secret kulcsot továbbra se tegyél frontend fájlba vagy GitHub Pages kódba.

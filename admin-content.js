@@ -161,7 +161,13 @@
                 field('email.lemondas.szoveg', 'Lemondás – email szövege', 'textarea'),
                 field('email.fuggoben.targy', 'Függőben státusz – email tárgya'),
                 field('email.fuggoben.cim', 'Függőben státusz – email címe'),
-                field('email.fuggoben.szoveg', 'Függőben státusz – email szövege', 'textarea')
+                field('email.fuggoben.szoveg', 'Függőben státusz – email szövege', 'textarea'),
+                field('email.emlekezteto.targy', 'Emlékeztető – email tárgya'),
+                field('email.emlekezteto.cim', 'Emlékeztető – email címe'),
+                field('email.emlekezteto.szoveg', 'Emlékeztető – email szövege ({nev}, {szolgaltatas}, {idopont}, {helyszin}, {instagram})', 'textarea'),
+                field('email.ertekelesKeres.targy', 'Értékeléskérés – email tárgya'),
+                field('email.ertekelesKeres.cim', 'Értékeléskérés – email címe'),
+                field('email.ertekelesKeres.szoveg', 'Értékeléskérés – email szövege ({nev}, {szolgaltatas}, {idopont}, {ertekelesLink})', 'textarea')
             ]
         },
         {
@@ -171,6 +177,7 @@
                 field('kapcsolat.cimke', 'Kapcsolati blokk címe'),
                 field('kapcsolat.cim', 'Cím'),
                 field('kapcsolat.terkepUrl', 'Térkép link', 'url'),
+                field('kapcsolat.googleErtekelesUrl', 'Google értékelés link', 'url'),
                 field('kapcsolat.telefon', 'Telefonszám'),
                 field('kapcsolat.telefonLink', 'Telefon hívási formátumban'),
                 checkbox('kapcsolat.telefonLathato', 'Telefonszám megjelenítése'),

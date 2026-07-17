@@ -1,0 +1,362 @@
+-- Lumi Nails automatikus foglalási emlékeztetők és értékeléskérő emailek
+-- Futtasd a Supabase Dashboard > SQL Editor felületén.
+-- Nem töröl meglévő adatot. Új opcionális mezőket, ütemező trigger(eke)t és service-role RPC-ket ad hozzá.
+
+alter table public.bookings
+    add column if not exists reminder_scheduled_for timestamptz,
+    add column if not exists reminder_sent_at timestamptz,
+    add column if not exists reminder_locked_at timestamptz,
+    add column if not exists reminder_attempts integer not null default 0,
+    add column if not exists reminder_last_error text,
+    add column if not exists review_request_scheduled_for timestamptz,
+    add column if not exists review_request_sent_at timestamptz,
+    add column if not exists review_request_locked_at timestamptz,
+    add column if not exists review_request_attempts integer not null default 0,
+    add column if not exists review_request_last_error text;
+
+create index if not exists bookings_reminder_due_idx
+    on public.bookings (reminder_scheduled_for)
+    where reminder_sent_at is null;
+
+create index if not exists bookings_review_request_due_idx
+    on public.bookings (review_request_scheduled_for)
+    where review_request_sent_at is null;
+
+-- Erős védelem: egy email címre legfeljebb egyszer legyen sikeresen kiküldött értékeléskérés.
+create unique index if not exists bookings_review_request_email_once_idx
+    on public.bookings (lower(customer_email))
+    where review_request_sent_at is not null;
+
+create or replace function public.lumi_booking_previous_day_noon(p_starts_at timestamptz)
+returns timestamptz
+language sql
+stable
+set search_path = public
+as $$
+    select ((((p_starts_at at time zone 'Europe/Budapest')::date - 1) + time '12:00') at time zone 'Europe/Budapest');
+$$;
+
+create or replace function public.lumi_booking_two_days_later_noon(p_reference timestamptz default now())
+returns timestamptz
+language sql
+stable
+set search_path = public
+as $$
+    select ((((coalesce(p_reference, now()) at time zone 'Europe/Budapest')::date + 2) + time '12:00') at time zone 'Europe/Budapest');
+$$;
+
+create or replace function public.set_booking_notification_schedule()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_reference timestamptz;
+begin
+    v_reference := coalesce(new.created_at, now());
+
+    if tg_op = 'INSERT' then
+        if new.starts_at > v_reference + interval '48 hours' then
+            new.reminder_scheduled_for := public.lumi_booking_previous_day_noon(new.starts_at);
+        else
+            new.reminder_scheduled_for := null;
+        end if;
+    elsif tg_op = 'UPDATE' and new.starts_at is distinct from old.starts_at and new.reminder_sent_at is null then
+        if new.starts_at > now() + interval '48 hours' then
+            new.reminder_scheduled_for := public.lumi_booking_previous_day_noon(new.starts_at);
+        else
+            new.reminder_scheduled_for := null;
+        end if;
+
+        new.reminder_locked_at := null;
+        new.reminder_last_error := null;
+    end if;
+
+    if new.status in ('cancelled', 'done') and new.reminder_sent_at is null then
+        new.reminder_scheduled_for := null;
+        new.reminder_locked_at := null;
+    end if;
+
+    if tg_op = 'UPDATE'
+        and new.status = 'done'
+        and old.status is distinct from new.status
+        and new.review_request_scheduled_for is null
+        and new.review_request_sent_at is null
+        and not exists (
+            select 1
+            from public.bookings b
+            where lower(b.customer_email) = lower(new.customer_email)
+                and b.review_request_sent_at is not null
+        )
+    then
+        new.review_request_scheduled_for := public.lumi_booking_two_days_later_noon(now());
+        new.review_request_locked_at := null;
+        new.review_request_last_error := null;
+    end if;
+
+    if tg_op = 'UPDATE'
+        and old.status = 'done'
+        and new.status <> 'done'
+        and new.review_request_sent_at is null
+    then
+        new.review_request_scheduled_for := null;
+        new.review_request_locked_at := null;
+    end if;
+
+    return new;
+end;
+$$;
+
+drop trigger if exists bookings_notification_schedule on public.bookings;
+create trigger bookings_notification_schedule
+    before insert or update of starts_at, status, customer_email, reminder_sent_at, review_request_sent_at
+    on public.bookings
+    for each row
+    execute function public.set_booking_notification_schedule();
+
+-- Csak a jövőbeli, aktív, már meglévő foglalásokra pótolja az emlékeztető időpontot.
+-- Régi/Kész foglalásokra nem küld visszamenőleg értékeléskérést.
+update public.bookings
+set reminder_scheduled_for = public.lumi_booking_previous_day_noon(starts_at)
+where status in ('pending', 'confirmed')
+    and starts_at > now()
+    and starts_at > created_at + interval '48 hours'
+    and reminder_sent_at is null
+    and reminder_scheduled_for is null;
+
+create or replace function public.claim_due_booking_reminders(p_limit integer default 20)
+returns table (
+    id uuid,
+    customer_name text,
+    customer_email text,
+    customer_phone text,
+    note text,
+    starts_at timestamptz,
+    ends_at timestamptz,
+    created_at timestamptz,
+    status text,
+    service_name text,
+    service_price_text text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    return query
+    with candidates as (
+        select b.id
+        from public.bookings b
+        where b.reminder_scheduled_for <= now()
+            and b.reminder_sent_at is null
+            and b.status in ('pending', 'confirmed')
+            and b.starts_at > now()
+            and coalesce(b.reminder_attempts, 0) < 5
+            and (b.reminder_locked_at is null or b.reminder_locked_at < now() - interval '30 minutes')
+        order by b.reminder_scheduled_for asc
+        limit least(greatest(coalesce(p_limit, 20), 1), 50)
+        for update skip locked
+    )
+    update public.bookings b
+    set reminder_locked_at = now()
+    from candidates c, public.services s
+    where b.id = c.id
+        and s.id = b.service_id
+    returning
+        b.id,
+        b.customer_name,
+        b.customer_email,
+        b.customer_phone,
+        b.note,
+        b.starts_at,
+        b.ends_at,
+        b.created_at,
+        b.status,
+        s.name,
+        s.price_text;
+end;
+$$;
+
+create or replace function public.claim_due_booking_review_requests(p_limit integer default 20)
+returns table (
+    id uuid,
+    customer_name text,
+    customer_email text,
+    customer_phone text,
+    note text,
+    starts_at timestamptz,
+    ends_at timestamptz,
+    created_at timestamptz,
+    status text,
+    service_name text,
+    service_price_text text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    return query
+    with ranked as (
+        select
+            b.id,
+            row_number() over (
+                partition by lower(b.customer_email)
+                order by b.review_request_scheduled_for asc, b.created_at asc
+            ) as rn
+        from public.bookings b
+        where b.review_request_scheduled_for <= now()
+            and b.review_request_sent_at is null
+            and b.status = 'done'
+            and coalesce(b.review_request_attempts, 0) < 5
+            and (b.review_request_locked_at is null or b.review_request_locked_at < now() - interval '30 minutes')
+            and not exists (
+                select 1
+                from public.bookings sent
+                where lower(sent.customer_email) = lower(b.customer_email)
+                    and sent.review_request_sent_at is not null
+            )
+    ),
+    candidates as (
+        select id
+        from ranked
+        where rn = 1
+        limit least(greatest(coalesce(p_limit, 20), 1), 50)
+    )
+    update public.bookings b
+    set review_request_locked_at = now()
+    from candidates c, public.services s
+    where b.id = c.id
+        and s.id = b.service_id
+    returning
+        b.id,
+        b.customer_name,
+        b.customer_email,
+        b.customer_phone,
+        b.note,
+        b.starts_at,
+        b.ends_at,
+        b.created_at,
+        b.status,
+        s.name,
+        s.price_text;
+end;
+$$;
+
+create or replace function public.finish_booking_reminder(
+    p_booking_id uuid,
+    p_success boolean,
+    p_error text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    update public.bookings
+    set
+        reminder_locked_at = null,
+        reminder_attempts = coalesce(reminder_attempts, 0) + 1,
+        reminder_sent_at = case when p_success then now() else reminder_sent_at end,
+        reminder_last_error = case when p_success then null else left(coalesce(p_error, 'Ismeretlen email hiba'), 2000) end
+    where id = p_booking_id;
+
+    insert into public.booking_events (
+        booking_id,
+        event_type,
+        channel,
+        status,
+        title,
+        message,
+        metadata
+    ) values (
+        p_booking_id,
+        'booking_reminder_email',
+        'email',
+        case when p_success then 'success' else 'error' end,
+        case when p_success then 'Emlékeztető email elküldve' else 'Emlékeztető email hiba' end,
+        case when p_success then 'A vendég megkapta a foglalás előtti emlékeztetőt.' else left(coalesce(p_error, 'Az emlékeztető email nem ment ki.'), 2000) end,
+        jsonb_build_object('ok', p_success, 'error', p_error)
+    );
+end;
+$$;
+
+create or replace function public.finish_booking_review_request(
+    p_booking_id uuid,
+    p_success boolean,
+    p_error text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    update public.bookings
+    set
+        review_request_locked_at = null,
+        review_request_attempts = coalesce(review_request_attempts, 0) + 1,
+        review_request_sent_at = case when p_success then now() else review_request_sent_at end,
+        review_request_last_error = case when p_success then null else left(coalesce(p_error, 'Ismeretlen email hiba'), 2000) end
+    where id = p_booking_id;
+
+    insert into public.booking_events (
+        booking_id,
+        event_type,
+        channel,
+        status,
+        title,
+        message,
+        metadata
+    ) values (
+        p_booking_id,
+        'booking_review_request_email',
+        'email',
+        case when p_success then 'success' else 'error' end,
+        case when p_success then 'Értékeléskérő email elküldve' else 'Értékeléskérő email hiba' end,
+        case when p_success then 'A vendég megkapta a köszönő és Google értékeléskérő emailt.' else left(coalesce(p_error, 'Az értékeléskérő email nem ment ki.'), 2000) end,
+        jsonb_build_object('ok', p_success, 'error', p_error)
+    );
+end;
+$$;
+
+revoke all on function public.claim_due_booking_reminders(integer) from public;
+revoke all on function public.claim_due_booking_review_requests(integer) from public;
+revoke all on function public.finish_booking_reminder(uuid, boolean, text) from public;
+revoke all on function public.finish_booking_review_request(uuid, boolean, text) from public;
+
+grant execute on function public.claim_due_booking_reminders(integer) to service_role;
+grant execute on function public.claim_due_booking_review_requests(integer) to service_role;
+grant execute on function public.finish_booking_reminder(uuid, boolean, text) to service_role;
+grant execute on function public.finish_booking_review_request(uuid, boolean, text) to service_role;
+
+insert into public.site_settings (key, value)
+values ('site_content', '{}'::jsonb)
+on conflict (key) do nothing;
+
+update public.site_settings
+set value = coalesce(value, '{}'::jsonb) || jsonb_build_object(
+    'kapcsolat',
+    coalesce(value->'kapcsolat', '{}'::jsonb) || jsonb_build_object(
+        'googleErtekelesUrl',
+        coalesce(value #>> '{kapcsolat,googleErtekelesUrl}', 'https://www.google.com/search?q=Lumi+Nails+Tatab%C3%A1nya+Google+%C3%A9rt%C3%A9kel%C3%A9s')
+    ),
+    'email',
+    coalesce(value->'email', '{}'::jsonb) || jsonb_build_object(
+        'emlekezteto',
+        coalesce(value #> '{email,emlekezteto}', '{}'::jsonb) || jsonb_build_object(
+            'targy', coalesce(value #>> '{email,emlekezteto,targy}', 'Emlékeztető: holnap Lumi Nails időpontod van'),
+            'cim', coalesce(value #>> '{email,emlekezteto,cim}', 'Holnap várlak az időpontodon'),
+            'szoveg', coalesce(value #>> '{email,emlekezteto,szoveg}', 'Szia {nev}!\n\nCsak szeretnélek emlékeztetni, hogy holnap vártalak a foglalt időpontodra. A részleteket lent találod.\n\nHa bármi közbejönne, kérlek írj Instagramon minél hamarabb.')
+        ),
+        'ertekelesKeres',
+        coalesce(value #> '{email,ertekelesKeres}', '{}'::jsonb) || jsonb_build_object(
+            'targy', coalesce(value #>> '{email,ertekelesKeres,targy}', 'Köszönöm, hogy nálam jártál'),
+            'cim', coalesce(value #>> '{email,ertekelesKeres,cim}', 'Köszönöm a bizalmadat'),
+            'szoveg', coalesce(value #>> '{email,ertekelesKeres,szoveg}', 'Szia {nev}!\n\nKöszönöm, hogy nálam jártál. Remélem, elégedett vagy a körmeiddel. Ha van egy perced, nagyon sokat segítene, ha írnál egy rövid Google értékelést.\n\nÉrtékelés link: {ertekelesLink}')
+        )
+    )
+)
+where key = 'site_content';

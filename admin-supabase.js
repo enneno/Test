@@ -731,7 +731,9 @@
             owner_email: 'Tulaj email',
             customer_email: 'Vendég email',
             email_flow_failed: 'Email folyamat hiba',
-            admin_update_email: 'Módosítás email'
+            admin_update_email: 'Módosítás email',
+            booking_reminder_email: 'Emlékeztető email',
+            booking_review_request_email: 'Értékeléskérő email'
         }[tipus] || 'Esemény';
     }
 
