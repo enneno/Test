@@ -128,7 +128,7 @@ begin
     return query
     with ranked as (
         select
-            b.id,
+            b.id as booking_id,
             row_number() over (
                 partition by lower(trim(b.customer_email))
                 order by b.review_request_scheduled_for asc, b.created_at asc
@@ -152,7 +152,7 @@ begin
             )
     ),
     candidates as (
-        select id
+        select ranked.booking_id
         from ranked
         where rn = 1
         limit least(greatest(coalesce(p_limit, 20), 1), 50)
@@ -160,7 +160,7 @@ begin
     update public.bookings b
     set review_request_locked_at = now()
     from candidates c, public.services s
-    where b.id = c.id
+    where b.id = c.booking_id
         and s.id = b.service_id
     returning
         b.id,
