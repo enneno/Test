@@ -215,7 +215,7 @@ async function sendReviewRequestEmail(options: {
 
   const html = pageHtml(`
     <h1>${escapeHtml(template.title)}</h1>
-    ${paragraphsHtml(template.message)}
+    ${paragraphsHtml(removeReviewLinkLine(template.message))}
     <p style="margin:22px 0;">
       <a href="${escapeAttribute(reviewUrl)}" style="display:inline-block;padding:12px 18px;background:#b9858f;color:#fffaf4;border-radius:999px;text-decoration:none;font-weight:700;">Google értékelés írása</a>
     </p>
@@ -278,11 +278,16 @@ function notificationVariables(
   };
 }
 
+function normalizeTemplateText(value: unknown) {
+  return String(value || "")
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "\r");
+}
 function emailTemplate(source: any, fallback: any, variables: Record<string, string>) {
   return {
-    subject: applyVariables(source?.targy || fallback.targy, variables),
-    title: applyVariables(source?.cim || fallback.cim, variables),
-    message: applyVariables(source?.szoveg || fallback.szoveg, variables),
+    subject: applyVariables(normalizeTemplateText(source?.targy || fallback.targy), variables),
+    title: applyVariables(normalizeTemplateText(source?.cim || fallback.cim), variables),
+    message: applyVariables(normalizeTemplateText(source?.szoveg || fallback.szoveg), variables),
   };
 }
 
@@ -290,6 +295,13 @@ function applyVariables(value: unknown, variables: Record<string, string>) {
   return String(value || "").replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink)\}/g, (_match, key) => variables[key] || "");
 }
 
+function removeReviewLinkLine(value: string) {
+  return String(value || "")
+    .split("\n")
+    .filter((line) => !/^\s*Értékelés link\s*:/i.test(line.trim()) && !/^\s*Ertekeles link\s*:/i.test(line.trim()))
+    .join("\n")
+    .trim();
+}
 async function sendEmailWithRetry(
   apiKey: string,
   from: string,
