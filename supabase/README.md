@@ -83,12 +83,12 @@ Működés:
 
 - ha foglaláskor az időpont több mint 48 órára van, a rendszer az előző nap 12:00-ra ütemez egy emlékeztető emailt;
 - ha adminban a foglalás `Kész` állapotba kerül, a rendszer 2 nappal később 12:00-ra ütemez egy köszönő + Google értékeléskérő emailt;
-- ugyanarra az email címre értékeléskérő email csak egyszer mehet ki;
+- ugyanarra az email címre értékeléskérő email csak egyszer mehet ki; ezt külön `booking_review_recipients` tábla őrzi, ezért akkor is megmarad, ha az eredeti foglalást később törlöd az adminból;
 - minden küldés eredménye bekerül a `booking_events` naplóba.
 
 Telepítés:
 
-1. Supabase SQL Editorban futtasd a gyökérben lévő `supabase-booking-notifications.sql` fájlt.
+1. Supabase SQL Editorban futtasd a gyökérben lévő `supabase-booking-notifications.sql` fájlt. Ha ezt már korábban futtattad, elég a kisebb `supabase-review-recipient-fix.sql` javító SQL-t lefuttatni.
 2. Állíts be egy erős titkot Edge Function secretként:
 
 ```bash

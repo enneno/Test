@@ -26,6 +26,43 @@ create index if not exists bookings_review_request_due_idx
 create unique index if not exists bookings_review_request_email_once_idx
     on public.bookings (lower(customer_email))
     where review_request_sent_at is not null;
+-- Tartós címzettlista: ha egy foglalást később törölsz, az email akkor is megmarad,
+-- így ugyanarra a címre nem megy ki újra értékeléskérés.
+create table if not exists public.booking_review_recipients (
+    email text primary key,
+    first_booking_id uuid references public.bookings(id) on delete set null,
+    sent_at timestamptz not null default now(),
+    created_at timestamptz not null default now(),
+    check (email = lower(trim(email))),
+    check (position('@' in email) > 1)
+);
+
+alter table public.booking_review_recipients enable row level security;
+
+drop policy if exists "admin can read booking review recipients" on public.booking_review_recipients;
+create policy "admin can read booking review recipients"
+    on public.booking_review_recipients for select
+    to authenticated
+    using (true);
+
+drop policy if exists "admin can delete booking review recipients" on public.booking_review_recipients;
+create policy "admin can delete booking review recipients"
+    on public.booking_review_recipients for delete
+    to authenticated
+    using (true);
+
+grant select, delete on public.booking_review_recipients to authenticated;
+
+insert into public.booking_review_recipients (email, first_booking_id, sent_at)
+select distinct on (lower(trim(customer_email)))
+    lower(trim(customer_email)) as email,
+    id as first_booking_id,
+    review_request_sent_at as sent_at
+from public.bookings
+where review_request_sent_at is not null
+    and nullif(trim(customer_email), '') is not null
+order by lower(trim(customer_email)), review_request_sent_at asc
+on conflict (email) do nothing;
 
 create or replace function public.lumi_booking_previous_day_noon(p_starts_at timestamptz)
 returns timestamptz
@@ -85,8 +122,13 @@ begin
         and new.review_request_sent_at is null
         and not exists (
             select 1
+            from public.booking_review_recipients r
+            where r.email = lower(trim(new.customer_email))
+        )
+        and not exists (
+            select 1
             from public.bookings b
-            where lower(b.customer_email) = lower(new.customer_email)
+            where lower(trim(b.customer_email)) = lower(trim(new.customer_email))
                 and b.review_request_sent_at is not null
         )
     then
@@ -202,7 +244,7 @@ begin
         select
             b.id,
             row_number() over (
-                partition by lower(b.customer_email)
+                partition by lower(trim(b.customer_email))
                 order by b.review_request_scheduled_for asc, b.created_at asc
             ) as rn
         from public.bookings b
@@ -213,8 +255,13 @@ begin
             and (b.review_request_locked_at is null or b.review_request_locked_at < now() - interval '30 minutes')
             and not exists (
                 select 1
+                from public.booking_review_recipients r
+                where r.email = lower(trim(b.customer_email))
+            )
+            and not exists (
+                select 1
                 from public.bookings sent
-                where lower(sent.customer_email) = lower(b.customer_email)
+                where lower(trim(sent.customer_email)) = lower(trim(b.customer_email))
                     and sent.review_request_sent_at is not null
             )
     ),
@@ -302,7 +349,16 @@ begin
         review_request_last_error = case when p_success then null else left(coalesce(p_error, 'Ismeretlen email hiba'), 2000) end
     where id = p_booking_id;
 
-    insert into public.booking_events (
+    if p_success then
+        insert into public.booking_review_recipients (email, first_booking_id, sent_at)
+        select lower(trim(customer_email)), id, now()
+        from public.bookings
+        where id = p_booking_id
+            and nullif(trim(customer_email), '') is not null
+        on conflict (email) do nothing;
+    end if;
+
+        insert into public.booking_events (
         booking_id,
         event_type,
         channel,
