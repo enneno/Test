@@ -74,7 +74,7 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
-                kep: '/kepek/hatter2.jpg',
+                kep: '/kepek/hero-hullamos.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
@@ -994,15 +994,35 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     szovegBeallitasa('.hero-content h1', fooldal.hero?.cim);
     szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
     const hero = document.getElementById('hero');
+    const heroKep = hero?.querySelector('.hero-kep');
     if (hero && fooldal.hero?.kep) {
-        hero.style.backgroundImage = `linear-gradient(90deg, rgba(253, 244, 226, 0.12) 0%, rgba(253, 244, 226, 0.02) 44%, rgba(43, 37, 33, 0.05) 100%), url("/kepek/hero-hullamos.jpg")`;
+        let heroKepSrc = fooldal.hero.kep || '/kepek/hero-hullamos.jpg';
+        if (heroKepSrc.includes('/kepek/hatter2.jpg')) heroKepSrc = '/kepek/hero-hullamos.jpg';
+
+        if (heroKep) {
+            heroKep.src = heroKepSrc;
+            heroKep.alt = fooldal.hero.kepAlt || 'Lumi Nails nyitókép';
+            heroKep.loading = 'eager';
+            heroKep.decoding = 'async';
+            if ('fetchPriority' in heroKep) heroKep.fetchPriority = 'high';
+            hero.style.backgroundImage = 'none';
+            hero.removeAttribute('role');
+        } else {
+            hero.style.backgroundImage = `linear-gradient(90deg, rgba(253, 244, 226, 0.12) 0%, rgba(253, 244, 226, 0.02) 44%, rgba(43, 37, 33, 0.05) 100%), url("${heroKepSrc}")`;
+            hero.setAttribute('role', 'img');
+        }
+
         if (fooldal.hero.kepAlt) hero.setAttribute('aria-label', fooldal.hero.kepAlt);
-        hero.setAttribute('role', 'img');
     }
 
     szovegBeallitasa('.bemutatkozas-szoveg h2', fooldal.bemutatkozas?.cim);
     bekezdesekRenderelese('.bemutatkozas-szoveg', fooldal.bemutatkozas?.bekezdesek);
     kepBeallitasa('.bemutatkozas-kep img', fooldal.bemutatkozas?.kep, fooldal.bemutatkozas?.kepAlt);
+    const bemutatkozasKep = document.querySelector('.bemutatkozas-kep img');
+    if (bemutatkozasKep) {
+        bemutatkozasKep.loading = 'eager';
+        bemutatkozasKep.decoding = 'async';
+    }
 
     szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
     galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto);
@@ -1086,6 +1106,8 @@ function galeriaAtvezetoAlkalmazasa(galeria) {
 
         if (kep.src) kepek[index].src = kep.src;
         if (kep.alt) kepek[index].alt = kep.alt;
+        kepek[index].loading = 'eager';
+        kepek[index].decoding = 'async';
     });
 }
 

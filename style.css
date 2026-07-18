@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --akcentus: #b9858f;
     --akcentus-vilagos: #d9aaa7;
     --tinta: #2b2521;
@@ -5330,59 +5330,6 @@ body {
         box-shadow: 0 24px 58px rgba(78, 54, 48, 0.16);
     }
 }
-/* LOCAL PREVIEW: desktop bemutatkozás image/text swap */
-@media screen and (min-width: 769px) {
-    #bemutatkozas .bemutatkozas-szoveg {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    #bemutatkozas .bemutatkozas-kep {
-        grid-column: 1;
-        grid-row: 1;
-    }
-}
-/* LOCAL PREVIEW: desktop bemutatkozás smaller image + justified text */
-@media screen and (min-width: 769px) {
-    #bemutatkozas .bemutatkozas-belso {
-        grid-template-columns: minmax(240px, 0.62fr) minmax(360px, 1.08fr);
-    }
-
-    #bemutatkozas .bemutatkozas-kep {
-        width: min(100%, 360px);
-        justify-self: center;
-        min-height: 260px;
-    }
-
-    #bemutatkozas .bemutatkozas-kep img {
-        min-height: 260px;
-    }
-
-    #bemutatkozas .bemutatkozas-szoveg p {
-        text-align: justify;
-        text-align-last: left;
-        hyphens: auto;
-    }
-}
-/* LOCAL PREVIEW: bemutatkozás justified text on mobile too */
-#bemutatkozas .bemutatkozas-szoveg p {
-    text-align: justify !important;
-    text-align-last: left !important;
-    hyphens: none !important;
-    word-break: normal !important;
-    overflow-wrap: normal !important;
-}
-
-@media screen and (max-width: 768px) {
-    #bemutatkozas .bemutatkozas-szoveg,
-    #bemutatkozas .bemutatkozas-szoveg p {
-        text-align: justify !important;
-        text-align-last: left !important;
-        hyphens: none !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-    }
-}
 
 /* Coupons / promotions */
 .akcios-banner {
@@ -7151,5 +7098,229 @@ h2 {
         min-height: 40px !important;
         padding-inline: 18px !important;
         font-size: 0.78rem !important;
+    }
+}
+
+/* Valodi hero es galeria kepek teljes oldalas screenshothoz 20260718-27 */
+#hero.hero-preview-refresh {
+    background-image: none !important;
+    background-color: rgba(255, 250, 244, 0.62);
+}
+
+#hero.hero-preview-refresh .hero-kep {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 48% 8%;
+    transform: scale(1.24);
+    transform-origin: 48% 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+#hero.hero-preview-refresh .hero-wave {
+    z-index: 1;
+}
+
+#hero.hero-preview-refresh .hero-content {
+    z-index: 2;
+}
+
+.galeria-atvezeto-kepek img {
+    content-visibility: visible;
+}
+
+@media screen and (min-width: 769px) {
+    #hero.hero-preview-refresh::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        position: relative;
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        justify-self: stretch;
+        width: 100%;
+        height: 100%;
+        min-height: 420px;
+        max-height: 460px;
+        object-fit: cover;
+        object-position: 48% 28%;
+        transform: rotate(1.4deg);
+        transform-origin: center;
+        border-radius: 30px;
+        box-shadow: 0 24px 58px rgba(78, 54, 48, 0.16);
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        z-index: 0;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        z-index: 2;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 6%;
+        transform: scale(1.26);
+        transform-origin: 49% 0;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 48% 5%;
+        transform: scale(1.28);
+        transform-origin: 48% 0;
+    }
+}
+
+/* Bemutatkozas sotetitett kepes overlay kartya 20260718-28 */
+#bemutatkozas {
+    padding-top: clamp(28px, 4vw, 48px);
+}
+
+#bemutatkozas .bemutatkozas-belso {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    max-width: min(1040px, calc(100% - 48px));
+    min-height: clamp(520px, 58vw, 680px);
+    margin-inline: auto;
+    padding: clamp(28px, 5vw, 64px);
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: 30px;
+    background: #2b2521;
+    box-shadow: 0 24px 70px rgba(78, 54, 48, 0.16);
+}
+
+#bemutatkozas .bemutatkozas-belso::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(circle at 20% 18%, rgba(255, 250, 244, 0.08), transparent 34%),
+        linear-gradient(90deg, rgba(26, 22, 20, 0.82) 0%, rgba(26, 22, 20, 0.56) 42%, rgba(26, 22, 20, 0.22) 100%),
+        linear-gradient(0deg, rgba(26, 22, 20, 0.56), rgba(26, 22, 20, 0.08));
+    pointer-events: none;
+}
+
+#bemutatkozas .bemutatkozas-kep {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 0;
+    border-radius: inherit;
+    box-shadow: none;
+}
+
+#bemutatkozas .bemutatkozas-kep img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    object-position: 56% 34%;
+    filter: brightness(0.58) saturate(0.96) contrast(1.03);
+    transform: scale(1.035);
+}
+
+#bemutatkozas .bemutatkozas-szoveg {
+    position: relative;
+    z-index: 2;
+    max-width: min(100%, 560px);
+    color: #fffaf4;
+}
+
+#bemutatkozas .bemutatkozas-szoveg h2 {
+    margin: 0 0 clamp(16px, 2vw, 24px);
+    color: #fffaf4;
+    text-align: left;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
+}
+
+#bemutatkozas .bemutatkozas-szoveg p {
+    max-width: 48ch;
+    margin: 0 0 14px;
+    color: rgba(255, 250, 244, 0.92);
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.62;
+    text-align: left !important;
+    text-align-last: auto !important;
+    hyphens: none !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.34);
+}
+
+#bemutatkozas .bemutatkozas-szoveg p:last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (min-width: 769px) {
+    #bemutatkozas .bemutatkozas-szoveg {
+        margin-bottom: clamp(4px, 1vw, 18px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #bemutatkozas .bemutatkozas-belso {
+        max-width: calc(100% - 28px);
+        min-height: 640px;
+        padding: 30px 26px;
+        border-radius: 28px;
+    }
+
+    #bemutatkozas .bemutatkozas-belso::before {
+        background:
+            linear-gradient(180deg, rgba(26, 22, 20, 0.20) 0%, rgba(26, 22, 20, 0.48) 42%, rgba(26, 22, 20, 0.86) 100%),
+            linear-gradient(90deg, rgba(26, 22, 20, 0.38), rgba(26, 22, 20, 0.10));
+    }
+
+    #bemutatkozas .bemutatkozas-kep img {
+        object-position: 54% 22%;
+        filter: brightness(0.56) saturate(0.96) contrast(1.03);
+    }
+
+    #bemutatkozas .bemutatkozas-szoveg {
+        max-width: 100%;
+    }
+
+    #bemutatkozas .bemutatkozas-szoveg h2 {
+        text-align: left;
+    }
+
+    #bemutatkozas .bemutatkozas-szoveg p {
+        max-width: 100%;
+        font-size: 15.6px;
+        line-height: 1.58;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #bemutatkozas .bemutatkozas-belso {
+        min-height: 620px;
+        padding: 28px 22px;
+    }
+
+    #bemutatkozas .bemutatkozas-szoveg p {
+        font-size: 15px;
+        line-height: 1.54;
     }
 }
