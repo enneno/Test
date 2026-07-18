@@ -21,6 +21,8 @@ serve(async (req) => {
     const customerEmail = stringValue(body.customer_email).toLowerCase();
     const note = stringValue(body.note);
     const startsAt = stringValue(body.starts_at);
+    const couponId = stringValue(body.coupon_id);
+    const couponCode = stringValue(body.coupon_code).toUpperCase();
 
     if (!serviceId || !customerName || !customerPhone || !customerEmail || !startsAt) {
       return json({ ok: false, error: "Hiányzó foglalási adat." }, 400);
@@ -35,14 +37,22 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
-    const { data: bookingId, error } = await supabase.rpc("create_booking", {
+    const bookingRpcBody = {
       p_service_id: serviceId,
       p_customer_name: customerName,
       p_customer_phone: customerPhone,
       p_customer_email: customerEmail,
       p_note: note,
       p_starts_at: startsAt,
-    });
+      p_coupon_id: couponId || null,
+      p_coupon_code: couponCode || null,
+    };
+    let { data: bookingId, error } = await supabase.rpc("create_booking", bookingRpcBody);
+
+    if (error && isCouponSchemaError(error)) {
+      const { p_coupon_id: _couponId, p_coupon_code: _couponCode, ...legacyBookingRpcBody } = bookingRpcBody;
+      ({ data: bookingId, error } = await supabase.rpc("create_booking", legacyBookingRpcBody));
+    }
 
     if (error || !bookingId) {
       console.error("create-booking-with-email booking failed", {
@@ -154,6 +164,11 @@ async function responseJson(response: Response) {
   } catch {
     return { raw: text };
   }
+}
+
+function isCouponSchemaError(error: unknown) {
+  const message = errorMessage(error).toLowerCase();
+  return message.includes("p_coupon") || message.includes("coupon") && (message.includes("schema cache") || message.includes("function") || message.includes("column"));
 }
 
 function stringValue(value: unknown) {

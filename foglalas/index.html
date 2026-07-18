@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="hu">
 
 <head>
@@ -24,7 +24,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=20260714email2">
+    <link rel="stylesheet" href="/style.css?v=20260718couponfix11">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -195,6 +195,14 @@
                         </div>
                         <input type="email" id="foglalas-email" class="urlap-mezo" placeholder="Email címed" autocomplete="email">
                     </div>
+                    <div id="foglalas-kupon-blokk" class="foglalas-kupon-blokk" hidden>
+                        <label for="foglalas-kupon" class="foglalas-kupon-cimke">Kuponkód</label>
+                        <div class="foglalas-kupon-sor">
+                            <input type="text" id="foglalas-kupon" class="urlap-mezo" placeholder="pl. LUMI10" autocomplete="off">
+                            <button type="button" id="foglalas-kupon-ellenorzes" class="admin-kis-gomb">Érvényesítés</button>
+                        </div>
+                        <p id="foglalas-kupon-status" class="foglalas-kupon-status" aria-live="polite"></p>
+                    </div>
                     <div id="foglalas-osszefoglalo" class="foglalas-osszefoglalo" aria-live="polite">
                         <h3>Összefoglaló</h3>
                         <p>Ahogy választasz, itt egyben látod majd a foglalásodat.</p>
@@ -225,8 +233,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase-config.js"></script>
-    <script src="/script.js?v=20260717notifications1"></script>
-    <script src="/booking.js?v=20260714email2"></script>
+    <script src="/script.js?v=20260718couponfix8"></script>
+    <script src="/booking.js?v=20260718couponfix8"></script>
 </body>
 
 </html>
+

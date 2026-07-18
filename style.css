@@ -1777,7 +1777,7 @@ select.urlap-mezo:invalid {
 
 .admin-szolgaltatas-szamok {
     grid-column: 1 / -1;
-    grid-template-columns: minmax(118px, 1fr) minmax(64px, 0.38fr) minmax(64px, 0.38fr);
+    grid-template-columns: minmax(78px, 0.55fr) minmax(92px, 0.65fr) minmax(54px, 0.36fr) minmax(54px, 0.36fr);
 }
 
 .admin-szolgaltatas-szamok .admin-mezo,
@@ -1786,12 +1786,19 @@ select.urlap-mezo:invalid {
 }
 
 .admin-sorrend-mezo input,
-.admin-szolgaltatas-szamok input[type="number"] {
+.admin-szolgaltatas-szamok input {
     text-align: center;
 }
 
 .admin-szolgaltatas-fej-opciok .admin-checkbox {
     white-space: nowrap;
+}
+
+.admin-szolgaltatas-ar input,
+.admin-szolgaltatas-egyseg input,
+.admin-szolgaltatas-ido input {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .admin-idosav-kartya {
@@ -2533,7 +2540,7 @@ select.urlap-mezo:invalid {
 
     .admin-szolgaltatas-szamok {
         grid-column: 1 / -1;
-        grid-template-columns: minmax(0, 1fr) minmax(50px, 0.34fr) minmax(50px, 0.34fr);
+        grid-template-columns: minmax(58px, 0.7fr) minmax(74px, 0.9fr) minmax(46px, 0.48fr) minmax(46px, 0.48fr);
         gap: 6px;
     }
 
@@ -5373,5 +5380,1426 @@ body {
         hyphens: none !important;
         word-break: normal !important;
         overflow-wrap: normal !important;
+    }
+}
+
+/* Coupons / promotions */
+.akcios-banner {
+    width: min(1120px, calc(100% - 32px));
+    margin: 22px auto 28px;
+}
+
+.akcios-banner[hidden] {
+    display: none !important;
+}
+
+.akcios-banner-belso {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 22px;
+    padding: 24px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at 14% 20%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0) 36%),
+        linear-gradient(125deg, rgba(255, 250, 244, 0.96), rgba(246, 219, 219, 0.88), rgba(253, 244, 226, 0.98));
+    box-shadow: 0 22px 48px rgba(106, 76, 68, 0.12);
+}
+
+.akcios-banner-feny {
+    position: absolute;
+    inset: -40% auto -40% -20%;
+    width: 45%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    transform: translateX(-130%) skewX(-18deg);
+    animation: kuponFenysav 4.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.akcios-banner-szoveg,
+.akcios-banner-kupon,
+.akcios-banner-gomb {
+    position: relative;
+    z-index: 1;
+}
+
+.akcios-banner-kicker {
+    display: inline-flex;
+    margin-bottom: 8px;
+    color: #b9858f;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.akcios-banner h2 {
+    margin: 0 0 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 0.95;
+    color: #2f2926;
+}
+
+.akcios-banner p {
+    max-width: 56ch;
+    margin: 0;
+    color: #6b5f58;
+    line-height: 1.55;
+}
+
+.akcios-banner-kupon {
+    display: grid;
+    gap: 4px;
+    min-width: 150px;
+    padding: 14px 18px;
+    border: 1px dashed rgba(185, 133, 143, 0.62);
+    border-radius: 22px;
+    background: rgba(255, 250, 244, 0.62);
+    text-align: center;
+}
+
+.akcios-banner-kupon span {
+    color: #8b7470;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.akcios-banner-kupon strong {
+    color: #b9858f;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.22rem;
+    letter-spacing: 0.12em;
+}
+
+.akcios-banner-gomb {
+    white-space: nowrap;
+}
+
+@keyframes kuponFenysav {
+    0%, 42% { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
+    55% { opacity: 1; }
+    76%, 100% { transform: translateX(320%) skewX(-18deg); opacity: 0; }
+}
+
+.foglalas-kupon-blokk {
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 22px;
+    background: rgba(255, 250, 244, 0.72);
+}
+
+.foglalas-kupon-blokk[hidden] {
+    display: none !important;
+}
+
+.foglalas-kupon-cimke {
+    display: block;
+    margin-bottom: 8px;
+    color: #6b5f58;
+    font-weight: 700;
+}
+
+.foglalas-kupon-sor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.foglalas-kupon-sor .admin-kis-gomb {
+    min-height: 48px;
+    padding-inline: 18px;
+}
+
+.foglalas-kupon-status {
+    min-height: 1.4em;
+    margin: 8px 0 0;
+    color: #7f8b6c;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.foglalas-kupon-status.hiba {
+    color: #a35b65;
+}
+
+.foglalas-osszefoglalo .foglalas-vegosszeg-sor {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(185, 133, 143, 0.22);
+}
+
+.foglalas-osszefoglalo .foglalas-vegosszeg-sor dt,
+.foglalas-osszefoglalo .foglalas-vegosszeg-sor dd {
+    color: #2f2926;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.admin-mezo select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    border-radius: 16px;
+    background: rgba(255, 250, 244, 0.9);
+    color: #4d403b;
+    font: inherit;
+    padding: 0 14px;
+}
+
+.admin-db-grid-kupon {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.admin-kupon-kod,
+.admin-kupon-cim,
+.admin-db-grid-kupon .admin-mezo-szeles {
+    grid-column: span 3;
+}
+
+.admin-db-grid-kupon .admin-mezo-szeles {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+    .akcios-banner-belso {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 22px;
+    }
+
+    .akcios-banner-kupon,
+    .akcios-banner-gomb {
+        width: 100%;
+    }
+
+    .admin-db-grid-kupon {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-kupon-kod,
+    .admin-kupon-cim,
+    .admin-db-grid-kupon .admin-mezo-szeles {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .akcios-banner {
+        width: min(100% - 28px, 560px);
+        margin-top: 16px;
+    }
+
+    .akcios-banner-belso {
+        border-radius: 24px;
+        text-align: left;
+    }
+
+    .foglalas-kupon-sor {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================
+   Kupon finomitasok 20260718
+   ========================================= */
+.admin-db-grid-kupon {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: end;
+    gap: 10px;
+}
+
+.admin-kupon-kod,
+.admin-kupon-cim,
+.admin-kupon-leiras,
+.admin-kupon-tipus,
+.admin-kupon-szoveg,
+.admin-kupon-szolgaltatas {
+    grid-column: span 2;
+}
+
+.admin-kupon-ertek,
+.admin-kupon-datum,
+.admin-kupon-checkbox,
+.admin-kupon-sorrend {
+    grid-column: span 1;
+}
+
+.admin-db-grid-kupon .admin-mezo input,
+.admin-db-grid-kupon .admin-mezo textarea,
+.admin-db-grid-kupon .admin-mezo select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.admin-db-grid-kupon .admin-mezo input[type="date"] {
+    min-width: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 13px;
+    text-align: center;
+}
+
+.admin-db-grid-kupon textarea {
+    min-height: 84px;
+    resize: vertical;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+    min-height: 36px;
+    padding-inline: 12px;
+}
+
+.akcios-banner-kupon {
+    min-width: 0;
+    width: min(260px, 100%);
+    overflow: hidden;
+}
+
+.akcios-banner-kod-sor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.akcios-banner-kupon strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.1;
+}
+
+.akcios-banner-kupon small {
+    color: rgba(83, 67, 59, 0.68);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.akcios-banner-masolas {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 250, 244, 0.82);
+    color: var(--barna);
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.akcios-banner-masolas:hover {
+    color: #fffaf4;
+    background: var(--akcentus);
+}
+
+.galeria-atvezeto-szoveg .gomb,
+#kapcsolat > .gomb,
+.akcios-banner-gomb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 999px;
+    padding: 0 30px;
+    text-align: center;
+    box-shadow: 0 12px 24px rgba(185, 133, 143, 0.13);
+}
+
+.galeria-atvezeto-szoveg .gomb {
+    background: rgba(255, 250, 244, 0.72);
+    border-color: rgba(185, 133, 143, 0.42);
+}
+
+#kapcsolat > .gomb,
+.akcios-banner-gomb {
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-color: transparent;
+}
+
+#kapcsolat > .gomb:hover,
+.akcios-banner-gomb:hover {
+    background: var(--akcentus-vilagos);
+}
+
+@media (max-width: 860px) {
+    .admin-db-grid-kupon {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .admin-kupon-kod,
+    .admin-kupon-cim,
+    .admin-kupon-leiras,
+    .admin-kupon-tipus,
+    .admin-kupon-szoveg,
+    .admin-kupon-szolgaltatas {
+        grid-column: span 1;
+    }
+
+    .admin-kupon-leiras {
+        grid-row: span 2;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok {
+        justify-content: stretch;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+        flex: 1 1 0;
+        padding-inline: 8px;
+    }
+}
+
+@media (max-width: 520px) {
+    .admin-kupon-kartya {
+        padding: 14px;
+    }
+
+    .admin-db-grid-kupon {
+        gap: 9px;
+    }
+
+    .admin-db-grid-kupon .admin-mezo {
+        font-size: 12px;
+    }
+
+    .admin-db-grid-kupon .admin-mezo input,
+    .admin-db-grid-kupon .admin-mezo textarea,
+    .admin-db-grid-kupon .admin-mezo select {
+        min-height: 42px;
+        font-size: 13px;
+    }
+
+    .admin-kupon-checkbox {
+        min-height: 42px;
+        align-self: end;
+    }
+
+    .akcios-banner-kod-sor {
+        grid-template-columns: 1fr;
+    }
+
+    .akcios-banner-masolas,
+    .akcios-banner-gomb,
+    .galeria-atvezeto-szoveg .gomb,
+    #kapcsolat > .gomb {
+        width: 100%;
+    }
+}
+
+
+/* =========================================
+   Kupon es admin lapozo finomitasok 20260718-3
+   ========================================= */
+.akcios-banner-belso {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: stretch;
+}
+
+.akcios-banner-kupon,
+.akcios-banner-gomb {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+}
+
+.akcios-banner-kupon {
+    position: relative;
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    padding: 18px 52px 18px 18px;
+    box-sizing: border-box;
+}
+
+.akcios-banner-kod-sor {
+    display: block;
+}
+
+.akcios-banner-kupon strong {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.1;
+}
+
+.akcios-banner-kupon small {
+    display: none !important;
+}
+
+.akcios-banner-masolas {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    border-radius: 999px;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.akcios-banner-masolas svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.admin-lapozo {
+    flex-wrap: wrap;
+}
+
+.admin-lapozo > span {
+    min-width: 54px;
+    text-align: center;
+}
+
+.admin-lapozo .admin-kis-gomb {
+    min-height: 36px;
+    padding-inline: 14px;
+}
+
+.admin-oldalmeret {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.admin-oldalmeret select {
+    min-height: 36px;
+    padding: 0 30px 0 12px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 250, 244, 0.9);
+    color: var(--tinta);
+    font: inherit;
+}
+
+@media (max-width: 520px) {
+    .akcios-banner-kupon {
+        padding-right: 48px;
+    }
+
+    .akcios-banner-gomb {
+        width: 100%;
+    }
+
+    .admin-lapozo {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 8px;
+    }
+
+    .admin-oldalmeret {
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
+}
+
+
+/* =========================================
+   Kupon slider es admin lapozo 20260718-4
+   ========================================= */
+.akcios-banner-slider {
+    position: relative;
+    overflow: hidden;
+}
+
+.akcios-banner-track {
+    display: flex;
+    transform: translateX(0);
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.akcios-banner-track .akcios-banner-belso {
+    flex: 0 0 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.akcios-banner-vezerlok {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.akcios-banner-nyil,
+.akcios-banner-pont {
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    background: rgba(255, 250, 244, 0.86);
+    color: var(--barna);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.akcios-banner-nyil {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.akcios-banner-pontok {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.akcios-banner-pont {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border-radius: 999px;
+}
+
+.akcios-banner-nyil:hover,
+.akcios-banner-pont.aktiv {
+    color: #fffaf4;
+    background: var(--akcentus);
+}
+
+.admin-lapozo {
+    position: relative;
+    z-index: 1205;
+    padding-bottom: 72px;
+}
+
+.admin-oldalmeret {
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.admin-oldalmeret-gomb {
+    min-height: 34px;
+    padding: 0 13px;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 250, 244, 0.9);
+    color: var(--barna);
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.admin-oldalmeret-gomb.aktiv {
+    color: #fffaf4;
+    background: var(--akcentus);
+    border-color: transparent;
+}
+
+@media (max-width: 520px) {
+    .akcios-banner-vezerlok {
+        margin-top: 10px;
+    }
+
+    .admin-lapozo {
+        grid-template-columns: 1fr;
+        padding-bottom: 92px;
+    }
+
+    .admin-oldalmeret,
+    .admin-lapozo > span,
+    .admin-lapozo .admin-kis-gomb {
+        justify-self: center;
+    }
+}
+
+
+/* =========================================
+   Kupon slider, kereso es lapozo 20260718-5
+   ========================================= */
+.akcios-banner .akcios-banner-cim {
+    font-size: clamp(1.65rem, 5.2vw, 2.65rem);
+    line-height: 0.98;
+    letter-spacing: 0.045em;
+}
+
+.akcios-banner-cim span {
+    display: block;
+}
+
+.akcios-banner-cim-al {
+    margin-top: 0.06em;
+    font-size: 0.82em;
+    letter-spacing: 0.05em;
+}
+
+.akcios-banner-track {
+    align-items: stretch;
+}
+
+.akcios-banner-track .akcios-banner-belso {
+    min-width: 100%;
+}
+
+.akcios-banner-nyil {
+    width: 42px;
+    height: 42px;
+    font-size: 0;
+    box-shadow: 0 10px 24px rgba(106, 76, 68, 0.08);
+}
+
+.akcios-banner-nyil svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.akcios-banner-pont {
+    opacity: 0.42;
+}
+
+.akcios-banner-pont.aktiv {
+    opacity: 1;
+    transform: scale(1.12);
+}
+
+.akcios-banner-kupon {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 18px 58px 18px 18px;
+}
+
+.akcios-banner-kupon span {
+    display: block;
+    max-width: calc(100% - 18px);
+    margin-inline: auto;
+}
+
+.akcios-banner-kupon strong {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.akcios-banner-masolas {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    border-radius: 999px;
+    font-size: 0;
+}
+
+.akcios-banner-masolas svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+}
+
+.admin-panel-akciok-keresessel {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(220px, 1fr);
+    align-items: end;
+    gap: 10px;
+}
+
+.admin-kereses-mezo {
+    display: grid;
+    gap: 5px;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.admin-kereses-mezo input {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 250, 244, 0.9);
+    color: var(--tinta);
+    font: inherit;
+    font-weight: 700;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.admin-lapozo-felso {
+    margin: 8px 0 12px;
+    padding-bottom: 0 !important;
+}
+
+.admin-db-lista + .admin-lapozo {
+    margin-top: 14px;
+}
+
+.admin-lapozo .admin-oldalmeret-gomb,
+.admin-lapozo .admin-kis-gomb {
+    touch-action: manipulation;
+}
+
+.admin-db-grid-kupon {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.admin-kupon-kod,
+.admin-kupon-cim,
+.admin-kupon-leiras,
+.admin-kupon-tipus,
+.admin-kupon-szoveg,
+.admin-kupon-szolgaltatas {
+    grid-column: span 3;
+}
+
+.admin-kupon-ertek,
+.admin-kupon-datum,
+.admin-kupon-checkbox,
+.admin-kupon-sorrend {
+    grid-column: span 2;
+}
+
+@media (max-width: 860px) {
+    .admin-panel-akciok-keresessel {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-db-grid-kupon {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-kupon-kod,
+    .admin-kupon-cim,
+    .admin-kupon-leiras,
+    .admin-kupon-tipus,
+    .admin-kupon-szoveg,
+    .admin-kupon-szolgaltatas,
+    .admin-kupon-ertek,
+    .admin-kupon-datum,
+    .admin-kupon-checkbox,
+    .admin-kupon-sorrend {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 520px) {
+    .akcios-banner .akcios-banner-cim {
+        font-size: clamp(1.48rem, 7.2vw, 2rem);
+        letter-spacing: 0.035em;
+    }
+
+    .akcios-banner-kupon {
+        padding: 17px 54px 17px 14px;
+    }
+
+    .akcios-banner-nyil {
+        width: 40px;
+        height: 40px;
+    }
+
+    .admin-lapozo-felso {
+        padding-bottom: 0 !important;
+    }
+}
+
+
+/* =========================================
+   CTA, admin lapozo es kupon slider finomitas 20260718-6
+   ========================================= */
+.szekcio .gomb,
+.szolgaltatas-arlista-gomb,
+.galeria-atvezeto-szoveg .gomb,
+.arlista-oldal > .gomb,
+.galeria-oldal > .gomb,
+#kapcsolat > .gomb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 999px;
+    padding: 0 32px;
+    border: 1px solid rgba(185, 133, 143, 0.22);
+    background: var(--akcentus);
+    color: #fffaf4;
+    box-shadow: 0 14px 28px rgba(185, 133, 143, 0.16);
+    text-align: center;
+}
+
+.szekcio .gomb:hover,
+.szolgaltatas-arlista-gomb:hover,
+.galeria-atvezeto-szoveg .gomb:hover,
+.arlista-oldal > .gomb:hover,
+.galeria-oldal > .gomb:hover,
+#kapcsolat > .gomb:hover {
+    background: var(--akcentus-vilagos);
+    color: #fffaf4;
+    transform: translateY(-1px);
+}
+
+.hero .gomb,
+.hero-gomb-primary,
+.hero-gomb-secondary {
+    box-shadow: inherit;
+}
+
+.akcios-banner {
+    margin-bottom: 22px;
+}
+
+.akcios-banner-slider {
+    overflow: hidden;
+    border-radius: 30px;
+    isolation: isolate;
+}
+
+.akcios-banner-track {
+    transition: transform 0.52s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backface-visibility: hidden;
+}
+
+.akcios-banner-track .akcios-banner-belso {
+    box-shadow: 0 14px 32px rgba(106, 76, 68, 0.075);
+}
+
+.akcios-banner-vezerlok {
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.akcios-banner-nyil {
+    box-shadow: none;
+    background: rgba(255, 250, 244, 0.78);
+}
+
+.akcios-banner-pont {
+    box-shadow: none;
+}
+
+.admin-lapozo {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.admin-lapozo .admin-oldalmeret {
+    flex: 0 0 100%;
+    justify-content: center;
+}
+
+.admin-lapozo > span {
+    flex: 0 0 auto;
+    min-width: 42px;
+    font-size: 14px;
+}
+
+.admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
+.admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 76px;
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
+.admin-lapozo-felso {
+    margin-top: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 0 !important;
+}
+
+@media (max-width: 520px) {
+    .szekcio .gomb,
+    .szolgaltatas-arlista-gomb,
+    .galeria-atvezeto-szoveg .gomb,
+    .arlista-oldal > .gomb,
+    .galeria-oldal > .gomb,
+    #kapcsolat > .gomb {
+        width: min(100%, 360px);
+        min-height: 46px;
+        padding-inline: 22px;
+    }
+
+    .admin-lapozo {
+        grid-template-columns: none !important;
+        padding-bottom: 72px;
+    }
+
+    .admin-lapozo-felso {
+        padding-bottom: 0 !important;
+    }
+
+    .admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
+    .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
+        min-width: 72px;
+    }
+}
+
+/* =========================================
+   Kupon sortores es simabb slider 20260718-7
+   ========================================= */
+.akcios-banner-slider {
+    overflow: hidden;
+}
+
+.akcios-banner-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.58s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+}
+
+.akcios-banner-track.animacio-nelkul {
+    transition: none !important;
+}
+
+.akcios-banner-track .akcios-banner-belso {
+    flex: 0 0 100%;
+    min-width: 100%;
+    max-width: 100%;
+    box-shadow: 0 10px 24px rgba(106, 76, 68, 0.055);
+}
+
+.akcios-banner-cim-osztott .akcios-banner-cim-fo,
+.akcios-banner-cim-osztott .akcios-banner-cim-al {
+    display: block;
+}
+
+.akcios-banner-cim-osztott .akcios-banner-cim-al {
+    margin-top: 0.02em;
+}
+
+/* =========================================
+   Uj vendeg kupon admin mezo 20260718-8
+   ========================================= */
+.admin-kupon-celkozonseg {
+    grid-column: span 3;
+}
+
+@media (max-width: 860px) {
+    .admin-kupon-celkozonseg {
+        grid-column: span 1;
+    }
+}
+
+/* =========================================
+   Kompakt kupon admin kartya 20260718-9
+   ========================================= */
+.admin-kupon-kartya {
+    padding: 10px !important;
+}
+
+.admin-kupon-kartya .admin-db-grid-kupon {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    align-items: end;
+}
+
+.admin-kupon-kartya .admin-mezo {
+    gap: 3px !important;
+    min-width: 0;
+    font-size: 11px !important;
+    line-height: 1.1;
+    font-weight: 900;
+}
+
+.admin-kupon-kartya .admin-mezo input,
+.admin-kupon-kartya .admin-mezo select,
+.admin-kupon-kartya .admin-mezo textarea {
+    min-width: 0 !important;
+    min-height: 34px !important;
+    height: 34px;
+    padding: 6px 8px !important;
+    border-radius: 12px !important;
+    font-size: 12.5px !important;
+    line-height: 1.18;
+}
+
+.admin-kupon-kartya .admin-mezo textarea {
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 7px 8px !important;
+    resize: vertical;
+}
+
+.admin-kupon-kartya .admin-mezo input[type="date"] {
+    text-align: center;
+    font-size: 12px !important;
+}
+
+.admin-kupon-kartya .admin-kupon-kod {
+    grid-column: span 2 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-cim {
+    grid-column: span 4 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-leiras,
+.admin-kupon-kartya .admin-kupon-tipus,
+.admin-kupon-kartya .admin-kupon-szolgaltatas,
+.admin-kupon-kartya .admin-kupon-celkozonseg {
+    grid-column: span 3 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-ertek,
+.admin-kupon-kartya .admin-kupon-datum,
+.admin-kupon-kartya .admin-kupon-checkbox,
+.admin-kupon-kartya .admin-kupon-sorrend {
+    grid-column: span 2 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-szoveg {
+    grid-column: span 4 !important;
+}
+
+.admin-kupon-kartya .admin-checkbox {
+    min-height: 34px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 7px !important;
+    padding: 0 2px;
+}
+
+.admin-kupon-kartya .admin-checkbox input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+@media (max-width: 520px) {
+    .admin-kupon-kartya {
+        padding: 9px !important;
+    }
+
+    .admin-kupon-kartya .admin-db-grid-kupon {
+        gap: 6px !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo {
+        font-size: 10.5px !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo input,
+    .admin-kupon-kartya .admin-mezo select,
+    .admin-kupon-kartya .admin-mezo textarea {
+        min-height: 32px !important;
+        height: 32px;
+        padding-inline: 7px !important;
+        font-size: 12px !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo textarea {
+        height: 54px !important;
+        min-height: 54px !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+        min-height: 32px;
+        padding-inline: 6px;
+        font-size: 11.5px;
+    }
+}
+
+
+/* Meg kompaktabb kupon admin kartya mobilon 20260718-10 */
+.admin-kupon-kartya .admin-db-grid-kupon {
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+}
+
+.admin-kupon-kartya .admin-mezo {
+    letter-spacing: -0.01em;
+}
+
+.admin-kupon-kartya .admin-kupon-kod {
+    grid-column: span 3 !important;
+    order: 1;
+}
+
+.admin-kupon-kartya .admin-kupon-cim {
+    grid-column: span 9 !important;
+    order: 2;
+}
+
+.admin-kupon-kartya .admin-kupon-leiras {
+    grid-column: span 6 !important;
+    order: 3;
+}
+
+.admin-kupon-kartya .admin-kupon-tipus {
+    grid-column: span 4 !important;
+    order: 4;
+}
+
+.admin-kupon-kartya .admin-kupon-ertek {
+    grid-column: span 2 !important;
+    order: 5;
+}
+
+.admin-kupon-kartya .admin-kupon-szoveg {
+    grid-column: span 5 !important;
+    order: 6;
+}
+
+.admin-kupon-kartya .admin-kupon-szolgaltatas {
+    grid-column: span 4 !important;
+    order: 7;
+}
+
+.admin-kupon-kartya .admin-kupon-celkozonseg {
+    grid-column: span 3 !important;
+    order: 8;
+}
+
+.admin-kupon-kartya .admin-kupon-datum {
+    grid-column: span 3 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-datum:nth-of-type(9) {
+    order: 9;
+}
+
+.admin-kupon-kartya .admin-kupon-datum:nth-of-type(10) {
+    order: 10;
+}
+
+.admin-kupon-kartya .admin-kupon-checkbox {
+    grid-column: span 3 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-checkbox:nth-of-type(11) {
+    order: 11;
+}
+
+.admin-kupon-kartya .admin-kupon-checkbox:nth-of-type(12) {
+    order: 12;
+}
+
+.admin-kupon-kartya .admin-kupon-sorrend {
+    grid-column: span 2 !important;
+    order: 13;
+}
+
+.admin-kupon-kartya .admin-mezo input,
+.admin-kupon-kartya .admin-mezo select {
+    height: 31px !important;
+    min-height: 31px !important;
+}
+
+.admin-kupon-kartya .admin-checkbox {
+    min-height: 31px;
+    font-size: 12px !important;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+    min-height: 31px;
+    font-size: 11.5px;
+}
+
+@media (max-width: 520px) {
+    .admin-kupon-kartya {
+        padding: 8px !important;
+    }
+
+    .admin-kupon-kartya .admin-db-grid-kupon {
+        gap: 5px !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo {
+        font-size: 10px !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-kod {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-cim {
+        grid-column: span 8 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-leiras {
+        grid-column: span 7 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-tipus {
+        grid-column: span 5 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-ertek {
+        grid-column: span 3 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-szoveg {
+        grid-column: span 5 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-szolgaltatas {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-celkozonseg {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-datum {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-checkbox {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-sorrend {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo input,
+    .admin-kupon-kartya .admin-mezo select {
+        height: 30px !important;
+        min-height: 30px !important;
+        padding-inline: 6px !important;
+    }
+
+    .admin-kupon-kartya .admin-mezo textarea {
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+}
+
+/* Kupon admin konkret mezosorrend 20260718-11 */
+.admin-kupon-kartya .admin-kupon-kod {
+    grid-column: span 3 !important;
+    order: 1;
+}
+
+.admin-kupon-kartya .admin-kupon-cim {
+    grid-column: span 9 !important;
+    order: 2;
+}
+
+.admin-kupon-kartya .admin-kupon-szoveg {
+    grid-column: span 3 !important;
+    order: 3;
+}
+
+.admin-kupon-kartya .admin-kupon-tipus {
+    grid-column: span 6 !important;
+    order: 4;
+}
+
+.admin-kupon-kartya .admin-kupon-ertek {
+    grid-column: span 3 !important;
+    order: 5;
+}
+
+.admin-kupon-kartya .admin-kupon-szolgaltatas {
+    grid-column: span 6 !important;
+    order: 6;
+}
+
+.admin-kupon-kartya .admin-kupon-celkozonseg {
+    grid-column: span 6 !important;
+    order: 7;
+}
+
+.admin-kupon-kartya .admin-kupon-leiras {
+    grid-column: 1 / -1 !important;
+    order: 8;
+}
+
+@media (max-width: 520px) {
+    .admin-kupon-kartya .admin-kupon-kod,
+    .admin-kupon-kartya .admin-kupon-szoveg {
+        grid-column: span 4 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-cim {
+        grid-column: span 8 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-tipus {
+        grid-column: span 5 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-ertek {
+        grid-column: span 3 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-szolgaltatas,
+    .admin-kupon-kartya .admin-kupon-celkozonseg {
+        grid-column: span 6 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-leiras {
+        grid-column: 1 / -1 !important;
     }
 }

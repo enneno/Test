@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="hu">
 
 <head>
@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=20260714email2">
+    <link rel="stylesheet" href="/style.css?v=20260718couponfix11">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&display=swap"
@@ -66,6 +66,7 @@
                 <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
                     <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
                     <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
+                    <button type="button" class="admin-tab" data-admin-tab="kuponok">Kuponok</button>
                     <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
                     <button type="button" class="admin-tab" data-admin-tab="tiltasok">Foglalt idők</button>
                     <button type="button" class="admin-tab" data-admin-tab="esemenynaplo">Eseménynapló</button>
@@ -75,9 +76,14 @@
                 <p id="admin-online-status" class="admin-status" aria-live="polite"></p>
 
                 <div id="admin-panel-foglalasok" class="admin-db-panel aktiv">
-                    <div class="admin-panel-akciok">
-                        <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas">Foglalások frissítése</button>
+                    <div class="admin-panel-akciok admin-panel-akciok-keresessel">
+                        <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas">Foglal&aacute;sok friss&iacute;t&eacute;se</button>
+                        <label class="admin-kereses-mezo" for="admin-foglalas-kereses">
+                            <span>Keres&eacute;s</span>
+                            <input type="search" id="admin-foglalas-kereses" placeholder="N&eacute;v, email vagy telefonsz&aacute;m">
+                        </label>
                     </div>
+                    <div id="admin-foglalas-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
                     <div id="admin-foglalas-lista" class="admin-db-lista"></div>
                     <div id="admin-foglalas-lapozo" class="admin-lapozo"></div>
                 </div>
@@ -88,6 +94,14 @@
                         <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas">Új árlista tétel</button>
                     </div>
                     <div id="admin-szolgaltatas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-kuponok" class="admin-db-panel">
+                    <p class="admin-info">Itt kezelheted az akciókat és kuponkódokat. Csak az aktív, érvényes kupon jelenik meg a főoldalon és a foglalásnál.</p>
+                    <div class="admin-panel-akciok">
+                        <button type="button" id="admin-kupon-hozzaadas" class="admin-hozzaadas">Új kupon</button>
+                    </div>
+                    <div id="admin-kupon-lista" class="admin-db-lista"></div>
                 </div>
 
                 <div id="admin-panel-idosavok" class="admin-db-panel">
@@ -171,11 +185,13 @@
                 </div>
 
                 <div id="admin-panel-esemenynaplo" class="admin-db-panel">
-                    <p class="admin-info">Itt látod a foglalási rendszer fontos eseményeit: foglalás létrejött, email sikerült, email hiba, admin módosítás. Ha valami furcsa történik, itt érdemes először ránézni.</p>
+                    <p class="admin-info">Itt l&aacute;tod a foglal&aacute;si rendszer fontos esem&eacute;nyeit: foglal&aacute;s l&eacute;trej&ouml;tt, email siker&uuml;lt, email hiba, admin m&oacute;dos&iacute;t&aacute;s. Ha valami furcsa t&ouml;rt&eacute;nik, itt &eacute;rdemes el&ouml;sz&ouml;r r&aacute;n&eacute;zni.</p>
                     <div class="admin-panel-akciok">
-                        <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas">Eseménynapló frissítése</button>
+                        <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas">Esem&eacute;nynapl&oacute; friss&iacute;t&eacute;se</button>
                     </div>
+                    <div id="admin-esemenynaplo-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
                     <div id="admin-esemenynaplo-lista" class="admin-db-lista"></div>
+                    <div id="admin-esemenynaplo-lapozo" class="admin-lapozo"></div>
                 </div>
 
 
@@ -206,9 +222,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase-config.js"></script>
-    <script src="/script.js?v=20260717notifications1"></script>
-    <script src="/admin-supabase.js?v=20260717notifications1"></script>
-    <script src="/admin-content.js?v=20260717notifications1"></script>
+    <script src="/script.js?v=20260718couponfix8"></script>
+    <script src="/admin-supabase.js?v=20260718couponfix8"></script>
+    <script src="/admin-content.js?v=20260718couponfix8"></script>
 </body>
 
 </html>
+
+

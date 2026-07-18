@@ -1,14 +1,20 @@
 (function () {
     const ADMIN_EMAIL = 'llevisimon@gmail.com';
-    const FOGLALAS_OLDAL_MERET = 10;
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
+    const SZOLGALTATAS_KUPON_KATEGORIAK = ['\u00c9p\u00edt\u00e9s', 'T\u00f6lt\u00e9s', 'G\u00e9l lakk', 'Manik\u0171r', 'D\u00edsz\u00edt\u00e9s', 'Leszed\u00e9s'];
     const allapot = {
         kliens: null,
         session: null,
         aktivTab: 'foglalasok',
         foglalasOldal: 1,
+        foglalasOldalMeret: 10,
         foglalasElemek: [],
+        foglalasKereses: '',
+        szolgaltatasok: [],
+        kuponok: [],
+        esemenynaploOldal: 1,
+        esemenynaploOldalMeret: 10,
         esemenynaploElemek: [],
         naptarKijelolesek: new Map()
     };
@@ -45,6 +51,7 @@
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
         elemek.esemenynaploFrissites?.addEventListener('click', esemenynaploBetoltese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
+        elemek.kuponHozzaadas?.addEventListener('click', kuponHozzaadas);
         elemek.lebegoMentes?.addEventListener('click', lebegoMentes);
         idosavAlapertelmezes(elemek);
         idosavNaptarInicializalasa(elemek);
@@ -58,7 +65,20 @@
 
         elemek.foglalasLista?.addEventListener('click', foglalasListaKattintas);
         elemek.foglalasLapozo?.addEventListener('click', foglalasLapozoKattintas);
+        elemek.foglalasLapozo?.addEventListener('change', foglalasLapozoKattintas);
+        elemek.foglalasLapozoFelso?.addEventListener('click', foglalasLapozoKattintas);
+        elemek.foglalasLapozoFelso?.addEventListener('change', foglalasLapozoKattintas);
+        elemek.foglalasKereses?.addEventListener('input', () => {
+            allapot.foglalasKereses = elemek.foglalasKereses.value.trim();
+            allapot.foglalasOldal = 1;
+            foglalasListaRenderelese();
+        });
         elemek.szolgaltatasLista?.addEventListener('click', szolgaltatasListaKattintas);
+        elemek.kuponLista?.addEventListener('click', kuponListaKattintas);
+        elemek.esemenynaploLapozo?.addEventListener('click', esemenynaploLapozoKattintas);
+        elemek.esemenynaploLapozo?.addEventListener('change', esemenynaploLapozoKattintas);
+        elemek.esemenynaploLapozoFelso?.addEventListener('click', esemenynaploLapozoKattintas);
+        elemek.esemenynaploLapozoFelso?.addEventListener('change', esemenynaploLapozoKattintas);
         elemek.idosavLista?.addEventListener('click', idosavListaKattintas);
         elemek.idosavOsszesTorles?.addEventListener('click', idosavokOsszesTorlese);
         elemek.idosavLepesOsszes?.addEventListener('click', idosavLepesOsszesAlkalmazasa);
@@ -91,11 +111,17 @@
             onlineStatusz: document.getElementById('admin-online-status'),
             foglalasLista: document.getElementById('admin-foglalas-lista'),
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
+            foglalasLapozoFelso: document.getElementById('admin-foglalas-lapozo-felso'),
+            foglalasKereses: document.getElementById('admin-foglalas-kereses'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
             esemenynaploLista: document.getElementById('admin-esemenynaplo-lista'),
             esemenynaploFrissites: document.getElementById('admin-esemenynaplo-frissites'),
+            esemenynaploLapozo: document.getElementById('admin-esemenynaplo-lapozo'),
+            esemenynaploLapozoFelso: document.getElementById('admin-esemenynaplo-lapozo-felso'),
             szolgaltatasLista: document.getElementById('admin-szolgaltatas-lista'),
             szolgaltatasHozzaadas: document.getElementById('admin-szolgaltatas-hozzaadas'),
+            kuponLista: document.getElementById('admin-kupon-lista'),
+            kuponHozzaadas: document.getElementById('admin-kupon-hozzaadas'),
             idosavLista: document.getElementById('admin-idosav-lista'),
             idosavOsszesTorles: document.getElementById('admin-idosav-osszes-torles'),
             idosavLepesOsszes: document.getElementById('admin-idosav-lepes-osszes'),
@@ -490,6 +516,7 @@
         foglalasokBetoltese();
         esemenynaploBetoltese();
         szolgaltatasokBetoltese();
+        kuponokBetoltese();
         idosavokBetoltese();
         tiltasokBetoltese();
         beallitasokBetoltese();
@@ -506,6 +533,11 @@
 
         if (tab === 'szolgaltatasok') {
             await szolgaltatasokMentese();
+            return;
+        }
+
+        if (tab === 'kuponok') {
+            await kuponokMentese();
             return;
         }
 
@@ -594,15 +626,31 @@
         const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
         return uzenet.includes('inspiration_image') || uzenet.includes('nail_style') || uzenet.includes('column') && uzenet.includes('schema cache');
     }
+
+    function adatbazisOszlopHiany(error, oszlopok = []) {
+        const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
+        return oszlopok.some(oszlop => uzenet.includes(oszlop.toLowerCase())) || uzenet.includes('schema cache') && uzenet.includes('column');
+    }
+
+    function hianyzoKuponTabla(error) {
+        const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
+        return uzenet.includes('coupons') || uzenet.includes('schema cache') || uzenet.includes('does not exist');
+    }
     function foglalasListaRenderelese() {
         const elemek = adminElemek();
-        const kezd = (allapot.foglalasOldal - 1) * FOGLALAS_OLDAL_MERET;
-        const oldalElemek = allapot.foglalasElemek.slice(kezd, kezd + FOGLALAS_OLDAL_MERET);
+        const szurtElemek = foglalasSzurtElemek();
+        const meret = listaOldalMeret(allapot.foglalasOldalMeret, szurtElemek.length);
+        const kezd = allapot.foglalasOldalMeret === 'all' ? 0 : (allapot.foglalasOldal - 1) * meret;
+        const oldalElemek = allapot.foglalasOldalMeret === 'all'
+            ? szurtElemek
+            : szurtElemek.slice(kezd, kezd + meret);
 
         elemek.foglalasLista.innerHTML = '';
 
         if (!oldalElemek.length) {
-            elemek.foglalasLista.innerHTML = '<p class="admin-ures">Még nincs foglalás vagy kézzel felvett foglalt idő.</p>';
+            elemek.foglalasLista.innerHTML = allapot.foglalasKereses
+                ? '<p class="admin-ures">Nincs tal\u00e1lat erre a keres\u00e9sre.</p>'
+                : '<p class="admin-ures">M\u00e9g nincs foglal\u00e1s vagy k\u00e9zzel felvett foglalt id\u0151.</p>';
             foglalasLapozoRenderelese();
             return;
         }
@@ -616,32 +664,98 @@
         foglalasLapozoRenderelese();
     }
 
+    function foglalasSzurtElemek() {
+        const kereses = normalizaltKereses(allapot.foglalasKereses);
+        const telefonKereses = csakSzamok(allapot.foglalasKereses);
+
+        if (!kereses && !telefonKereses) {
+            return allapot.foglalasElemek;
+        }
+
+        return allapot.foglalasElemek.filter(elem => {
+            const adat = elem.adat || {};
+            const szolgaltatasNev = adat.services?.description || adat.services?.name || '';
+            const szovegek = [
+                adat.customer_name,
+                adat.customer_email,
+                adat.customer_phone,
+                adat.note,
+                adat.nail_style,
+                adat.reason,
+                szolgaltatasNev,
+                elem.tipus === 'blocked' ? 'k\u00e9zzel felvett foglalt id\u0151' : 'foglal\u00e1s'
+            ];
+            const szovegTalalat = normalizaltKereses(szovegek.filter(Boolean).join(' ')).includes(kereses);
+            const telefonTalalat = telefonKereses && csakSzamok([adat.customer_phone, adat.customer_name, adat.customer_email].filter(Boolean).join(' ')).includes(telefonKereses);
+            return szovegTalalat || telefonTalalat;
+        });
+    }
+
+    function normalizaltKereses(ertek) {
+        return String(ertek || '')
+            .toLocaleLowerCase('hu-HU')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+    }
+
+    function csakSzamok(ertek) {
+        return String(ertek || '').replace(/\D/g, '');
+    }
+
+    function listaOldalMeret(ertek, osszes) {
+        if (ertek === 'all') return Math.max(1, osszes || 1);
+        const szam = Number.parseInt(ertek, 10);
+        return Number.isFinite(szam) && szam > 0 ? szam : 10;
+    }
+
+    function oldalmeretGombok(aktiv, adatNev) {
+        return [10, 20, 'all'].map(ertek => {
+            const cimke = ertek === 'all' ? '\u00d6sszes' : String(ertek);
+            const aktivE = String(aktiv) === String(ertek);
+            return `<button type="button" class="admin-oldalmeret-gomb${aktivE ? ' aktiv' : ''}" data-${adatNev}="${ertek}" aria-pressed="${aktivE ? 'true' : 'false'}">${cimke}</button>`;
+        }).join('');
+    }
+
     function foglalasOsszesOldal() {
-        return Math.max(1, Math.ceil(allapot.foglalasElemek.length / FOGLALAS_OLDAL_MERET));
+        const lista = foglalasSzurtElemek();
+        if (allapot.foglalasOldalMeret === 'all') return 1;
+        return Math.max(1, Math.ceil(lista.length / listaOldalMeret(allapot.foglalasOldalMeret, lista.length)));
+    }
+
+    function foglalasLapozoHtml() {
+        const lista = foglalasSzurtElemek();
+        const osszes = foglalasOsszesOldal();
+        const vanElem = lista.length > 0;
+        return `
+            <div class="admin-oldalmeret" role="group" aria-label="Foglal\u00e1sok oldalank\u00e9nt">
+                <span>Oldalank\u00e9nt</span>
+                ${oldalmeretGombok(allapot.foglalasOldalMeret, 'foglalas-oldalmeret')}
+            </div>
+            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="elozo" ${allapot.foglalasOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
+            <span>${vanElem ? `${allapot.foglalasOldal} / ${osszes}` : '0 / 0'}</span>
+            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="kovetkezo" ${allapot.foglalasOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+        `;
     }
 
     function foglalasLapozoRenderelese() {
         const elemek = adminElemek();
-
-        if (!elemek.foglalasLapozo) {
-            return;
-        }
-
-        const osszes = foglalasOsszesOldal();
-
-        if (osszes <= 1) {
-            elemek.foglalasLapozo.innerHTML = '';
-            return;
-        }
-
-        elemek.foglalasLapozo.innerHTML = `
-            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="elozo" ${allapot.foglalasOldal <= 1 ? 'disabled' : ''}>Előző</button>
-            <span>${allapot.foglalasOldal} / ${osszes}</span>
-            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="kovetkezo" ${allapot.foglalasOldal >= osszes ? 'disabled' : ''}>Következő</button>
-        `;
+        const htmlTartalom = foglalasLapozoHtml();
+        [elemek.foglalasLapozoFelso, elemek.foglalasLapozo].filter(Boolean).forEach(lapozo => {
+            lapozo.innerHTML = htmlTartalom;
+        });
     }
 
     function foglalasLapozoKattintas(event) {
+        const meretValaszto = event.target.closest('[data-foglalas-oldalmeret]');
+        if (meretValaszto) {
+            const meretErtek = meretValaszto.dataset.foglalasOldalmeret || meretValaszto.value;
+            allapot.foglalasOldalMeret = meretErtek === 'all' ? 'all' : Number.parseInt(meretErtek, 10);
+            allapot.foglalasOldal = 1;
+            foglalasListaRenderelese();
+            return;
+        }
+
         const gomb = event.target.closest('[data-foglalas-oldal]');
 
         if (!gomb) {
@@ -666,7 +780,7 @@
             .from('booking_events')
             .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at,bookings(customer_name,starts_at)')
             .order('created_at', { ascending: false })
-            .limit(80);
+            .limit(200);
 
         if (error) {
             elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">Az eseménynapló még nem érhető el. Futtasd a booking_events SQL-t Supabase-ben.</p>';
@@ -674,6 +788,9 @@
         }
 
         allapot.esemenynaploElemek = Array.isArray(data) ? data : [];
+        if (allapot.esemenynaploOldal > esemenynaploOsszesOldal()) {
+            allapot.esemenynaploOldal = esemenynaploOsszesOldal();
+        }
         esemenynaploRenderelese();
     }
 
@@ -687,11 +804,18 @@
         elemek.esemenynaploLista.innerHTML = '';
 
         if (!allapot.esemenynaploElemek.length) {
-            elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">Még nincs naplózott foglalási esemény.</p>';
+            elemek.esemenynaploLista.innerHTML = '<p class="admin-ures">M\u00e9g nincs napl\u00f3zott foglal\u00e1si esem\u00e9ny.</p>';
+            esemenynaploLapozoRenderelese();
             return;
         }
 
-        allapot.esemenynaploElemek.forEach(esemeny => {
+        const meret = listaOldalMeret(allapot.esemenynaploOldalMeret, allapot.esemenynaploElemek.length);
+        const kezd = allapot.esemenynaploOldalMeret === 'all' ? 0 : (allapot.esemenynaploOldal - 1) * meret;
+        const oldalElemek = allapot.esemenynaploOldalMeret === 'all'
+            ? allapot.esemenynaploElemek
+            : allapot.esemenynaploElemek.slice(kezd, kezd + meret);
+
+        oldalElemek.forEach(esemeny => {
             const kartya = document.createElement('article');
             kartya.className = `admin-db-kartya admin-esemeny-kartya admin-esemeny-${html(esemeny.status || 'info')}`;
             const foglalasNev = esemeny.bookings?.customer_name || '';
@@ -706,7 +830,7 @@
                     <span class="admin-esemeny-statusz">${html(esemenyStatuszFelirat(esemeny.status))}</span>
                 </div>
                 <div class="admin-esemeny-reszletek">
-                    ${foglalasNev ? `<p><strong>Foglalás:</strong> ${html(foglalasNev)}${foglalasIdo ? ` - ${html(foglalasIdo)}` : ''}</p>` : ''}
+                    ${foglalasNev ? `<p><strong>Foglal\u00e1s:</strong> ${html(foglalasNev)}${foglalasIdo ? ` - ${html(foglalasIdo)}` : ''}</p>` : ''}
                     ${esemeny.message ? `<p>${html(esemeny.message)}</p>` : ''}
                     <p class="admin-esemeny-meta">${html([esemeny.channel, esemeny.event_type].filter(Boolean).join(' / '))}</p>
                 </div>
@@ -714,6 +838,53 @@
 
             elemek.esemenynaploLista.appendChild(kartya);
         });
+
+        esemenynaploLapozoRenderelese();
+    }
+
+    function esemenynaploOsszesOldal() {
+        if (allapot.esemenynaploOldalMeret === 'all') return 1;
+        return Math.max(1, Math.ceil(allapot.esemenynaploElemek.length / listaOldalMeret(allapot.esemenynaploOldalMeret, allapot.esemenynaploElemek.length)));
+    }
+
+    function esemenynaploLapozoHtml() {
+        const osszes = esemenynaploOsszesOldal();
+        const vanElem = allapot.esemenynaploElemek.length > 0;
+        return `
+            <div class="admin-oldalmeret" role="group" aria-label="Esem\u00e9nynapl\u00f3 oldalank\u00e9nt">
+                <span>Oldalank\u00e9nt</span>
+                ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+            </div>
+            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="elozo" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
+            <span>${vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0'}</span>
+            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="kovetkezo" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+        `;
+    }
+
+    function esemenynaploLapozoRenderelese() {
+        const elemek = adminElemek();
+        const htmlTartalom = esemenynaploLapozoHtml();
+        [elemek.esemenynaploLapozoFelso, elemek.esemenynaploLapozo].filter(Boolean).forEach(lapozo => {
+            lapozo.innerHTML = htmlTartalom;
+        });
+    }
+
+    function esemenynaploLapozoKattintas(event) {
+        const meretValaszto = event.target.closest('[data-esemenynaplo-oldalmeret]');
+        if (meretValaszto) {
+            const meretErtek = meretValaszto.dataset.esemenynaploOldalmeret || meretValaszto.value;
+            allapot.esemenynaploOldalMeret = meretErtek === 'all' ? 'all' : Number.parseInt(meretErtek, 10);
+            allapot.esemenynaploOldal = 1;
+            esemenynaploRenderelese();
+            return;
+        }
+
+        const gomb = event.target.closest('[data-esemenynaplo-oldal]');
+        if (!gomb) return;
+
+        allapot.esemenynaploOldal += gomb.dataset.esemenynaploOldal === 'kovetkezo' ? 1 : -1;
+        allapot.esemenynaploOldal = Math.min(Math.max(allapot.esemenynaploOldal, 1), esemenynaploOsszesOldal());
+        esemenynaploRenderelese();
     }
 
     function esemenyStatuszFelirat(statusz) {
@@ -1183,20 +1354,47 @@
         }
     }
 
+
     async function szolgaltatasokBetoltese() {
         const elemek = adminElemek();
-        const { data, error } = await allapot.kliens
+        let { data, error } = await allapot.kliens
             .from('services')
-            .select('id,name,description,price_text,duration_minutes,booking_enabled,active,sort_order')
+            .select('id,name,description,price_text,price_amount,price_unit,price_suffix,duration_minutes,booking_enabled,active,sort_order')
             .order('sort_order', { ascending: true });
+
+        if (error && adatbazisOszlopHiany(error, ['price_amount', 'price_unit', 'price_suffix'])) {
+            ({ data, error } = await allapot.kliens
+                .from('services')
+                .select('id,name,description,price_text,duration_minutes,booking_enabled,active,sort_order')
+                .order('sort_order', { ascending: true }));
+        }
 
         if (error) {
             onlineStatusz('Nem sikerült betölteni az árlista tételeket.', true);
             return;
         }
 
+        allapot.szolgaltatasok = (data || []).map(szolgaltatasArNormalizalasa);
         elemek.szolgaltatasLista.innerHTML = '';
-        data.forEach(szolgaltatas => elemek.szolgaltatasLista.appendChild(szolgaltatasKartya(szolgaltatas)));
+        allapot.szolgaltatasok.forEach(szolgaltatas => elemek.szolgaltatasLista.appendChild(szolgaltatasKartya(szolgaltatas)));
+    }
+
+    function szolgaltatasArNormalizalasa(szolgaltatas) {
+        const priceText = szolgaltatas.price_text || '';
+        const priceAmount = Number.isFinite(Number(szolgaltatas.price_amount)) && Number(szolgaltatas.price_amount) > 0
+            ? Number(szolgaltatas.price_amount)
+            : arOsszegKinyerese(priceText);
+        const priceUnit = szolgaltatas.price_unit || arEgysegKinyerese(priceText) || 'Ft';
+        const priceValue = priceAmount > 0 ? String(priceAmount) : arErtekKinyerese(priceText);
+
+        return {
+            ...szolgaltatas,
+            price_amount: priceAmount || null,
+            price_value: priceValue,
+            price_unit: priceUnit,
+            price_suffix: '',
+            price_text: priceText || arFelirat(priceValue || priceAmount, priceUnit)
+        };
     }
 
     function szolgaltatasKartya(szolgaltatas) {
@@ -1216,9 +1414,10 @@
                 <label class="admin-mezo admin-szolgaltatas-foglalasi-nev">Foglalási név<input type="text" data-mezo="description" value="${attr(szolgaltatas.description || '')}" placeholder="Ha üres, a teljes név látszik"></label>
                 <label class="admin-mezo admin-sorrend-mezo">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(szolgaltatas.sort_order) || 0}"></label>
                 <div class="admin-szolgaltatas-szamok">
-                    <label class="admin-mezo">Ár<input type="text" data-mezo="price_text" value="${attr(szolgaltatas.price_text || '')}"></label>
-                    <label class="admin-mezo">Óra<input type="number" min="0" step="1" data-mezo="ora" value="${ora}"></label>
-                    <label class="admin-mezo">Perc<input type="number" min="0" max="59" step="1" data-mezo="perc" value="${perc}"></label>
+                    <label class="admin-mezo admin-szolgaltatas-ar">Ár<input type="text" data-mezo="price_amount" value="${attr(szolgaltatas.price_value || '')}" placeholder="7000 vagy 500-800"></label>
+                    <label class="admin-mezo admin-szolgaltatas-egyseg">Egység<input type="text" data-mezo="price_unit" value="${attr(szolgaltatas.price_unit || 'Ft')}" placeholder="Ft, Ft/db, Ft-tól"></label>
+                    <label class="admin-mezo admin-szolgaltatas-ido">Óra<input type="number" min="0" step="1" data-mezo="ora" value="${ora}"></label>
+                    <label class="admin-mezo admin-szolgaltatas-ido">Perc<input type="number" min="0" max="59" step="1" data-mezo="perc" value="${perc}"></label>
                 </div>
             </div>
             <div class="admin-db-akciok">
@@ -1234,14 +1433,24 @@
     async function szolgaltatasHozzaadas() {
         onlineStatusz('Új árlista tétel létrehozása...');
 
-        const { error } = await allapot.kliens.from('services').insert({
-            name: 'Új kategória - Új tétel',
+        const ujTetel = {
+            name: 'Új kategória - új tétel',
             price_text: '',
+            price_amount: null,
+            price_unit: 'Ft',
+            price_suffix: '',
             duration_minutes: 60,
             booking_enabled: true,
             active: true,
             sort_order: 999
-        });
+        };
+
+        let { error } = await allapot.kliens.from('services').insert(ujTetel);
+
+        if (error && adatbazisOszlopHiany(error, ['price_amount', 'price_unit', 'price_suffix'])) {
+            const { price_amount, price_unit, price_suffix, ...regiTetel } = ujTetel;
+            ({ error } = await allapot.kliens.from('services').insert(regiTetel));
+        }
 
         if (error) {
             onlineStatusz('Nem sikerült létrehozni az új árlista tételt.', true);
@@ -1286,6 +1495,7 @@
         onlineStatusz('A sorrend módosult. A véglegesítéshez nyomd meg a Mentés gombot.');
     }
 
+
     async function szolgaltatasokMentese() {
         const kartyak = Array.from(document.querySelectorAll('#admin-szolgaltatas-lista .admin-db-kartya'));
 
@@ -1297,21 +1507,19 @@
         onlineStatusz('Árlista mentése...');
 
         for (const kartya of kartyak) {
-            const ora = szamMezo(kartya, 'ora');
-            const perc = szamMezo(kartya, 'perc');
-
-            const { error } = await allapot.kliens
+            const payload = szolgaltatasPayload(kartya);
+            let { error } = await allapot.kliens
                 .from('services')
-                .update({
-                    name: mezo(kartya, 'name').value.trim(),
-                    description: mezo(kartya, 'description').value.trim(),
-                    price_text: mezo(kartya, 'price_text').value.trim(),
-                    duration_minutes: (ora * 60) + perc,
-                    sort_order: szamMezo(kartya, 'sort_order'),
-                    booking_enabled: mezo(kartya, 'booking_enabled').checked,
-                    active: mezo(kartya, 'active').checked
-                })
+                .update(payload)
                 .eq('id', kartya.dataset.id);
+
+            if (error && adatbazisOszlopHiany(error, ['price_amount', 'price_unit', 'price_suffix'])) {
+                const { price_amount, price_unit, price_suffix, ...regiPayload } = payload;
+                ({ error } = await allapot.kliens
+                    .from('services')
+                    .update(regiPayload)
+                    .eq('id', kartya.dataset.id));
+            }
 
             if (error) {
                 onlineStatusz('Nem sikerült menteni az egyik árlista tételt.', true);
@@ -1320,7 +1528,366 @@
         }
 
         onlineStatusz('Árlista mentve.');
-        szolgaltatasokBetoltese();
+        await szolgaltatasokBetoltese();
+        kuponokBetoltese();
+    }
+
+    function szolgaltatasPayload(kartya) {
+        const ora = szamMezo(kartya, 'ora');
+        const perc = szamMezo(kartya, 'perc');
+        const priceValue = mezo(kartya, 'price_amount').value.trim();
+        const priceAmount = arSzamolhatoOsszeg(priceValue);
+        const priceUnit = mezo(kartya, 'price_unit').value.trim() || 'Ft';
+
+        return {
+            name: mezo(kartya, 'name').value.trim(),
+            description: mezo(kartya, 'description').value.trim(),
+            price_text: arFelirat(priceValue, priceUnit),
+            price_amount: priceAmount,
+            price_unit: priceUnit,
+            price_suffix: '',
+            duration_minutes: (ora * 60) + perc,
+            sort_order: szamMezo(kartya, 'sort_order'),
+            booking_enabled: mezo(kartya, 'booking_enabled').checked,
+            active: mezo(kartya, 'active').checked
+        };
+    }
+
+    function arFelirat(osszeg, egyseg = 'Ft') {
+        const nyers = String(osszeg ?? '').trim();
+        if (!nyers) return '';
+        if (/[^\d\s.,\-\u2013]/.test(nyers)) return nyers;
+
+        const csakSzam = nyers.replace(/[\s.]/g, '');
+        const ertek = /^\d+$/.test(csakSzam)
+            ? Number.parseInt(csakSzam, 10).toLocaleString('hu-HU')
+            : nyers;
+
+        return `${ertek} ${egyseg || 'Ft'}`.trim();
+    }
+
+    function arSzamolhatoOsszeg(ertek) {
+        const nyers = String(ertek || '').trim();
+        if (!nyers || /[-\u2013]/.test(nyers)) return null;
+        const csakSzam = nyers.replace(/\D/g, '');
+        const szam = Number.parseInt(csakSzam, 10);
+        return Number.isFinite(szam) && szam > 0 ? szam : null;
+    }
+
+    function arErtekKinyerese(szoveg) {
+        const tiszta = String(szoveg || '').replace(/\s+/g, ' ').trim();
+        const tartomany = tiszta.match(/\d[\d\s.]*(?:[-\u2013]\s*\d[\d\s.]*)/);
+        if (tartomany) return tartomany[0].replace(/[\s.]/g, '');
+        const egyszeru = tiszta.match(/\d[\d\s.]*/);
+        return egyszeru ? egyszeru[0].replace(/[\s.]/g, '') : '';
+    }
+
+    function arOsszegKinyerese(szoveg) {
+        return arSzamolhatoOsszeg(arErtekKinyerese(szoveg)) || 0;
+    }
+
+    function arEgysegKinyerese(szoveg) {
+        const kis = String(szoveg || '').toLowerCase();
+        if (kis.includes('/ db')) return 'Ft / db';
+        if (kis.includes('/ ujj')) return 'Ft / ujj';
+        if (kis.includes('-tól') || kis.includes('-tol')) return 'Ft-tól';
+        if (kis.includes('ft')) return 'Ft';
+        if (kis.includes('db')) return 'db';
+        if (kis.includes('ujj')) return 'ujj';
+        return 'Ft';
+    }
+
+    async function kuponokBetoltese() {
+        const elemek = adminElemek();
+        if (!elemek.kuponLista) return;
+
+        let { data, error } = await allapot.kliens
+            .from('coupons')
+            .select('id,code,title,description,discount_type,discount_value,discount_text,service_id,service_category,customer_scope,valid_from,valid_until,active,show_on_home,sort_order')
+            .order('sort_order', { ascending: true })
+            .order('created_at', { ascending: true });
+
+        if (error && adatbazisOszlopHiany(error, ['service_category', 'customer_scope'])) {
+            ({ data, error } = await allapot.kliens
+                .from('coupons')
+                .select('id,code,title,description,discount_type,discount_value,discount_text,service_id,valid_from,valid_until,active,show_on_home,sort_order')
+                .order('sort_order', { ascending: true })
+                .order('created_at', { ascending: true }));
+        }
+
+        if (error) {
+            allapot.kuponok = [];
+            elemek.kuponLista.innerHTML = `<p class="admin-ures">A kuponkezel\u00e9shez futtasd a <code>supabase-coupons.sql</code> f\u00e1jlt Supabase-ben.</p>`;
+            if (!hianyzoKuponTabla(error)) onlineStatusz('Nem siker\u00fclt bet\u00f6lteni a kuponokat.', true);
+            return;
+        }
+
+        allapot.kuponok = data || [];
+        elemek.kuponLista.innerHTML = '';
+
+        if (!allapot.kuponok.length) {
+            elemek.kuponLista.innerHTML = '<p class="admin-ures">M\u00e9g nincs kupon. Hozz l\u00e9tre egyet az \u00daj kupon gombbal.</p>';
+            return;
+        }
+
+        allapot.kuponok.forEach(kupon => elemek.kuponLista.appendChild(kuponKartya(kupon)));
+    }
+
+    function kuponKartya(kupon) {
+        const kartya = document.createElement('article');
+        kartya.className = 'admin-db-kartya admin-kupon-kartya';
+        kartya.dataset.id = kupon.id;
+
+        kartya.innerHTML = `
+            <div class="admin-db-grid admin-db-grid-kupon">
+                <label class="admin-mezo admin-kupon-kod">Kuponk\u00f3d<input type="text" data-mezo="code" value="${attr(kupon.code || '')}" placeholder="pl. LUMI10"></label>
+                <label class="admin-mezo admin-kupon-cim">C\u00edm<input type="text" data-mezo="title" value="${attr(kupon.title || '')}" placeholder="pl. 10% kedvezm\u00e9ny \u00faj vend\u00e9geknek"></label>
+                <label class="admin-mezo admin-kupon-leiras">Le\u00edr\u00e1s<textarea data-mezo="description" rows="3" placeholder="Ez jelenik meg a f\u0151oldali akci\u00f3s k\u00e1rty\u00e1n.">${html(kupon.description || '')}</textarea></label>
+                <label class="admin-mezo admin-kupon-tipus">Kedvezm\u00e9ny t\u00edpusa<select data-mezo="discount_type">${kuponTipusOptions(kupon.discount_type)}</select></label>
+                <label class="admin-mezo admin-kupon-ertek">\u00c9rt\u00e9k<input type="number" min="0" step="1" data-mezo="discount_value" value="${Number(kupon.discount_value) || 0}"></label>
+                <label class="admin-mezo admin-kupon-szoveg">Megjelen\u0151 sz\u00f6veg<input type="text" data-mezo="discount_text" value="${attr(kupon.discount_text || '')}" placeholder="pl. 10% kedvezm\u00e9ny"></label>
+                <label class="admin-mezo admin-kupon-szolgaltatas">\u00c9rv\u00e9nyess\u00e9g<select data-mezo="service_scope">${kuponSzolgaltatasOptions(kupon)}</select></label>
+                <label class="admin-mezo admin-kupon-celkozonseg">Kinek \u00e9rv\u00e9nyes?<select data-mezo="customer_scope">${kuponKozonsegOptions(kupon.customer_scope)}</select></label>
+                <label class="admin-mezo admin-kupon-datum">\u00c9rv\u00e9nyes ett\u0151l<input type="date" data-mezo="valid_from" value="${attr(kupon.valid_from || '')}"></label>
+                <label class="admin-mezo admin-kupon-datum">\u00c9rv\u00e9nyes eddig<input type="date" data-mezo="valid_until" value="${attr(kupon.valid_until || '')}"></label>
+                <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="active" ${kupon.active ? 'checked' : ''}> Akt\u00edv</label>
+                <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="show_on_home" ${kupon.show_on_home ? 'checked' : ''}> F\u0151oldali k\u00e1rtya</label>
+                <label class="admin-mezo admin-kupon-sorrend">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(kupon.sort_order) || 0}"></label>
+            </div>
+            <div class="admin-db-akciok admin-kupon-akciok">
+                <button type="button" class="admin-kis-gomb" data-kupon-mozgat="fel" aria-label="Kupon feljebb">\u2191 Feljebb</button>
+                <button type="button" class="admin-kis-gomb" data-kupon-mozgat="le" aria-label="Kupon lejjebb">\u2193 Lejjebb</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-kupon-torles>T\u00f6rl\u00e9s</button>
+            </div>
+        `;
+
+        return kartya;
+    }
+
+    function kuponTipusOptions(aktiv) {
+        return [
+            ['percent', 'Sz\u00e1zal\u00e9k (%)'],
+            ['fixed', 'Fix \u00f6sszeg (Ft)'],
+            ['text', 'Csak sz\u00f6veges akci\u00f3']
+        ].map(([ertek, cimke]) => `<option value="${ertek}" ${ertek === aktiv ? 'selected' : ''}>${cimke}</option>`).join('');
+    }
+
+    function kuponKozonsegOptions(aktiv = 'all') {
+        const ertek = ['all', 'new_customer'].includes(String(aktiv || 'all')) ? String(aktiv || 'all') : 'all';
+        return [
+            ['all', 'Mindenkinek'],
+            ['new_customer', 'Csak \u00faj vend\u00e9gnek']
+        ].map(([value, cimke]) => `<option value="${value}" ${value === ertek ? 'selected' : ''}>${cimke}</option>`).join('');
+    }
+
+    function kuponSzolgaltatasOptions(kupon = {}) {
+        const aktivErtek = kuponScopeAktivErtek(kupon);
+        const opciok = [`<option value="all" ${aktivErtek === 'all' ? 'selected' : ''}>Minden szolg\u00e1ltat\u00e1s</option>`];
+        const kategoriak = SZOLGALTATAS_KUPON_KATEGORIAK.filter(kategoria =>
+            allapot.szolgaltatasok.some(szolgaltatas => szolgaltatasKuponKategoria(szolgaltatas) === kategoria)
+        );
+
+        if (kategoriak.length) {
+            opciok.push('<optgroup label="Kateg\u00f3ri\u00e1k">');
+            kategoriak.forEach(kategoria => {
+                const ertek = `category:${kategoria}`;
+                opciok.push(`<option value="${attr(ertek)}" ${aktivErtek === ertek ? 'selected' : ''}>${html(kategoria)} kateg\u00f3ria</option>`);
+            });
+            opciok.push('</optgroup>');
+        }
+
+        if (allapot.szolgaltatasok.length) {
+            opciok.push('<optgroup label="Konkr\u00e9t t\u00e9telek">');
+            allapot.szolgaltatasok.forEach(szolgaltatas => {
+                const ertek = `service:${szolgaltatas.id}`;
+                opciok.push(`<option value="${attr(ertek)}" ${aktivErtek === ertek ? 'selected' : ''}>${html(szolgaltatas.name || '')}</option>`);
+            });
+            opciok.push('</optgroup>');
+        }
+
+        return opciok.join('');
+    }
+
+    function kuponScopeAktivErtek(kupon = {}) {
+        if (kupon.service_id) return `service:${kupon.service_id}`;
+        if (kupon.service_category) return `category:${kupon.service_category}`;
+        return 'all';
+    }
+
+    function kuponScopePayload(scope) {
+        const payload = { service_id: null, service_category: null };
+        const ertek = String(scope || 'all');
+        if (ertek.startsWith('service:')) payload.service_id = ertek.slice('service:'.length) || null;
+        if (ertek.startsWith('category:')) payload.service_category = ertek.slice('category:'.length) || null;
+        return payload;
+    }
+
+    function szolgaltatasKuponKategoria(szolgaltatas) {
+        const szoveg = `${szolgaltatas?.name || ''} ${szolgaltatas?.description || ''}`.toLocaleLowerCase('hu-HU');
+        if (szoveg.includes('\u00e9p\u00edt')) return '\u00c9p\u00edt\u00e9s';
+        if (szoveg.includes('t\u00f6lt')) return 'T\u00f6lt\u00e9s';
+        if (szoveg.includes('g\u00e9l lakk') || szoveg.includes('g\u00e9llakk') || szoveg.includes('gel lakk')) return 'G\u00e9l lakk';
+        if (szoveg.includes('manik')) return 'Manik\u0171r';
+        if (szoveg.includes('d\u00edsz') || szoveg.includes('nail art') || szoveg.includes('k\u0151')) return 'D\u00edsz\u00edt\u00e9s';
+        if (szoveg.includes('leszed')) return 'Leszed\u00e9s';
+        return '';
+    }
+
+    async function kuponHozzaadas() {
+        onlineStatusz('\u00daj kupon l\u00e9trehoz\u00e1sa...');
+        const ujKupon = {
+            code: `LUMI${Math.floor(Math.random() * 90 + 10)}`,
+            title: '\u00daj kupon',
+            description: 'R\u00f6vid akci\u00f3s le\u00edr\u00e1s, ami a f\u0151oldalon is megjelenhet.',
+            discount_type: 'percent',
+            discount_value: 10,
+            discount_text: '10% kedvezm\u00e9ny',
+            customer_scope: 'all',
+            active: false,
+            show_on_home: true,
+            sort_order: 999
+        };
+
+        let { error } = await allapot.kliens.from('coupons').insert(ujKupon);
+
+        if (error && adatbazisOszlopHiany(error, ['customer_scope'])) {
+            const kompatibilisKupon = { ...ujKupon };
+            delete kompatibilisKupon.customer_scope;
+            ({ error } = await allapot.kliens.from('coupons').insert(kompatibilisKupon));
+            if (!error) {
+                onlineStatusz('\u00daj kupon l\u00e9trehozva, de az \u00faj vend\u00e9g kuponmez\u0151h\u00f6z futtasd a friss Supabase SQL-t.', true);
+                kuponokBetoltese();
+                return;
+            }
+        }
+
+        if (error) {
+            onlineStatusz('Nem siker\u00fclt l\u00e9trehozni a kupont. Futtasd a supabase-coupons.sql f\u00e1jlt.', true);
+            return;
+        }
+
+        onlineStatusz('\u00daj kupon l\u00e9trehozva.');
+        kuponokBetoltese();
+    }
+
+    async function kuponListaKattintas(event) {
+        const kartya = event.target.closest('.admin-kupon-kartya');
+        if (!kartya) return;
+
+        const mozgatas = event.target.closest('[data-kupon-mozgat]');
+        if (mozgatas) {
+            kuponMozgatasa(kartya, mozgatas.dataset.kuponMozgat);
+            return;
+        }
+
+        if (event.target.closest('[data-kupon-torles]')) {
+            if (!window.confirm('Biztosan törlöd ezt a kupont? Törlés előtt automatikusan inaktiválom, hogy ne maradjon kint a főoldalon.')) return;
+            await kuponTorlese(kartya.dataset.id);
+        }
+    }
+
+    async function kuponTorlese(id) {
+        onlineStatusz('Kupon inaktiválása és törlése...');
+
+        const { error: inaktivHiba } = await allapot.kliens
+            .from('coupons')
+            .update({ active: false, show_on_home: false })
+            .eq('id', id);
+
+        if (inaktivHiba) {
+            onlineStatusz('Nem sikerült inaktiválni a kupont, ezért nem töröltem.', true);
+            return;
+        }
+
+        const { error } = await allapot.kliens
+            .from('coupons')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            onlineStatusz('A kupont inaktiváltam, de törölni nem sikerült. Így már nem jelenik meg az oldalon.', true);
+            await kuponokBetoltese();
+            return;
+        }
+
+        onlineStatusz('Kupon törölve.');
+        await kuponokBetoltese();
+    }
+
+    function kuponMozgatasa(kartya, irany) {
+        const lista = kartya.parentElement;
+        const csere = irany === 'fel' ? kartya.previousElementSibling : kartya.nextElementSibling;
+        if (!lista || !csere || !csere.classList.contains('admin-kupon-kartya')) return;
+
+        if (irany === 'fel') lista.insertBefore(kartya, csere);
+        else lista.insertBefore(csere, kartya);
+
+        Array.from(lista.querySelectorAll('.admin-kupon-kartya')).forEach((elem, index) => {
+            const sorrend = mezo(elem, 'sort_order');
+            if (sorrend) sorrend.value = String((index + 1) * 10);
+        });
+        onlineStatusz('A kupon sorrend módosult. A véglegesítéshez nyomd meg a Mentés gombot.');
+    }
+
+    async function kuponokMentese() {
+        const kartyak = Array.from(document.querySelectorAll('#admin-kupon-lista .admin-kupon-kartya'));
+        if (!kartyak.length) {
+            onlineStatusz('Nincs menthet\u0151 kupon.');
+            return;
+        }
+
+        onlineStatusz('Kuponok ment\u00e9se...');
+
+        for (const kartya of kartyak) {
+            const kod = mezo(kartya, 'code').value.trim().toUpperCase();
+            if (!kod) {
+                onlineStatusz('Minden kuponn\u00e1l k\u00f6telez\u0151 a kuponk\u00f3d.', true);
+                mezo(kartya, 'code').focus();
+                return;
+            }
+
+            const payload = {
+                code: kod,
+                title: mezo(kartya, 'title').value.trim(),
+                description: mezo(kartya, 'description').value.trim(),
+                discount_type: mezo(kartya, 'discount_type').value,
+                discount_value: szamMezo(kartya, 'discount_value'),
+                discount_text: mezo(kartya, 'discount_text').value.trim(),
+                customer_scope: mezo(kartya, 'customer_scope')?.value === 'new_customer' ? 'new_customer' : 'all',
+                ...kuponScopePayload(mezo(kartya, 'service_scope')?.value),
+                valid_from: mezo(kartya, 'valid_from').value || null,
+                valid_until: mezo(kartya, 'valid_until').value || null,
+                active: mezo(kartya, 'active').checked,
+                show_on_home: mezo(kartya, 'show_on_home').checked,
+                sort_order: szamMezo(kartya, 'sort_order')
+            };
+
+            let { error } = await allapot.kliens
+                .from('coupons')
+                .update(payload)
+                .eq('id', kartya.dataset.id);
+
+            if (error && adatbazisOszlopHiany(error, ['service_category', 'customer_scope'])) {
+                const kompatibilisPayload = { ...payload };
+                if (adatbazisOszlopHiany(error, ['service_category'])) delete kompatibilisPayload.service_category;
+                if (adatbazisOszlopHiany(error, ['customer_scope'])) delete kompatibilisPayload.customer_scope;
+                ({ error } = await allapot.kliens
+                    .from('coupons')
+                    .update(kompatibilisPayload)
+                    .eq('id', kartya.dataset.id));
+                if (!error) {
+                    onlineStatusz('Kuponok mentve, de az \u00faj vend\u00e9g / kateg\u00f3ri\u00e1s kuponmez\u0151kh\u00f6z futtasd a friss supabase-coupons.sql-t.', true);
+                }
+            }
+
+            if (error) {
+                onlineStatusz('Nem siker\u00fclt menteni az egyik kupont.', true);
+                return;
+            }
+        }
+
+        onlineStatusz('Kuponok mentve.');
+        kuponokBetoltese();
     }
 
     async function idosavokBetoltese() {
@@ -1542,7 +2109,7 @@
             .from('blocked_times')
             .select('id,starts_at,ends_at,reason')
             .order('starts_at', { ascending: false })
-            .limit(80);
+            .limit(200);
 
         if (error) {
             onlineStatusz('Nem sikerült betölteni a foglalt időket.', true);
