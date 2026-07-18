@@ -6944,95 +6944,155 @@ h2 {
 }
 
 
-/* Kupon cim es elegans CTA csillanas 20260718-15 */
-.akcios-banner h2 {
-    font-size: clamp(1.34rem, 4.7vw, 2.08rem) !important;
-    line-height: 1.12 !important;
-    letter-spacing: 0.085em !important;
+
+/* Kupon CTA koruli hely osszehuzasa 20260718-17 */
+.akcios-banner-belso {
+    gap: 14px !important;
+    padding-bottom: 18px !important;
+}
+
+.akcios-banner-kupon {
+    margin-bottom: 0 !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.akcios-banner-gomb {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 42px !important;
+}
+
+@media (max-width: 860px) {
+    .akcios-banner-belso {
+        gap: 11px !important;
+        padding-top: 18px !important;
+        padding-bottom: 13px !important;
+    }
+
+    .akcios-banner-kupon {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+
+    .akcios-banner-gomb {
+        min-height: 40px !important;
+    }
 }
 
 @media (max-width: 520px) {
-    .akcios-banner h2 {
-        font-size: clamp(1.28rem, 6.1vw, 1.72rem) !important;
-        letter-spacing: 0.075em !important;
+    .akcios-banner-belso {
+        gap: 9px !important;
+        padding-top: 16px !important;
+        padding-bottom: 11px !important;
+    }
+
+    .akcios-banner-kupon {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        border-radius: 18px !important;
+    }
+
+    .akcios-banner-gomb {
+        min-height: 38px !important;
     }
 }
 
-.szekcio .gomb,
-.szolgaltatas-arlista-gomb,
-.galeria-atvezeto-szoveg .gomb,
-.arlista-oldal > .gomb,
-.galeria-oldal > .gomb,
-#kapcsolat > .gomb,
-.akcios-banner-gomb {
-    position: relative;
+/* Tiszta kuponkartya es gombstilus, animacio nelkul 20260718-26 */
+.akcios-banner,
+.akcios-banner * {
+    box-sizing: border-box;
+}
+
+.akcios-banner {
+    width: min(1120px, calc(100% - 32px));
+    max-width: calc(100vw - 32px);
+    overflow: visible;
+}
+
+.akcios-banner-slider {
+    width: 100%;
+    max-width: 100%;
     overflow: hidden;
-    isolation: isolate;
+    border-radius: 30px;
 }
 
-.szekcio .gomb::after,
-.szolgaltatas-arlista-gomb::after,
-.galeria-atvezeto-szoveg .gomb::after,
-.arlista-oldal > .gomb::after,
-.galeria-oldal > .gomb::after,
-#kapcsolat > .gomb::after,
-.akcios-banner-gomb::after {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    inset: -45% auto -45% -58%;
-    width: 42%;
-    transform: rotate(18deg);
-    background: linear-gradient(90deg, transparent, rgba(255, 250, 244, 0.52), transparent);
-    opacity: 0;
-    animation: lumiCtaShine 5.8s ease-in-out infinite;
-    pointer-events: none;
+.akcios-banner-track {
+    width: 100%;
+    max-width: 100%;
+    gap: 0;
 }
 
-@keyframes lumiCtaShine {
-    0%, 62% {
-        left: -58%;
-        opacity: 0;
-    }
-    70% {
-        opacity: 0.42;
-    }
-    86% {
-        left: 118%;
-        opacity: 0.18;
-    }
-    100% {
-        left: 118%;
-        opacity: 0;
-    }
+.akcios-banner-track .akcios-banner-belso {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    margin: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .szekcio .gomb::after,
-    .szolgaltatas-arlista-gomb::after,
-    .galeria-atvezeto-szoveg .gomb::after,
-    .arlista-oldal > .gomb::after,
-    .galeria-oldal > .gomb::after,
-    #kapcsolat > .gomb::after,
-    .akcios-banner-gomb::after {
-        animation: none;
-    }
+.akcios-banner-belso {
+    overflow: hidden;
+    gap: 16px;
+    padding-bottom: 20px;
 }
 
-
-/* Lathatobb CTA fenycsik es kisebb kupon cim 20260718-16 */
-.akcios-banner h2 {
+.akcios-banner .akcios-banner-cim {
+    max-width: 100%;
     font-size: clamp(1.08rem, 3.9vw, 1.68rem) !important;
     line-height: 1.14 !important;
     letter-spacing: 0.065em !important;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
 }
 
-@media (max-width: 520px) {
-    .akcios-banner h2 {
-        font-size: clamp(1.02rem, 5.05vw, 1.42rem) !important;
-        line-height: 1.16 !important;
-        letter-spacing: 0.055em !important;
-    }
+.akcios-banner-cim span {
+    max-width: 100%;
+}
+
+.akcios-banner p {
+    max-width: 100%;
+}
+
+.akcios-banner-kupon {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.akcios-banner-gomb {
+    width: 100%;
+    max-width: 100%;
+    min-height: 42px;
+    margin: 0;
+    white-space: normal;
+    animation: none !important;
+    background-image: none !important;
+}
+
+.akcios-banner-gomb::after,
+.akcios-banner-masolas::after,
+.szekcio .gomb::after,
+.szolgaltatas-arlista-gomb::after,
+.galeria-atvezeto-szoveg .gomb::after,
+.arlista-oldal > .gomb::after,
+.galeria-oldal > .gomb::after,
+#kapcsolat > .gomb::after,
+.admin-gomb::after,
+.admin-kis-gomb::after,
+.admin-hozzaadas::after,
+.admin-oldalmeret-gomb::after,
+.admin-lebego-mentes::after,
+.urlap-kuldes-gomb::after,
+.popup-gomb::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
 }
 
 .szekcio .gomb,
@@ -7041,80 +7101,55 @@ h2 {
 .arlista-oldal > .gomb,
 .galeria-oldal > .gomb,
 #kapcsolat > .gomb,
-.akcios-banner-gomb {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    animation: lumiCtaSoftGlow 4.8s ease-in-out infinite;
+.akcios-banner-masolas,
+.admin-gomb,
+.admin-kis-gomb,
+.admin-hozzaadas,
+.admin-oldalmeret-gomb,
+.admin-lebego-mentes,
+.urlap-kuldes-gomb,
+.popup-gomb {
+    animation: none !important;
+    background-image: none !important;
 }
 
-.szekcio .gomb::after,
-.szolgaltatas-arlista-gomb::after,
-.galeria-atvezeto-szoveg .gomb::after,
-.arlista-oldal > .gomb::after,
-.galeria-oldal > .gomb::after,
-#kapcsolat > .gomb::after,
-.akcios-banner-gomb::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: -45%;
-    bottom: -45%;
-    left: -55%;
-    width: 38%;
-    transform: rotate(18deg);
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 250, 244, 0.08) 20%, rgba(255, 255, 255, 0.78) 50%, rgba(255, 250, 244, 0.1) 78%, transparent 100%);
-    opacity: 0;
-    filter: blur(0.2px);
-    animation: lumiCtaShineVisible 3.45s ease-in-out infinite;
-    pointer-events: none;
-}
+@media (max-width: 520px) {
+    .akcios-banner {
+        width: calc(100% - 28px);
+        max-width: calc(100vw - 28px);
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-@keyframes lumiCtaShineVisible {
-    0%, 35% {
-        left: -55%;
-        opacity: 0;
+    .akcios-banner-slider {
+        border-radius: 28px;
     }
-    46% {
-        opacity: 0.56;
-    }
-    64% {
-        left: 116%;
-        opacity: 0.18;
-    }
-    100% {
-        left: 116%;
-        opacity: 0;
-    }
-}
 
-@keyframes lumiCtaSoftGlow {
-    0%, 100% {
-        box-shadow: 0 10px 22px rgba(185, 133, 143, 0.14), inset 0 0 0 1px rgba(255, 250, 244, 0.08);
+    .akcios-banner-belso {
+        gap: 13px !important;
+        padding: 18px 16px 20px !important;
+        border-radius: 28px;
     }
-    48% {
-        box-shadow: 0 12px 28px rgba(185, 133, 143, 0.2), inset 0 0 0 1px rgba(255, 250, 244, 0.32);
-    }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .szekcio .gomb,
-    .szolgaltatas-arlista-gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    .arlista-oldal > .gomb,
-    .galeria-oldal > .gomb,
-    #kapcsolat > .gomb,
+    .akcios-banner .akcios-banner-cim {
+        font-size: clamp(0.98rem, 4.55vw, 1.28rem) !important;
+        line-height: 1.16 !important;
+        letter-spacing: 0.045em !important;
+    }
+
+    .akcios-banner p {
+        font-size: 0.96rem;
+        line-height: 1.45;
+    }
+
+    .akcios-banner-kupon {
+        padding: 10px 50px 10px 14px !important;
+        border-radius: 18px !important;
+    }
+
     .akcios-banner-gomb {
-        animation: none;
-    }
-
-    .szekcio .gomb::after,
-    .szolgaltatas-arlista-gomb::after,
-    .galeria-atvezeto-szoveg .gomb::after,
-    .arlista-oldal > .gomb::after,
-    .galeria-oldal > .gomb::after,
-    #kapcsolat > .gomb::after,
-    .akcios-banner-gomb::after {
-        animation: none;
+        min-height: 40px !important;
+        padding-inline: 18px !important;
+        font-size: 0.78rem !important;
     }
 }

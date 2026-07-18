@@ -496,7 +496,7 @@ function akciosBannerCimReszek(cim) {
     if (manualis) return { fo: manualis[1].trim(), alcim: manualis[2].trim() };
     const kotjeles = tiszta.match(/^(.+?)\s+-\s+(.+)$/);
     if (kotjeles) return { fo: kotjeles[1].trim(), alcim: kotjeles[2].trim() };
-    const kedvezmenyMinta = tiszta.match(/^(.+?kedvezm[e\u00e9]ny)\s+(.+)$/i);
+    const kedvezmenyMinta = tiszta.match(/^(.+?kedvezm[e\u00e9]ny[.!?]?)\s+(.+)$/i);
     if (kedvezmenyMinta) return { fo: kedvezmenyMinta[1].trim(), alcim: kedvezmenyMinta[2].trim() };
     return { fo: tiszta, alcim: '' };
 }
