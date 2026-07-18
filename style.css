@@ -7549,3 +7549,48 @@ h2 {
         letter-spacing: -0.01em !important;
     }
 }
+
+/* Hero gombok nelkul es kevesbe zoomolt kep 20260718-33 */
+#hero.hero-preview-refresh .hero-actions {
+    display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(355px, 47svh, 410px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 36% !important;
+        transform: scale(1.08) !important;
+        transform-origin: 49% 36% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 58% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        bottom: 24px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content p {
+        margin-top: 8px !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(340px, 45svh, 388px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 38% !important;
+        transform: scale(1.08) !important;
+        transform-origin: 49% 38% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        bottom: 22px !important;
+    }
+}
