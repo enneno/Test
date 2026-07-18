@@ -7413,3 +7413,98 @@ h2 {
         font-size: 15px !important;
     }
 }
+
+/* Hero kep fokusz es kisebb hullam-szoveg mobilon 20260718-31 */
+@media screen and (max-width: 768px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(380px, 50svh, 430px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 42% !important;
+        transform: scale(1.22) !important;
+        transform-origin: 49% 42% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 61% !important;
+        bottom: -2px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        left: 24px !important;
+        right: 22px !important;
+        bottom: 17px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kicker {
+        margin-bottom: 6px !important;
+        font-size: 9px !important;
+        letter-spacing: 2.1px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content h1 {
+        max-width: 245px !important;
+        font-size: clamp(34px, 9.2vw, 46px) !important;
+        line-height: 0.92 !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content p {
+        max-width: 270px !important;
+        margin-top: 9px !important;
+        font-size: 13.6px !important;
+        line-height: 1.22 !important;
+    }
+
+    #hero.hero-preview-refresh .hero-actions {
+        margin-top: 11px !important;
+        gap: 9px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-actions .gomb {
+        min-height: 34px !important;
+        padding-inline: 10px !important;
+        font-size: 8.8px !important;
+        letter-spacing: 0.9px !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(360px, 48svh, 398px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 44% !important;
+        transform: scale(1.24) !important;
+        transform-origin: 49% 44% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 61% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        left: 22px !important;
+        right: 20px !important;
+        bottom: 16px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content h1 {
+        max-width: 230px !important;
+        font-size: clamp(32px, 8.9vw, 42px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content p {
+        max-width: 255px !important;
+        font-size: 13px !important;
+    }
+}
+
+#bemutatkozas .bemutatkozas-szoveg p {
+    text-align: justify !important;
+    text-align-last: left !important;
+    hyphens: none !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
