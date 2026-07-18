@@ -7594,3 +7594,34 @@ h2 {
         bottom: 22px !important;
     }
 }
+
+/* Hero mobil kep zoom es vegleges hullam 20260719 */
+@media screen and (max-width: 768px) {
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 34% !important;
+        transform: scale(1.01) !important;
+        transform-origin: 49% 34% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 57% !important;
+        bottom: -1px !important;
+        background-image:
+            url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20760%20500%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%20500V86C48%2070%2098%2077%20139%20104C181%20132%20203%20174%20242%20199C278%20222%20314%20229%20348%20254C392%20286%20422%20338%20470%20366C520%20396%20568%20388%20608%20348C642%20315%20690%20316%20733%20333C744%20338%20753%20336%20760%20326V500Z%27%20fill%3D%27%23fffaf4%27%20fill-opacity%3D%270.95%27%2F%3E%3Cpath%20d%3D%27M0%20500V146C72%20116%20137%20126%20196%20158C248%20186%20292%20217%20342%20235C400%20255%20438%20322%20498%20372C552%20417%20616%20408%20660%20374C692%20350%20730%20354%20760%20342V500Z%27%20fill%3D%27%23f1ded9%27%20fill-opacity%3D%270.24%27%2F%3E%3C%2Fsvg%3E"),
+            url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20820%20430%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%20430V134C86%20108%20156%20119%20224%20151C288%20181%20344%20201%20404%20218C486%20242%20542%20314%20626%20356C686%20386%20748%20372%20820%20332V430Z%27%20fill%3D%27%23d9aaa7%27%20fill-opacity%3D%270.10%27%2F%3E%3C%2Fsvg%3E") !important;
+        background-size: 102% 100%, 102% 72% !important;
+        background-position: center bottom, center bottom !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 36% !important;
+        transform: scale(1.01) !important;
+        transform-origin: 49% 36% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 56% !important;
+    }
+}
