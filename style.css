@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --akcentus: #b9858f;
     --akcentus-vilagos: #d9aaa7;
     --tinta: #2b2521;
@@ -38,6 +38,7 @@ textarea,
     background: var(--krem);
     pointer-events: none;
 }
+
 
 /* ===================================
             1. FEJLÉC ÉS MENÜ (Header, Hamburger)
@@ -6801,5 +6802,219 @@ body {
 
     .admin-kupon-kartya .admin-kupon-leiras {
         grid-column: 1 / -1 !important;
+    }
+}
+
+
+/* Public CTA gombok egysegesitese 20260718-12 */
+.szekcio .gomb,
+.szolgaltatas-arlista-gomb,
+.galeria-atvezeto-szoveg .gomb,
+.arlista-oldal > .gomb,
+.galeria-oldal > .gomb,
+#kapcsolat > .gomb {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: min(calc(100% - 64px), 320px) !important;
+    max-width: 320px !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    margin: 18px auto !important;
+    padding: 0 18px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(185, 133, 143, 0.26) !important;
+    background: var(--akcentus) !important;
+    color: #fffaf4 !important;
+    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.14) !important;
+    font-size: 11px !important;
+    line-height: 1.1;
+    letter-spacing: 1.35px !important;
+    text-align: center;
+    white-space: normal;
+}
+
+.szekcio .gomb:hover,
+.szolgaltatas-arlista-gomb:hover,
+.galeria-atvezeto-szoveg .gomb:hover,
+.arlista-oldal > .gomb:hover,
+.galeria-oldal > .gomb:hover,
+#kapcsolat > .gomb:hover {
+    background: var(--akcentus-vilagos) !important;
+    color: #fffaf4 !important;
+}
+
+@media (min-width: 769px) {
+    .szekcio .gomb,
+    .szolgaltatas-arlista-gomb,
+    .galeria-atvezeto-szoveg .gomb,
+    .arlista-oldal > .gomb,
+    .galeria-oldal > .gomb,
+    #kapcsolat > .gomb {
+        width: fit-content !important;
+        min-width: 230px !important;
+        max-width: 320px !important;
+        min-height: 42px !important;
+        padding-inline: 26px !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .szekcio .gomb,
+    .szolgaltatas-arlista-gomb,
+    .galeria-atvezeto-szoveg .gomb,
+    .arlista-oldal > .gomb,
+    .galeria-oldal > .gomb,
+    #kapcsolat > .gomb {
+        width: min(calc(100% - 88px), 300px) !important;
+        max-width: 300px !important;
+        min-height: 40px !important;
+        margin-block: 16px !important;
+        padding-inline: 16px !important;
+        font-size: 10.5px !important;
+        letter-spacing: 1.25px !important;
+    }
+}
+
+/* Kupon admin datum mezo kompaktabb 20260718-12 */
+.admin-kupon-kartya .admin-kupon-datum {
+    grid-column: span 2 !important;
+}
+
+.admin-kupon-kartya .admin-kupon-datum input[type="date"] {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding-inline: 5px !important;
+    font-size: 11.5px !important;
+}
+
+@media (max-width: 520px) {
+    .admin-kupon-kartya .admin-kupon-datum {
+        grid-column: span 3 !important;
+    }
+
+    .admin-kupon-kartya .admin-kupon-datum input[type="date"] {
+        height: 29px !important;
+        min-height: 29px !important;
+        font-size: 11px !important;
+    }
+}
+
+
+/* Outfit Light szekciocimek 20260718-14 */
+h2,
+.akcios-banner h2,
+.arlista-csoport h3,
+.jogi-tartalom h2 {
+    font-family: 'Outfit', 'Manrope', sans-serif !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: clamp(1.78rem, 5.4vw, 2.32rem);
+    line-height: 1.12;
+}
+
+.akcios-banner h2 {
+    font-size: clamp(1.75rem, 5.2vw, 2.8rem);
+    line-height: 1.08;
+    letter-spacing: 0.13em;
+}
+
+.arlista-csoport h3,
+.jogi-tartalom h2 {
+    font-size: clamp(1.42rem, 4.6vw, 2.15rem);
+    line-height: 1.12;
+    letter-spacing: 0.14em;
+}
+
+@media (max-width: 520px) {
+    h2,
+    .akcios-banner h2,
+    .arlista-csoport h3,
+    .jogi-tartalom h2 {
+        letter-spacing: 0.13em;
+    }
+
+    h2 {
+        font-size: clamp(1.62rem, 7vw, 2.05rem);
+    }
+}
+
+
+/* Kupon cim es elegans CTA csillanas 20260718-15 */
+.akcios-banner h2 {
+    font-size: clamp(1.34rem, 4.7vw, 2.08rem) !important;
+    line-height: 1.12 !important;
+    letter-spacing: 0.085em !important;
+}
+
+@media (max-width: 520px) {
+    .akcios-banner h2 {
+        font-size: clamp(1.28rem, 6.1vw, 1.72rem) !important;
+        letter-spacing: 0.075em !important;
+    }
+}
+
+.szekcio .gomb,
+.szolgaltatas-arlista-gomb,
+.galeria-atvezeto-szoveg .gomb,
+.arlista-oldal > .gomb,
+.galeria-oldal > .gomb,
+#kapcsolat > .gomb,
+.akcios-banner-gomb {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.szekcio .gomb::after,
+.szolgaltatas-arlista-gomb::after,
+.galeria-atvezeto-szoveg .gomb::after,
+.arlista-oldal > .gomb::after,
+.galeria-oldal > .gomb::after,
+#kapcsolat > .gomb::after,
+.akcios-banner-gomb::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    inset: -45% auto -45% -58%;
+    width: 42%;
+    transform: rotate(18deg);
+    background: linear-gradient(90deg, transparent, rgba(255, 250, 244, 0.52), transparent);
+    opacity: 0;
+    animation: lumiCtaShine 5.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes lumiCtaShine {
+    0%, 62% {
+        left: -58%;
+        opacity: 0;
+    }
+    70% {
+        opacity: 0.42;
+    }
+    86% {
+        left: 118%;
+        opacity: 0.18;
+    }
+    100% {
+        left: 118%;
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .szekcio .gomb::after,
+    .szolgaltatas-arlista-gomb::after,
+    .galeria-atvezeto-szoveg .gomb::after,
+    .arlista-oldal > .gomb::after,
+    .galeria-oldal > .gomb::after,
+    #kapcsolat > .gomb::after,
+    .akcios-banner-gomb::after {
+        animation: none;
     }
 }
