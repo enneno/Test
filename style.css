@@ -7018,3 +7018,103 @@ h2 {
         animation: none;
     }
 }
+
+
+/* Lathatobb CTA fenycsik es kisebb kupon cim 20260718-16 */
+.akcios-banner h2 {
+    font-size: clamp(1.08rem, 3.9vw, 1.68rem) !important;
+    line-height: 1.14 !important;
+    letter-spacing: 0.065em !important;
+}
+
+@media (max-width: 520px) {
+    .akcios-banner h2 {
+        font-size: clamp(1.02rem, 5.05vw, 1.42rem) !important;
+        line-height: 1.16 !important;
+        letter-spacing: 0.055em !important;
+    }
+}
+
+.szekcio .gomb,
+.szolgaltatas-arlista-gomb,
+.galeria-atvezeto-szoveg .gomb,
+.arlista-oldal > .gomb,
+.galeria-oldal > .gomb,
+#kapcsolat > .gomb,
+.akcios-banner-gomb {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    animation: lumiCtaSoftGlow 4.8s ease-in-out infinite;
+}
+
+.szekcio .gomb::after,
+.szolgaltatas-arlista-gomb::after,
+.galeria-atvezeto-szoveg .gomb::after,
+.arlista-oldal > .gomb::after,
+.galeria-oldal > .gomb::after,
+#kapcsolat > .gomb::after,
+.akcios-banner-gomb::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -45%;
+    bottom: -45%;
+    left: -55%;
+    width: 38%;
+    transform: rotate(18deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 250, 244, 0.08) 20%, rgba(255, 255, 255, 0.78) 50%, rgba(255, 250, 244, 0.1) 78%, transparent 100%);
+    opacity: 0;
+    filter: blur(0.2px);
+    animation: lumiCtaShineVisible 3.45s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes lumiCtaShineVisible {
+    0%, 35% {
+        left: -55%;
+        opacity: 0;
+    }
+    46% {
+        opacity: 0.56;
+    }
+    64% {
+        left: 116%;
+        opacity: 0.18;
+    }
+    100% {
+        left: 116%;
+        opacity: 0;
+    }
+}
+
+@keyframes lumiCtaSoftGlow {
+    0%, 100% {
+        box-shadow: 0 10px 22px rgba(185, 133, 143, 0.14), inset 0 0 0 1px rgba(255, 250, 244, 0.08);
+    }
+    48% {
+        box-shadow: 0 12px 28px rgba(185, 133, 143, 0.2), inset 0 0 0 1px rgba(255, 250, 244, 0.32);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .szekcio .gomb,
+    .szolgaltatas-arlista-gomb,
+    .galeria-atvezeto-szoveg .gomb,
+    .arlista-oldal > .gomb,
+    .galeria-oldal > .gomb,
+    #kapcsolat > .gomb,
+    .akcios-banner-gomb {
+        animation: none;
+    }
+
+    .szekcio .gomb::after,
+    .szolgaltatas-arlista-gomb::after,
+    .galeria-atvezeto-szoveg .gomb::after,
+    .arlista-oldal > .gomb::after,
+    .galeria-oldal > .gomb::after,
+    #kapcsolat > .gomb::after,
+    .akcios-banner-gomb::after {
+        animation: none;
+    }
+}
