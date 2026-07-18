@@ -7211,9 +7211,9 @@ h2 {
     inset: 0;
     z-index: 1;
     background:
-        radial-gradient(circle at 20% 18%, rgba(255, 250, 244, 0.08), transparent 34%),
-        linear-gradient(90deg, rgba(26, 22, 20, 0.82) 0%, rgba(26, 22, 20, 0.56) 42%, rgba(26, 22, 20, 0.22) 100%),
-        linear-gradient(0deg, rgba(26, 22, 20, 0.56), rgba(26, 22, 20, 0.08));
+        radial-gradient(circle at 20% 18%, rgba(255, 250, 244, 0.10), transparent 34%),
+        linear-gradient(90deg, rgba(26, 22, 20, 0.58) 0%, rgba(26, 22, 20, 0.36) 42%, rgba(26, 22, 20, 0.10) 100%),
+        linear-gradient(0deg, rgba(26, 22, 20, 0.34), rgba(26, 22, 20, 0.03));
     pointer-events: none;
 }
 
@@ -7237,7 +7237,7 @@ h2 {
     min-height: 0;
     object-fit: cover;
     object-position: 56% 34%;
-    filter: brightness(0.58) saturate(0.96) contrast(1.03);
+    filter: brightness(0.78) saturate(0.98) contrast(1.02);
     transform: scale(1.035);
 }
 
@@ -7252,13 +7252,13 @@ h2 {
     margin: 0 0 clamp(16px, 2vw, 24px);
     color: #fffaf4;
     text-align: left;
-    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.42);
 }
 
 #bemutatkozas .bemutatkozas-szoveg p {
     max-width: 48ch;
     margin: 0 0 14px;
-    color: rgba(255, 250, 244, 0.92);
+    color: rgba(255, 250, 244, 0.94);
     font-size: clamp(16px, 1.6vw, 19px);
     line-height: 1.62;
     text-align: left !important;
@@ -7266,7 +7266,7 @@ h2 {
     hyphens: none !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.34);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.46);
 }
 
 #bemutatkozas .bemutatkozas-szoveg p:last-child {
@@ -7289,13 +7289,13 @@ h2 {
 
     #bemutatkozas .bemutatkozas-belso::before {
         background:
-            linear-gradient(180deg, rgba(26, 22, 20, 0.20) 0%, rgba(26, 22, 20, 0.48) 42%, rgba(26, 22, 20, 0.86) 100%),
-            linear-gradient(90deg, rgba(26, 22, 20, 0.38), rgba(26, 22, 20, 0.10));
+            linear-gradient(180deg, rgba(26, 22, 20, 0.08) 0%, rgba(26, 22, 20, 0.28) 42%, rgba(26, 22, 20, 0.68) 100%),
+            linear-gradient(90deg, rgba(26, 22, 20, 0.22), rgba(26, 22, 20, 0.04));
     }
 
     #bemutatkozas .bemutatkozas-kep img {
         object-position: 54% 22%;
-        filter: brightness(0.56) saturate(0.96) contrast(1.03);
+        filter: brightness(0.76) saturate(0.98) contrast(1.02);
     }
 
     #bemutatkozas .bemutatkozas-szoveg {
@@ -7322,5 +7322,94 @@ h2 {
     #bemutatkozas .bemutatkozas-szoveg p {
         font-size: 15px;
         line-height: 1.54;
+    }
+}
+
+/* Kompaktabb mobil hero 20260718-30 */
+@media screen and (max-width: 768px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(440px, 58svh, 500px) !important;
+        margin-top: 0;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 18% !important;
+        transform: scale(1.18) !important;
+        transform-origin: 49% 12% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 64% !important;
+        bottom: -3px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        left: 26px !important;
+        right: 24px !important;
+        bottom: 22px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kicker {
+        margin-bottom: 8px !important;
+        font-size: 10px !important;
+        letter-spacing: 2.4px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content h1 {
+        max-width: 290px !important;
+        font-size: clamp(42px, 11.2vw, 58px) !important;
+        line-height: 0.9 !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content p {
+        max-width: 300px !important;
+        margin-top: 12px !important;
+        font-size: 15.5px !important;
+        line-height: 1.24 !important;
+    }
+
+    #hero.hero-preview-refresh .hero-actions {
+        margin-top: 14px !important;
+        gap: 10px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-actions .gomb {
+        min-height: 38px !important;
+        padding-inline: 12px !important;
+        font-size: 9.5px !important;
+        letter-spacing: 1px !important;
+    }
+
+    #akcios-banner.akcios-banner {
+        margin-top: 18px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #hero.hero-preview-refresh {
+        min-height: clamp(420px, 56svh, 470px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-kep {
+        object-position: 49% 20% !important;
+        transform: scale(1.16) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-wave {
+        height: 63% !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content {
+        left: 24px !important;
+        right: 22px !important;
+        bottom: 20px !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content h1 {
+        font-size: clamp(40px, 10.8vw, 54px) !important;
+    }
+
+    #hero.hero-preview-refresh .hero-content p {
+        font-size: 15px !important;
     }
 }
