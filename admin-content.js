@@ -1,5 +1,7 @@
 (function () {
     const MAX_FILE_SIZE = 12 * 1024 * 1024;
+    const IMAGE_UPLOAD_MAX_SIDE = 1800;
+    const IMAGE_UPLOAD_WEBP_QUALITY = 0.85;
     const BUCKET = window.LUMI_MEDIA_BUCKET || 'site-media';
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
@@ -462,26 +464,29 @@
     async function uploadImage(path, file, input) {
         if (!state.client || !state.session) return;
         if (!file.type.startsWith('image/')) {
-            status('Csak képfájl tölthető fel.', true);
+            status('Csak k?pf?jl t?lthet? fel.', true);
             return;
         }
         if (file.size > MAX_FILE_SIZE) {
-            status('A kép legfeljebb 12 MB lehet.', true);
+            status('A k?p legfeljebb 12 MB lehet.', true);
             return;
         }
 
         input.disabled = true;
-        status(`Kép feltöltése: ${file.name}...`);
-        const extension = safeExtension(file);
+        status(`K?p optimaliz?l?sa: ${file.name}...`);
+        const optimalizalt = await optimizeImageFile(file);
+        const uploadFile = optimalizalt.file;
+        const extension = optimalizalt.extension;
         const objectPath = `uploads/${new Date().toISOString().slice(0, 10)}/${Date.now()}-${randomId()}.${extension}`;
+        status(`K?p felt?lt?se: ${file.name}...`);
         const { error } = await state.client.storage.from(BUCKET)
-            .upload(objectPath, file, { cacheControl: '31536000', contentType: file.type, upsert: false });
+            .upload(objectPath, uploadFile, { cacheControl: '31536000', contentType: uploadFile.type || `image/${extension}`, upsert: false });
         input.disabled = false;
         input.value = '';
 
         if (error) {
-            console.error('Képfeltöltési hiba:', error);
-            status('A kép feltöltése nem sikerült. Ellenőrizd, hogy lefuttattad-e a Storage SQL részt.', true);
+            console.error('K?pfelt?lt?si hiba:', error);
+            status('A k?p felt?lt?se nem siker?lt. Ellen?rizd, hogy lefuttattad-e a Storage SQL r?szt.', true);
             return;
         }
 
@@ -490,7 +495,9 @@
         if (/^galeria\.elemek\.\d+\.kep$/.test(path)) {
             setPath(state.content, path.replace(/\.kep$/, '.eloKep'), data.publicUrl);
         }
-        status('A kép feltöltve. A véglegesítéshez nyomd meg a Tartalom mentése gombot.');
+        status(optimalizalt.optimized
+            ? 'A k?p WebP form?tumban, kisebb m?retben felt?ltve. A v?gleges?t?shez nyomd meg a Tartalom ment?se gombot.'
+            : 'A k?p felt?ltve. A v?gleges?t?shez nyomd meg a Tartalom ment?se gombot.');
     }
 
     function setImageValue(path, value) {
@@ -608,6 +615,70 @@
         return result;
     }
     function clone(value) { return JSON.parse(JSON.stringify(value)); }
+    async function optimizeImageFile(file) {
+        const original = { file, extension: safeExtension(file), optimized: false };
+        const type = String(file.type || '').toLowerCase();
+        const name = String(file.name || '').toLowerCase();
+
+        if (type === 'image/gif' || name.endsWith('.gif')) return original;
+
+        try {
+            const image = await loadImageFile(file);
+            const width = image.width || image.naturalWidth;
+            const height = image.height || image.naturalHeight;
+            if (!width || !height) return original;
+
+            const scale = Math.min(1, IMAGE_UPLOAD_MAX_SIDE / Math.max(width, height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(width * scale));
+            canvas.height = Math.max(1, Math.round(height * scale));
+            const context = canvas.getContext('2d', { alpha: true });
+            if (!context) return original;
+
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            if (typeof image.close === 'function') image.close();
+
+            const blob = await canvasToBlob(canvas, 'image/webp', IMAGE_UPLOAD_WEBP_QUALITY);
+            if (!blob) return original;
+            if (scale >= 1 && blob.size > file.size * 1.05) return original;
+
+            const baseName = String(file.name || 'kep').replace(/\.[^.]+$/, '') || 'kep';
+            const webpFile = new File([blob], `${baseName}.webp`, { type: 'image/webp', lastModified: Date.now() });
+            return { file: webpFile, extension: 'webp', optimized: true };
+        } catch (error) {
+            console.warn('K?p optimaliz?l?sa nem siker?lt, eredeti f?jl ker?l felt?lt?sre:', error);
+            return original;
+        }
+    }
+
+    async function loadImageFile(file) {
+        if ('createImageBitmap' in window) {
+            try {
+                return await createImageBitmap(file, { imageOrientation: 'from-image' });
+            } catch (error) {
+                // Safari/iOS esetekben az img fallback megb?zhat?bb lehet.
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                resolve(img);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('A k?p nem olvashat?.'));
+            };
+            img.src = url;
+        });
+    }
+
+    function canvasToBlob(canvas, type, quality) {
+        return new Promise(resolve => canvas.toBlob(resolve, type, quality));
+    }
+
     function safeExtension(file) {
         return { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif', 'image/gif': 'gif' }[file.type] || 'jpg';
     }

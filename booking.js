@@ -7,6 +7,8 @@
     const INSPIRATION_FOLDER = 'booking-inspirations';
     const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
     const MAX_IMAGE_COUNT = 5;
+    const IMAGE_UPLOAD_MAX_SIDE = 1600;
+    const IMAGE_UPLOAD_WEBP_QUALITY = 0.84;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
 
     if (!document.body || document.body.dataset.bookingMode !== 'supabase') {
@@ -546,20 +548,25 @@
         if (hiba) return { ok: false, uzenet: hiba };
 
         try {
-            const ext = kepKiterjesztes(file);
+            const optimalizalt = await kepOptimalizalasa(file, {
+                maxSide: IMAGE_UPLOAD_MAX_SIDE,
+                quality: IMAGE_UPLOAD_WEBP_QUALITY
+            });
+            const feltoltendo = optimalizalt.file;
+            const ext = optimalizalt.extension;
             const azonosito = randomAzonosito();
             const path = `${INSPIRATION_FOLDER}/${maiDatum()}/${Date.now()}-${azonosito}.${ext}`;
             const { error } = await allapot.kliens.storage
                 .from(MEDIA_BUCKET)
-                .upload(path, file, {
+                .upload(path, feltoltendo, {
                     cacheControl: '31536000',
                     upsert: false,
-                    contentType: file.type || `image/${ext}`
+                    contentType: feltoltendo.type || `image/${ext}`
                 });
 
             if (error) {
-                console.error('Inspirációs kép feltöltési hiba:', error);
-                return { ok: false, uzenet: 'A kép feltöltése nem sikerült. Lehet, hogy még nem futott le a foglalási kép SQL.' };
+                console.error('Inspir?ci?s k?p felt?lt?si hiba:', error);
+                return { ok: false, uzenet: 'A k?p felt?lt?se nem siker?lt. Lehet, hogy m?g nem futott le a foglal?si k?p SQL.' };
             }
 
             const { data } = allapot.kliens.storage.from(MEDIA_BUCKET).getPublicUrl(path);
@@ -569,13 +576,17 @@
                     url: data?.publicUrl || '',
                     path,
                     name: file.name,
-                    type: file.type || '',
-                    size: file.size
+                    type: feltoltendo.type || '',
+                    size: feltoltendo.size,
+                    originalName: file.name,
+                    originalType: file.type || '',
+                    originalSize: file.size,
+                    optimized: optimalizalt.optimized
                 }
             };
         } catch (error) {
-            console.error('Inspirációs kép feltöltési kivétel:', error);
-            return { ok: false, uzenet: 'A kép feltöltése nem sikerült. Kérlek próbáld újra.' };
+            console.error('Inspir?ci?s k?p felt?lt?si kiv?tel:', error);
+            return { ok: false, uzenet: 'A k?p felt?lt?se nem siker?lt. K?rlek pr?b?ld ?jra.' };
         }
     }
 
@@ -1341,6 +1352,75 @@
         }
         while (szamok.startsWith('0')) szamok = szamok.substring(1);
         return szamok.substring(0, 9);
+    }
+
+    async function kepOptimalizalasa(file, options = {}) {
+        const eredetiExt = kepKiterjesztes(file);
+        const eredeti = { file, extension: eredetiExt, optimized: false };
+        const type = String(file.type || '').toLowerCase();
+        const name = String(file.name || '').toLowerCase();
+
+        if (type === 'image/gif' || name.endsWith('.gif')) return eredeti;
+
+        try {
+            const maxSide = Number(options.maxSide) || IMAGE_UPLOAD_MAX_SIDE;
+            const quality = Number(options.quality) || IMAGE_UPLOAD_WEBP_QUALITY;
+            const kep = await kepBetoltese(file);
+            const width = kep.width || kep.naturalWidth;
+            const height = kep.height || kep.naturalHeight;
+
+            if (!width || !height) return eredeti;
+
+            const scale = Math.min(1, maxSide / Math.max(width, height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(width * scale));
+            canvas.height = Math.max(1, Math.round(height * scale));
+            const context = canvas.getContext('2d', { alpha: true });
+            if (!context) return eredeti;
+
+            context.drawImage(kep, 0, 0, canvas.width, canvas.height);
+            if (typeof kep.close === 'function') kep.close();
+
+            const blob = await canvasBlob(canvas, 'image/webp', quality);
+            if (!blob) return eredeti;
+
+            if (scale >= 1 && blob.size > file.size * 1.05) return eredeti;
+
+            const nevAlap = String(file.name || 'kep').replace(/\.[^.]+$/, '') || 'kep';
+            const webpFile = new File([blob], `${nevAlap}.webp`, { type: 'image/webp', lastModified: Date.now() });
+            return { file: webpFile, extension: 'webp', optimized: true };
+        } catch (error) {
+            console.warn('K?p optimaliz?l?sa nem siker?lt, eredeti f?jl ker?l felt?lt?sre:', error);
+            return eredeti;
+        }
+    }
+
+    async function kepBetoltese(file) {
+        if ('createImageBitmap' in window) {
+            try {
+                return await createImageBitmap(file, { imageOrientation: 'from-image' });
+            } catch (error) {
+                // Egyes iOS/HEIC esetekben az img fallback megb?zhat?bb.
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                resolve(img);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('A k?p nem olvashat?.'));
+            };
+            img.src = url;
+        });
+    }
+
+    function canvasBlob(canvas, type, quality) {
+        return new Promise(resolve => canvas.toBlob(resolve, type, quality));
     }
 
     function kepKiterjesztes(file) {
