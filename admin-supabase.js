@@ -583,7 +583,8 @@
         onlineStatusz('Foglalások betöltése...');
 
         const alapSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,services(name,price_text)';
-        const inspiracioSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,inspiration_image_url,inspiration_image_path,inspiration_image_name,inspiration_image_type,inspiration_image_size,inspiration_images,nail_style,nail_style_note,services(name,price_text)';
+        const kuponSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,coupon_code,coupon_title,services(name,price_text)';
+        const inspiracioSelect = 'id,customer_name,customer_phone,customer_email,note,starts_at,ends_at,status,created_at,coupon_code,coupon_title,inspiration_image_url,inspiration_image_path,inspiration_image_name,inspiration_image_type,inspiration_image_size,inspiration_images,nail_style,nail_style_note,services(name,price_text)';
         let { data: foglalasok, error: foglalasHiba } = await allapot.kliens
             .from('bookings')
             .select(inspiracioSelect)
@@ -591,6 +592,14 @@
             .limit(120);
 
         if (foglalasHiba && hianyzoInspiracioOszlop(foglalasHiba)) {
+            ({ data: foglalasok, error: foglalasHiba } = await allapot.kliens
+                .from('bookings')
+                .select(kuponSelect)
+                .order('starts_at', { ascending: false })
+                .limit(120));
+        }
+
+        if (foglalasHiba && hianyzoKuponOszlop(foglalasHiba)) {
             ({ data: foglalasok, error: foglalasHiba } = await allapot.kliens
                 .from('bookings')
                 .select(alapSelect)
@@ -625,6 +634,11 @@
     function hianyzoInspiracioOszlop(error) {
         const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
         return uzenet.includes('inspiration_image') || uzenet.includes('nail_style') || uzenet.includes('column') && uzenet.includes('schema cache');
+    }
+
+    function hianyzoKuponOszlop(error) {
+        const uzenet = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
+        return uzenet.includes('coupon_code') || uzenet.includes('coupon_title') || uzenet.includes('column') && uzenet.includes('schema cache');
     }
 
     function adatbazisOszlopHiany(error, oszlopok = []) {
@@ -918,6 +932,7 @@
         kartya.dataset.eredetiKezdes = idoInputErtek(foglalas.starts_at);
         kartya.dataset.eredetiVege = idoInputErtek(foglalas.ends_at);
         const inspiracioKepek = foglalasInspiracioKepek(foglalas);
+        const kuponKod = foglalasKuponKod(foglalas);
         kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
 
         kartya.innerHTML = `
@@ -957,6 +972,15 @@
         `;
 
         return kartya;
+    }
+
+    function foglalasKuponKod(foglalas) {
+        const direktKod = String(foglalas?.coupon_code || '').trim();
+        if (direktKod) return direktKod.toUpperCase();
+
+        const note = String(foglalas?.note || '');
+        const talalat = note.match(/(?:^|\n)Kupon:\s*([A-Z0-9_-]+)/i);
+        return talalat?.[1] ? talalat[1].toUpperCase() : '';
     }
 
     function foglalasInspiracioKepek(foglalas) {
