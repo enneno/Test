@@ -74,7 +74,7 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
-                kep: '/kepek/hero-hullamos.jpg',
+                kep: '/kepek/hero-exact.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
@@ -88,7 +88,6 @@ function lumiAlapOldalAdatok() {
             },
             szolgaltatasok: {
                 cim: 'SZOLGÁLTATÁSOK',
-                arlistaGomb: 'Árlista megtekintése',
                 kartyak: [
                     { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', szeles: true },
                     { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', szeles: false },
@@ -103,7 +102,9 @@ function lumiAlapOldalAdatok() {
                 kepek: [
                     { src: '/kepek/galeria-atvezeto-1.jpg', alt: 'Lumi Nails köröm munka' },
                     { src: '/kepek/galeria-atvezeto-2.jpg', alt: 'Lumi Nails díszített köröm' },
-                    { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' }
+                    { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' },
+                    { src: '/galeria/optimized/thumbs/image0.jpg', alt: 'Lumi Nails letisztult köröm' },
+                    { src: '/galeria/optimized/thumbs/image1.jpg', alt: 'Lumi Nails gél lakk köröm' }
                 ]
             },
             foglalasAtvezeto: {
@@ -996,8 +997,9 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     const hero = document.getElementById('hero');
     const heroKep = hero?.querySelector('.hero-kep');
     if (hero && fooldal.hero?.kep) {
-        let heroKepSrc = fooldal.hero.kep || '/kepek/hero-hullamos.jpg';
-        if (heroKepSrc.includes('/kepek/hatter2.jpg')) heroKepSrc = '/kepek/hero-hullamos.jpg';
+        let heroKepSrc = fooldal.hero.kep || '/kepek/hero-exact.jpg';
+        if (heroKepSrc.includes('/kepek/hatter2.jpg')) heroKepSrc = '/kepek/hero-exact.jpg';
+        if (heroKepSrc.includes('/kepek/hero-hullamos.jpg')) heroKepSrc = '/kepek/hero-exact.jpg';
 
         if (heroKep) {
             heroKep.src = heroKepSrc;
@@ -1069,7 +1071,6 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     }
 
     szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
-    szovegBeallitasa('.szolgaltatas-arlista-gomb', szolgaltatasok.arlistaGomb, szekcio);
     racs.innerHTML = '';
 
     szolgaltatasok.kartyak.forEach(kartya => {
