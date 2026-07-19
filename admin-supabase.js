@@ -933,6 +933,7 @@
         kartya.dataset.eredetiVege = idoInputErtek(foglalas.ends_at);
         const inspiracioKepek = foglalasInspiracioKepek(foglalas);
         const kuponKod = foglalasKuponKod(foglalas);
+        const megjegyzes = foglalasMegjegyzesMegjelenites(foglalas);
         kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
 
         kartya.innerHTML = `
@@ -958,7 +959,8 @@
                     <p><strong>Tel</strong><a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
                     <p><strong>Email</strong><a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
                 </div>
-                ${foglalas.note ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyzés:</strong> ${html(foglalas.note)}</p>` : ''}
+                ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon: ${html(kuponKod)}</strong></p>` : ''}
+                ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyz\u00e9s:</strong> ${html(megjegyzes)}</p>` : ''}
                 ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button></p>` : ''}
             </div>            <div class="admin-idopont-szerkeszto">
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
@@ -981,6 +983,23 @@
         const note = String(foglalas?.note || '');
         const talalat = note.match(/(?:^|\n)Kupon:\s*([A-Z0-9_-]+)/i);
         return talalat?.[1] ? talalat[1].toUpperCase() : '';
+    }
+
+    function foglalasMegjegyzesMegjelenites(foglalas) {
+        const note = String(foglalas?.note || '').trim();
+        if (!note) return '';
+
+        return note
+            .split(/\r?\n/)
+            .map(sor => sor.trim())
+            .filter(sor => sor && !/^(Kupon:|Alap\u00e1r:|Kedvezm\u00e9ny:|V\u00e9g\u00f6sszeg:)/i.test(sor))
+            .join(' ')
+            .replace(/\s*Kupon:\s*[A-Z0-9_-]+(?:\s*\([^)]*\))?(?:\s*Alap\u00e1r:[\s\S]*)?$/i, '')
+            .replace(/\s*Alap\u00e1r:\s*[\s\S]*$/i, '')
+            .replace(/\s*Kedvezm\u00e9ny:\s*[\s\S]*$/i, '')
+            .replace(/\s*V\u00e9g\u00f6sszeg:\s*[\s\S]*$/i, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
     }
 
     function foglalasInspiracioKepek(foglalas) {

@@ -7892,3 +7892,16 @@ h2 {
         font-size: 11.8px !important;
     }
 }
+
+/* Admin booking coupon row 20260719 */
+.admin-foglalas-kupon {
+    margin-top: 2px !important;
+    color: var(--barna);
+    font-weight: 900;
+}
+
+.admin-foglalas-kupon strong {
+    color: var(--barna);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+}
