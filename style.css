@@ -7561,3 +7561,67 @@ button {
         line-height: 1.48 !important;
     }
 }
+/* =========================================
+   FOOLDALI SECTION RITMUS - kozos hezagok
+   ========================================= */
+:root {
+    --lumi-section-gap: clamp(30px, 3.6vw, 54px);
+}
+
+body:not(.admin-body) > #hero.hero-preview-refresh {
+    margin-top: 8px !important;
+    margin-bottom: 0 !important;
+}
+
+body:not(.admin-body) > #akcios-banner:not([hidden]),
+body:not(.admin-body) > #bemutatkozas,
+body:not(.admin-body) > #szolgaltatasok,
+body:not(.admin-body) > #galeria-atvezeto,
+body:not(.admin-body) > #kapcsolat {
+    margin-top: var(--lumi-section-gap) !important;
+    margin-bottom: 0 !important;
+}
+
+body:not(.admin-body) > #akcios-banner[hidden] {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body:not(.admin-body) > #akcios-banner,
+body:not(.admin-body) > #bemutatkozas,
+body:not(.admin-body) > #szolgaltatasok,
+body:not(.admin-body) > #galeria-atvezeto {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+body:not(.admin-body) > #akcios-banner {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+body:not(.admin-body) > #kapcsolat {
+    padding-top: clamp(22px, 2.6vw, 34px) !important;
+    padding-bottom: 0 !important;
+}
+
+@media screen and (max-width: 768px) {
+    :root {
+        --lumi-section-gap: 30px;
+    }
+
+    body:not(.admin-body) > #hero.hero-preview-refresh {
+        margin-top: 0 !important;
+    }
+
+    body:not(.admin-body) > #kapcsolat {
+        padding-top: 22px !important;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    :root {
+        --lumi-section-gap: 26px;
+    }
+}
