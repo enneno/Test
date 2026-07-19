@@ -7625,3 +7625,54 @@ h2 {
         height: 56% !important;
     }
 }
+
+/* Admin save and pager layer cleanup 20260719 */
+.admin-cms-main-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-cms-main-actions .admin-kis-gomb {
+    min-width: 150px;
+}
+
+.admin-lapozo-felso {
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .admin-body #admin-tartalom {
+        padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
+        margin-bottom: 22px !important;
+        padding-bottom: 0 !important;
+    }
+
+    .admin-body .admin-lebego-mentes {
+        position: static !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: min(260px, calc(100% - 72px));
+        min-height: 46px;
+        margin: 24px auto calc(84px + env(safe-area-inset-bottom));
+        transform: none !important;
+        z-index: auto;
+    }
+
+    .admin-body .admin-lebego-mentes[hidden] {
+        display: none !important;
+    }
+
+    .admin-body .admin-cms-main-actions {
+        justify-content: stretch;
+    }
+
+    .admin-body .admin-cms-main-actions .admin-kis-gomb {
+        width: 100%;
+        min-width: 0;
+    }
+}
