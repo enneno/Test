@@ -7676,3 +7676,44 @@ h2 {
         min-width: 0;
     }
 }
+
+/* Admin floating save button top layer 20260719 */
+.admin-body .admin-lebego-mentes {
+    position: fixed !important;
+    z-index: 99999 !important;
+}
+
+.admin-body .admin-lapozo,
+.admin-body .admin-oldalmeret,
+.admin-body .admin-oldalmeret-gomb {
+    z-index: auto !important;
+}
+
+.admin-body #admin-tartalom {
+    padding-bottom: calc(124px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 768px) {
+    .admin-body .admin-lebego-mentes {
+        left: 50% !important;
+        right: auto !important;
+        bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: min(260px, calc(100% - 72px));
+        min-height: 46px;
+        margin: 0 !important;
+        transform: translateX(-50%) !important;
+        pointer-events: auto;
+    }
+
+    .admin-body .admin-lebego-mentes[hidden] {
+        display: none !important;
+    }
+
+    .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
+        margin-bottom: 92px !important;
+        padding-bottom: 0 !important;
+    }
+}
