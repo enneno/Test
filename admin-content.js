@@ -10,6 +10,7 @@
     const GROUPS = [
         {
             title: 'Márka és navigáció',
+            description: 'A fejlécben, a mobilmenüben és a láblécben megjelenő márkanév és menüpontok.',
             fields: [
                 field('marka.nev', 'Márkanév'),
                 field('navigacio.kezdolap', 'Kezdőlap menüpont'),
@@ -20,7 +21,8 @@
             ]
         },
         {
-            title: 'Főoldal nyitó rész',
+            title: 'Főoldal – nyitókép (hero)',
+            description: 'A főoldal legfelső képes blokkja. Az itt látható kép ugyanaz, amelyet a nyilvános oldal használ.',
             fields: [
                 field('fooldal.hero.kicker', 'Kis felső szöveg'),
                 field('fooldal.hero.cim', 'Főcím'),
@@ -30,7 +32,8 @@
             ]
         },
         {
-            title: 'Bemutatkozás',
+            title: 'Főoldal – bemutatkozás',
+            description: 'A főoldali bemutatkozó kép és a rajta megjelenő szöveg.',
             fields: [
                 field('fooldal.bemutatkozas.cim', 'Cím'),
                 field('fooldal.bemutatkozas.bekezdesek.0', 'Első bekezdés', 'textarea'),
@@ -40,10 +43,10 @@
             ]
         },
         {
-            title: 'Főoldali szolgáltatáskártyák',
+            title: 'Főoldal – szolgáltatások',
+            description: 'A főoldalon látható négy rövid szolgáltatásleírás. Az árak és időtartamok az Árlista menüben kezelhetők.',
             fields: [
                 field('fooldal.szolgaltatasok.cim', 'Szekció címe'),
-                field('fooldal.szolgaltatasok.arlistaGomb', 'Árlista gomb szövege'),
                 ...cardFields('fooldal.szolgaltatasok.kartyak', 0, '1. kártya'),
                 ...cardFields('fooldal.szolgaltatasok.kartyak', 1, '2. kártya'),
                 ...cardFields('fooldal.szolgaltatasok.kartyak', 2, '3. kártya'),
@@ -51,18 +54,18 @@
             ]
         },
         {
-            title: 'Főoldali galéria-átvezető',
+            title: 'Főoldal – galéria-előnézet',
+            description: 'Az első három kép mobilon és asztali nézetben is látszik; a 4. és 5. kép csak az asztali mozaikot egészíti ki.',
             fields: [
                 field('fooldal.galeriaAtvezeto.cim', 'Cím'),
                 field('fooldal.galeriaAtvezeto.leiras', 'Leírás', 'textarea'),
-                field('fooldal.galeriaAtvezeto.gombSzoveg', 'Gomb szövege'),
-                ...imageWithAlt('fooldal.galeriaAtvezeto.kepek.0', '1. kép'),
-                ...imageWithAlt('fooldal.galeriaAtvezeto.kepek.1', '2. kép'),
-                ...imageWithAlt('fooldal.galeriaAtvezeto.kepek.2', '3. kép')
-            ]
+                field('fooldal.galeriaAtvezeto.gombSzoveg', 'Gomb szövege')
+            ],
+            homepageGallery: true
         },
         {
-            title: 'Főoldali foglalási blokk',
+            title: 'Főoldal – időpontfoglalási blokk',
+            description: 'A főoldal alján, a lábléc előtt látható időpontfoglalási felhívás.',
             fields: [
                 field('fooldal.foglalasAtvezeto.cim', 'Cím'),
                 field('fooldal.foglalasAtvezeto.leiras', 'Leírás', 'textarea'),
@@ -71,13 +74,15 @@
         },
         {
             title: 'Árlista oldal',
+            description: 'Az árlista oldal főcíme és bevezető szövege. A konkrét szolgáltatások az admin Árlista menüjében szerkeszthetők.',
             fields: [
                 field('arlista.cim', 'Oldal címe'),
                 field('arlista.leiras', 'Bevezető szöveg', 'textarea')
             ]
         },
         {
-            title: 'Galéria oldal',
+            title: 'Galéria oldal és teljes galéria',
+            description: 'A külön Galéria oldal címe, leírása és összes képe. Ez nem azonos a főoldali ötképes előnézettel.',
             fields: [
                 field('galeria.cim', 'Oldal címe'),
                 field('galeria.leiras', 'Bevezető szöveg', 'textarea'),
@@ -86,7 +91,8 @@
             gallery: true
         },
         {
-            title: 'Foglalási oldal',
+            title: 'Foglalás – kapcsolatfelvételi lehetőségek',
+            description: 'A foglalási oldal bevezetője, valamint az Instagram, Messenger, SMS és online foglalás kártyái.',
             fields: [
                 field('foglalas.oldal.nyitoKicker', 'Nyitó kis felső szöveg'),
                 field('foglalas.oldal.nyitoCim', 'Nyitó cím'),
@@ -102,7 +108,13 @@
                 field('foglalas.oldal.utak.sms.gomb', 'SMS gomb'),
                 field('foglalas.oldal.utak.online.cim', 'Online foglalás kártya címe'),
                 field('foglalas.oldal.utak.online.leiras', 'Online foglalás kártya szövege', 'textarea'),
-                field('foglalas.oldal.utak.online.gomb', 'Online foglalás kártya gomb'),
+                field('foglalas.oldal.utak.online.gomb', 'Online foglalás kártya gomb')
+            ]
+        },
+        {
+            title: 'Foglalás – online űrlap',
+            description: 'Az ötlépéses online foglalás címei, magyarázatai, mezőfeliratai és összefoglalója.',
+            fields: [
                 field('foglalas.oldal.onlineKicker', 'Online rész kis felső szöveg'),
                 field('foglalas.oldal.onlineCim', 'Online rész címe'),
                 field('foglalas.oldal.onlineLeiras', 'Online rész leírása', 'textarea'),
@@ -130,7 +142,13 @@
                 field('foglalas.telefonPlaceholder', 'Telefon mező placeholder'),
                 field('foglalas.emailPlaceholder', 'Email mező placeholder'),
                 field('foglalas.oldal.osszefoglaloCim', 'Összefoglaló címe'),
-                field('foglalas.oldal.osszefoglaloUres', 'Összefoglaló üres szövege', 'textarea'),
+                field('foglalas.oldal.osszefoglaloUres', 'Összefoglaló üres szövege', 'textarea')
+            ]
+        },
+        {
+            title: 'Foglalás – kuponüzenetek',
+            description: 'A kupon ellenőrzésekor a vendégnek megjelenő sikeres és hibás visszajelzések.',
+            fields: [
                 field('foglalas.kuponUzenetek.ures', 'Kupon üzenet: üres mező'),
                 field('foglalas.kuponUzenetek.nincsAktiv', 'Kupon üzenet: nincs ilyen aktív kupon'),
                 field('foglalas.kuponUzenetek.masikSzolgaltatas', 'Kupon üzenet: másik szolgáltatáshoz tartozik', 'textarea'),
@@ -141,7 +159,13 @@
                 field('foglalas.kuponUzenetek.ujVendegEllenorzes', 'Kupon \u00fczenet: \u00faj vend\u00e9g ellen\u0151rz\u00e9s'),
                 field('foglalas.kuponUzenetek.ujVendegEllenorzesHiba', 'Kupon \u00fczenet: ellen\u0151rz\u00e9si hiba', 'textarea'),
                 field('foglalas.kuponUzenetek.ujVendegMarVolt', 'Kupon \u00fczenet: m\u00e1r volt foglal\u00e1s', 'textarea'),
-                field('foglalas.kuponUzenetek.ujVendegEmailValtozott', 'Kupon \u00fczenet: email v\u00e1ltozott', 'textarea'),
+                field('foglalas.kuponUzenetek.ujVendegEmailValtozott', 'Kupon \u00fczenet: email v\u00e1ltozott', 'textarea')
+            ]
+        },
+        {
+            title: 'Foglalás – gombok és visszajelző ablak',
+            description: 'A foglalás elküldése gomb, a lebegő gomb és a sikeres vagy hibás foglalás után megjelenő ablak szövegei.',
+            fields: [
                 field('foglalas.kuldesGomb', 'Foglalás elküldése gomb'),
                 field('foglalas.lebegoGomb', 'Lebegő foglalás gomb'),
                 field('foglalas.popup.emailSikeresCim', 'Sikeres popup címe'),
@@ -156,6 +180,7 @@
         },
         {
             title: 'Automatikus vendégemailek',
+            description: 'A foglalás állapotához kapcsolódó tényleges kimenő vendégemailek tárgya, címe és szövege.',
             fields: [
                 field('email.ujFoglalas.targy', 'Új foglalás – email tárgya'),
                 field('email.ujFoglalas.cim', 'Új foglalás – email címe'),
@@ -185,6 +210,7 @@
         },
         {
             title: 'Elérhetőségek és lábléc',
+            description: 'A publikus elérhetőségek, közösségi linkek, térkép és a lábléc tartalma.',
             fields: [
                 field('marka.rovidLeiras', 'Rövid márkaleírás', 'textarea'),
                 field('kapcsolat.cimke', 'Kapcsolati blokk címe'),
@@ -206,6 +232,7 @@
         },
         {
             title: 'Kereső és megosztás',
+            description: 'A főoldal böngészőcíme, keresőleírása és közösségi megosztási képe.',
             fields: [
                 field('seo.fooldalCim', 'Főoldal böngészőcíme'),
                 field('seo.fooldalLeiras', 'Főoldal keresőleírása', 'textarea'),
@@ -244,12 +271,8 @@
     function cardFields(base, index, label) {
         return [
             field(`${base}.${index}.cim`, `${label} címe`),
-            field(`${base}.${index}.leiras`, `${label} szövege`, 'textarea'),
-            checkbox(`${base}.${index}.szeles`, `${label} széles elrendezésben`)
+            field(`${base}.${index}.leiras`, `${label} szövege`, 'textarea')
         ];
-    }
-    function imageWithAlt(base, label) {
-        return [image(`${base}.src`, label), field(`${base}.alt`, `${label} leírása`)];
     }
 
     async function loadContent() {
@@ -265,7 +288,7 @@
             return;
         }
 
-        state.content = deepMerge(defaults, data?.value || {});
+        state.content = normalizeContent(deepMerge(defaults, data?.value || {}), defaults);
         state.dirty = false;
         render();
         status('A weboldal tartalma betöltve.');
@@ -277,7 +300,8 @@
         if (!root || !state.content) return;
         root.innerHTML = '';
 
-        GROUPS.forEach((group, groupIndex) => {
+        const orderedGroups = [...GROUPS.slice(1, 6), GROUPS[0], ...GROUPS.slice(6)];
+        orderedGroups.forEach((group, groupIndex) => {
             const section = document.createElement('section');
             section.className = 'cms-section';
             const header = document.createElement('button');
@@ -289,10 +313,17 @@
             const body = document.createElement('div');
             body.className = 'cms-section-body';
             body.hidden = groupIndex !== 0;
+            if (group.description) {
+                const description = document.createElement('p');
+                description.className = 'cms-section-description';
+                description.textContent = group.description;
+                body.appendChild(description);
+            }
             const grid = document.createElement('div');
             grid.className = 'admin-grid cms-field-grid';
             group.fields.forEach(definition => grid.appendChild(renderField(definition)));
             body.appendChild(grid);
+            if (group.homepageGallery) body.appendChild(renderHomepageGallery());
             if (group.gallery) body.appendChild(renderGallery());
             section.append(header, body);
             root.appendChild(section);
@@ -359,6 +390,40 @@
         url.placeholder = 'Kép URL vagy /kepek/fajl.jpg';
         holder.append(label, preview, controls, url);
         return holder;
+    }
+
+    function renderHomepageGallery() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'cms-home-gallery-editor';
+        const heading = document.createElement('div');
+        heading.className = 'cms-gallery-header';
+        heading.innerHTML = '<h3>Főoldali mozaik képei</h3><span>Fix sorrend</span>';
+        wrapper.appendChild(heading);
+
+        const labels = [
+            ['1. kép – nagy kiemelt kép', 'Mobilon és asztali nézetben is látható.'],
+            ['2. kép – felső kis kép', 'Mobilon és asztali nézetben is látható.'],
+            ['3. kép – alsó kis kép', 'Mobilon és asztali nézetben is látható.'],
+            ['4. kép – asztali kiegészítő', 'Csak asztali nézetben látható.'],
+            ['5. kép – asztali kiegészítő', 'Csak asztali nézetben látható.']
+        ];
+        const list = document.createElement('div');
+        list.className = 'cms-home-gallery-list';
+        labels.forEach(([titleText, noteText], index) => {
+            const card = document.createElement('article');
+            card.className = 'cms-gallery-item cms-home-gallery-item';
+            const title = document.createElement('h4');
+            title.textContent = titleText;
+            const note = document.createElement('p');
+            note.className = 'cms-gallery-note';
+            note.textContent = noteText;
+            card.append(title, note);
+            card.appendChild(renderImageField(`fooldal.galeriaAtvezeto.kepek.${index}.src`, 'Kép'));
+            card.appendChild(renderField(field(`fooldal.galeriaAtvezeto.kepek.${index}.alt`, 'Kép leírása')));
+            list.appendChild(card);
+        });
+        wrapper.appendChild(list);
+        return wrapper;
     }
 
     function renderGallery() {
@@ -521,6 +586,7 @@
     async function saveContent() {
         if (!state.client || !state.session || !state.content || state.saving) return;
         readForm();
+        state.content = normalizeContent(state.content, window.lumiAlapOldalAdatok?.() || {});
         setSaving(true);
         status('Tartalom mentése...');
         const phoneVisible = getPath(state.content, 'kapcsolat.telefonLathato') !== false;
@@ -613,6 +679,30 @@
         const result = { ...base };
         Object.keys(override || {}).forEach(key => { result[key] = deepMerge(base[key], override[key]); });
         return result;
+    }
+    function normalizeContent(content, defaults) {
+        const normalized = content || {};
+        const defaultHero = getPath(defaults, 'fooldal.hero.kep') || '/kepek/hero-exact.jpg';
+        const hero = String(getPath(normalized, 'fooldal.hero.kep') || '');
+        if (!hero || hero.includes('/kepek/hatter2.jpg') || hero.includes('/kepek/hero-hullamos.jpg')) {
+            setPath(normalized, 'fooldal.hero.kep', defaultHero);
+        }
+
+        const defaultImages = getPath(defaults, 'fooldal.galeriaAtvezeto.kepek') || [];
+        const storedImages = getPath(normalized, 'fooldal.galeriaAtvezeto.kepek') || [];
+        const homepageImages = Array.from({ length: 5 }, (_item, index) =>
+            deepMerge(clone(defaultImages[index] || { src: '', alt: '' }), storedImages[index] || {})
+        );
+        setPath(normalized, 'fooldal.galeriaAtvezeto.kepek', homepageImages);
+
+        const services = getPath(normalized, 'fooldal.szolgaltatasok');
+        if (services && typeof services === 'object') {
+            delete services.arlistaGomb;
+            (services.kartyak || []).forEach(card => {
+                if (card && typeof card === 'object') delete card.szeles;
+            });
+        }
+        return normalized;
     }
     function clone(value) { return JSON.parse(JSON.stringify(value)); }
     async function optimizeImageFile(file) {

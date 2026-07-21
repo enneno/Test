@@ -11,6 +11,7 @@
         foglalasOldalMeret: 10,
         foglalasElemek: [],
         foglalasKereses: '',
+        foglalasStatuszSzuro: 'all',
         szolgaltatasok: [],
         kuponok: [],
         esemenynaploOldal: 1,
@@ -73,6 +74,11 @@
             allapot.foglalasOldal = 1;
             foglalasListaRenderelese();
         });
+        elemek.foglalasStatuszSzuro?.addEventListener('change', () => {
+            allapot.foglalasStatuszSzuro = elemek.foglalasStatuszSzuro.value || 'all';
+            allapot.foglalasOldal = 1;
+            foglalasListaRenderelese();
+        });
         elemek.szolgaltatasLista?.addEventListener('click', szolgaltatasListaKattintas);
         elemek.kuponLista?.addEventListener('click', kuponListaKattintas);
         elemek.esemenynaploLapozo?.addEventListener('click', esemenynaploLapozoKattintas);
@@ -113,6 +119,7 @@
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
             foglalasLapozoFelso: document.getElementById('admin-foglalas-lapozo-felso'),
             foglalasKereses: document.getElementById('admin-foglalas-kereses'),
+            foglalasStatuszSzuro: document.getElementById('admin-foglalas-statusz-szuro'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
             esemenynaploLista: document.getElementById('admin-esemenynaplo-lista'),
             esemenynaploFrissites: document.getElementById('admin-esemenynaplo-frissites'),
@@ -293,7 +300,7 @@
                 <div class="admin-naptar-datum">${html(datumRovid(datum))}</div>
                 <label class="admin-mezo">Kezdés<input type="time" data-naptar-mezo="start_time" value="${attr(ertek.start_time)}"></label>
                 <label class="admin-mezo">Vége<input type="time" data-naptar-mezo="end_time" value="${attr(ertek.end_time)}"></label>
-                <button type="button" class="admin-kis-gomb admin-naptar-torles-x" data-naptar-torles aria-label="Törlés">×</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb admin-naptar-torles-x" data-naptar-torles aria-label="Törlés">×</button>
             `;
             elemek.naptarKijeloltLista.appendChild(sor);
         });
@@ -426,7 +433,7 @@
 
     function datumRovid(datumSzovegErtek) {
         const [ev, honap, nap] = String(datumSzovegErtek || '').split('-');
-        return ev && honap && nap ? `${nap}.${honap}.${String(ev).slice(-2)}` : String(datumSzovegErtek || '');
+        return ev && honap && nap ? `${nap}/${honap}/${String(ev).slice(-2)}` : String(datumSzovegErtek || '');
     }
 
     function datumFelirat(datumSzovegErtek) {
@@ -662,10 +669,12 @@
         elemek.foglalasLista.innerHTML = '';
 
         if (!oldalElemek.length) {
-            elemek.foglalasLista.innerHTML = allapot.foglalasKereses
-                ? '<p class="admin-ures">Nincs tal\u00e1lat erre a keres\u00e9sre.</p>'
+            const aktivSzuro = Boolean(allapot.foglalasKereses) || (allapot.foglalasStatuszSzuro || 'all') !== 'all';
+            elemek.foglalasLista.innerHTML = aktivSzuro
+                ? '<p class="admin-ures">Nincs tal\u00e1lat erre a sz\u0171r\u00e9sre.</p>'
                 : '<p class="admin-ures">M\u00e9g nincs foglal\u00e1s vagy k\u00e9zzel felvett foglalt id\u0151.</p>';
             foglalasLapozoRenderelese();
+            foglalasTabJelzesFrissitese();
             return;
         }
 
@@ -676,18 +685,32 @@
         });
 
         foglalasLapozoRenderelese();
+        foglalasTabJelzesFrissitese();
     }
 
     function foglalasSzurtElemek() {
         const kereses = normalizaltKereses(allapot.foglalasKereses);
         const telefonKereses = csakSzamok(allapot.foglalasKereses);
+        const statuszSzuro = allapot.foglalasStatuszSzuro || 'all';
 
-        if (!kereses && !telefonKereses) {
+        if (!kereses && !telefonKereses && statuszSzuro === 'all') {
             return allapot.foglalasElemek;
         }
 
         return allapot.foglalasElemek.filter(elem => {
             const adat = elem.adat || {};
+            const statuszTalalat = statuszSzuro === 'all'
+                || statuszSzuro === 'blocked' && elem.tipus === 'blocked'
+                || elem.tipus === 'booking' && String(adat.status || '').toLowerCase() === statuszSzuro;
+
+            if (!statuszTalalat) {
+                return false;
+            }
+
+            if (!kereses && !telefonKereses) {
+                return true;
+            }
+
             const szolgaltatasNev = adat.services?.description || adat.services?.name || '';
             const szovegek = [
                 adat.customer_name,
@@ -704,6 +727,43 @@
             return szovegTalalat || telefonTalalat;
         });
     }
+
+    function foglalasFuggoben(foglalas) {
+        return String(foglalas?.status || '').toLowerCase() === 'pending';
+    }
+
+    function foglalasFuggobenDarab() {
+        return allapot.foglalasElemek.filter(elem => elem.tipus === 'booking' && foglalasFuggoben(elem.adat)).length;
+    }
+
+    function foglalasTabJelzesFrissitese() {
+        const tab = document.querySelector('.admin-tab[data-admin-tab="foglalasok"]');
+
+        if (!tab) {
+            return;
+        }
+
+        const darab = foglalasFuggobenDarab();
+        let jelzes = tab.querySelector('.admin-tab-jelzes');
+
+        tab.classList.toggle('admin-tab-jelzes-van', darab > 0);
+
+        if (!darab) {
+            jelzes?.remove();
+            tab.removeAttribute('aria-label');
+            return;
+        }
+
+        if (!jelzes) {
+            jelzes = document.createElement('span');
+            jelzes.className = 'admin-tab-jelzes';
+            tab.appendChild(jelzes);
+        }
+
+        jelzes.textContent = darab > 99 ? '99+' : String(darab);
+        tab.setAttribute('aria-label', `Foglal\u00e1sok, ${darab} f\u00fcgg\u0151ben`);
+    }
+
 
     function normalizaltKereses(ertek) {
         return String(ertek || '')
@@ -724,11 +784,13 @@
     }
 
     function oldalmeretGombok(aktiv, adatNev) {
-        return [10, 20, 'all'].map(ertek => {
-            const cimke = ertek === 'all' ? '\u00d6sszes' : String(ertek);
-            const aktivE = String(aktiv) === String(ertek);
-            return `<button type="button" class="admin-oldalmeret-gomb${aktivE ? ' aktiv' : ''}" data-${adatNev}="${ertek}" aria-pressed="${aktivE ? 'true' : 'false'}">${cimke}</button>`;
-        }).join('');
+        return `<select class="admin-oldalmeret-select" data-${adatNev} aria-label="Oldalank\u00e9nt">
+            ${[10, 20, 'all'].map(ertek => {
+                const cimke = ertek === 'all' ? '\u00d6sszes' : String(ertek);
+                const aktivE = String(aktiv) === String(ertek);
+                return `<option value="${ertek}" ${aktivE ? 'selected' : ''}>${cimke}</option>`;
+            }).join('')}
+        </select>`;
     }
 
     function foglalasOsszesOldal() {
@@ -763,6 +825,10 @@
     function foglalasLapozoKattintas(event) {
         const meretValaszto = event.target.closest('[data-foglalas-oldalmeret]');
         if (meretValaszto) {
+            if (event.type === 'click' && meretValaszto.tagName === 'SELECT') {
+                return;
+            }
+
             const meretErtek = meretValaszto.dataset.foglalasOldalmeret || meretValaszto.value;
             allapot.foglalasOldalMeret = meretErtek === 'all' ? 'all' : Number.parseInt(meretErtek, 10);
             allapot.foglalasOldal = 1;
@@ -833,12 +899,12 @@
             const kartya = document.createElement('article');
             kartya.className = `admin-db-kartya admin-esemeny-kartya admin-esemeny-${html(esemeny.status || 'info')}`;
             const foglalasNev = esemeny.bookings?.customer_name || '';
-            const foglalasIdo = esemeny.bookings?.starts_at ? datumIdo(esemeny.bookings.starts_at) : '';
+            const foglalasIdo = esemeny.bookings?.starts_at ? datumIdoRovid(esemeny.bookings.starts_at) : '';
 
             kartya.innerHTML = `
                 <div class="admin-db-kartya-fej">
                     <div>
-                        <p class="admin-esemeny-idopont">${html(datumIdo(esemeny.created_at))}</p>
+                        <p class="admin-esemeny-idopont">${html(datumIdoRovid(esemeny.created_at))}</p>
                         <h3>${html(esemeny.title || esemenyTipusFelirat(esemeny.event_type))}</h3>
                     </div>
                     <span class="admin-esemeny-statusz">${html(esemenyStatuszFelirat(esemeny.status))}</span>
@@ -886,6 +952,10 @@
     function esemenynaploLapozoKattintas(event) {
         const meretValaszto = event.target.closest('[data-esemenynaplo-oldalmeret]');
         if (meretValaszto) {
+            if (event.type === 'click' && meretValaszto.tagName === 'SELECT') {
+                return;
+            }
+
             const meretErtek = meretValaszto.dataset.esemenynaploOldalmeret || meretValaszto.value;
             allapot.esemenynaploOldalMeret = meretErtek === 'all' ? 'all' : Number.parseInt(meretErtek, 10);
             allapot.esemenynaploOldal = 1;
@@ -924,7 +994,8 @@
 
     function foglalasKartya(foglalas) {
         const kartya = document.createElement('article');
-        kartya.className = 'admin-db-kartya';
+        const fuggoben = foglalasFuggoben(foglalas);
+        kartya.className = `admin-db-kartya${fuggoben ? ' admin-foglalas-fuggoben' : ''}`;
         kartya.dataset.id = foglalas.id;
         kartya.dataset.tipus = 'booking';
         kartya.dataset.eredetiStatusz = foglalas.status || '';
@@ -969,7 +1040,7 @@
                 <label class="admin-mezo admin-mezo-szeles">Üzenet az emailhez<textarea data-idopont-mezo="admin_message" placeholder="Opcionális. Lemondásnál vagy időpontmódosításnál bekerül a vendég emailjébe." disabled></textarea></label>
             </div>
             <div class="admin-db-akciok">
-                <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-foglalas-torles>Eltávolítás</button>
             </div>
         `;
 
@@ -1070,8 +1141,10 @@
 
         modal.innerHTML = `
             <div class="admin-inspiracio-modal-doboz" role="dialog" aria-modal="true" aria-label="Inspirációs képek">
-                <button type="button" class="admin-inspiracio-bezaras" data-inspiracio-bezaras aria-label="Bezárás">×</button>
-                <h3>Inspirációs képek</h3>
+                <div class="admin-inspiracio-modal-fejlec">
+                    <h3>Inspirációs képek</h3>
+                    <button type="button" class="admin-inspiracio-bezaras" data-inspiracio-bezaras aria-label="Bezárás">×</button>
+                </div>
                 <div class="admin-inspiracio-modal-racs">
                     ${kepek.map(kep => `<figure><img src="${attr(kep.url)}" alt="${attr(kep.name || 'Inspirációs kép')}"><figcaption>${html(kep.name || 'Inspirációs kép')}</figcaption></figure>`).join('')}
                 </div>
@@ -1097,7 +1170,7 @@
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <h3>${html(megjegyzes)}</h3>
-                    <p class="admin-foglalas-idopont">${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
+                    <p class="admin-foglalas-idopont">${html(datumIdoRovid(tiltas.starts_at))} - ${html(datumIdoRovid(tiltas.ends_at, true))}</p>
                 </div>
                 <div class="admin-foglalas-vezerlok">
                     <span class="admin-db-statusz admin-db-statusz-fix">Foglalt</span>
@@ -1111,7 +1184,7 @@
                 <label class="admin-mezo admin-mezo-szeles">Név / megjegyzés<input type="text" data-idopont-mezo="reason" value="${attr(megjegyzes)}" required disabled></label>
             </div>
             <div class="admin-db-akciok">
-                <button type="button" class="admin-kis-gomb" data-foglalas-torles>Eltávolítás</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-foglalas-torles>Eltávolítás</button>
             </div>
         `;
 
@@ -1962,7 +2035,7 @@
         kartya.dataset.id = idosav.id;
 
         kartya.innerHTML = `
-            <div class="admin-idosav-grid admin-idosav-grid-kompakt">
+            <div class="admin-idosav-grid">
                 <label class="admin-mezo">Dátum<input type="date" data-mezo="work_date" value="${attr(idosav.work_date || maiDatum())}"></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-mezo="start_time" value="${attr(idosav.start_time?.slice(0, 5) || '09:00')}"></label>
                 <label class="admin-mezo">Vége<input type="time" data-mezo="end_time" value="${attr(idosav.end_time?.slice(0, 5) || '18:00')}"></label>
@@ -2178,9 +2251,9 @@
             <div class="admin-db-kartya-fej">
                 <div>
                     <h3>${html(megjegyzes)}</h3>
-                    <p>${html(datumIdo(tiltas.starts_at))} - ${html(datumIdo(tiltas.ends_at, true))}</p>
+                    <p>${html(datumIdoRovid(tiltas.starts_at))} - ${html(datumIdoRovid(tiltas.ends_at, true))}</p>
                 </div>
-                <button type="button" class="admin-kis-gomb" data-tiltas-torles>Törlés</button>
+                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-tiltas-torles>Törlés</button>
             </div>
         `;
 
@@ -2382,15 +2455,6 @@
         return `${ev}-${honap}-${nap}`;
     }
 
-    function datumIdo(ertek, csakIdo = false) {
-        const datum = new Date(ertek);
-        const opciok = csakIdo
-            ? { hour: '2-digit', minute: '2-digit' }
-            : { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-
-        return new Intl.DateTimeFormat('hu-HU', opciok).format(datum);
-    }
-
     function datumIdoRovid(ertek, csakIdo = false) {
         const datum = new Date(ertek);
         const nap = String(datum.getDate()).padStart(2, '0');
@@ -2398,7 +2462,7 @@
         const ev = String(datum.getFullYear()).slice(-2);
         const ora = String(datum.getHours()).padStart(2, '0');
         const perc = String(datum.getMinutes()).padStart(2, '0');
-        return csakIdo ? `${ora}:${perc}` : `${nap}.${honap}.${ev} ${ora}:${perc}`;
+        return csakIdo ? `${ora}:${perc}` : `${nap}/${honap}/${ev} ${ora}:${perc}`;
     }
 
     function datumInputErtek(ertek) {

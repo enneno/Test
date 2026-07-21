@@ -89,10 +89,10 @@ function lumiAlapOldalAdatok() {
             szolgaltatasok: {
                 cim: 'SZOLGÁLTATÁSOK',
                 kartyak: [
-                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', szeles: true },
-                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', szeles: false },
-                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.', szeles: false },
-                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.', szeles: true }
+                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.' },
+                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.' },
+                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.' },
+                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.' }
                 ]
             },
             galeriaAtvezeto: {
@@ -813,7 +813,8 @@ function adatokBetoltese() {
                 .then(response => response.ok ? response.json() : null)
                 .then(jsonAdatok => jsonAdatok ? melyOsszefesules(alap, jsonAdatok) : alap)
                 .catch(() => alap);
-        });
+        })
+        .then(adatok => oldalAdatokNormalizalasa(adatok, alap));
 }
 
 async function onlineOldalAdatokBetoltese() {
@@ -859,6 +860,25 @@ function melyOsszefesules(alap, feluliras) {
     });
 
     return eredmeny;
+}
+
+function oldalAdatokNormalizalasa(adatok, alap) {
+    if (!adatok) return alap;
+    adatok.fooldal ||= {};
+    adatok.fooldal.hero ||= {};
+    adatok.fooldal.galeriaAtvezeto ||= {};
+
+    const hero = String(adatok.fooldal.hero.kep || '');
+    if (!hero || hero.includes('/kepek/hatter2.jpg') || hero.includes('/kepek/hero-hullamos.jpg')) {
+        adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-exact.jpg';
+    }
+
+    const alapKepek = alap?.fooldal?.galeriaAtvezeto?.kepek || [];
+    const mentettKepek = adatok.fooldal.galeriaAtvezeto.kepek || [];
+    adatok.fooldal.galeriaAtvezeto.kepek = Array.from({ length: 5 }, (_item, index) =>
+        melyOsszefesules(alapKepek[index] || { src: '', alt: '' }, mentettKepek[index] || {})
+    );
+    return adatok;
 }
 
 function kapcsolatGyorsLinkekNormalizalasa(adatok) {
@@ -997,9 +1017,7 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     const hero = document.getElementById('hero');
     const heroKep = hero?.querySelector('.hero-kep');
     if (hero && fooldal.hero?.kep) {
-        let heroKepSrc = fooldal.hero.kep || '/kepek/hero-exact.jpg';
-        if (heroKepSrc.includes('/kepek/hatter2.jpg')) heroKepSrc = '/kepek/hero-exact.jpg';
-        if (heroKepSrc.includes('/kepek/hero-hullamos.jpg')) heroKepSrc = '/kepek/hero-exact.jpg';
+        const heroKepSrc = fooldal.hero.kep || '/kepek/hero-exact.jpg';
 
         if (heroKep) {
             heroKep.src = heroKepSrc;
@@ -1064,7 +1082,7 @@ function kepBeallitasa(selector, src, alt) {
 
 function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     const szekcio = document.getElementById('szolgaltatasok');
-    const racs = szekcio?.querySelector('.bento-racs');
+    const racs = szekcio?.querySelector('.szolgaltatas-lista');
 
     if (!szekcio || !racs || !Array.isArray(szolgaltatasok?.kartyak)) {
         return;
@@ -1075,7 +1093,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
 
     szolgaltatasok.kartyak.forEach(kartya => {
         const doboz = document.createElement('div');
-        doboz.className = `bento-kartya${kartya.szeles ? ' szeles' : ''}`;
+        doboz.className = 'szolgaltatas-kartya';
 
         const cim = document.createElement('h3');
         cim.textContent = kartya.cim || '';
@@ -1708,7 +1726,7 @@ function lebegoFoglalasLetrehozasa() {
     const gomb = document.createElement('a');
     gomb.href = '/foglalas/';
     gomb.id = 'lebego-foglalas-gomb';
-    gomb.className = 'lebego-foglalas-gomb';
+    gomb.className = 'gomb lebego-foglalas-gomb';
     gomb.textContent = 'Időpontfoglalás';
     document.body.appendChild(gomb);
 }

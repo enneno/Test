@@ -8,6 +8,26 @@
     --szoveg: #655e57;
     --rozsa-halvany: #f1ded9;
     --zsalyaszurke: #a7b7a1;
+    --lumi-section-gap: clamp(30px, 3.6vw, 54px);
+    --lumi-section-gap-mobile: 30px;
+    --lumi-section-gap-small: 26px;
+    --lumi-heading-description-gap: 28px;
+    --lumi-price-heading-content-gap: 18px;
+    --lumi-container-width: min(1400px, calc(100% - 40px));
+    --lumi-radius-pill: 999px;
+    --lumi-radius-card: 28px;
+    --lumi-radius-control: 16px;
+    --lumi-button-height: 44px;
+    --lumi-button-width: min(calc(100% - 16px), 360px);
+    --lumi-button-padding: 30px;
+    --lumi-button-font: 'Outfit', 'Montserrat', sans-serif;
+    --lumi-button-shadow: 0 12px 26px rgba(185, 133, 143, 0.22);
+    --lumi-control-bg: rgba(255, 250, 244, 0.92);
+    --lumi-control-border: rgba(185, 133, 143, 0.24);
+    --lumi-control-border-strong: rgba(185, 133, 143, 0.5);
+    --lumi-control-focus: 0 0 0 3px rgba(185, 133, 143, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    --lumi-soft-shadow: 0 14px 34px rgba(70, 48, 42, 0.1);
+    --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%2364524d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 html,
@@ -20,6 +40,13 @@ select,
 textarea,
 [role="button"] {
     touch-action: manipulation;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
 .lumi-js body.tartalom-toltes > section,
@@ -47,7 +74,7 @@ header {
     position: fixed;
     top: 12px;
     left: 50%;
-    width: min(1400px, calc(100% - 40px));
+    width: var(--lumi-container-width);
     background-color: rgba(255, 250, 244, 0.88);
     backdrop-filter: blur(18px);
     padding: 10px 18px 10px 24px;
@@ -57,7 +84,7 @@ header {
     justify-content: space-between;
     align-items: center;
     border: 1px solid rgba(185, 133, 143, 0.24);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     box-shadow: 0 14px 34px rgba(70, 48, 42, 0.12);
     height: 64px;
     transform: translateX(-50%);
@@ -99,7 +126,7 @@ header {
     text-decoration: none;
     margin-left: 8px;
     padding: 12px 14px;
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -201,7 +228,11 @@ header {
 /* 1. EZ FELEL A TÚLHÚZÁS SZÍNÉÉRT (Eltünteti a fehéret/pirosat az űrből) */
 html {
     background-color: var(--krem);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     scroll-padding-top: 56px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 /* 2. EZ A WEBOLDALAD TARTALMA ÉS A MINTA */
@@ -213,6 +244,7 @@ body {
 
     /* Az eddigi dizájn beállításaid */
     margin: 0;
+    max-width: 100%;
     padding-top: 78px;
     overflow-x: hidden;
     font-family: 'Manrope', sans-serif;
@@ -225,6 +257,37 @@ section {
     max-width: 1400px;
     margin: 0 auto;
     box-sizing: border-box;
+}
+
+body.fooldal > section {
+    margin-top: var(--lumi-section-gap);
+    margin-bottom: 0;
+}
+
+body.fooldal > section:first-of-type {
+    margin-top: 8px;
+}
+
+body.fooldal > section[hidden] {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media screen and (max-width: 768px) {
+    body.fooldal > section {
+        margin-top: var(--lumi-section-gap-mobile);
+    }
+
+    body.fooldal > section:first-of-type {
+        margin-top: 0;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    body.fooldal > section {
+        margin-top: var(--lumi-section-gap-small);
+    }
 }
 
 /* FŐCÍM STÍLUSA */
@@ -245,7 +308,7 @@ h2 {
     font-weight: 700;
     text-align: center;
     margin-top: 0;
-    margin-bottom: 28px;
+    margin-bottom: var(--lumi-heading-description-gap);
     letter-spacing: 1.2px;
     text-transform: uppercase;
 }
@@ -263,8 +326,7 @@ h2 {
 #kapcsolat {
     position: relative;
     border-top: none;
-    margin-top: 18px;
-    padding-top: 58px;
+    padding-top: clamp(22px, 2.6vw, 34px);
 }
 
 #kapcsolat::before {
@@ -275,7 +337,7 @@ h2 {
     width: min(760px, calc(100% - 40px));
     height: 2px;
     background: linear-gradient(90deg, transparent, rgba(185, 133, 143, 0.48), transparent);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     transform: translateX(-50%);
 }
 
@@ -300,7 +362,7 @@ h2 {
     color: var(--akcentus);
     background: rgba(185, 133, 143, 0.09);
     border: 1px solid rgba(185, 133, 143, 0.18);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-family: 'Manrope', sans-serif;
     font-size: 12px;
     font-weight: 800;
@@ -400,7 +462,7 @@ h2 {
     --galeria-mosaic-height: clamp(320px, 24vw, 390px);
     width: 100%;
     max-width: none;
-    padding: clamp(30px, 4vw, 48px) 0 clamp(30px, 4vw, 52px);
+    padding: 0;
 }
 
 .galeria-atvezeto-belso {
@@ -408,7 +470,7 @@ h2 {
     grid-template-columns: minmax(720px, 1.04fr) minmax(340px, 0.48fr);
     align-items: center;
     gap: clamp(32px, 4vw, 62px);
-    width: min(1400px, calc(100% - 40px));
+    width: var(--lumi-container-width);
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -452,7 +514,6 @@ h2 {
 }
 
 .galeria-atvezeto-szoveg h2 {
-    margin-bottom: 20px;
     text-align: left;
 }
 
@@ -463,15 +524,12 @@ h2 {
     text-align: left;
 }
 
-.galeria-atvezeto-szoveg .gomb {
-    margin-left: 0;
-}
 
 @media screen and (max-width: 768px) {
     #galeria-atvezeto {
         --galeria-gap: 10px;
-        padding-top: 30px;
-        padding-bottom: 36px;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     .galeria-atvezeto-belso {
@@ -490,7 +548,6 @@ h2 {
     }
 
     .galeria-atvezeto-szoveg h2 {
-        margin-bottom: 16px;
         text-align: center;
     }
 
@@ -502,10 +559,6 @@ h2 {
         text-align: center;
     }
 
-    .galeria-atvezeto-szoveg .gomb {
-        margin-left: auto;
-        margin-right: auto;
-    }
 
     .galeria-atvezeto-kepek {
         order: 2;
@@ -562,7 +615,7 @@ h2 {
     padding: 15px;
     font-family: 'Manrope', sans-serif;
     font-size: 14px;
-    border-radius: 4px;
+    border-radius: var(--lumi-radius-control);
     transition: border-color 0.3s;
     box-sizing: border-box;
     color-scheme: light;
@@ -593,10 +646,21 @@ select.urlap-mezo:invalid {
     align-items: center;
     background-color: #fffaf4;
     border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 4px;
+    border-radius: var(--lumi-radius-control);
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.tel-csoport:focus-within {
+    border-color: var(--akcentus-vilagos);
+    box-shadow: var(--lumi-control-focus);
 }
 
 .tel-prefix {
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    flex: 0 0 auto;
     padding: 15px;
     color: var(--akcentus-vilagos);
     font-weight: 600;
@@ -613,40 +677,49 @@ select.urlap-mezo:invalid {
 }
 
 .gomb {
-    display: block;
-    width: fit-content;
-    max-width: 100%;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    width: var(--lumi-button-width);
+    min-height: var(--lumi-button-height);
     box-sizing: border-box;
     margin: 20px auto;
-    padding: 15px 40px;
-    background-color: rgba(185, 133, 143, 0.08);
-    color: var(--tinta);
-    text-decoration: none;
-    border: 1px solid var(--akcentus);
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    padding: 0 var(--lumi-button-padding);
+    border: 1px solid rgba(185, 133, 143, 0.42);
+    border-radius: var(--lumi-radius-pill);
+    background: var(--akcentus);
+    color: #fffaf4;
+    box-shadow: var(--lumi-button-shadow);
+    font-family: var(--lumi-button-font);
     font-size: 12px;
     font-weight: 700;
-    transition: all 0.3s;
-    cursor: pointer;
+    line-height: 1.15;
+    letter-spacing: 0.14em;
     text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .gomb:hover {
-    background-color: var(--akcentus);
+    border-color: rgba(185, 133, 143, 0.58);
+    background: var(--akcentus-vilagos);
     color: #fffaf4;
+    transform: translateY(-1px);
+}
+
+.gomb:disabled {
+    cursor: default;
+    opacity: 0.6;
+    transform: none;
 }
 
 .urlap-kuldes-gomb {
     width: 100%;
-    border: none;
-    background-color: var(--akcentus);
-    color: #fffaf4;
 }
 
-.urlap-kuldes-gomb:hover {
-    background-color: var(--akcentus-vilagos);
-}
 
 .urlap-kuldes-gomb:disabled {
     cursor: wait;
@@ -677,22 +750,9 @@ select.urlap-mezo:invalid {
     right: 28px;
     bottom: calc(28px + env(safe-area-inset-bottom));
     z-index: 1200;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0 24px;
-    background-color: var(--akcentus);
-    color: #fffaf4;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 999px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    line-height: 1;
-    text-decoration: none;
-    text-transform: uppercase;
+    width: auto;
+    margin: 0;
+
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
@@ -700,7 +760,6 @@ select.urlap-mezo:invalid {
 }
 
 .lebego-foglalas-gomb:hover {
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
     transform: translateY(-2px);
 }
 
@@ -729,7 +788,7 @@ select.urlap-mezo:invalid {
     background-color: #111;
     border: 1px solid var(--akcentus);
     padding: 40px;
-    border-radius: 8px;
+    border-radius: var(--lumi-radius-card);
     text-align: center;
     max-width: 90%;
     width: 350px;
@@ -757,7 +816,7 @@ select.urlap-mezo:invalid {
     padding: 12px;
     box-sizing: border-box;
     border: 1px solid rgba(185, 133, 143, 0.35);
-    border-radius: 8px;
+    border-radius: var(--lumi-radius-control);
     background-color: #fffaf4;
     color: var(--tinta);
     font-family: 'Manrope', sans-serif;
@@ -780,11 +839,9 @@ select.urlap-mezo:invalid {
 
 .popup-gomb {
     margin: 0;
-    padding: 10px 20px;
     background-color: transparent;
     color: #fffaf4;
     border-color: rgba(255, 250, 244, 0.55);
-    font-size: 11px;
 }
 
 .popup-gomb:hover {
@@ -812,9 +869,6 @@ select.urlap-mezo:invalid {
     padding-top: 24px;
 }
 
-.arlista-oldal h2 {
-    margin-bottom: 22px;
-}
 
 .arlista-oldal .szekcio-leiras {
     margin-bottom: 34px;
@@ -845,7 +899,7 @@ select.urlap-mezo:invalid {
 }
 
 .arlista-csoport h3 {
-    margin: 0 0 18px;
+    margin: 0 0 var(--lumi-price-heading-content-gap);
     color: var(--akcentus);
     font-family: 'Cormorant Garamond', serif;
     font-size: 42px;
@@ -912,9 +966,6 @@ select.urlap-mezo:invalid {
     padding-top: 24px;
 }
 
-.galeria-oldal h2 {
-    margin-bottom: 22px;
-}
 
 .galeria-oldal .szekcio-leiras {
     margin-bottom: 34px;
@@ -1006,7 +1057,7 @@ select.urlap-mezo:invalid {
     width: 44px;
     height: 44px;
     border: 1px solid rgba(255, 250, 244, 0.4);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     background: rgba(255, 250, 244, 0.15);
     color: #fffaf4;
     font-family: 'Cormorant Garamond', serif;
@@ -1057,71 +1108,78 @@ select.urlap-mezo:invalid {
 }
 
 .site-footer {
+    width: var(--lumi-container-width);
     max-width: 1400px;
     margin: 36px auto 0;
-    padding: 0 20px 72px;
+    padding: 0 0 40px;
     box-sizing: border-box;
 }
 
 .footer-belso {
     display: grid;
-    grid-template-columns: minmax(260px, 540px) auto;
-    justify-content: start;
-    gap: 8px 18px;
-    align-items: end;
-    padding: 24px 28px 22px;
+    grid-template-columns: minmax(300px, 1.25fr) minmax(260px, 0.9fr) auto;
+    gap: 24px 32px;
+    align-items: center;
+    padding: 20px 24px;
     background: rgba(255, 250, 244, 0.86);
     border: 1px solid rgba(185, 133, 143, 0.2);
     border-radius: 20px;
     box-shadow: 0 14px 34px rgba(78, 54, 48, 0.07);
 }
 
-.footer-brand,
-.footer-kapcsolat {
+.footer-brand {
     grid-column: 1;
+    max-width: 520px;
 }
 
-.footer-brand {
-    grid-column: 1 / -1;
-    max-width: 620px;
+.footer-kapcsolat {
+    grid-column: 2;
 }
 
 .footer-social {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: start;
-    align-self: end;
-    padding-bottom: 2px;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
 }
 
 .footer-logo {
     display: inline-block;
     color: var(--tinta);
     font-family: 'Cormorant Garamond', serif;
-    font-size: 34px;
+    font-size: 30px;
     font-weight: 700;
     text-decoration: none;
 }
 
 .footer-brand p,
 .footer-kapcsolat address {
-    margin: 8px 0 0;
+    margin: 4px 0 0;
     color: var(--szoveg);
-    font-size: 15px;
+    font-size: 13.5px;
     font-style: normal;
-    line-height: 1.6;
+    line-height: 1.45;
 }
 
 .footer-kapcsolat h3 {
-    margin: 4px 0 0;
+    margin: 0 0 6px;
     color: var(--akcentus);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.footer-kapcsolat address {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 14px;
 }
 
 .footer-kapcsolat a {
-    display: block;
+    display: inline-flex;
     width: fit-content;
     max-width: 100%;
     color: var(--tinta);
@@ -1136,18 +1194,17 @@ select.urlap-mezo:invalid {
 }
 
 .footer-jogi-link {
-    margin-top: 8px;
-    font-size: 13px;
+    margin-top: 0;
+    font-size: 12px;
     font-weight: 700;
 }
 
 .social-linkek {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 10px;
+    justify-content: flex-end;
+    gap: 8px;
 }
-
 .jogi-oldal {
     max-width: 920px;
     margin: 0 auto;
@@ -1248,7 +1305,7 @@ select.urlap-mezo:invalid {
     color: var(--tinta);
     background: rgba(185, 133, 143, 0.08);
     border: 1px solid rgba(185, 133, 143, 0.24);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     text-decoration: none;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
@@ -1463,7 +1520,7 @@ select.urlap-mezo:invalid {
     color: #fffaf4;
     background: var(--akcentus);
     border: 1px solid rgba(255, 250, 244, 0.36);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     box-shadow: 0 10px 24px rgba(78, 54, 48, 0.18);
     font-family: 'Manrope', sans-serif;
     font-size: 13px;
@@ -1485,14 +1542,20 @@ select.urlap-mezo:invalid {
 }
 
 .admin-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
     min-width: 0;
     min-height: 40px;
     padding: 0 16px;
+    overflow: visible;
     color: var(--tinta);
     background: rgba(185, 133, 143, 0.08);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 999px;
-    font-family: 'Manrope', sans-serif;
+    border-radius: var(--lumi-radius-pill);
+    font-family: var(--lumi-button-font);
     font-size: 12px;
     font-weight: 800;
     line-height: 1.2;
@@ -1578,8 +1641,11 @@ select.urlap-mezo:invalid {
 .admin-idopont-szerkeszto .admin-mezo textarea {
     width: 100%;
     min-width: 0;
-    min-height: 38px;
     padding: 8px 10px;
+}
+
+.admin-idopont-szerkeszto .admin-mezo input {
+    min-height: 38px;
 }
 
 .admin-idopont-szerkeszto .admin-mezo textarea {
@@ -1665,7 +1731,7 @@ select.urlap-mezo:invalid {
     color: var(--tinta);
     background: rgba(255, 250, 244, 0.82);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-size: 12px;
     font-weight: 800;
     white-space: nowrap;
@@ -1682,18 +1748,11 @@ select.urlap-mezo:invalid {
     font-weight: 700;
 }
 
-.admin-db-statusz,
 .admin-db-grid select,
 .admin-db-grid input,
 .admin-db-form input {
     width: 100%;
-    box-sizing: border-box;
     padding: 11px 12px;
-    color: var(--tinta);
-    background: #fffdf8;
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 10px;
-    font-family: 'Manrope', sans-serif;
     font-size: 14px;
 }
 
@@ -1781,6 +1840,8 @@ select.urlap-mezo:invalid {
 
 .admin-idosav-grid {
     display: grid;
+    grid-template-columns: minmax(132px, 1.2fr) minmax(82px, 0.7fr) minmax(82px, 0.7fr) auto;
+    align-items: end;
     gap: 8px;
 }
 
@@ -1876,13 +1937,15 @@ select.urlap-mezo:invalid {
 }
 
 .admin-naptar-fej,
-.admin-naptar-tomeges,
 .admin-naptar-lista-fej {
     display: flex;
-    align-items: end;
     justify-content: space-between;
     gap: 14px;
     margin-bottom: 14px;
+}
+
+.admin-naptar-fej {
+    align-items: end;
 }
 
 .admin-naptar-fej .admin-mezo {
@@ -1895,9 +1958,11 @@ select.urlap-mezo:invalid {
 }
 
 .admin-naptar-tomeges {
+    display: flex;
     align-items: end;
     justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 14px;
     margin: 16px 0;
 }
 
@@ -2123,13 +2188,7 @@ select.urlap-mezo:invalid {
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    box-sizing: border-box;
     padding: 13px 14px;
-    color: var(--tinta);
-    background: #fffdf8;
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 10px;
-    font-family: 'Manrope', sans-serif;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -2138,12 +2197,6 @@ select.urlap-mezo:invalid {
     resize: vertical;
 }
 
-.admin-mezo input:focus,
-.admin-mezo textarea:focus {
-    border-color: var(--akcentus);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(185, 133, 143, 0.12);
-}
 
 .admin-mezo input[type="date"],
 .admin-mezo input[type="month"],
@@ -2224,21 +2277,25 @@ select.urlap-mezo:invalid {
 
 .admin-hozzaadas,
 .admin-kis-gomb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
     min-height: 38px;
     max-width: 100%;
-    box-sizing: border-box;
     padding: 0 14px;
     color: var(--tinta);
     background: rgba(185, 133, 143, 0.08);
     border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
-    font-family: 'Manrope', sans-serif;
+    border-radius: var(--lumi-radius-pill);
+    font-family: var(--lumi-button-font);
     font-size: 12px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.18;
     text-align: center;
     white-space: normal;
     cursor: pointer;
+    touch-action: manipulation;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -2253,31 +2310,12 @@ select.urlap-mezo:invalid {
     background: var(--akcentus);
 }
 
-.admin-veszely-gomb {
-    color: #8f3c48;
-    background: rgba(143, 60, 72, 0.07);
-    border-color: rgba(143, 60, 72, 0.26);
-}
-
-.admin-veszely-gomb:hover {
-    color: #fffaf4;
-    background: #9b4e5c;
-}
 
 .admin-kis-gomb:disabled {
     cursor: default;
     opacity: 0.45;
 }
 
-.admin-lapozo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 18px;
-    color: var(--barna);
-    font-weight: 800;
-}
 
 /* A HAMBURGER GOMB */
 .hamburger {
@@ -2286,7 +2324,7 @@ select.urlap-mezo:invalid {
     width: 44px;
     height: 44px;
     border: none;
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     background-color: rgba(185, 133, 143, 0.12);
     box-shadow: inset 0 0 0 1px rgba(185, 133, 143, 0.18);
     z-index: 9999;
@@ -2305,7 +2343,7 @@ select.urlap-mezo:invalid {
     right: 12px;
     height: 2px;
     background-color: var(--tinta);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
 }
 
@@ -2412,11 +2450,11 @@ select.urlap-mezo:invalid {
     }
 
     .menu-pontok {
-        display: none !important;
+        display: none;
     }
 
     .hamburger {
-        display: block !important;
+        display: block;
     }
 
     .admin-oldal {
@@ -2432,7 +2470,6 @@ select.urlap-mezo:invalid {
     .admin-grid,
     .admin-arlista-sor,
     .admin-db-grid,
-    .admin-db-grid-szolgaltatas,
     .admin-db-form {
         grid-template-columns: 1fr;
     }
@@ -2449,8 +2486,7 @@ select.urlap-mezo:invalid {
     .admin-leiras,
     .admin-info,
     .admin-status,
-    .admin-db-kartya p,
-    .admin-foglalas-reszletek {
+    .admin-db-kartya p {
         font-size: 12.5px;
     }
 
@@ -2662,17 +2698,13 @@ select.urlap-mezo:invalid {
         font-size: 12.5px;
     }
 
-    .admin-db-statusz {
-        width: 100%;
-    }
 
     .admin-idopont-szerkeszto {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(100px, 1.4fr) repeat(2, minmax(62px, 0.72fr));
         padding: 10px;
         gap: 8px;
     }
 
-    .admin-idopont-szerkeszto .admin-mezo:first-child,
     .admin-idopont-szerkeszto .admin-mezo-szeles {
         grid-column: 1 / -1;
     }
@@ -2683,9 +2715,12 @@ select.urlap-mezo:invalid {
         inline-size: 100%;
         max-inline-size: 100%;
         min-width: 0;
-        min-height: 36px;
         padding: 6px 7px;
         font-size: 12.5px;
+    }
+
+    .admin-idopont-szerkeszto .admin-mezo input {
+        min-height: 36px;
     }
 
     .admin-idopont-szerkeszto .admin-mezo textarea {
@@ -2757,7 +2792,7 @@ select.urlap-mezo:invalid {
 
     .admin-tiltas-sor {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(100px, 1.4fr) repeat(2, minmax(62px, 0.72fr));
         gap: 8px;
         margin: 0;
     }
@@ -2767,7 +2802,6 @@ select.urlap-mezo:invalid {
         max-width: 100%;
     }
 
-    .admin-tiltas-sor > .admin-mezo:first-child,
     .admin-tiltas-sor > .admin-mezo-szeles {
         grid-column: 1 / -1;
     }
@@ -2799,8 +2833,7 @@ select.urlap-mezo:invalid {
     }
 
     .admin-naptar-akciok .admin-kis-gomb,
-    .admin-naptar-fej .admin-mezo,
-    .admin-naptar-fej input[type="month"] {
+    .admin-naptar-fej .admin-mezo {
         width: 100%;
         max-width: 100%;
         min-width: 0;
@@ -2827,42 +2860,70 @@ select.urlap-mezo:invalid {
     }
 
     .admin-naptar-sor {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: 7px;
+        grid-template-columns: minmax(74px, 0.9fr) minmax(58px, 1fr) minmax(58px, 1fr) 34px;
+        align-items: center;
+        gap: 6px;
         padding: 9px;
     }
 
     .admin-naptar-datum {
-        grid-column: 1 / -1;
-        font-size: 12.5px;
+        grid-column: auto;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .admin-naptar-sor .admin-mezo {
+        gap: 0;
+        font-size: 0;
     }
 
     .admin-naptar-sor .admin-mezo input {
         width: 100%;
         min-width: 0;
-        min-height: 36px;
-        padding: 6px 7px;
-        font-size: 12.5px;
+        min-height: 34px;
+        padding: 5px 4px;
+        font-size: 12px;
+        text-align: center;
     }
 
     .admin-naptar-sor .admin-kis-gomb {
-        grid-column: 1 / -1;
+        grid-column: auto;
+        min-width: 34px;
         min-height: 34px;
-        padding: 0 10px;
+        padding: 0;
+    }
+
+    .admin-idosav-grid {
+        grid-template-columns: minmax(96px, 1.25fr) repeat(2, minmax(58px, 0.75fr)) 34px;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .admin-idosav-grid .admin-mezo {
+        gap: 0;
+        font-size: 0;
+    }
+
+    .admin-idosav-grid .admin-mezo input {
+        min-height: 34px;
+        padding: 5px 4px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .admin-idosav-grid .admin-idosav-torles-x {
+        min-width: 34px;
+        min-height: 34px;
     }
 
     .lebego-foglalas-gomb {
         right: 50%;
         bottom: calc(18px + env(safe-area-inset-bottom));
-        min-height: 46px;
-        padding: 0 22px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
         transform: translateX(50%);
         white-space: nowrap;
     }
 
     .lebego-foglalas-gomb:hover {
-        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
         transform: translateX(50%) translateY(-2px);
     }
 
@@ -2937,17 +2998,13 @@ select.urlap-mezo:invalid {
         font-size: 13.5px;
     }
     #kapcsolat {
-        margin-top: 6px;
-        padding-top: 46px;
+        padding-top: 22px;
     }
 
     .arlista-oldal {
         padding-top: 12px;
     }
 
-    .arlista-oldal h2 {
-        margin-bottom: 16px;
-    }
 
     .arlista-oldal .szekcio-leiras {
         margin-bottom: 24px;
@@ -2960,7 +3017,7 @@ select.urlap-mezo:invalid {
 
     .arlista-ket-oszlop {
         grid-template-columns: 1fr;
-        gap: 28px;
+        gap: 0;
     }
 
     .arlista-csoport,
@@ -2990,9 +3047,6 @@ select.urlap-mezo:invalid {
         padding-top: 12px;
     }
 
-    .galeria-oldal h2 {
-        margin-bottom: 16px;
-    }
 
     .galeria-oldal .szekcio-leiras {
         margin-bottom: 24px;
@@ -3040,31 +3094,61 @@ select.urlap-mezo:invalid {
 
     .site-footer {
         margin-top: 24px;
-        padding: 0 12px 82px;
+        padding: 0 0 28px;
     }
 
     .footer-belso {
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px 12px;
-        padding: 20px 18px 18px;
+        gap: 12px 14px;
+        padding: 16px;
         text-align: left;
         border-radius: 20px;
     }
 
     .footer-brand {
-        grid-column: 1 / -1;
+        grid-column: 1;
+        grid-row: 1;
+        max-width: none;
     }
 
     .footer-kapcsolat {
-        grid-column: 1;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+        gap: 4px 14px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(185, 133, 143, 0.18);
     }
 
     .footer-social {
         grid-column: 2;
-        grid-row: 2;
-        justify-self: start;
-        align-self: end;
-        padding-bottom: 2px;
+        grid-row: 1;
+        justify-self: end;
+        align-self: center;
+    }
+
+    .footer-logo {
+        font-size: 28px;
+    }
+
+    .footer-brand p {
+        margin-top: 3px;
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .footer-kapcsolat h3 {
+        margin: 2px 0 0;
+        font-size: 12px;
+    }
+
+    .footer-kapcsolat address {
+        margin: 0;
+        gap: 3px 12px;
+        font-size: 12.5px;
+        line-height: 1.4;
     }
 
     .footer-kapcsolat a {
@@ -3072,28 +3156,28 @@ select.urlap-mezo:invalid {
     }
 
     .footer-jogi-link {
-        font-size: 12.5px;
+        font-size: 12px;
     }
 
     .social-linkek {
-        justify-content: flex-start;
+        justify-content: flex-end;
         flex-direction: row;
         gap: 8px;
     }
 
     .social-gomb {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
 
     .social-gomb svg {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
     }
 
     .social-gomb[href*="facebook"] svg {
-        width: 27px;
-        height: 27px;
+        width: 25px;
+        height: 25px;
         transform: translateX(1px);
     }
 
@@ -3179,7 +3263,14 @@ select.urlap-mezo:invalid {
     font-family: 'Cormorant Garamond', serif;
 }
 .admin-cms-heading p { margin-bottom: 0; }
-.admin-cms-main-actions,
+.admin-cms-main-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .cms-gallery-header,
 .cms-gallery-actions,
 .cms-image-controls {
@@ -3213,6 +3304,13 @@ select.urlap-mezo:invalid {
     font-weight: 400;
 }
 .cms-section-body { padding: 6px 0 30px; }
+.cms-section-description {
+    max-width: 820px;
+    margin: 0 0 20px;
+    color: var(--szoveg);
+    font-size: 14px;
+    line-height: 1.6;
+}
 .cms-field-grid { align-items: start; }
 .cms-field-label { color: var(--barna); }
 .cms-checkbox { align-self: center; min-height: 48px; }
@@ -3255,7 +3353,8 @@ select.urlap-mezo:invalid {
     pointer-events: none;
 }
 .cms-image-url { font-size: 13px; }
-.cms-gallery-editor {
+.cms-gallery-editor,
+.cms-home-gallery-editor {
     margin-top: 26px;
     padding-top: 24px;
     border-top: 1px solid rgba(185, 133, 143, 0.25);
@@ -3264,10 +3363,20 @@ select.urlap-mezo:invalid {
     justify-content: space-between;
     margin-bottom: 16px;
 }
-.cms-gallery-list {
+.cms-gallery-list,
+.cms-home-gallery-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+.cms-gallery-header > span,
+.cms-gallery-note {
+    color: var(--szoveg);
+    font-size: 13px;
+}
+.cms-gallery-note {
+    margin: -6px 0 14px;
+    line-height: 1.45;
 }
 .cms-gallery-item {
     min-width: 0;
@@ -3294,10 +3403,10 @@ select.urlap-mezo:invalid {
 .cms-gallery-actions .admin-kis-gomb { min-width: 50px; padding-inline: 14px; }
 #admin-cms-status { margin: 18px 0; }
 .footer-jogok {
-    margin: 0;
-    padding: 0 20px 24px;
+    margin: 10px 0 0;
+    padding: 0;
     color: var(--szoveg);
-    font-size: 12px;
+    font-size: 11.5px;
     text-align: center;
 }
 
@@ -3305,7 +3414,8 @@ select.urlap-mezo:invalid {
     .admin-cms-heading { align-items: stretch; flex-direction: column; }
     .admin-cms-main-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .admin-cms-main-actions button { width: 100%; padding-inline: 12px; }
-    .cms-gallery-list { grid-template-columns: 1fr; }
+    .cms-gallery-list,
+    .cms-home-gallery-list { grid-template-columns: 1fr; }
     .cms-section-toggle { min-height: 58px; font-size: 16px; }
     .cms-section-body { padding-bottom: 22px; }
     .cms-image-field,
@@ -3358,7 +3468,6 @@ select.urlap-mezo:invalid {
     text-align: center;
 }
 
-.foglalas-nyito h2,
 .foglalas-asszisztens-fej h2 {
     margin-bottom: 14px;
 }
@@ -3374,20 +3483,20 @@ select.urlap-mezo:invalid {
 
 .foglalas-utak {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
 }
 
 .foglalas-ut-kartya {
     display: flex;
-    min-height: 230px;
+    min-height: 176px;
     flex-direction: column;
-    gap: 12px;
-    padding: 22px;
+    gap: 9px;
+    padding: 17px;
     color: var(--tinta);
     background: rgba(255, 250, 244, 0.92);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 26px;
+    border-radius: 22px;
     text-decoration: none;
     box-shadow: 0 12px 24px rgba(78, 54, 48, 0.07);
     transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
@@ -3407,49 +3516,56 @@ select.urlap-mezo:invalid {
 
 .foglalas-ut-ikon {
     display: inline-flex;
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     align-items: center;
     justify-content: center;
     color: #fffaf4;
     background: var(--akcentus);
-    border-radius: 999px;
-    font-size: 22px;
+    border-radius: var(--lumi-radius-pill);
+    font-size: 15px;
     font-weight: 800;
 }
 
 .foglalas-ut-cim {
     color: var(--barna);
     font-family: 'Cormorant Garamond', serif;
-    font-size: 29px;
+    font-size: clamp(20px, 2.3vw, 28px);
     font-weight: 700;
-    line-height: 1;
+    line-height: 1.02;
 }
 
 .foglalas-ut-leiras {
     color: var(--szoveg);
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 13px;
+    line-height: 1.45;
 }
 
 .foglalas-ut-gomb {
     margin-top: auto;
     color: var(--akcentus);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.11em;
     text-transform: uppercase;
 }
 
 .foglalas-asszisztens {
     display: grid;
+    width: 100%;
+    min-width: 0;
     max-width: 880px;
+    box-sizing: border-box;
     margin: 0 auto;
     gap: 18px;
 }
 
 .foglalas-lepes {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: clamp(18px, 3vw, 28px);
+    scroll-margin-top: 112px;
     background: rgba(255, 250, 244, 0.92);
     border: 1px solid rgba(185, 133, 143, 0.2);
     border-radius: 26px;
@@ -3486,7 +3602,7 @@ select.urlap-mezo:invalid {
     justify-content: center;
     color: #fffaf4;
     background: var(--akcentus);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-weight: 800;
 }
 
@@ -3501,7 +3617,12 @@ select.urlap-mezo:invalid {
     border: 0;
 }
 
-.foglalas-kartya-racs,
+.foglalas-kartya-racs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+}
+
 .foglalas-stilus-racs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3524,18 +3645,19 @@ select.urlap-mezo:invalid {
     color: var(--tinta);
     background: rgba(241, 222, 217, 0.18);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 18px;
     cursor: pointer;
     font-family: 'Manrope', sans-serif;
-    text-align: left;
     transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .foglalas-valaszto-kartya {
     display: grid;
+    align-content: center;
     gap: 6px;
-    min-height: 96px;
-    padding: 16px;
+    min-height: 92px;
+    padding: 14px;
+    border-radius: 16px;
+    text-align: left;
 }
 
 .foglalas-valaszto-kartya:hover,
@@ -3557,20 +3679,22 @@ select.urlap-mezo:invalid {
 
 .foglalas-kartya-cim {
     color: var(--barna);
+    font-size: 14px;
     font-weight: 800;
     line-height: 1.25;
 }
 
 .foglalas-kartya-meta {
     color: rgba(83, 67, 59, 0.72);
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 12.5px;
+    line-height: 1.35;
 }
 
 .foglalas-mini-kartya,
 .foglalas-idopont-gomb {
     min-height: 44px;
     padding: 11px 14px;
+    border-radius: 18px;
     text-align: center;
     font-weight: 800;
 }
@@ -3587,6 +3711,8 @@ select.urlap-mezo:invalid {
 .foglalas-stilus-kartya {
     display: grid;
     gap: 5px;
+    border-radius: 18px;
+    text-align: left;
     min-height: 112px;
     padding: 16px;
 }
@@ -3642,7 +3768,7 @@ select.urlap-mezo:invalid {
     justify-content: center;
     color: #fffaf4;
     background: var(--akcentus);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-size: 24px;
     line-height: 1;
 }
@@ -3664,7 +3790,7 @@ select.urlap-mezo:invalid {
 
 .foglalas-kep-elonezet {
     display: grid;
-    grid-template-columns: 90px minmax(0, 1fr);
+    grid-template-columns: 1fr;
     gap: 12px;
     align-items: center;
     margin-top: 12px;
@@ -3707,23 +3833,20 @@ select.urlap-mezo:invalid {
 .foglalas-adat-racs .urlap-mezo,
 .foglalas-adat-racs .tel-csoport {
     min-width: 0;
-    border-radius: 16px;
 }
 
-.admin-inspiracio-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 800;
-}
 
 @media screen and (max-width: 900px) {
     .foglalas-utak,
-    .foglalas-adat-racs {
-        grid-template-columns: 1fr;
+    .foglalas-kartya-racs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .foglalas-kartya-racs,
+    .foglalas-utak {
+        gap: 10px;
+    }
+
+    .foglalas-adat-racs,
     .foglalas-stilus-racs {
         grid-template-columns: 1fr;
     }
@@ -3765,9 +3888,6 @@ select.urlap-mezo:invalid {
         font-size: 24px;
     }
 
-    .foglalas-ut-cim {
-        font-size: 25px;
-    }
 
     .foglalas-mini-kartya,
     .foglalas-idopont-gomb {
@@ -3779,7 +3899,7 @@ select.urlap-mezo:invalid {
     }
 }
 /* =========================================
-   FINOMITASOK 20260714 BOOKING2
+   BOOKING SUMMARY, IMAGE PREVIEWS AND ADMIN DETAILS
    ========================================= */
 .foglalas-osszefoglalo {
     margin-top: 14px;
@@ -3833,9 +3953,6 @@ select.urlap-mezo:invalid {
     overflow-wrap: anywhere;
 }
 
-.foglalas-kep-elonezet {
-    grid-template-columns: 1fr;
-}
 
 .foglalas-kep-elonezet-racs {
     display: grid;
@@ -3895,12 +4012,14 @@ select.urlap-mezo:invalid {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     min-height: 30px;
+    font-weight: 800;
     padding: 0 12px;
     color: var(--akcentus);
     background: rgba(185, 133, 143, 0.08);
     border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-family: 'Manrope', sans-serif;
     font-size: 12px;
     font-weight: 800;
@@ -3925,18 +4044,33 @@ select.urlap-mezo:invalid {
 
 .admin-inspiracio-modal-doboz {
     position: relative;
+    display: flex;
+    flex-direction: column;
     width: min(980px, 100%);
     max-height: min(86vh, 900px);
-    overflow: auto;
-    padding: clamp(18px, 3vw, 28px);
+    overflow: hidden;
+    padding: 0;
     background: #fffaf4;
     border: 1px solid rgba(185, 133, 143, 0.28);
     border-radius: 26px;
     box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24);
 }
 
+.admin-inspiracio-modal-fejlec {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: clamp(18px, 3vw, 28px);
+    background: #fffaf4;
+    border-bottom: 1px solid rgba(185, 133, 143, 0.16);
+}
+
 .admin-inspiracio-modal-doboz h3 {
-    margin: 0 42px 16px 0;
+    margin: 0;
     color: var(--barna);
     font-family: 'Cormorant Garamond', serif;
     font-size: 34px;
@@ -3944,15 +4078,14 @@ select.urlap-mezo:invalid {
 }
 
 .admin-inspiracio-bezaras {
-    position: absolute;
-    top: 14px;
-    right: 14px;
+    position: static;
+    flex: 0 0 auto;
     width: 40px;
     height: 40px;
     color: var(--tinta);
     background: rgba(241, 222, 217, 0.55);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
     font-size: 28px;
     line-height: 1;
     cursor: pointer;
@@ -3960,8 +4093,13 @@ select.urlap-mezo:invalid {
 
 .admin-inspiracio-modal-racs {
     display: grid;
+    min-height: 0;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
+    align-content: start;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: clamp(18px, 3vw, 28px);
 }
 
 .admin-inspiracio-modal-racs figure {
@@ -3984,14 +4122,13 @@ select.urlap-mezo:invalid {
     font-weight: 800;
     overflow-wrap: anywhere;
 }
-
 body.admin-modal-nyitva {
     overflow: hidden;
 }
 
 .admin-naptar-torles-x {
     min-width: 38px;
-    padding-inline: 0 !important;
+    padding-inline: 0;
     font-size: 18px;
     line-height: 1;
 }
@@ -4008,153 +4145,98 @@ body.admin-modal-nyitva {
     }
 
     .admin-foglalas-reszlet-sor {
-        gap: 2px 8px;
+        display: block;
+        width: 100%;
         line-height: 1.35;
+        text-align: left;
     }
 
-    .admin-foglalas-reszlet-sor span {
+    .admin-foglalas-reszlet-sor > span {
+        display: inline;
         min-width: 0;
+        text-align: left;
     }
 
     .admin-foglalas-idopont {
+        justify-self: end;
+        max-width: none;
         font-size: 11.5px;
-        white-space: normal;
+        line-height: 1.25;
+        white-space: nowrap;
         text-align: right;
     }
 
-    .admin-naptar-sor {
-        grid-template-columns: minmax(74px, 0.9fr) minmax(70px, 1fr) minmax(70px, 1fr) 38px !important;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .admin-naptar-datum {
-        grid-column: auto !important;
-        font-size: 12px;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .admin-naptar-sor .admin-mezo {
-        font-size: 0 !important;
-        gap: 0;
-    }
-
-    .admin-naptar-sor .admin-mezo input {
-        min-height: 34px;
-        padding: 5px 4px;
-        font-size: 12px;
-        text-align: center;
-    }
-
-    .admin-naptar-sor .admin-kis-gomb {
-        grid-column: auto !important;
-        min-height: 34px;
-    }
 
     .admin-inspiracio-modal {
         padding: 10px;
+    }
+
+    .admin-inspiracio-modal-doboz {
+        max-height: calc(100dvh - 20px);
+        border-radius: 22px;
+    }
+
+    .admin-inspiracio-modal-fejlec,
+    .admin-inspiracio-modal-racs {
+        padding: 16px;
+    }
+
+    .admin-inspiracio-modal-doboz h3 {
+        font-size: 30px;
     }
 
     .admin-inspiracio-modal-racs {
         grid-template-columns: 1fr;
     }
 }
-.admin-idosav-grid-kompakt {
-    grid-template-columns: minmax(132px, 1.2fr) minmax(82px, 0.7fr) minmax(82px, 0.7fr) auto;
-    align-items: end;
-}
 
 .admin-idosav-torles-x {
     min-width: 38px;
-    padding-inline: 0 !important;
-    font-size: 18px !important;
+    padding-inline: 0;
+    font-size: 18px;
     line-height: 1;
 }
 
-@media screen and (max-width: 760px) {
-    .admin-idosav-grid-kompakt {
-        grid-template-columns: minmax(104px, 1.3fr) minmax(64px, 0.8fr) minmax(64px, 0.8fr) 38px !important;
-        gap: 6px;
-        align-items: center;
-    }
 
-    .admin-idosav-grid-kompakt .admin-mezo {
-        font-size: 0 !important;
-        gap: 0;
-    }
-
-    .admin-idosav-grid-kompakt .admin-mezo input {
-        min-height: 34px;
-        padding: 5px 4px;
-        font-size: 12px;
-        text-align: center;
-    }
-
-    .admin-idosav-grid-kompakt .admin-idosav-torles-x {
-        min-height: 34px;
-        min-width: 34px;
-    }
-}
-/* =========================================
-   FINOMITASOK 20260714 BOOKING3
-   ========================================= */
-.foglalas-kartya-racs {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-}
-
-.foglalas-valaszto-kartya {
-    min-height: 78px;
-    padding: 12px 14px;
-    border-radius: 16px;
-    align-content: center;
-}
-
-.foglalas-kartya-cim {
-    font-size: 14px;
-}
-
-.foglalas-kartya-meta {
-    font-size: 12.5px;
-    line-height: 1.35;
-}
-
+/* Dátumválasztó */
 .foglalas-datum-csik {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    margin-top: 10px;
-    padding: 2px 2px 10px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    max-height: 250px;
+    margin-top: 12px;
+    padding: 2px 2px 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .foglalas-datum-csik::-webkit-scrollbar {
-    height: 4px;
+    width: 4px;
 }
 
 .foglalas-datum-csik::-webkit-scrollbar-thumb {
     background: rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
+    border-radius: var(--lumi-radius-pill);
 }
 
 .foglalas-datum-chip {
-    display: inline-flex;
-    flex: 0 0 126px;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
     align-items: center;
-    gap: 9px;
-    min-height: 58px;
-    padding: 9px 11px;
+    gap: 7px;
+    width: 100%;
+    min-height: 46px;
+    padding: 7px 8px;
     color: var(--tinta);
     background: rgba(241, 222, 217, 0.18);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 999px;
+    border-radius: 15px;
     cursor: pointer;
     font-family: 'Manrope', sans-serif;
-    scroll-snap-align: start;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .foglalas-datum-chip:hover {
@@ -4170,67 +4252,42 @@ body.admin-modal-nyitva {
 
 .foglalas-datum-chip-nap {
     display: inline-flex;
-    flex: 0 0 34px;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    color: #fffaf4;
-    background: var(--akcentus);
-    border-radius: 999px;
-    font-size: 13px;
+    width: 26px;
+    height: 26px;
+    color: var(--akcentus);
+    background: rgba(255, 250, 244, 0.86);
+    border: 1px solid rgba(185, 133, 143, 0.32);
+    border-radius: 9px;
+    font-size: 11px;
     font-weight: 900;
-    letter-spacing: 0.02em;
 }
 
 .foglalas-datum-chip-resz {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
     color: var(--barna);
     font-size: 12px;
     font-weight: 850;
-    line-height: 1.15;
+    line-height: 1.1;
     text-align: left;
-    text-transform: capitalize;
+    text-overflow: ellipsis;
     white-space: nowrap;
+    text-transform: capitalize;
 }
 
-@media screen and (max-width: 900px) {
-    .foglalas-kartya-racs {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 9px;
-    }
+.foglalas-datum-chip-resz strong,
+.foglalas-datum-chip-resz small {
+    display: inline;
+    color: inherit;
+    font: inherit;
+    text-transform: inherit;
 }
-
-@media screen and (max-width: 620px) {
-    .foglalas-valaszto-kartya {
-        min-height: 82px;
-        padding: 11px 10px;
-    }
-
-    .foglalas-kartya-cim {
-        font-size: 12.5px;
-    }
-
-    .foglalas-kartya-meta {
-        font-size: 11.5px;
-    }
-
-    .foglalas-datum-chip {
-        flex-basis: 116px;
-        min-height: 54px;
-        padding: 8px 9px;
-    }
-
-    .foglalas-datum-chip-nap {
-        flex-basis: 31px;
-        width: 31px;
-        height: 31px;
-        font-size: 12px;
-    }
-}
-
 @media screen and (max-width: 760px) {
     .admin-foglalas-fosor {
-        grid-template-columns: minmax(0, 1fr) minmax(122px, auto) !important;
+        grid-template-columns: minmax(0, 1fr) minmax(122px, auto);
         align-items: start;
         column-gap: 12px;
     }
@@ -4241,26 +4298,6 @@ body.admin-modal-nyitva {
         overflow-wrap: anywhere;
     }
 
-    .admin-foglalas-idopont {
-        justify-self: end;
-        max-width: 152px;
-        text-align: right;
-        white-space: normal;
-        line-height: 1.25;
-    }
-
-    .admin-foglalas-reszlet-sor {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 5px 10px;
-        width: 100%;
-    }
-
-    .admin-foglalas-reszlet-sor > span {
-        justify-content: flex-end;
-        min-width: 0;
-        text-align: right;
-    }
 
     .admin-foglalas-reszlet-sor a {
         overflow-wrap: anywhere;
@@ -4271,10 +4308,9 @@ body.admin-modal-nyitva {
     }
 }
 /* =========================================
-   FINOMITASOK 20260714 BOOKING5
+   BOOKING SCROLL TARGETS
    ========================================= */
-.foglalas-asszisztens-szekcio,
-.foglalas-lepes {
+.foglalas-asszisztens-szekcio {
     scroll-margin-top: 112px;
 }
 
@@ -4285,25 +4321,17 @@ body.admin-modal-nyitva {
     }
 }
 /* =========================================
-   FINOMITASOK 20260714 BOOKING6
+   BOOKING RESPONSIVE SAFETY AND ADMIN META
    ========================================= */
-html,
-body {
-    max-width: 100%;
-    overflow-x: hidden;
-}
 
 .foglalas-oldal,
 .foglalas-nyito,
 .foglalas-asszisztens-szekcio,
-.foglalas-asszisztens,
-.foglalas-lepes,
 .foglalas-lepes-fej,
 .foglalas-lepes-fej > div,
 .foglalas-kartya-racs,
 .foglalas-stilus-racs,
-.foglalas-ido-racs,
-.foglalas-datum-csik {
+.foglalas-ido-racs {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
@@ -4316,113 +4344,6 @@ body {
     overflow-wrap: anywhere;
 }
 
-.foglalas-utak {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.foglalas-ut-kartya {
-    min-height: 176px;
-    padding: 17px;
-    border-radius: 22px;
-    gap: 9px;
-}
-
-.foglalas-ut-ikon {
-    width: 38px;
-    height: 38px;
-    font-size: 15px;
-}
-
-.foglalas-ut-cim {
-    font-size: clamp(20px, 2.3vw, 28px);
-    line-height: 1.02;
-}
-
-.foglalas-ut-leiras {
-    font-size: 13px;
-    line-height: 1.45;
-}
-
-.foglalas-ut-gomb {
-    margin-top: auto;
-    font-size: 11px;
-    letter-spacing: 0.11em;
-}
-
-.foglalas-kartya-racs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px;
-}
-
-.foglalas-valaszto-kartya {
-    min-height: 92px;
-    padding: 14px;
-}
-
-.foglalas-kartya-cim {
-    font-size: 14px;
-    line-height: 1.25;
-}
-
-.foglalas-kartya-meta {
-    font-size: 12.5px;
-    line-height: 1.35;
-}
-
-.foglalas-datum-csik {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 9px;
-    max-height: 250px;
-    margin-top: 12px;
-    padding: 2px 2px 8px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-snap-type: none;
-}
-
-.foglalas-datum-chip {
-    display: grid;
-    grid-template-columns: 36px minmax(0, 1fr);
-    flex: none;
-    width: 100%;
-    min-height: 62px;
-    padding: 9px;
-    border-radius: 16px;
-    gap: 8px;
-}
-
-.foglalas-datum-chip-nap {
-    width: 34px;
-    height: 34px;
-    flex-basis: auto;
-    font-size: 12.5px;
-}
-
-.foglalas-datum-chip-resz {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-    text-align: left;
-    white-space: normal;
-    text-transform: none;
-}
-
-.foglalas-datum-chip-resz strong {
-    color: var(--barna);
-    font-size: 12px;
-    line-height: 1.05;
-    text-transform: capitalize;
-}
-
-.foglalas-datum-chip-resz small {
-    color: rgba(83, 67, 59, 0.72);
-    font-size: 10.5px;
-    font-weight: 750;
-    line-height: 1.1;
-    text-transform: capitalize;
-}
 
 .admin-foglalas-meta-grid {
     display: grid;
@@ -4456,20 +4377,6 @@ body {
     overflow-wrap: anywhere;
 }
 
-@media screen and (max-width: 900px) {
-    .foglalas-utak {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 10px;
-    }
-
-    .foglalas-kartya-racs {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
-
-    .foglalas-stilus-racs {
-        grid-template-columns: 1fr !important;
-    }
-}
 
 @media screen and (max-width: 620px) {
     .foglalas-nyito,
@@ -4517,28 +4424,18 @@ body {
 
     .foglalas-datum-csik {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-height: 238px;
-        gap: 8px;
+        max-height: 220px;
+        gap: 7px;
     }
 
     .foglalas-datum-chip {
-        grid-template-columns: 34px minmax(0, 1fr);
-        min-height: 60px;
-        padding: 8px;
+        grid-template-columns: 28px minmax(0, 1fr);
+        min-height: 46px;
+        padding: 7px 8px;
     }
 }
 
 @media screen and (max-width: 760px) {
-    .admin-foglalas-reszlet-sor {
-        display: block;
-        text-align: left;
-    }
-
-    .admin-foglalas-reszlet-sor > span {
-        display: inline;
-        text-align: left;
-    }
-
     .admin-foglalas-meta-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px 10px;
@@ -4552,85 +4449,24 @@ body {
         font-size: 10px;
     }
 }
+
 /* =========================================
-   FINOMITASOK 20260714 BOOKING7
-   ========================================= */
-.foglalas-datum-csik {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
-}
-
-.foglalas-datum-chip {
-    grid-template-columns: 28px minmax(0, 1fr);
-    min-height: 46px;
-    padding: 7px 8px;
-    gap: 7px;
-    border-radius: 15px;
-}
-
-.foglalas-datum-chip-nap {
-    width: 26px;
-    height: 26px;
-    color: var(--akcentus);
-    background: rgba(255, 250, 244, 0.86);
-    border: 1px solid rgba(185, 133, 143, 0.32);
-    border-radius: 9px;
-    box-shadow: none;
-    font-size: 11px;
-    font-weight: 900;
-}
-
-.foglalas-datum-chip-resz {
-    display: block;
-    color: var(--barna);
-    font-size: 12px;
-    font-weight: 850;
-    line-height: 1.1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-transform: capitalize;
-}
-
-.foglalas-datum-chip-resz strong,
-.foglalas-datum-chip-resz small {
-    display: inline;
-    color: inherit;
-    font: inherit;
-    text-transform: inherit;
-}
-
-@media screen and (max-width: 620px) {
-    .foglalas-datum-csik {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-height: 220px;
-        gap: 7px;
-    }
-
-    .foglalas-datum-chip {
-        grid-template-columns: 28px minmax(0, 1fr);
-        min-height: 46px;
-        padding: 7px 8px;
-    }
-}
-/* =========================================
-   FINOMITASOK 20260714 BOOKING9
+   BOOKING VALIDATION STATES
    ========================================= */
 .foglalas-hiba-szekcio {
-    border-color: rgba(155, 52, 52, 0.55) !important;
+    border-color: rgba(155, 52, 52, 0.55);
     box-shadow: 0 0 0 3px rgba(155, 52, 52, 0.08), 0 12px 28px rgba(155, 52, 52, 0.08);
 }
 
 .foglalas-hibas-mezo {
     outline: 2px solid rgba(155, 52, 52, 0.72);
     outline-offset: 4px;
-    border-radius: 18px;
     scroll-margin-top: 120px;
 }
 
 .urlap-mezo.foglalas-hibas-mezo,
 .tel-csoport.foglalas-hibas-mezo {
-    border-color: rgba(155, 52, 52, 0.72) !important;
+    border-color: rgba(155, 52, 52, 0.72);
     box-shadow: 0 0 0 4px rgba(155, 52, 52, 0.08);
 }
 
@@ -4658,7 +4494,7 @@ body {
     box-sizing: border-box;
     position: relative;
     isolation: isolate;
-    width: min(1400px, calc(100% - 40px));
+    width: var(--lumi-container-width);
     margin: 8px auto 0;
     padding: clamp(14px, 1.5vw, 22px);
     border: 1px solid rgba(185, 133, 143, 0.14);
@@ -4883,11 +4719,6 @@ body {
     }
 }
 
-html,
-body {
-    max-width: 100%;
-    overflow-x: hidden;
-}
 
 @supports (overflow: clip) {
     html,
@@ -4895,26 +4726,53 @@ body {
         overflow-x: clip;
     }
 }
-/* Coupons / promotions */
+/* =========================================
+   KUPONOK ÉS AKCIÓK
+   ========================================= */
 .akcios-banner {
-    width: min(1120px, calc(100% - 32px));
-    margin: 22px auto 28px;
+    width: var(--lumi-container-width);
+    margin-inline: auto;
 }
 
-.akcios-banner[hidden] {
-    display: none !important;
+.akcios-banner[hidden],
+.foglalas-kupon-blokk[hidden] {
+    display: none;
+}
+
+.akcios-banner-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--lumi-radius-card);
+}
+
+.akcios-banner-track {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    gap: 0;
+    transform: translateX(0);
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
 }
 
 .akcios-banner-belso {
     position: relative;
-    overflow: hidden;
+    flex: 0 0 100%;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
-    gap: 22px;
-    padding: 24px;
+    justify-items: stretch;
+    gap: 16px;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 24px 24px 20px;
+    overflow: hidden;
     border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 28px;
+    border-radius: var(--lumi-radius-card);
     background:
         radial-gradient(circle at 14% 20%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0) 36%),
         linear-gradient(125deg, rgba(255, 250, 244, 0.96), rgba(246, 219, 219, 0.88), rgba(253, 244, 226, 0.98));
@@ -4932,8 +4790,7 @@ body {
 }
 
 .akcios-banner-szoveg,
-.akcios-banner-kupon,
-.akcios-banner-gomb {
+.akcios-banner-kupon {
     position: relative;
     z-index: 1;
 }
@@ -4941,24 +4798,42 @@ body {
 .akcios-banner-kicker {
     display: inline-flex;
     margin-bottom: 8px;
-    color: #b9858f;
-    font-family: 'Montserrat', sans-serif;
+    color: var(--akcentus);
+    font-family: var(--lumi-button-font);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
 }
 
-.akcios-banner h2 {
+.akcios-banner .akcios-banner-cim {
+    max-width: 100%;
     margin: 0 0 8px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 0.95;
-    color: #2f2926;
+    color: var(--tinta);
+    font-family: 'Outfit', 'Montserrat', sans-serif;
+    font-size: clamp(1.08rem, 3.9vw, 1.68rem);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.065em;
+    text-align: center;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+}
+
+.akcios-banner-cim span {
+    display: block;
+    max-width: 100%;
+}
+
+.akcios-banner-cim-al {
+    margin-top: 0.06em;
+    font-size: 0.82em;
+    letter-spacing: 0.05em;
 }
 
 .akcios-banner p {
-    max-width: 56ch;
+    max-width: 100%;
     margin: 0;
     color: #6b5f58;
     line-height: 1.55;
@@ -4966,9 +4841,14 @@ body {
 
 .akcios-banner-kupon {
     display: grid;
+    grid-column: 1 / -1;
     gap: 4px;
-    min-width: 150px;
-    padding: 14px 18px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 14px 58px 14px 18px;
+    overflow: hidden;
     border: 1px dashed rgba(185, 133, 143, 0.62);
     border-radius: 22px;
     background: rgba(255, 250, 244, 0.62);
@@ -4976,20 +4856,122 @@ body {
 }
 
 .akcios-banner-kupon span {
+    display: block;
+    max-width: calc(100% - 18px);
+    margin-inline: auto;
     color: #8b7470;
     font-size: 0.82rem;
     font-weight: 700;
 }
 
 .akcios-banner-kupon strong {
-    color: #b9858f;
-    font-family: 'Montserrat', sans-serif;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    color: var(--akcentus);
+    font-family: var(--lumi-button-font);
     font-size: 1.22rem;
+    line-height: 1.1;
     letter-spacing: 0.12em;
+    text-align: center;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.akcios-banner-kupon small {
+    display: none;
+}
+
+.akcios-banner-masolas {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    border-radius: var(--lumi-radius-pill);
+    background: rgba(255, 250, 244, 0.82);
+    color: var(--barna);
+    cursor: pointer;
+}
+
+.akcios-banner-masolas:hover,
+.akcios-banner-nyil:hover,
+.akcios-banner-pont.aktiv {
+    color: #fffaf4;
+    background: var(--akcentus);
+}
+
+.akcios-banner-masolas svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
 }
 
 .akcios-banner-gomb {
-    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    white-space: normal;
+}
+
+.akcios-banner-vezerlok {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.akcios-banner-nyil,
+.akcios-banner-pont {
+    border: 1px solid rgba(185, 133, 143, 0.28);
+    background: rgba(255, 250, 244, 0.86);
+    color: var(--barna);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.akcios-banner-nyil {
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--lumi-radius-pill);
+    font-size: 0;
+    box-shadow: 0 10px 24px rgba(106, 76, 68, 0.08);
+}
+
+.akcios-banner-nyil svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.akcios-banner-pontok {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.akcios-banner-pont {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border-radius: var(--lumi-radius-pill);
+    opacity: 0.42;
+}
+
+.akcios-banner-pont.aktiv {
+    opacity: 1;
+    transform: scale(1.12);
 }
 
 @keyframes kuponFenysav {
@@ -5006,10 +4988,6 @@ body {
     background: rgba(255, 250, 244, 0.72);
 }
 
-.foglalas-kupon-blokk[hidden] {
-    display: none !important;
-}
-
 .foglalas-kupon-cimke {
     display: block;
     margin-bottom: 8px;
@@ -5020,12 +4998,12 @@ body {
 .foglalas-kupon-sor {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
 }
 
 .foglalas-kupon-sor .admin-kis-gomb {
-    min-height: 48px;
+    min-height: var(--lumi-button-height);
     padding-inline: 18px;
 }
 
@@ -5057,75 +5035,13 @@ body {
 .admin-mezo select {
     width: 100%;
     min-height: 46px;
-    border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 16px;
-    background: rgba(255, 250, 244, 0.9);
-    color: #4d403b;
-    font: inherit;
-    padding: 0 14px;
+    padding: 0 40px 0 14px;
 }
 
 .admin-db-grid-kupon {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-.admin-kupon-kod,
-.admin-kupon-cim,
-.admin-db-grid-kupon .admin-mezo-szeles {
-    grid-column: span 3;
-}
-
-.admin-db-grid-kupon .admin-mezo-szeles {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 860px) {
-    .akcios-banner-belso {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 22px;
-    }
-
-    .akcios-banner-kupon,
-    .akcios-banner-gomb {
-        width: 100%;
-    }
-
-    .admin-db-grid-kupon {
-        grid-template-columns: 1fr;
-    }
-
-    .admin-kupon-kod,
-    .admin-kupon-cim,
-    .admin-db-grid-kupon .admin-mezo-szeles {
-        grid-column: auto;
-    }
-}
-
-@media (max-width: 520px) {
-    .akcios-banner {
-        width: min(100% - 28px, 560px);
-        margin-top: 16px;
-    }
-
-    .akcios-banner-belso {
-        border-radius: 24px;
-        text-align: left;
-    }
-
-    .foglalas-kupon-sor {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-/* =========================================
-   Kupon finomitasok 20260718
-   ========================================= */
-.admin-db-grid-kupon {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: end;
-    gap: 10px;
+    gap: 9px;
 }
 
 .admin-kupon-kod,
@@ -5134,14 +5050,14 @@ body {
 .admin-kupon-tipus,
 .admin-kupon-szoveg,
 .admin-kupon-szolgaltatas {
-    grid-column: span 2;
+    grid-column: span 3;
 }
 
 .admin-kupon-ertek,
 .admin-kupon-datum,
 .admin-kupon-checkbox,
 .admin-kupon-sorrend {
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 .admin-db-grid-kupon .admin-mezo input,
@@ -5150,8 +5066,7 @@ body {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-inline: 10px;
 }
 
 .admin-db-grid-kupon .admin-mezo input[type="date"] {
@@ -5179,542 +5094,7 @@ body {
     padding-inline: 12px;
 }
 
-.akcios-banner-kupon {
-    min-width: 0;
-    width: min(260px, 100%);
-    overflow: hidden;
-}
-
-.akcios-banner-kod-sor {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-}
-
-.akcios-banner-kupon strong {
-    min-width: 0;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    line-height: 1.1;
-}
-
-.akcios-banner-kupon small {
-    color: rgba(83, 67, 59, 0.68);
-    font-size: 0.76rem;
-    font-weight: 700;
-}
-
-.akcios-banner-masolas {
-    min-height: 32px;
-    padding: 0 12px;
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
-    background: rgba(255, 250, 244, 0.82);
-    color: var(--barna);
-    font-family: 'Manrope', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-}
-
-.akcios-banner-masolas:hover {
-    color: #fffaf4;
-    background: var(--akcentus);
-}
-
-.galeria-atvezeto-szoveg .gomb,
-#kapcsolat > .gomb,
-.akcios-banner-gomb {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    border-radius: 999px;
-    padding: 0 30px;
-    text-align: center;
-    box-shadow: 0 12px 24px rgba(185, 133, 143, 0.13);
-}
-
-.galeria-atvezeto-szoveg .gomb {
-    background: rgba(255, 250, 244, 0.72);
-    border-color: rgba(185, 133, 143, 0.42);
-}
-
-#kapcsolat > .gomb,
-.akcios-banner-gomb {
-    color: #fffaf4;
-    background: var(--akcentus);
-    border-color: transparent;
-}
-
-#kapcsolat > .gomb:hover,
-.akcios-banner-gomb:hover {
-    background: var(--akcentus-vilagos);
-}
-
 @media (max-width: 860px) {
-    .admin-db-grid-kupon {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .admin-kupon-kod,
-    .admin-kupon-cim,
-    .admin-kupon-leiras,
-    .admin-kupon-tipus,
-    .admin-kupon-szoveg,
-    .admin-kupon-szolgaltatas {
-        grid-column: span 1;
-    }
-
-    .admin-kupon-leiras {
-        grid-row: span 2;
-    }
-
-    .admin-kupon-kartya .admin-kupon-akciok {
-        justify-content: stretch;
-    }
-
-    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
-        flex: 1 1 0;
-        padding-inline: 8px;
-    }
-}
-
-@media (max-width: 520px) {
-    .admin-kupon-kartya {
-        padding: 14px;
-    }
-
-    .admin-db-grid-kupon {
-        gap: 9px;
-    }
-
-    .admin-db-grid-kupon .admin-mezo {
-        font-size: 12px;
-    }
-
-    .admin-db-grid-kupon .admin-mezo input,
-    .admin-db-grid-kupon .admin-mezo textarea,
-    .admin-db-grid-kupon .admin-mezo select {
-        min-height: 42px;
-        font-size: 13px;
-    }
-
-    .admin-kupon-checkbox {
-        min-height: 42px;
-        align-self: end;
-    }
-
-    .akcios-banner-kod-sor {
-        grid-template-columns: 1fr;
-    }
-
-    .akcios-banner-masolas,
-    .akcios-banner-gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    #kapcsolat > .gomb {
-        width: 100%;
-    }
-}
-
-
-/* =========================================
-   Kupon es admin lapozo finomitasok 20260718-3
-   ========================================= */
-.akcios-banner-belso {
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: stretch;
-}
-
-.akcios-banner-kupon,
-.akcios-banner-gomb {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: none;
-    justify-self: stretch;
-}
-
-.akcios-banner-kupon {
-    position: relative;
-    min-width: 0;
-    width: 100%;
-    max-width: none;
-    padding: 18px 52px 18px 18px;
-    box-sizing: border-box;
-}
-
-.akcios-banner-kod-sor {
-    display: block;
-}
-
-.akcios-banner-kupon strong {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    line-height: 1.1;
-}
-
-.akcios-banner-kupon small {
-    display: none !important;
-}
-
-.akcios-banner-masolas {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: inline-grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    min-height: 34px;
-    padding: 0;
-    border-radius: 999px;
-    font-size: 17px;
-    line-height: 1;
-    letter-spacing: 0;
-    text-transform: none;
-}
-
-.akcios-banner-masolas svg {
-    display: block;
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
-.admin-lapozo {
-    flex-wrap: wrap;
-}
-
-.admin-lapozo > span {
-    min-width: 54px;
-    text-align: center;
-}
-
-.admin-lapozo .admin-kis-gomb {
-    min-height: 36px;
-    padding-inline: 14px;
-}
-
-.admin-oldalmeret {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--barna);
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.admin-oldalmeret select {
-    min-height: 36px;
-    padding: 0 30px 0 12px;
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
-    background: rgba(255, 250, 244, 0.9);
-    color: var(--tinta);
-    font: inherit;
-}
-
-@media (max-width: 520px) {
-    .akcios-banner-kupon {
-        padding-right: 48px;
-    }
-
-    .akcios-banner-gomb {
-        width: 100%;
-    }
-
-    .admin-lapozo {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap: 8px;
-    }
-
-    .admin-oldalmeret {
-        grid-column: 1 / -1;
-        justify-content: center;
-    }
-}
-
-
-/* =========================================
-   Kupon slider es admin lapozo 20260718-4
-   ========================================= */
-.akcios-banner-slider {
-    position: relative;
-    overflow: hidden;
-}
-
-.akcios-banner-track {
-    display: flex;
-    transform: translateX(0);
-    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
-}
-
-.akcios-banner-track .akcios-banner-belso {
-    flex: 0 0 100%;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.akcios-banner-vezerlok {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.akcios-banner-nyil,
-.akcios-banner-pont {
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    background: rgba(255, 250, 244, 0.86);
-    color: var(--barna);
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.akcios-banner-nyil {
-    display: inline-grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 999px;
-    font-size: 26px;
-    line-height: 1;
-}
-
-.akcios-banner-pontok {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.akcios-banner-pont {
-    width: 10px;
-    height: 10px;
-    padding: 0;
-    border-radius: 999px;
-}
-
-.akcios-banner-nyil:hover,
-.akcios-banner-pont.aktiv {
-    color: #fffaf4;
-    background: var(--akcentus);
-}
-
-.admin-lapozo {
-    position: relative;
-    z-index: 1205;
-    padding-bottom: 72px;
-}
-
-.admin-oldalmeret {
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.admin-oldalmeret-gomb {
-    min-height: 34px;
-    padding: 0 13px;
-    border: 1px solid rgba(185, 133, 143, 0.28);
-    border-radius: 999px;
-    background: rgba(255, 250, 244, 0.9);
-    color: var(--barna);
-    font: inherit;
-    font-weight: 900;
-    cursor: pointer;
-}
-
-.admin-oldalmeret-gomb.aktiv {
-    color: #fffaf4;
-    background: var(--akcentus);
-    border-color: transparent;
-}
-
-@media (max-width: 520px) {
-    .akcios-banner-vezerlok {
-        margin-top: 10px;
-    }
-
-    .admin-lapozo {
-        grid-template-columns: 1fr;
-        padding-bottom: 92px;
-    }
-
-    .admin-oldalmeret,
-    .admin-lapozo > span,
-    .admin-lapozo .admin-kis-gomb {
-        justify-self: center;
-    }
-}
-
-
-/* =========================================
-   Kupon slider, kereso es lapozo 20260718-5
-   ========================================= */
-.akcios-banner .akcios-banner-cim {
-    font-size: clamp(1.65rem, 5.2vw, 2.65rem);
-    line-height: 0.98;
-    letter-spacing: 0.045em;
-}
-
-.akcios-banner-cim span {
-    display: block;
-}
-
-.akcios-banner-cim-al {
-    margin-top: 0.06em;
-    font-size: 0.82em;
-    letter-spacing: 0.05em;
-}
-
-.akcios-banner-track {
-    align-items: stretch;
-}
-
-.akcios-banner-track .akcios-banner-belso {
-    min-width: 100%;
-}
-
-.akcios-banner-nyil {
-    width: 42px;
-    height: 42px;
-    font-size: 0;
-    box-shadow: 0 10px 24px rgba(106, 76, 68, 0.08);
-}
-
-.akcios-banner-nyil svg {
-    display: block;
-    width: 22px;
-    height: 22px;
-}
-
-.akcios-banner-pont {
-    opacity: 0.42;
-}
-
-.akcios-banner-pont.aktiv {
-    opacity: 1;
-    transform: scale(1.12);
-}
-
-.akcios-banner-kupon {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: none;
-    box-sizing: border-box;
-    padding: 18px 58px 18px 18px;
-}
-
-.akcios-banner-kupon span {
-    display: block;
-    max-width: calc(100% - 18px);
-    margin-inline: auto;
-}
-
-.akcios-banner-kupon strong {
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-
-.akcios-banner-masolas {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    display: inline-grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    min-height: 38px;
-    padding: 0;
-    border-radius: 999px;
-    font-size: 0;
-}
-
-.akcios-banner-masolas svg {
-    display: block;
-    width: 19px;
-    height: 19px;
-    fill: currentColor;
-}
-
-.admin-panel-akciok-keresessel {
-    display: grid;
-    grid-template-columns: minmax(150px, auto) minmax(220px, 1fr);
-    align-items: end;
-    gap: 10px;
-}
-
-.admin-kereses-mezo {
-    display: grid;
-    gap: 5px;
-    color: var(--barna);
-    font-size: 12px;
-    font-weight: 900;
-}
-
-.admin-kereses-mezo input {
-    width: 100%;
-    min-height: 42px;
-    border: 1px solid rgba(185, 133, 143, 0.24);
-    border-radius: 999px;
-    background: rgba(255, 250, 244, 0.9);
-    color: var(--tinta);
-    font: inherit;
-    font-weight: 700;
-    padding: 0 16px;
-    box-sizing: border-box;
-}
-
-.admin-lapozo-felso {
-    margin: 8px 0 12px;
-    padding-bottom: 0 !important;
-}
-
-.admin-db-lista + .admin-lapozo {
-    margin-top: 14px;
-}
-
-.admin-lapozo .admin-oldalmeret-gomb,
-.admin-lapozo .admin-kis-gomb {
-    touch-action: manipulation;
-}
-
-.admin-db-grid-kupon {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 9px;
-}
-
-.admin-kupon-kod,
-.admin-kupon-cim,
-.admin-kupon-leiras,
-.admin-kupon-tipus,
-.admin-kupon-szoveg,
-.admin-kupon-szolgaltatas {
-    grid-column: span 3;
-}
-
-.admin-kupon-ertek,
-.admin-kupon-datum,
-.admin-kupon-checkbox,
-.admin-kupon-sorrend {
-    grid-column: span 2;
-}
-
-@media (max-width: 860px) {
-    .admin-panel-akciok-keresessel {
-        grid-template-columns: 1fr;
-    }
-
     .admin-db-grid-kupon {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -5734,909 +5114,26 @@ body {
 }
 
 @media (max-width: 520px) {
-    .akcios-banner .akcios-banner-cim {
-        font-size: clamp(1.48rem, 7.2vw, 2rem);
-        letter-spacing: 0.035em;
-    }
-
-    .akcios-banner-kupon {
-        padding: 17px 54px 17px 14px;
-    }
-
-    .akcios-banner-nyil {
-        width: 40px;
-        height: 40px;
-    }
-
-    .admin-lapozo-felso {
-        padding-bottom: 0 !important;
-    }
-}
-
-
-/* =========================================
-   CTA, admin lapozo es kupon slider finomitas 20260718-6
-   ========================================= */
-.szekcio .gomb,
-.galeria-atvezeto-szoveg .gomb,
-.arlista-oldal > .gomb,
-.galeria-oldal > .gomb,
-#kapcsolat > .gomb {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    border-radius: 999px;
-    padding: 0 32px;
-    border: 1px solid rgba(185, 133, 143, 0.22);
-    background: var(--akcentus);
-    color: #fffaf4;
-    box-shadow: 0 14px 28px rgba(185, 133, 143, 0.16);
-    text-align: center;
-}
-
-.szekcio .gomb:hover,
-.galeria-atvezeto-szoveg .gomb:hover,
-.arlista-oldal > .gomb:hover,
-.galeria-oldal > .gomb:hover,
-#kapcsolat > .gomb:hover {
-    background: var(--akcentus-vilagos);
-    color: #fffaf4;
-    transform: translateY(-1px);
-}
-
-.hero .gomb,
-.hero-gomb-primary,
-.hero-gomb-secondary {
-    box-shadow: inherit;
-}
-
-.akcios-banner {
-    margin-bottom: 22px;
-}
-
-.akcios-banner-slider {
-    overflow: hidden;
-    border-radius: 30px;
-    isolation: isolate;
-}
-
-.akcios-banner-track {
-    transition: transform 0.52s cubic-bezier(0.25, 0.8, 0.25, 1);
-    backface-visibility: hidden;
-}
-
-.akcios-banner-track .akcios-banner-belso {
-    box-shadow: 0 14px 32px rgba(106, 76, 68, 0.075);
-}
-
-.akcios-banner-vezerlok {
-    margin-top: 10px;
-    gap: 10px;
-}
-
-.akcios-banner-nyil {
-    box-shadow: none;
-    background: rgba(255, 250, 244, 0.78);
-}
-
-.akcios-banner-pont {
-    box-shadow: none;
-}
-
-.admin-lapozo {
-    display: flex !important;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.admin-lapozo .admin-oldalmeret {
-    flex: 0 0 100%;
-    justify-content: center;
-}
-
-.admin-lapozo > span {
-    flex: 0 0 auto;
-    min-width: 42px;
-    font-size: 14px;
-}
-
-.admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
-.admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 76px;
-    min-height: 32px;
-    padding: 0 12px;
-    font-size: 12px;
-}
-
-.admin-lapozo-felso {
-    margin-top: 10px;
-    margin-bottom: 12px;
-    padding-bottom: 0 !important;
-}
-
-@media (max-width: 520px) {
-    .szekcio .gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    .arlista-oldal > .gomb,
-    .galeria-oldal > .gomb,
-    #kapcsolat > .gomb {
-        width: min(100%, 360px);
-        min-height: 46px;
-        padding-inline: 22px;
-    }
-
-    .admin-lapozo {
-        grid-template-columns: none !important;
-        padding-bottom: 72px;
-    }
-
-    .admin-lapozo-felso {
-        padding-bottom: 0 !important;
-    }
-
-    .admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
-    .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
-        min-width: 72px;
-    }
-}
-
-/* =========================================
-   Kupon sortores es simabb slider 20260718-7
-   ========================================= */
-.akcios-banner-slider {
-    overflow: hidden;
-}
-
-.akcios-banner-track {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-    transform: translate3d(0, 0, 0);
-    transition: transform 0.58s cubic-bezier(0.22, 0.61, 0.36, 1);
-    will-change: transform;
-}
-
-.akcios-banner-track.animacio-nelkul {
-    transition: none !important;
-}
-
-.akcios-banner-track .akcios-banner-belso {
-    flex: 0 0 100%;
-    min-width: 100%;
-    max-width: 100%;
-    box-shadow: 0 10px 24px rgba(106, 76, 68, 0.055);
-}
-
-.akcios-banner-cim-osztott .akcios-banner-cim-fo,
-.akcios-banner-cim-osztott .akcios-banner-cim-al {
-    display: block;
-}
-
-.akcios-banner-cim-osztott .akcios-banner-cim-al {
-    margin-top: 0.02em;
-}
-
-/* =========================================
-   Uj vendeg kupon admin mezo 20260718-8
-   ========================================= */
-.admin-kupon-celkozonseg {
-    grid-column: span 3;
-}
-
-@media (max-width: 860px) {
-    .admin-kupon-celkozonseg {
-        grid-column: span 1;
-    }
-}
-
-/* =========================================
-   Kompakt kupon admin kartya 20260718-9
-   ========================================= */
-.admin-kupon-kartya {
-    padding: 10px !important;
-}
-
-.admin-kupon-kartya .admin-db-grid-kupon {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-    gap: 7px !important;
-    align-items: end;
-}
-
-.admin-kupon-kartya .admin-mezo {
-    gap: 3px !important;
-    min-width: 0;
-    font-size: 11px !important;
-    line-height: 1.1;
-    font-weight: 900;
-}
-
-.admin-kupon-kartya .admin-mezo input,
-.admin-kupon-kartya .admin-mezo select,
-.admin-kupon-kartya .admin-mezo textarea {
-    min-width: 0 !important;
-    min-height: 34px !important;
-    height: 34px;
-    padding: 6px 8px !important;
-    border-radius: 12px !important;
-    font-size: 12.5px !important;
-    line-height: 1.18;
-}
-
-.admin-kupon-kartya .admin-mezo textarea {
-    height: 58px !important;
-    min-height: 58px !important;
-    padding: 7px 8px !important;
-    resize: vertical;
-}
-
-.admin-kupon-kartya .admin-mezo input[type="date"] {
-    text-align: center;
-    font-size: 12px !important;
-}
-
-.admin-kupon-kartya .admin-kupon-kod {
-    grid-column: span 2 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-cim {
-    grid-column: span 4 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-leiras,
-.admin-kupon-kartya .admin-kupon-tipus,
-.admin-kupon-kartya .admin-kupon-szolgaltatas,
-.admin-kupon-kartya .admin-kupon-celkozonseg {
-    grid-column: span 3 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-ertek,
-.admin-kupon-kartya .admin-kupon-datum,
-.admin-kupon-kartya .admin-kupon-checkbox,
-.admin-kupon-kartya .admin-kupon-sorrend {
-    grid-column: span 2 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-szoveg {
-    grid-column: span 4 !important;
-}
-
-.admin-kupon-kartya .admin-checkbox {
-    min-height: 34px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 7px !important;
-    padding: 0 2px;
-}
-
-.admin-kupon-kartya .admin-checkbox input[type="checkbox"] {
-    width: 18px !important;
-    height: 18px !important;
-    min-width: 18px !important;
-    min-height: 18px !important;
-}
-
-.admin-kupon-kartya .admin-kupon-akciok {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-    margin-top: 8px;
-}
-
-.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
-    width: 100%;
-    min-width: 0;
-    min-height: 34px;
-    padding: 0 8px;
-    border-radius: 999px;
-    font-size: 12px;
-}
-
-@media (max-width: 520px) {
-    .admin-kupon-kartya {
-        padding: 9px !important;
-    }
-
-    .admin-kupon-kartya .admin-db-grid-kupon {
-        gap: 6px !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo {
-        font-size: 10.5px !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo input,
-    .admin-kupon-kartya .admin-mezo select,
-    .admin-kupon-kartya .admin-mezo textarea {
-        min-height: 32px !important;
-        height: 32px;
-        padding-inline: 7px !important;
-        font-size: 12px !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo textarea {
-        height: 54px !important;
-        min-height: 54px !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
-        min-height: 32px;
-        padding-inline: 6px;
-        font-size: 11.5px;
-    }
-}
-
-
-/* Meg kompaktabb kupon admin kartya mobilon 20260718-10 */
-.admin-kupon-kartya .admin-db-grid-kupon {
-    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
-    gap: 6px !important;
-}
-
-.admin-kupon-kartya .admin-mezo {
-    letter-spacing: -0.01em;
-}
-
-.admin-kupon-kartya .admin-kupon-kod {
-    grid-column: span 3 !important;
-    order: 1;
-}
-
-.admin-kupon-kartya .admin-kupon-cim {
-    grid-column: span 9 !important;
-    order: 2;
-}
-
-.admin-kupon-kartya .admin-kupon-leiras {
-    grid-column: span 6 !important;
-    order: 3;
-}
-
-.admin-kupon-kartya .admin-kupon-tipus {
-    grid-column: span 4 !important;
-    order: 4;
-}
-
-.admin-kupon-kartya .admin-kupon-ertek {
-    grid-column: span 2 !important;
-    order: 5;
-}
-
-.admin-kupon-kartya .admin-kupon-szoveg {
-    grid-column: span 5 !important;
-    order: 6;
-}
-
-.admin-kupon-kartya .admin-kupon-szolgaltatas {
-    grid-column: span 4 !important;
-    order: 7;
-}
-
-.admin-kupon-kartya .admin-kupon-celkozonseg {
-    grid-column: span 3 !important;
-    order: 8;
-}
-
-.admin-kupon-kartya .admin-kupon-datum {
-    grid-column: span 3 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-datum:nth-of-type(9) {
-    order: 9;
-}
-
-.admin-kupon-kartya .admin-kupon-datum:nth-of-type(10) {
-    order: 10;
-}
-
-.admin-kupon-kartya .admin-kupon-checkbox {
-    grid-column: span 3 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-checkbox:nth-of-type(11) {
-    order: 11;
-}
-
-.admin-kupon-kartya .admin-kupon-checkbox:nth-of-type(12) {
-    order: 12;
-}
-
-.admin-kupon-kartya .admin-kupon-sorrend {
-    grid-column: span 2 !important;
-    order: 13;
-}
-
-.admin-kupon-kartya .admin-mezo input,
-.admin-kupon-kartya .admin-mezo select {
-    height: 31px !important;
-    min-height: 31px !important;
-}
-
-.admin-kupon-kartya .admin-checkbox {
-    min-height: 31px;
-    font-size: 12px !important;
-}
-
-.admin-kupon-kartya .admin-kupon-akciok {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 5px;
-    margin-top: 7px;
-}
-
-.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
-    min-height: 31px;
-    font-size: 11.5px;
-}
-
-@media (max-width: 520px) {
-    .admin-kupon-kartya {
-        padding: 8px !important;
-    }
-
-    .admin-kupon-kartya .admin-db-grid-kupon {
-        gap: 5px !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo {
-        font-size: 10px !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-kod {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-cim {
-        grid-column: span 8 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-leiras {
-        grid-column: span 7 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-tipus {
-        grid-column: span 5 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-ertek {
-        grid-column: span 3 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-szoveg {
-        grid-column: span 5 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-szolgaltatas {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-celkozonseg {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-datum {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-checkbox {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-sorrend {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo input,
-    .admin-kupon-kartya .admin-mezo select {
-        height: 30px !important;
-        min-height: 30px !important;
-        padding-inline: 6px !important;
-    }
-
-    .admin-kupon-kartya .admin-mezo textarea {
-        height: 48px !important;
-        min-height: 48px !important;
-    }
-}
-
-/* Kupon admin konkret mezosorrend 20260718-11 */
-.admin-kupon-kartya .admin-kupon-kod {
-    grid-column: span 3 !important;
-    order: 1;
-}
-
-.admin-kupon-kartya .admin-kupon-cim {
-    grid-column: span 9 !important;
-    order: 2;
-}
-
-.admin-kupon-kartya .admin-kupon-szoveg {
-    grid-column: span 3 !important;
-    order: 3;
-}
-
-.admin-kupon-kartya .admin-kupon-tipus {
-    grid-column: span 6 !important;
-    order: 4;
-}
-
-.admin-kupon-kartya .admin-kupon-ertek {
-    grid-column: span 3 !important;
-    order: 5;
-}
-
-.admin-kupon-kartya .admin-kupon-szolgaltatas {
-    grid-column: span 6 !important;
-    order: 6;
-}
-
-.admin-kupon-kartya .admin-kupon-celkozonseg {
-    grid-column: span 6 !important;
-    order: 7;
-}
-
-.admin-kupon-kartya .admin-kupon-leiras {
-    grid-column: 1 / -1 !important;
-    order: 8;
-}
-
-@media (max-width: 520px) {
-    .admin-kupon-kartya .admin-kupon-kod,
-    .admin-kupon-kartya .admin-kupon-szoveg {
-        grid-column: span 4 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-cim {
-        grid-column: span 8 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-tipus {
-        grid-column: span 5 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-ertek {
-        grid-column: span 3 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-szolgaltatas,
-    .admin-kupon-kartya .admin-kupon-celkozonseg {
-        grid-column: span 6 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-leiras {
-        grid-column: 1 / -1 !important;
-    }
-}
-
-
-/* Public CTA gombok egysegesitese 20260718-12 */
-.szekcio .gomb,
-.galeria-atvezeto-szoveg .gomb,
-.arlista-oldal > .gomb,
-.galeria-oldal > .gomb,
-#kapcsolat > .gomb {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: min(calc(100% - 64px), 320px) !important;
-    max-width: 320px !important;
-    min-width: 0 !important;
-    min-height: 42px !important;
-    margin: 18px auto !important;
-    padding: 0 18px !important;
-    border-radius: 999px !important;
-    border: 1px solid rgba(185, 133, 143, 0.26) !important;
-    background: var(--akcentus) !important;
-    color: #fffaf4 !important;
-    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.14) !important;
-    font-size: 11px !important;
-    line-height: 1.1;
-    letter-spacing: 1.35px !important;
-    text-align: center;
-    white-space: normal;
-}
-
-.szekcio .gomb:hover,
-.galeria-atvezeto-szoveg .gomb:hover,
-.arlista-oldal > .gomb:hover,
-.galeria-oldal > .gomb:hover,
-#kapcsolat > .gomb:hover {
-    background: var(--akcentus-vilagos) !important;
-    color: #fffaf4 !important;
-}
-
-@media (min-width: 769px) {
-    .szekcio .gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    .arlista-oldal > .gomb,
-    .galeria-oldal > .gomb,
-    #kapcsolat > .gomb {
-        width: fit-content !important;
-        min-width: 230px !important;
-        max-width: 320px !important;
-        min-height: 42px !important;
-        padding-inline: 26px !important;
-    }
-}
-
-@media (max-width: 520px) {
-    .szekcio .gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    .arlista-oldal > .gomb,
-    .galeria-oldal > .gomb,
-    #kapcsolat > .gomb {
-        width: min(calc(100% - 88px), 300px) !important;
-        max-width: 300px !important;
-        min-height: 40px !important;
-        margin-block: 16px !important;
-        padding-inline: 16px !important;
-        font-size: 10.5px !important;
-        letter-spacing: 1.25px !important;
-    }
-}
-
-/* Kupon admin datum mezo kompaktabb 20260718-12 */
-.admin-kupon-kartya .admin-kupon-datum {
-    grid-column: span 2 !important;
-}
-
-.admin-kupon-kartya .admin-kupon-datum input[type="date"] {
-    height: 30px !important;
-    min-height: 30px !important;
-    padding-inline: 5px !important;
-    font-size: 11.5px !important;
-}
-
-@media (max-width: 520px) {
-    .admin-kupon-kartya .admin-kupon-datum {
-        grid-column: span 3 !important;
-    }
-
-    .admin-kupon-kartya .admin-kupon-datum input[type="date"] {
-        height: 29px !important;
-        min-height: 29px !important;
-        font-size: 11px !important;
-    }
-}
-
-
-/* Outfit Light szekciocimek 20260718-14 */
-h2,
-.akcios-banner h2,
-.arlista-csoport h3,
-.jogi-tartalom h2 {
-    font-family: 'Outfit', 'Manrope', sans-serif !important;
-    font-weight: 300 !important;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-}
-
-h2 {
-    font-size: clamp(1.78rem, 5.4vw, 2.32rem);
-    line-height: 1.12;
-}
-
-.akcios-banner h2 {
-    font-size: clamp(1.75rem, 5.2vw, 2.8rem);
-    line-height: 1.08;
-    letter-spacing: 0.13em;
-}
-
-.arlista-csoport h3,
-.jogi-tartalom h2 {
-    font-size: clamp(1.42rem, 4.6vw, 2.15rem);
-    line-height: 1.12;
-    letter-spacing: 0.14em;
-}
-
-@media (max-width: 520px) {
-    h2,
-    .akcios-banner h2,
-    .arlista-csoport h3,
-    .jogi-tartalom h2 {
-        letter-spacing: 0.13em;
-    }
-
-    h2 {
-        font-size: clamp(1.62rem, 7vw, 2.05rem);
-    }
-}
-
-
-
-/* Kupon CTA koruli hely osszehuzasa 20260718-17 */
-.akcios-banner-belso {
-    gap: 14px !important;
-    padding-bottom: 18px !important;
-}
-
-.akcios-banner-kupon {
-    margin-bottom: 0 !important;
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
-}
-
-.akcios-banner-gomb {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    min-height: 42px !important;
-}
-
-@media (max-width: 860px) {
-    .akcios-banner-belso {
-        gap: 11px !important;
-        padding-top: 18px !important;
-        padding-bottom: 13px !important;
-    }
-
-    .akcios-banner-kupon {
-        padding-top: 12px !important;
-        padding-bottom: 12px !important;
-    }
-
-    .akcios-banner-gomb {
-        min-height: 40px !important;
-    }
-}
-
-@media (max-width: 520px) {
-    .akcios-banner-belso {
-        gap: 9px !important;
-        padding-top: 16px !important;
-        padding-bottom: 11px !important;
-    }
-
-    .akcios-banner-kupon {
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        border-radius: 18px !important;
-    }
-
-    .akcios-banner-gomb {
-        min-height: 38px !important;
-    }
-}
-
-/* Tiszta kuponkartya es gombstilus, animacio nelkul 20260718-26 */
-.akcios-banner,
-.akcios-banner * {
-    box-sizing: border-box;
-}
-
-.akcios-banner {
-    width: min(1120px, calc(100% - 32px));
-    max-width: calc(100vw - 32px);
-    overflow: visible;
-}
-
-.akcios-banner-slider {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: 30px;
-}
-
-.akcios-banner-track {
-    width: 100%;
-    max-width: 100%;
-    gap: 0;
-}
-
-.akcios-banner-track .akcios-banner-belso {
-    flex: 0 0 100%;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    margin: 0;
-}
-
-.akcios-banner-belso {
-    overflow: hidden;
-    gap: 16px;
-    padding-bottom: 20px;
-}
-
-.akcios-banner .akcios-banner-cim {
-    max-width: 100%;
-    font-size: clamp(1.08rem, 3.9vw, 1.68rem) !important;
-    line-height: 1.14 !important;
-    letter-spacing: 0.065em !important;
-    overflow-wrap: normal;
-    word-break: normal;
-    hyphens: none;
-}
-
-.akcios-banner-cim span {
-    max-width: 100%;
-}
-
-.akcios-banner p {
-    max-width: 100%;
-}
-
-.akcios-banner-kupon {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    margin: 0;
-    overflow: hidden;
-    padding-top: 14px;
-    padding-bottom: 14px;
-}
-
-.akcios-banner-gomb {
-    width: 100%;
-    max-width: 100%;
-    min-height: 42px;
-    margin: 0;
-    white-space: normal;
-    animation: none !important;
-    background-image: none !important;
-}
-
-.akcios-banner-gomb::after,
-.akcios-banner-masolas::after,
-.szekcio .gomb::after,
-.galeria-atvezeto-szoveg .gomb::after,
-.arlista-oldal > .gomb::after,
-.galeria-oldal > .gomb::after,
-#kapcsolat > .gomb::after,
-.admin-gomb::after,
-.admin-kis-gomb::after,
-.admin-hozzaadas::after,
-.admin-oldalmeret-gomb::after,
-.admin-lebego-mentes::after,
-.urlap-kuldes-gomb::after,
-.popup-gomb::after {
-    content: none !important;
-    display: none !important;
-    animation: none !important;
-}
-
-.szekcio .gomb,
-.galeria-atvezeto-szoveg .gomb,
-.arlista-oldal > .gomb,
-.galeria-oldal > .gomb,
-#kapcsolat > .gomb,
-.akcios-banner-masolas,
-.admin-gomb,
-.admin-kis-gomb,
-.admin-hozzaadas,
-.admin-oldalmeret-gomb,
-.admin-lebego-mentes,
-.urlap-kuldes-gomb,
-.popup-gomb {
-    animation: none !important;
-    background-image: none !important;
-}
-
-@media (max-width: 520px) {
     .akcios-banner {
         width: calc(100% - 28px);
         max-width: calc(100vw - 28px);
-        margin-left: auto;
-        margin-right: auto;
+        margin-top: 16px;
     }
 
-    .akcios-banner-slider {
+    .akcios-banner-slider,
+    .akcios-banner-belso {
         border-radius: 28px;
     }
 
     .akcios-banner-belso {
-        gap: 13px !important;
-        padding: 18px 16px 20px !important;
-        border-radius: 28px;
+        gap: 13px;
+        padding: 18px 16px 20px;
     }
 
     .akcios-banner .akcios-banner-cim {
-        font-size: clamp(0.98rem, 4.55vw, 1.28rem) !important;
-        line-height: 1.16 !important;
-        letter-spacing: 0.045em !important;
+        font-size: clamp(0.98rem, 4.55vw, 1.28rem);
+        line-height: 1.16;
+        letter-spacing: 0.045em;
     }
 
     .akcios-banner p {
@@ -6645,30 +5142,51 @@ h2 {
     }
 
     .akcios-banner-kupon {
-        padding: 10px 50px 10px 14px !important;
-        border-radius: 18px !important;
+        padding: 10px 50px 10px 14px;
+        border-radius: 18px;
     }
 
-    .akcios-banner-gomb {
-        min-height: 40px !important;
-        padding-inline: 18px !important;
-        font-size: 0.78rem !important;
+    .akcios-banner-nyil {
+        width: 40px;
+        height: 40px;
+    }
+
+    .foglalas-kupon-sor {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .foglalas-kupon-sor .admin-kis-gomb {
+        padding-inline: 12px;
+        white-space: nowrap;
+    }
+
+    .admin-kupon-kartya {
+        padding: 14px;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok {
+        justify-content: stretch;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+        flex: 1 1 0;
+        padding-inline: 8px;
     }
 }
-
 /* =========================================
    BEMUTATKOZAS SECTION - clean image-led overlay
    ========================================= */
 #bemutatkozas {
     width: 100%;
     max-width: none;
-    padding: clamp(28px, 4vw, 48px) 0 0;
+    padding: 0;
 }
 
 #bemutatkozas .bemutatkozas-belso {
     box-sizing: border-box;
     position: relative;
-    width: min(1400px, calc(100% - 40px));
+    width: var(--lumi-container-width);
     max-width: 1400px;
     margin-inline: auto;
     overflow: hidden;
@@ -6812,68 +5330,19 @@ h2 {
         line-height: 1.54;
     }
 }
-/* Admin save and pager layer cleanup 20260719 */
-.admin-cms-main-actions {
-    display: flex;
-    justify-content: flex-end;
-}
-
+/* Admin save and pager controls */
 .admin-cms-main-actions .admin-kis-gomb {
     min-width: 150px;
 }
 
-.admin-lapozo-felso {
-    position: relative;
-    z-index: 1;
-}
 
-@media (max-width: 768px) {
-    .admin-body #admin-tartalom {
-        padding-bottom: calc(28px + env(safe-area-inset-bottom));
-    }
-
-    .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
-        margin-bottom: 22px !important;
-        padding-bottom: 0 !important;
-    }
-
-    .admin-body .admin-lebego-mentes {
-        position: static !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: min(260px, calc(100% - 72px));
-        min-height: 46px;
-        margin: 24px auto calc(84px + env(safe-area-inset-bottom));
-        transform: none !important;
-        z-index: auto;
-    }
-
-    .admin-body .admin-lebego-mentes[hidden] {
-        display: none !important;
-    }
-
-    .admin-body .admin-cms-main-actions {
-        justify-content: stretch;
-    }
-
-    .admin-body .admin-cms-main-actions .admin-kis-gomb {
-        width: 100%;
-        min-width: 0;
-    }
-}
 
 /* Admin floating save button top layer 20260719 */
 .admin-body .admin-lebego-mentes {
-    position: fixed !important;
-    z-index: 99999 !important;
+    position: fixed;
+    z-index: 99999;
 }
 
-.admin-body .admin-lapozo,
-.admin-body .admin-oldalmeret,
-.admin-body .admin-oldalmeret-gomb {
-    z-index: auto !important;
-}
 
 .admin-body #admin-tartalom {
     padding-bottom: calc(124px + env(safe-area-inset-bottom));
@@ -6881,329 +5350,208 @@ h2 {
 
 @media (max-width: 768px) {
     .admin-body .admin-lebego-mentes {
-        left: 50% !important;
-        right: auto !important;
-        bottom: calc(18px + env(safe-area-inset-bottom)) !important;
-        display: inline-flex !important;
+        left: 50%;
+        right: auto;
+        bottom: calc(18px + env(safe-area-inset-bottom));
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         width: min(260px, calc(100% - 72px));
         min-height: 46px;
-        margin: 0 !important;
-        transform: translateX(-50%) !important;
+        margin: 0;
+        transform: translateX(-50%);
         pointer-events: auto;
     }
 
     .admin-body .admin-lebego-mentes[hidden] {
-        display: none !important;
+        display: none;
     }
 
     .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
-        margin-bottom: 92px !important;
-        padding-bottom: 0 !important;
+        margin-bottom: 92px;
+        padding-bottom: 0;
     }
 }
 
 /* =========================================
-   SZOLGALTATASOK SECTION - clean services list
+   SZOLGÁLTATÁSOK
    ========================================= */
 #szolgaltatasok {
-    box-sizing: border-box;
     width: 100%;
     max-width: none;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: clamp(24px, 4vw, 44px) !important;
-    padding-bottom: clamp(28px, 5vw, 60px) !important;
+    padding: 0;
 }
 
 #szolgaltatasok h2 {
-    margin-bottom: clamp(16px, 3vw, 28px) !important;
+    margin-bottom: clamp(16px, 3vw, 28px);
     letter-spacing: 0.16em;
 }
 
-#szolgaltatasok .bento-racs {
-    box-sizing: border-box !important;
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
-    width: min(1400px, calc(100% - 40px)) !important;
-    max-width: 1400px !important;
-    margin: 0 auto !important;
-    padding: clamp(8px, 1.4vw, 12px) !important;
+.szolgaltatas-lista {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    width: var(--lumi-container-width);
+    max-width: 1400px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: clamp(8px, 1.4vw, 12px);
     overflow: hidden;
+    border: 1px solid rgba(185, 133, 143, 0.18);
+    border-radius: var(--lumi-radius-card);
     background:
         radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.78), transparent 34%),
         linear-gradient(145deg, rgba(255, 250, 244, 0.88), rgba(255, 246, 242, 0.66));
-    border: 1px solid rgba(185, 133, 143, 0.18);
-    border-radius: 28px;
     box-shadow: 0 18px 46px rgba(78, 54, 48, 0.075);
 }
 
-#szolgaltatasok .bento-kartya,
-#szolgaltatasok .bento-kartya.szeles {
-    position: relative;
-    display: grid !important;
-    grid-template-columns: minmax(210px, 0.22fr) minmax(0, 1fr) !important;
+.szolgaltatas-kartya {
+    display: grid;
+    grid-template-columns: minmax(210px, 0.22fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(14px, 2.4vw, 30px) !important;
+    gap: clamp(14px, 2.4vw, 30px);
     min-height: 88px;
-    grid-column: auto !important;
-    order: initial !important;
-    padding: 17px clamp(16px, 3vw, 28px) !important;
-    overflow: visible;
-    text-align: left !important;
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 18px !important;
-    box-shadow: none !important;
-    transform: none !important;
-    font-family: 'Manrope', sans-serif !important;
-    transition: background 0.22s ease, transform 0.22s ease;
+    padding: 17px clamp(16px, 3vw, 28px);
+    border-radius: 18px;
+    background: transparent;
+    transition: background-color 0.22s ease, transform 0.22s ease;
 }
 
-#szolgaltatasok .bento-kartya:not(:last-child) {
-    border-bottom: 1px solid rgba(185, 133, 143, 0.14) !important;
+.szolgaltatas-kartya:not(:last-child) {
+    border-bottom: 1px solid rgba(185, 133, 143, 0.14);
 }
 
-#szolgaltatasok .bento-kartya:hover {
-    transform: translateX(2px) !important;
-    background: rgba(185, 133, 143, 0.06) !important;
-    box-shadow: none !important;
+.szolgaltatas-kartya:hover {
+    background: rgba(185, 133, 143, 0.06);
+    transform: translateX(2px);
 }
 
-#szolgaltatasok .bento-kartya::before,
-#szolgaltatasok .bento-kartya::after {
-    content: none !important;
-    display: none !important;
-}
-
-#szolgaltatasok .bento-kartya h3 {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
+.szolgaltatas-kartya h3 {
     max-width: 12ch;
-    margin: 0 !important;
+    margin: 0;
     color: var(--barna);
-    font-family: 'Outfit', sans-serif !important;
-    font-size: clamp(21px, 1.9vw, 26px) !important;
-    font-weight: 500 !important;
-    line-height: 1.08 !important;
-    text-align: left !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(21px, 1.9vw, 26px);
+    font-weight: 500;
+    line-height: 1.08;
+    text-align: left;
 }
 
-#szolgaltatasok .bento-kartya p {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    max-width: none;
-    margin: 0 !important;
-    padding-left: clamp(14px, 2vw, 22px) !important;
+.szolgaltatas-kartya p {
+    margin: 0;
+    padding-left: clamp(14px, 2vw, 22px);
     color: rgba(78, 54, 48, 0.72);
     border-left: 1px solid rgba(185, 133, 143, 0.22);
-    font-family: 'Manrope', sans-serif !important;
-    font-size: clamp(15.5px, 1.25vw, 18px) !important;
-    font-weight: 400 !important;
-    line-height: 1.52 !important;
-    letter-spacing: 0 !important;
-    text-align: justify !important;
-    text-align-last: left !important;
-    hyphens: none !important;
-    word-break: normal !important;
-    overflow-wrap: normal !important;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(15.5px, 1.25vw, 18px);
+    font-weight: 400;
+    line-height: 1.52;
+    text-align: justify;
+    text-align-last: left;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: normal;
 }
-
-#szolgaltatasok .bento-kartya br {
-    display: none !important;
-}
-
 
 @media (max-width: 640px) {
-    #szolgaltatasok {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        padding-top: 22px !important;
-        padding-bottom: 32px !important;
-    }
-
     #szolgaltatasok h2 {
-        margin-bottom: 16px !important;
-        font-size: clamp(1.58rem, 8vw, 2.1rem) !important;
+        margin-bottom: 16px;
+        font-size: clamp(1.58rem, 8vw, 2.1rem);
     }
 
-    #szolgaltatasok .bento-racs {
-        width: calc(100% - 28px) !important;
-        max-width: calc(100% - 28px) !important;
-        padding: 5px !important;
+    .szolgaltatas-lista {
+        width: calc(100% - 28px);
+        max-width: calc(100% - 28px);
+        padding: 5px;
         border-radius: 24px;
     }
 
-    #szolgaltatasok .bento-kartya,
-    #szolgaltatasok .bento-kartya.szeles {
-        grid-template-columns: minmax(96px, 0.34fr) minmax(0, 1fr) !important;
-        gap: 10px !important;
+    .szolgaltatas-kartya {
+        grid-template-columns: minmax(96px, 0.34fr) minmax(0, 1fr);
+        gap: 10px;
         min-height: 72px;
-        padding: 13px 10px !important;
-        border-radius: 16px !important;
+        padding: 13px 10px;
+        border-radius: 16px;
     }
 
-    #szolgaltatasok .bento-kartya h3 {
+    .szolgaltatas-kartya h3 {
         max-width: 8.5ch;
-        font-size: 16px !important;
-        line-height: 1.08 !important;
+        font-size: 16px;
     }
 
-    #szolgaltatasok .bento-kartya p {
-        padding-left: 10px !important;
+    .szolgaltatas-kartya p {
+        padding-left: 10px;
         border-left-color: rgba(185, 133, 143, 0.18);
-        font-size: 12.2px !important;
-        line-height: 1.38 !important;
+        font-size: 12.2px;
+        line-height: 1.38;
     }
 }
 
 @media (max-width: 380px) {
-    #szolgaltatasok .bento-racs {
-        width: calc(100% - 24px) !important;
-        max-width: calc(100% - 24px) !important;
+    .szolgaltatas-lista {
+        width: calc(100% - 24px);
+        max-width: calc(100% - 24px);
     }
 
-    #szolgaltatasok .bento-kartya,
-    #szolgaltatasok .bento-kartya.szeles {
-        grid-template-columns: minmax(84px, 0.34fr) minmax(0, 1fr) !important;
-        gap: 8px !important;
-        padding-inline: 9px !important;
+    .szolgaltatas-kartya {
+        grid-template-columns: minmax(84px, 0.34fr) minmax(0, 1fr);
+        gap: 8px;
+        padding-inline: 9px;
     }
 
-    #szolgaltatasok .bento-kartya h3 {
-        font-size: 15px !important;
+    .szolgaltatas-kartya h3 {
+        font-size: 15px;
     }
 
-    #szolgaltatasok .bento-kartya p {
-        padding-left: 8px !important;
-        font-size: 11.8px !important;
+    .szolgaltatas-kartya p {
+        padding-left: 8px;
+        font-size: 11.8px;
     }
-}
-
-/* Admin booking coupon row 20260719 */
-.admin-foglalas-kupon {
-    margin-top: 2px !important;
-    color: var(--barna);
-    font-weight: 900;
-}
-
-.admin-foglalas-kupon strong {
-    color: var(--barna);
-    font-weight: 900;
-    letter-spacing: 0.01em;
 }
 
 /* =========================================
-   Lumi component system 20260719
-   Kozos, ujrahasznalhato komponens-alapok.
-   Pozicio/layout maradhat oldalankent, a kinezet innen jon.
+   ADMIN KOMPONENSEK
    ========================================= */
-:root {
-    --lumi-radius-pill: 999px;
-    --lumi-radius-card: 28px;
-    --lumi-control-bg: rgba(255, 250, 244, 0.92);
-    --lumi-control-border: rgba(185, 133, 143, 0.24);
-    --lumi-control-border-strong: rgba(185, 133, 143, 0.5);
-    --lumi-control-focus: 0 0 0 3px rgba(185, 133, 143, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.75);
-    --lumi-soft-shadow: 0 14px 34px rgba(70, 48, 42, 0.1);
-    --lumi-button-shadow: 0 12px 26px rgba(185, 133, 143, 0.22);
-    --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%2364524d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-
-html,
-body,
-input,
-select,
-textarea,
-button {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-}
-
-/* Public CTA buttons */
-.szekcio .gomb,
-.galeria-atvezeto-szoveg .gomb,
-.arlista-oldal > .gomb,
-.galeria-oldal > .gomb,
-#kapcsolat > .gomb,
-.akcios-banner-gomb,
-.urlap-kuldes-gomb,
-.popup-gomb {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: min(100%, 380px);
-    min-height: 48px;
-    box-sizing: border-box;
-    border: 1px solid rgba(185, 133, 143, 0.42);
-    border-radius: var(--lumi-radius-pill);
-    background: var(--akcentus);
-    color: #fffaf4;
-    box-shadow: var(--lumi-button-shadow);
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-family: 'Outfit', 'Montserrat', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.15;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.szekcio .gomb:hover,
-.galeria-atvezeto-szoveg .gomb:hover,
-.arlista-oldal > .gomb:hover,
-.galeria-oldal > .gomb:hover,
-#kapcsolat > .gomb:hover,
-.akcios-banner-gomb:hover,
-.urlap-kuldes-gomb:hover,
-.popup-gomb:hover {
-    background: var(--akcentus-vilagos);
-    border-color: rgba(185, 133, 143, 0.58);
-    color: #fffaf4;
-    transform: translateY(-1px);
-}
-
 /* Admin buttons */
-.admin-body .admin-gomb,
-.admin-body .admin-hozzaadas,
-.admin-body .admin-kis-gomb,
-.admin-body .admin-oldalmeret-gomb,
-.admin-body .cms-gallery-actions .admin-kis-gomb,
-.admin-body .admin-cms-main-actions .admin-kis-gomb {
+.admin-body .admin-gomb {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    border-radius: var(--lumi-radius-pill) !important;
-    font-family: 'Manrope', sans-serif;
-    line-height: 1.18 !important;
+    border-radius: var(--lumi-radius-pill);
+    font-family: var(--lumi-button-font);
+    line-height: 1.18;
     text-align: center;
     touch-action: manipulation;
 }
 
 .admin-body .admin-hozzaadas,
-.admin-body .admin-kis-gomb,
-.admin-body .admin-oldalmeret-gomb {
+.admin-body .admin-kis-gomb {
     border: 1px solid rgba(185, 133, 143, 0.24);
     background: rgba(255, 250, 244, 0.8);
     color: var(--tinta);
 }
 
 .admin-body .admin-hozzaadas:hover,
-.admin-body .admin-kis-gomb:hover,
-.admin-body .admin-oldalmeret-gomb:hover,
-.admin-body .admin-oldalmeret-gomb.aktiv {
+.admin-body .admin-kis-gomb:hover {
     border-color: transparent;
     background: var(--akcentus);
     color: #fffaf4;
 }
 
-.admin-body .admin-kis-gomb:disabled,
-.admin-body .admin-oldalmeret-gomb:disabled {
+.admin-body .admin-veszely-gomb {
+    border-color: rgba(143, 60, 72, 0.3);
+    background: rgba(143, 60, 72, 0.08);
+    color: #8f3c48;
+}
+
+.admin-body .admin-veszely-gomb:hover {
+    border-color: #9b4e5c;
+    background: #9b4e5c;
+    color: #fffaf4;
+}
+
+.admin-body .admin-kis-gomb:disabled {
     cursor: default;
     opacity: 0.45;
 }
@@ -7220,29 +5568,41 @@ button {
 .admin-body .admin-kereses-mezo input,
 .admin-body .admin-kereses-mezo select,
 .admin-body .admin-oldalmeret-select {
-    box-sizing: border-box !important;
-    border: 1px solid var(--lumi-control-border) !important;
-    border-radius: var(--lumi-radius-pill) !important;
-    background-color: var(--lumi-control-bg) !important;
-    color: var(--tinta) !important;
-    font-family: inherit !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+    box-sizing: border-box;
+    border: 1px solid var(--lumi-control-border);
+    background-color: var(--lumi-control-bg);
+    color: var(--tinta);
+    font-family: inherit;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.admin-body .admin-mezo input,
+.admin-body .admin-mezo select,
+.admin-body .admin-db-grid input,
+.admin-body .admin-db-grid select,
+.admin-body .admin-db-form input,
+.admin-body .admin-db-statusz,
+.admin-body .admin-kereses-mezo input,
+.admin-body .admin-kereses-mezo select,
+.admin-body .admin-oldalmeret-select {
+    border-radius: var(--lumi-radius-pill);
 }
 
 .admin-body .admin-mezo textarea,
 .admin-body .admin-db-grid textarea {
-    border-radius: 18px !important;
+    border-radius: 18px;
 }
 
 .admin-body select,
 .admin-body .admin-db-statusz,
-.admin-body .admin-kereses-mezo select,
-.admin-body .admin-oldalmeret-select {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    background-image: var(--lumi-select-arrow) !important;
-    background-repeat: no-repeat !important;
-    background-size: 14px 14px !important;
+.admin-body .admin-kereses-mezo select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 34px;
+    background-image: var(--lumi-select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px 14px;
 }
 
 .admin-body select::-ms-expand,
@@ -7252,33 +5612,39 @@ button {
 
 .admin-body .admin-kereses-mezo input,
 .admin-body .admin-kereses-mezo select {
-    min-height: 42px !important;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    font-size: 13px;
     font-weight: 750;
 }
 
+.admin-body .admin-kereses-mezo input::placeholder {
+    font-size: inherit;
+}
+
 .admin-body .admin-kereses-mezo input {
-    padding: 0 16px !important;
+    padding: 0 16px;
 }
 
 .admin-body .admin-kereses-mezo select {
-    padding: 0 42px 0 16px !important;
-    background-position: right 14px center !important;
-}
-
-.admin-body .admin-db-statusz {
-    background-position: right 12px center !important;
-    padding-right: 34px !important;
+    padding: 0 42px 0 16px;
+    background-position: right 14px center;
 }
 
 .admin-body .admin-oldalmeret-select {
-    width: 64px !important;
-    min-width: 64px !important;
-    min-height: 34px !important;
-    padding: 0 24px 0 10px !important;
-    background-position: right 8px center !important;
-    background-size: 13px 13px !important;
-    font-size: 12px !important;
-    font-weight: 850 !important;
+    width: 64px;
+    min-width: 64px;
+    min-height: 34px;
+    padding: 0 24px 0 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: var(--lumi-select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 13px 13px;
+    font-size: 12px;
+    font-weight: 850;
     text-align: left;
 }
 
@@ -7292,30 +5658,38 @@ button {
 .admin-body .admin-kereses-mezo input:focus,
 .admin-body .admin-kereses-mezo select:focus,
 .admin-body .admin-oldalmeret-select:focus {
-    outline: none !important;
-    border-color: var(--lumi-control-border-strong) !important;
-    box-shadow: var(--lumi-control-focus) !important;
+    outline: none;
+    border-color: var(--lumi-control-border-strong);
+    box-shadow: var(--lumi-control-focus);
 }
 
 /* Admin toolbar and pagination */
 .admin-panel-akciok-keresessel {
-    display: grid !important;
-    grid-template-columns: minmax(145px, auto) minmax(0, 1fr) minmax(128px, 158px) !important;
+    display: grid;
+    grid-template-columns: minmax(145px, auto) minmax(0, 1fr) minmax(128px, 158px);
     align-items: end;
     gap: 10px;
 }
 
+.admin-panel-akciok-keresessel .admin-kereses-mezo {
+    min-width: 0;
+}
+
 .admin-statusz-szuro-mezo {
-    min-width: 0 !important;
+    min-width: 0;
     max-width: 158px;
 }
 
 .admin-lapozo {
-    display: flex !important;
+    position: relative;
+    z-index: 1;
+    display: flex;
     align-items: center;
-    justify-content: flex-start !important;
-    flex-wrap: nowrap !important;
-    gap: 7px !important;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 7px;
+    margin-top: 18px;
+    padding-bottom: 72px;
     color: var(--barna);
     font-weight: 800;
     overflow: visible;
@@ -7324,7 +5698,17 @@ button {
 .admin-lapozo-felso {
     margin-top: 10px;
     margin-bottom: 12px;
-    padding-bottom: 0 !important;
+    padding-bottom: 0;
+}
+
+.admin-oldalmeret {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--barna);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
 }
 
 .admin-lapozo .admin-kis-gomb[data-foglalas-oldal="elozo"],
@@ -7334,8 +5718,8 @@ button {
 
 .admin-lapozo > span {
     order: 2;
-    flex: 0 0 auto !important;
-    min-width: 36px !important;
+    flex: 0 0 auto;
+    min-width: 36px;
     font-size: 12.5px;
     text-align: center;
 }
@@ -7349,20 +5733,20 @@ button {
 .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
     flex: 0 0 auto;
     width: auto;
-    min-width: 68px !important;
-    min-height: 34px !important;
-    padding: 0 10px !important;
+    min-width: 68px;
+    min-height: 34px;
+    padding: 0 10px;
     font-size: 12px;
 }
 
 .admin-lapozo .admin-oldalmeret {
     order: 4;
-    flex: 0 0 auto !important;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
-    justify-content: flex-start !important;
+    justify-content: flex-start;
     gap: 6px;
-    margin-left: auto !important;
+    margin-left: auto;
     white-space: nowrap;
 }
 
@@ -7408,17 +5792,9 @@ button {
 .admin-body .admin-foglalas-meta-grid span,
 .admin-body .admin-foglalas-meta-grid a,
 .admin-body .admin-foglalas-kupon {
-    line-height: 1.45 !important;
+    line-height: 1.45;
 }
 
-.admin-tab {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    overflow: visible;
-}
 
 .admin-tab-jelzes {
     display: inline-flex;
@@ -7459,11 +5835,11 @@ button {
 }
 
 .admin-foglalas-jelzo {
-    display: none !important;
+    display: none;
 }
 
 .admin-foglalas-kupon {
-    margin-top: 2px !important;
+    margin-top: 2px;
     color: var(--barna);
     font-weight: 900;
 }
@@ -7475,21 +5851,9 @@ button {
 }
 
 @media screen and (max-width: 760px) {
-    .szekcio .gomb,
-    .galeria-atvezeto-szoveg .gomb,
-    .arlista-oldal > .gomb,
-    .galeria-oldal > .gomb,
-    #kapcsolat > .gomb,
-    .akcios-banner-gomb,
-    .urlap-kuldes-gomb,
-    .popup-gomb {
-        width: min(100%, 360px);
-        min-height: 46px;
-        padding-inline: 22px;
-    }
 
     .admin-panel-akciok-keresessel {
-        grid-template-columns: minmax(0, 1fr) minmax(116px, 142px) !important;
+        grid-template-columns: minmax(0, 1fr) 124px;
         gap: 9px;
     }
 
@@ -7498,22 +5862,28 @@ button {
     }
 
     .admin-statusz-szuro-mezo {
-        max-width: none;
+        width: 124px;
+        max-width: 124px;
+    }
+
+    .admin-body .admin-kereses-mezo input,
+    .admin-body .admin-kereses-mezo select {
+        font-size: 12.5px;
     }
 
     .admin-body .admin-kereses-mezo select {
-        padding-right: 38px !important;
-        background-position: right 12px center !important;
-        background-size: 13px 13px !important;
+        padding-right: 38px;
+        background-position: right 12px center;
+        background-size: 13px 13px;
     }
 
     .admin-lapozo {
-        gap: 5px !important;
+        gap: 5px;
         padding-bottom: 72px;
     }
 
     .admin-lapozo-felso {
-        padding-bottom: 0 !important;
+        padding-bottom: 0;
     }
 
     .admin-lapozo .admin-oldalmeret > span {
@@ -7521,25 +5891,25 @@ button {
     }
 
     .admin-body .admin-oldalmeret-select {
-        width: 60px !important;
-        min-width: 60px !important;
-        min-height: 32px !important;
-        padding-left: 9px !important;
-        padding-right: 22px !important;
-        background-position: right 7px center !important;
-        font-size: 11.5px !important;
+        width: 60px;
+        min-width: 60px;
+        min-height: 32px;
+        padding-left: 9px;
+        padding-right: 22px;
+        background-position: right 7px center;
+        font-size: 11.5px;
     }
 
     .admin-lapozo > span {
-        min-width: 32px !important;
+        min-width: 32px;
         font-size: 12px;
     }
 
     .admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
     .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
-        min-width: 62px !important;
-        min-height: 32px !important;
-        padding-inline: 8px !important;
+        min-width: 62px;
+        min-height: 32px;
+        padding-inline: 8px;
         font-size: 11.5px;
     }
 
@@ -7558,70 +5928,6 @@ button {
     .admin-body .admin-foglalas-meta-grid span,
     .admin-body .admin-foglalas-meta-grid a,
     .admin-body .admin-foglalas-kupon {
-        line-height: 1.48 !important;
-    }
-}
-/* =========================================
-   FOOLDALI SECTION RITMUS - kozos hezagok
-   ========================================= */
-:root {
-    --lumi-section-gap: clamp(30px, 3.6vw, 54px);
-}
-
-body:not(.admin-body) > #hero.hero-preview-refresh {
-    margin-top: 8px !important;
-    margin-bottom: 0 !important;
-}
-
-body:not(.admin-body) > #akcios-banner:not([hidden]),
-body:not(.admin-body) > #bemutatkozas,
-body:not(.admin-body) > #szolgaltatasok,
-body:not(.admin-body) > #galeria-atvezeto,
-body:not(.admin-body) > #kapcsolat {
-    margin-top: var(--lumi-section-gap) !important;
-    margin-bottom: 0 !important;
-}
-
-body:not(.admin-body) > #akcios-banner[hidden] {
-    display: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-body:not(.admin-body) > #akcios-banner,
-body:not(.admin-body) > #bemutatkozas,
-body:not(.admin-body) > #szolgaltatasok,
-body:not(.admin-body) > #galeria-atvezeto {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-body:not(.admin-body) > #akcios-banner {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-body:not(.admin-body) > #kapcsolat {
-    padding-top: clamp(22px, 2.6vw, 34px) !important;
-    padding-bottom: 0 !important;
-}
-
-@media screen and (max-width: 768px) {
-    :root {
-        --lumi-section-gap: 30px;
-    }
-
-    body:not(.admin-body) > #hero.hero-preview-refresh {
-        margin-top: 0 !important;
-    }
-
-    body:not(.admin-body) > #kapcsolat {
-        padding-top: 22px !important;
-    }
-}
-
-@media screen and (max-width: 380px) {
-    :root {
-        --lumi-section-gap: 26px;
+        line-height: 1.48;
     }
 }
