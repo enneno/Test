@@ -5859,7 +5859,7 @@ body.admin-modal-nyitva {
         gap: 9px;
     }
 
-    .admin-panel-akciok-keresessel #admin-foglalas-frissites {
+    .admin-panel-akciok-keresessel .admin-panel-gombcsoport {
         grid-column: 1 / -1;
     }
 
@@ -5932,4 +5932,21 @@ body.admin-modal-nyitva {
     .admin-body .admin-foglalas-kupon {
         line-height: 1.48;
     }
+}
+
+.admin-panel-gombcsoport {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.admin-panel-gombcsoport .admin-hozzaadas,
+.admin-panel-gombcsoport .admin-kis-gomb {
+    width: auto;
+}
+
+[data-admin-export]:disabled {
+    cursor: wait;
+    opacity: 0.58;
 }

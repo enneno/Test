@@ -19,6 +19,7 @@ const JS_FILES = [
     'script.js',
     'booking.js',
     'admin-supabase.js',
+    'admin-export.js',
     'admin-content.js'
 ];
 const VERSIONED_ASSETS = ['style.css'].concat(JS_FILES);

@@ -19,6 +19,7 @@ const ASSETS = [
     'script.js',
     'booking.js',
     'admin-supabase.js',
+    'admin-export.js',
     'admin-content.js'
 ];
 

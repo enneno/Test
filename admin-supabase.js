@@ -22,6 +22,11 @@
         naptarKijelolesek: new Map()
     };
 
+    window.LumiAdminExportData = Object.freeze({
+        foglalasok: () => aktualisFoglalasExportAdatok(),
+        esemenyek: () => aktualisEsemenyExportAdatok()
+    });
+
 
     document.addEventListener('DOMContentLoaded', () => {
         const elemek = adminElemek();
@@ -690,6 +695,14 @@
         foglalasTabJelzesFrissitese();
     }
 
+    function aktualisFoglalasExportAdatok() {
+        return aktualisListaOldal(
+            foglalasSzurtElemek(),
+            allapot.foglalasOldal,
+            allapot.foglalasOldalMeret
+        ).map(elem => ({ ...elem.adat, __tipus: elem.tipus }));
+    }
+
     function foglalasSzurtElemek() {
         const kereses = normalizaltKereses(allapot.foglalasKereses);
         const telefonKereses = csakSzamok(allapot.foglalasKereses);
@@ -860,7 +873,7 @@
 
         const { data, error } = await allapot.kliens
             .from('booking_events')
-            .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at,bookings(customer_name,starts_at)')
+            .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at,bookings(customer_name,customer_email,customer_phone,starts_at)')
             .order('created_at', { ascending: false })
             .limit(200);
 
@@ -922,6 +935,24 @@
         });
 
         esemenynaploLapozoRenderelese();
+    }
+
+    function aktualisEsemenyExportAdatok() {
+        return aktualisListaOldal(
+            allapot.esemenynaploElemek,
+            allapot.esemenynaploOldal,
+            allapot.esemenynaploOldalMeret
+        ).map(esemeny => ({ ...esemeny }));
+    }
+
+    function aktualisListaOldal(lista, oldal, oldalMeret) {
+        if (oldalMeret === 'all') {
+            return lista.slice();
+        }
+
+        const meret = listaOldalMeret(oldalMeret, lista.length);
+        const kezd = Math.max(0, (oldal - 1) * meret);
+        return lista.slice(kezd, kezd + meret);
     }
 
     function esemenynaploOsszesOldal() {

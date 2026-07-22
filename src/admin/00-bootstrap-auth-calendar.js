@@ -20,6 +20,11 @@
         naptarKijelolesek: new Map()
     };
 
+    window.LumiAdminExportData = Object.freeze({
+        foglalasok: () => aktualisFoglalasExportAdatok(),
+        esemenyek: () => aktualisEsemenyExportAdatok()
+    });
+
 
     document.addEventListener('DOMContentLoaded', () => {
         const elemek = adminElemek();

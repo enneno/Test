@@ -1,5 +1,6 @@
 const { test, expect } = require('playwright/test');
 const path = require('node:path');
+const fs = require('node:fs');
 
 const publicPages = ['/', '/arlista/', '/galeria/', '/foglalas/', '/adatkezeles/'];
 
@@ -40,6 +41,8 @@ test('az admin belépési felülete vagy a hitelesített panel megjelenik', asyn
     const response = await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
     expect(response.status()).toBeLessThan(400);
     await expect(page.locator('#admin-bejelentkezes-panel, #admin-tartalom').first()).toBeAttached();
+    await expect(page.locator('#admin-panel-export')).toHaveCount(0);
+    await expect(page.locator('[data-admin-export]')).toHaveCount(2);
 });
 
 test('az inspirációs képnéző fejléce görgetéskor rögzítve marad', async ({ page }) => {
@@ -86,4 +89,72 @@ test('a footer mobilon kompakt és asztali nézetben vízszintes', async ({ page
     await page.reload({ waitUntil: 'domcontentloaded' });
     const columns = await page.locator('.footer-belso').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(3);
+});
+
+test('a foglalásexport a kapott látható sorokat írja egy formázott munkalapra', async ({ page }) => {
+    await page.setContent('<button type="button" data-admin-export="foglalasok">Excel export</button>');
+    await page.evaluate(() => {
+        window.LumiAdminExportData = {
+            foglalasok: () => [{
+                __tipus: 'booking', id: 'booking-1', customer_name: 'Teszt Anna',
+                customer_phone: '+36201234567', customer_email: 'anna@example.com',
+                starts_at: '2026-07-24T08:00:00+02:00', ends_at: '2026-07-24T10:00:00+02:00',
+                created_at: '2026-07-20T10:00:00+02:00', status: 'confirmed', coupon_code: 'LUMI10',
+                services: { name: 'Gél lakk', price_text: '6000 Ft' }
+            }, {
+                __tipus: 'blocked', id: 'blocked-1', reason: 'Instagram - Erika',
+                starts_at: '2026-07-25T12:00:00+02:00', ends_at: '2026-07-25T13:30:00+02:00',
+                created_at: '2026-07-20T11:00:00+02:00'
+            }],
+            esemenyek: () => []
+        };
+    });
+    await page.addScriptTag({ path: path.resolve(__dirname, '..', 'admin-export.js') });
+    await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
+
+    const downloadPromise = page.waitForEvent('download');
+    await page.locator('[data-admin-export="foglalasok"]').click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^luminails-foglalasok-\d{4}-\d{2}-\d{2}\.xlsx$/);
+
+    const bytes = fs.readFileSync(await download.path());
+    expect(bytes.subarray(0, 4).toString('hex')).toBe('504b0304');
+    const eocd = bytes.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+    expect(eocd).toBeGreaterThan(0);
+    expect(bytes.readUInt16LE(eocd + 10)).toBe(8);
+    const raw = bytes.toString('utf8');
+    expect(raw).toContain('Foglalások');
+    expect(raw).toContain('Teszt Anna');
+    expect(raw).toContain('Kézzel hozzáadott');
+    expect(raw).not.toContain('Státuszkód');
+    expect(raw.indexOf('Azonosító')).toBeGreaterThan(raw.indexOf('Létrehozva'));
+    expect(raw).toContain('s="2"');
+});
+
+test('az eseménynapló exportja külön, egyetlen munkalapot készít', async ({ page }) => {
+    await page.setContent('<button type="button" data-admin-export="esemenyek">Excel export</button>');
+    await page.evaluate(() => {
+        window.LumiAdminExportData = {
+            foglalasok: () => [],
+            esemenyek: () => [{
+                id: 'event-1', booking_id: 'booking-1', event_type: 'booking_created', channel: 'web',
+                status: 'success', title: 'Foglalás rögzítve', message: 'Teszt esemény',
+                metadata: { source: 'test' }, created_at: '2026-07-20T10:00:01+02:00',
+                bookings: { customer_name: 'Teszt Anna', starts_at: '2026-07-24T08:00:00+02:00' }
+            }]
+        };
+    });
+    await page.addScriptTag({ path: path.resolve(__dirname, '..', 'admin-export.js') });
+    await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
+
+    const downloadPromise = page.waitForEvent('download');
+    await page.locator('[data-admin-export="esemenyek"]').click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^luminails-esemenynaplo-\d{4}-\d{2}-\d{2}\.xlsx$/);
+
+    const bytes = fs.readFileSync(await download.path());
+    const raw = bytes.toString('utf8');
+    expect(raw).toContain('Eseménynapló');
+    expect(raw).toContain('Foglalás rögzítve');
+    expect(raw).not.toContain('Foglalások');
 });
