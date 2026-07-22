@@ -3,3 +3,11 @@ server.err.log
 server.out.log
 lan-server.log
 lan-server-error.log
+node_modules/
+local-backups/
+backups/
+local-previews/
+preview-*.png
+*.local-redesign-backup.*
+playwright-report/
+test-results/

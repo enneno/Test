@@ -1,0 +1,20 @@
+{
+  "name": "luminails",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lumi Nails statikus weboldal helyi ellenőrző és kiadási eszközökkel",
+  "scripts": {
+    "serve": "node scripts/static-server.js --port 8101",
+    "build": "node scripts/build-assets.js",
+    "build:check": "node scripts/build-assets.js --check",
+    "assets:version": "node scripts/update-asset-versions.js",
+    "check": "node scripts/check-site.js && npm run build:check",
+    "test": "playwright test",
+    "verify": "npm run build && npm run assets:version && npm run check && npm test"
+  },
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

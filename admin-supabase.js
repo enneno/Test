@@ -1,3 +1,5 @@
+// Generated from src/admin by npm run build. Edit the source parts, not this file.
+
 (function () {
     const ADMIN_EMAIL = 'llevisimon@gmail.com';
     const config = window.LUMI_SUPABASE;
@@ -33,7 +35,7 @@
             return;
         }
 
-        allapot.kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        allapot.kliens = window.lumiSupabaseClient();
 
         elemek.loginForm.addEventListener('submit', event => {
             event.preventDefault();
@@ -1469,7 +1471,6 @@
             gomb.textContent = aktiv ? 'Bezárás' : 'Szerkesztés';
         }
     }
-
 
     async function szolgaltatasokBetoltese() {
         const elemek = adminElemek();

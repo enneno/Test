@@ -1,3 +1,5 @@
+// Generated from src/public by npm run build. Edit the source parts, not this file.
+
 const metaThemeColor = document.createElement('meta');
 metaThemeColor.name = 'theme-color';
 metaThemeColor.content = '#fdf4e2';
@@ -379,7 +381,7 @@ async function onlineKuponokBetolteseEsMegjelenitese() {
     }
 
     try {
-        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const kliens = window.lumiSupabaseClient();
         const { data, error } = await kliens
             .from('coupons')
             .select('id,code,title,description,discount_type,discount_value,discount_text,valid_from,valid_until,active,show_on_home,sort_order')
@@ -826,7 +828,7 @@ async function onlineOldalAdatokBetoltese() {
     }
 
     try {
-        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const kliens = window.lumiSupabaseClient();
         const { data, error } = await kliens
             .from('site_settings')
             .select('value')
@@ -1401,7 +1403,7 @@ async function onlineArlistaBetoltese() {
     }
 
     try {
-        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const kliens = window.lumiSupabaseClient();
         let { data, error } = await kliens
             .from('services')
             .select('name,price_text,price_amount,price_unit,price_suffix,duration_minutes,active,sort_order')
@@ -1604,7 +1606,7 @@ async function onlineTelefonLathatosagAlkalmazasa() {
     }
 
     try {
-        const kliens = supabaseLib.createClient(config.url, config.publishableKey);
+        const kliens = window.lumiSupabaseClient();
         const { data, error } = await kliens
             .from('site_settings')
             .select('value')

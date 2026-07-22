@@ -245,7 +245,7 @@
         const root = document.getElementById('admin-cms-root');
         if (!root || !config?.url || !config?.publishableKey || !supabaseLib?.createClient) return;
 
-        state.client = supabaseLib.createClient(config.url, config.publishableKey);
+        state.client = window.lumiSupabaseClient();
         root.addEventListener('input', cmsInput);
         root.addEventListener('change', cmsChange);
         root.addEventListener('click', cmsClick);

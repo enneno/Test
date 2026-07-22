@@ -1,3 +1,5 @@
+/* Generated from src/styles by npm run build. Edit the source parts, not this file. */
+
 :root {
     --akcentus: #b9858f;
     --akcentus-vilagos: #d9aaa7;
@@ -3410,7 +3412,7 @@ select.urlap-mezo:invalid {
     text-align: center;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .admin-cms-heading { align-items: stretch; flex-direction: column; }
     .admin-cms-main-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .admin-cms-main-actions button { width: 100%; padding-inline: 12px; }
@@ -3856,7 +3858,7 @@ select.urlap-mezo:invalid {
     }
 }
 
-@media screen and (max-width: 620px) {
+@media screen and (max-width: 640px) {
     .foglalas-oldal {
         width: calc(100% - 20px);
         margin-bottom: 54px;
@@ -4133,7 +4135,7 @@ body.admin-modal-nyitva {
     line-height: 1;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .foglalas-osszefoglalo dl div {
         grid-template-columns: 1fr;
         gap: 2px;
@@ -4196,7 +4198,6 @@ body.admin-modal-nyitva {
     font-size: 18px;
     line-height: 1;
 }
-
 
 /* Dátumválasztó */
 .foglalas-datum-csik {
@@ -4285,7 +4286,7 @@ body.admin-modal-nyitva {
     font: inherit;
     text-transform: inherit;
 }
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .admin-foglalas-fosor {
         grid-template-columns: minmax(0, 1fr) minmax(122px, auto);
         align-items: start;
@@ -4314,7 +4315,7 @@ body.admin-modal-nyitva {
     scroll-margin-top: 112px;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .foglalas-asszisztens-szekcio,
     .foglalas-lepes {
         scroll-margin-top: 104px;
@@ -4378,7 +4379,7 @@ body.admin-modal-nyitva {
 }
 
 
-@media screen and (max-width: 620px) {
+@media screen and (max-width: 640px) {
     .foglalas-nyito,
     .foglalas-asszisztens-szekcio {
         overflow: hidden;
@@ -4435,7 +4436,7 @@ body.admin-modal-nyitva {
     }
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .admin-foglalas-meta-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px 10px;
@@ -4475,7 +4476,7 @@ body.admin-modal-nyitva {
     color: #9b3434;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
     .foglalas-hibas-mezo {
         outline-offset: 3px;
         scroll-margin-top: 104px;
@@ -5094,7 +5095,7 @@ body.admin-modal-nyitva {
     padding-inline: 12px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
     .admin-db-grid-kupon {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -5330,6 +5331,7 @@ body.admin-modal-nyitva {
         line-height: 1.54;
     }
 }
+
 /* Admin save and pager controls */
 .admin-cms-main-actions .admin-kis-gomb {
     min-width: 150px;
@@ -5850,7 +5852,7 @@ body.admin-modal-nyitva {
     letter-spacing: 0.01em;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
 
     .admin-panel-akciok-keresessel {
         grid-template-columns: minmax(0, 1fr) 124px;
