@@ -185,7 +185,6 @@ function oldalAdatokAlkalmazasa(adatok) {
 function fejlecAdatokAlkalmazasa(adatok) {
     const marka = adatok?.marka;
     const navigacio = adatok?.navigacio;
-    szovegBeallitasa('header .logo', marka?.nev);
     document.querySelectorAll('header .logo').forEach(link => {
         link.setAttribute('aria-label', `${marka?.nev || 'Lumi Nails'} kezdőlap`);
     });
