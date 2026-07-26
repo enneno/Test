@@ -37,6 +37,26 @@ test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-ír�
     expect(writeRequest).toBe(false);
 });
 
+test('a francia és díszített stílus plusz 30 percet jelez', async ({ page }) => {
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+
+    const egyszeru = page.locator('input[name="korom-stilus"][value="Egyszerű / egyszínű köröm"]');
+    const francia = page.locator('input[name="korom-stilus"][value="Francia köröm"]');
+    const diszites = page.locator('input[name="korom-stilus"][value="Festés / díszítés"]');
+
+    await expect(egyszeru).toHaveAttribute('data-extra-minutes', '0');
+    await expect(francia).toHaveAttribute('data-extra-minutes', '30');
+    await expect(diszites).toHaveAttribute('data-extra-minutes', '30');
+    await expect(francia.locator('xpath=..').locator('.foglalas-stilus-ido')).toHaveText('+30 perc');
+    await expect(diszites.locator('xpath=..').locator('.foglalas-stilus-ido')).toHaveText('+30 perc');
+
+    await francia.evaluate(input => {
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await expect(page.locator('#foglalas-osszefoglalo')).toContainText('Francia köröm (+30 perc)');
+});
+
 test('az admin belépési felülete vagy a hitelesített panel megjelenik', async ({ page }) => {
     const response = await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
     expect(response.status()).toBeLessThan(400);

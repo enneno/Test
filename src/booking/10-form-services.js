@@ -37,6 +37,11 @@
             input.addEventListener('change', () => {
                 stilusAllapotFrissitese(elemek);
                 osszefoglaloFrissitese(elemek);
+                if (elemek.szolgaltatas.value) {
+                    elemek.datum.value = '';
+                    elemek.ido.value = '';
+                    szabadDatumokBetoltese(elemek);
+                }
                 kovetkezoReszhezGordit('[data-step="3"]');
             });
         });
@@ -171,6 +176,19 @@
         });
     }
 
+    function valasztottKoromStilusInput() {
+        return document.querySelector('input[name="korom-stilus"]:checked');
+    }
+
+    function valasztottKoromStilus() {
+        return valasztottKoromStilusInput()?.value || '';
+    }
+
+    function stilusExtraPerc() {
+        const perc = Number.parseInt(valasztottKoromStilusInput()?.dataset.extraMinutes || '0', 10);
+        return Number.isFinite(perc) && perc > 0 ? perc : 0;
+    }
+
     async function szabadDatumokBetoltese(elemek) {
         const szolgaltatasId = elemek.szolgaltatas.value;
 
@@ -187,10 +205,11 @@
         kartyaUzenet(elemek.datumKartyak, 'Szabad dátumok betöltése...');
         statuszKiirasa(elemek.statusz, '');
 
-        const { data, error } = await allapot.kliens.rpc('get_available_dates', {
+        const { data, error } = await allapot.kliens.rpc('get_available_dates_for_style', {
             p_service_id: szolgaltatasId,
             p_start_date: maiDatum(),
-            p_days: 90
+            p_days: 90,
+            p_nail_style: valasztottKoromStilus()
         });
 
         if (error) {
@@ -244,9 +263,10 @@
         kartyaUzenet(elemek.idoKartyak, 'Szabad időpontok betöltése...');
         statuszKiirasa(elemek.statusz, '');
 
-        const { data, error } = await allapot.kliens.rpc('get_available_slots', {
+        const { data, error } = await allapot.kliens.rpc('get_available_slots_for_style', {
             p_service_id: szolgaltatasId,
-            p_date: datum
+            p_date: datum,
+            p_nail_style: valasztottKoromStilus()
         });
 
         if (error) {
@@ -529,7 +549,7 @@
         }
     }
     function foglalasAdatok(elemek) {
-        const koromStilus = document.querySelector('input[name="korom-stilus"]:checked')?.value || '';
+        const koromStilus = valasztottKoromStilus();
         const eredetiMegjegyzes = elemek.komment.value.trim();
         const szolgaltatas = allapot.szolgaltatasok.find(szolgaltatas => szolgaltatas.id === elemek.szolgaltatas.value);
         const kupon = kuponOsszegAdatok(szolgaltatas, allapot.aktivKupon);

@@ -3,7 +3,8 @@
 
         const szolgaltatasObj = allapot.szolgaltatasok.find(szolgaltatas => szolgaltatas.id === elemek.szolgaltatas.value);
         const szolgaltatas = szolgaltatasObj ? (szolgaltatasObj.description?.trim() || szolgaltatasObj.name) : selectedText(elemek.szolgaltatas);
-        const stilus = document.querySelector('input[name="korom-stilus"]:checked')?.value || '';
+        const stilus = valasztottKoromStilus();
+        const extraPerc = stilusExtraPerc();
         const datum = selectedText(elemek.datum);
         const ido = selectedText(elemek.ido);
         const files = Array.from(elemek.kepInput?.files || []);
@@ -15,7 +16,7 @@
 
         const sorok = [
             ['Szolgáltatás', szolgaltatas],
-            ['Stílus', stilus],
+            ['Stílus', stilus ? `${stilus}${extraPerc ? ` (+${extraPerc} perc)` : ''}` : ''],
             ['Időpont', [datum, ido].filter(Boolean).join(' · ')],
             ['Alapár', kupon.baseLabel || (szolgaltatasObj ? szolgaltatasArFelirat(szolgaltatasObj) : '')],
             ['Kupon', kupon.code ? `${kupon.code} - ${kupon.discountLabel}` : ''],

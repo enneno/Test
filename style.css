@@ -3735,6 +3735,17 @@ select.urlap-mezo:invalid {
     line-height: 1.45;
 }
 
+.foglalas-stilus-ido {
+    justify-self: start;
+    color: var(--akcentus-sotet);
+    background: rgba(209, 145, 158, 0.14);
+    border: 1px solid rgba(185, 133, 143, 0.3);
+    border-radius: 999px;
+    padding: 4px 9px;
+    font-size: 0.76rem;
+    line-height: 1;
+}
+
 .foglalas-tipp,
 .foglalas-kartya-uzenet {
     margin: 12px 0 0;
