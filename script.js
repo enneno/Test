@@ -1386,6 +1386,36 @@ function foglalasUtSzovegAlkalmazasa(selector, adatok) {
     szovegBeallitasa('.foglalas-ut-cim', adatok.cim, kartya);
     htmlSzovegBeallitasa('.foglalas-ut-leiras', adatok.leiras, kartya);
     szovegBeallitasa('.foglalas-ut-gomb', adatok.gomb, kartya);
+
+    if (kartya.matches('[data-booking-contact="sms"]')) {
+        foglalasTelefonEgySorban(kartya.querySelector('.foglalas-ut-leiras'));
+    }
+}
+
+function foglalasTelefonEgySorban(gyoker) {
+    if (!gyoker) return;
+
+    const szovegCsomopontok = [];
+    const bejaro = document.createTreeWalker(gyoker, NodeFilter.SHOW_TEXT);
+
+    while (bejaro.nextNode()) {
+        szovegCsomopontok.push(bejaro.currentNode);
+    }
+
+    for (const csomopont of szovegCsomopontok) {
+        const szoveg = csomopont.nodeValue || '';
+        const talalat = szoveg.match(/\+36(?:[\s\u00a0-]*\d){8,10}/);
+        if (!talalat) continue;
+
+        const telefon = document.createElement('span');
+        telefon.className = 'foglalas-telefon-egysor';
+        telefon.textContent = talalat[0];
+
+        const reszlet = document.createDocumentFragment();
+        reszlet.append(szoveg.slice(0, talalat.index), telefon, szoveg.slice(talalat.index + talalat[0].length));
+        csomopont.replaceWith(reszlet);
+        break;
+    }
 }
 
 function arlistaSzolgaltatasokLetrehozasa(arlista) {
