@@ -616,3 +616,146 @@
     cursor: wait;
     opacity: 0.58;
 }
+/* Admin coupon editor */
+.admin-mezo select {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 40px 0 14px;
+}
+
+.admin-db-grid-kupon {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: end;
+    gap: 9px;
+}
+
+.admin-kupon-kod,
+.admin-kupon-cim,
+.admin-kupon-leiras,
+.admin-kupon-tipus,
+.admin-kupon-szoveg,
+.admin-kupon-szolgaltatas {
+    grid-column: span 3;
+}
+
+.admin-kupon-ertek,
+.admin-kupon-datum,
+.admin-kupon-checkbox,
+.admin-kupon-sorrend {
+    grid-column: span 2;
+}
+
+.admin-db-grid-kupon .admin-mezo input,
+.admin-db-grid-kupon .admin-mezo textarea,
+.admin-db-grid-kupon .admin-mezo select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-inline: 10px;
+}
+
+.admin-db-grid-kupon .admin-mezo input[type="date"] {
+    min-width: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 13px;
+    text-align: center;
+}
+
+.admin-db-grid-kupon textarea {
+    min-height: 84px;
+    resize: vertical;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+    min-height: 36px;
+    padding-inline: 12px;
+}
+
+@media (max-width: 900px) {
+    .admin-db-grid-kupon {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-kupon-kod,
+    .admin-kupon-cim,
+    .admin-kupon-leiras,
+    .admin-kupon-tipus,
+    .admin-kupon-szoveg,
+    .admin-kupon-szolgaltatas,
+    .admin-kupon-ertek,
+    .admin-kupon-datum,
+    .admin-kupon-checkbox,
+    .admin-kupon-sorrend {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 520px) {
+    .akcios-banner {
+        width: calc(100% - 28px);
+        max-width: calc(100vw - 28px);
+        margin-top: 16px;
+    }
+
+    .akcios-banner-slider,
+    .akcios-banner-belso {
+        border-radius: 28px;
+    }
+
+    .akcios-banner-belso {
+        gap: 13px;
+        padding: 18px 16px 20px;
+    }
+
+    .akcios-banner .akcios-banner-cim {
+        font-size: clamp(0.98rem, 4.55vw, 1.28rem);
+        line-height: 1.16;
+        letter-spacing: 0.045em;
+    }
+
+    .akcios-banner p {
+        font-size: 0.96rem;
+        line-height: 1.45;
+    }
+
+    .akcios-banner-kupon {
+        padding: 10px 50px 10px 14px;
+        border-radius: 18px;
+    }
+
+    .akcios-banner-nyil {
+        width: 40px;
+        height: 40px;
+    }
+
+    .foglalas-kupon-sor {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .foglalas-kupon-sor .admin-kis-gomb {
+        padding-inline: 12px;
+        white-space: nowrap;
+    }
+
+    .admin-kupon-kartya {
+        padding: 14px;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok {
+        justify-content: stretch;
+    }
+
+    .admin-kupon-kartya .admin-kupon-akciok .admin-kis-gomb {
+        flex: 1 1 0;
+        padding-inline: 8px;
+    }
+}

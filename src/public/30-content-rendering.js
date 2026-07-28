@@ -18,14 +18,15 @@ function menuEsemenyekBekotese() {
 function menuToggle() {
     const menu = document.getElementById('mobil-nav');
     const hamburger = document.querySelector('.hamburger');
-
-    if (menu) {
-        menu.classList.toggle('open');
-    }
+    const nyitva = menu ? menu.classList.toggle('open') : false;
 
     if (hamburger) {
-        hamburger.classList.toggle('open');
+        hamburger.classList.toggle('open', nyitva);
+        hamburger.setAttribute('aria-controls', 'mobil-nav');
+        hamburger.setAttribute('aria-expanded', String(nyitva));
     }
+
+    document.body.classList.toggle('mobil-menu-nyitva', nyitva);
 }
 
 function menuBezarasa() {
@@ -38,7 +39,10 @@ function menuBezarasa() {
 
     if (hamburger) {
         hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
     }
+
+    document.body.classList.remove('mobil-menu-nyitva');
 }
 
 function aktivMenuJelolese() {
@@ -362,9 +366,13 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
     racs.innerHTML = '';
 
-    szolgaltatasok.kartyak.forEach(kartya => {
+    szolgaltatasok.kartyak.forEach((kartya, index) => {
         const doboz = document.createElement('div');
         doboz.className = 'szolgaltatas-kartya';
+
+        const szam = document.createElement('span');
+        szam.className = 'szolgaltatas-szam';
+        szam.textContent = String(index + 1).padStart(2, '0');
 
         const cim = document.createElement('h3');
         cim.textContent = kartya.cim || '';
@@ -372,7 +380,12 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         const leiras = document.createElement('p');
         leiras.innerHTML = sortoresesSzoveg(kartya.leiras || '');
 
-        doboz.append(cim, leiras);
+        const link = document.createElement('a');
+        const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
+        link.href = galeriaKartya ? '/galeria/' : '/arlista/';
+        link.innerHTML = `${galeriaKartya ? 'Inspirációk' : 'Részletek és árak'} <span aria-hidden="true">↗</span>`;
+
+        doboz.append(szam, cim, leiras, link);
         racs.appendChild(doboz);
     });
 }

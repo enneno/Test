@@ -1220,13 +1220,13 @@
 
         window.setTimeout(() => {
             const fejlec = document.querySelector('header');
-            const fejlecAlja = fejlec ? Math.ceil(fejlec.getBoundingClientRect().bottom) : 0;
+            const fejlecMagassag = fejlec ? Math.ceil(fejlec.offsetHeight) : 0;
             const res = window.matchMedia('(max-width: 760px)').matches ? 18 : 24;
             const aktualisPozicio = window.scrollY || document.documentElement.scrollTop || 0;
-            const celPozicio = elem.getBoundingClientRect().top + aktualisPozicio - fejlecAlja - res;
+            const celPozicio = elem.getBoundingClientRect().top + aktualisPozicio - fejlecMagassag - res;
 
             window.scrollTo({
-                top: Math.max(0, celPozicio),
+                top: Math.max(0, Math.min(celPozicio, document.documentElement.scrollHeight - window.innerHeight)),
                 behavior: 'smooth'
             });
         }, kesleltetes);

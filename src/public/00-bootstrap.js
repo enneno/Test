@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
     galeriaBekotese();
+    fooldalGaleriaLapozasBekotese();
     lebegoFoglalasLetrehozasa();
     lebegoFoglalasFigyeles();
 });
