@@ -43,33 +43,49 @@
     function szolgaltatasKartya(szolgaltatas) {
         const ora = Math.floor((szolgaltatas.duration_minutes || 0) / 60);
         const perc = (szolgaltatas.duration_minutes || 0) % 60;
+        const idoFelirat = [ora ? `${ora} óra` : '', perc ? `${perc} perc` : ''].filter(Boolean).join(' ') || 'Nincs időtartam';
+        const arOsszeg = arFelirat(szolgaltatas.price_value, szolgaltatas.price_unit) || 'Nincs ár';
+        const ujTetel = /^Új\b/i.test(String(szolgaltatas.name || '').trim());
         const kartya = document.createElement('article');
-        kartya.className = 'admin-db-kartya';
+        kartya.className = `admin-db-kartya admin-szerkesztheto-kartya admin-szolgaltatas-kartya${ujTetel ? ' szerkeszt' : ''}`;
         kartya.dataset.id = szolgaltatas.id;
 
         kartya.innerHTML = `
-            <div class="admin-db-grid admin-db-grid-szolgaltatas">
-                <label class="admin-mezo admin-szolgaltatas-nev">Név<input type="text" data-mezo="name" value="${attr(szolgaltatas.name)}"></label>
-                <div class="admin-szolgaltatas-fej-opciok">
-                    <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="booking_enabled" ${szolgaltatas.booking_enabled ? 'checked' : ''}> Foglalható</label>
-                    <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="active" ${szolgaltatas.active ? 'checked' : ''}> Látható</label>
+            <div class="admin-kompakt-kartya-fej">
+                <div class="admin-kompakt-kartya-osszefoglalo">
+                    <span class="admin-kartya-tipus">Árlista tétel</span>
+                    <h3>${html(szolgaltatas.name)}</h3>
+                    <p>${html(arOsszeg)} · ${html(idoFelirat)}</p>
                 </div>
-                <label class="admin-mezo admin-szolgaltatas-foglalasi-nev">Foglalási név<input type="text" data-mezo="description" value="${attr(szolgaltatas.description || '')}" placeholder="Ha üres, a teljes név látszik"></label>
-                <label class="admin-mezo admin-sorrend-mezo">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(szolgaltatas.sort_order) || 0}"></label>
-                <div class="admin-szolgaltatas-szamok">
-                    <label class="admin-mezo admin-szolgaltatas-ar">Ár<input type="text" data-mezo="price_amount" value="${attr(szolgaltatas.price_value || '')}" placeholder="7000 vagy 500-800"></label>
-                    <label class="admin-mezo admin-szolgaltatas-egyseg">Egység<input type="text" data-mezo="price_unit" value="${attr(szolgaltatas.price_unit || 'Ft')}" placeholder="Ft, Ft/db, Ft-tól"></label>
-                    <label class="admin-mezo admin-szolgaltatas-ido">Óra<input type="number" min="0" step="1" data-mezo="ora" value="${ora}"></label>
-                    <label class="admin-mezo admin-szolgaltatas-ido">Perc<input type="number" min="0" max="59" step="1" data-mezo="perc" value="${perc}"></label>
+                <div class="admin-kompakt-kartya-vezerlok">
+                    <span class="admin-allapot-jelzo${szolgaltatas.active ? '' : ' inaktiv'}">${szolgaltatas.active ? 'Látható' : 'Rejtett'}</span>
+                    <span class="admin-allapot-jelzo${szolgaltatas.booking_enabled ? '' : ' inaktiv'}">${szolgaltatas.booking_enabled ? 'Foglalható' : 'Nem foglalható'}</span>
+                    <button type="button" class="admin-kis-gomb" data-admin-kartya-toggle aria-expanded="${String(ujTetel)}">${ujTetel ? 'Bezárás' : 'Szerkesztés'}</button>
                 </div>
             </div>
-            <div class="admin-db-akciok">
-                <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="fel" aria-label="Tétel feljebb">↑ Feljebb</button>
-                <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="le" aria-label="Tétel lejjebb">↓ Lejjebb</button>
-                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-szolgaltatas-torles>Törlés</button>
+            <div class="admin-kompakt-szerkeszto">
+                <div class="admin-db-grid admin-db-grid-szolgaltatas">
+                    <label class="admin-mezo admin-szolgaltatas-nev">Név<input type="text" data-mezo="name" value="${attr(szolgaltatas.name)}"></label>
+                    <div class="admin-szolgaltatas-fej-opciok">
+                        <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="booking_enabled" ${szolgaltatas.booking_enabled ? 'checked' : ''}> Foglalható</label>
+                        <label class="admin-mezo admin-checkbox"><input type="checkbox" data-mezo="active" ${szolgaltatas.active ? 'checked' : ''}> Látható</label>
+                    </div>
+                    <label class="admin-mezo admin-szolgaltatas-foglalasi-nev">Foglalási név<input type="text" data-mezo="description" value="${attr(szolgaltatas.description || '')}" placeholder="Ha üres, a teljes név látszik"></label>
+                    <label class="admin-mezo admin-sorrend-mezo">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(szolgaltatas.sort_order) || 0}"></label>
+                    <div class="admin-szolgaltatas-szamok">
+                        <label class="admin-mezo admin-szolgaltatas-ar">Ár<input type="text" data-mezo="price_amount" value="${attr(szolgaltatas.price_value || '')}" placeholder="7000 vagy 500-800"></label>
+                        <label class="admin-mezo admin-szolgaltatas-egyseg">Egység<input type="text" data-mezo="price_unit" value="${attr(szolgaltatas.price_unit || 'Ft')}" placeholder="Ft, Ft/db, Ft-tól"></label>
+                        <label class="admin-mezo admin-szolgaltatas-ido">Óra<input type="number" min="0" step="1" data-mezo="ora" value="${ora}"></label>
+                        <label class="admin-mezo admin-szolgaltatas-ido">Perc<input type="number" min="0" max="59" step="1" data-mezo="perc" value="${perc}"></label>
+                    </div>
+                </div>
+                <div class="admin-db-akciok">
+                    <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="fel">↑ Feljebb</button>
+                    <button type="button" class="admin-kis-gomb" data-szolgaltatas-mozgat="le">↓ Lejjebb</button>
+                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-szolgaltatas-torles>Törlés</button>
+                </div>
             </div>
         `;
-
         return kartya;
     }
 
@@ -108,6 +124,12 @@
         const kartya = event.target.closest('.admin-db-kartya');
 
         if (!kartya) {
+            return;
+        }
+
+        const szerkesztes = event.target.closest('[data-admin-kartya-toggle]');
+        if (szerkesztes) {
+            adminKartyaSzerkesztesKapcsolasa(kartya, szerkesztes);
             return;
         }
 

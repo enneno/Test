@@ -286,17 +286,40 @@ function fooldalAdatokAlkalmazasa(fooldal) {
         return;
     }
 
-    szovegBeallitasa('.hero-kicker', fooldal.hero?.kicker);
-    szovegBeallitasa('.hero-content h1', fooldal.hero?.cim);
-    szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
+    const heroAdatok = fooldal.hero || {};
+    szovegBeallitasa('.hero-kicker', heroAdatok.kicker);
+    szovegBeallitasa('.hero-content h1', heroAdatok.cim);
+    szovegBeallitasa('.hero-content > p', heroAdatok.leiras);
+    szovegBeallitasa('.hero-primary', heroAdatok.gombSzoveg);
+
+    const heroElonyok = document.querySelector('.hero-bizalom');
+    if (heroElonyok && Array.isArray(heroAdatok.elonyok)) {
+        heroElonyok.innerHTML = heroAdatok.elonyok.map(elony => `
+            <span><strong>${html(elony?.kiemeles || '')}</strong>${elony?.szoveg ? ` ${html(elony.szoveg)}` : ''}</span>
+        `).join('');
+    }
+
+    const heroMonogram = document.querySelector('.hero-monogram');
+    if (heroMonogram && heroAdatok.monogram !== undefined) {
+        heroMonogram.innerHTML = Array.from(String(heroAdatok.monogram || ''))
+            .map(betu => `<span>${html(betu)}</span>`)
+            .join('');
+    }
+
+    szovegBeallitasa('.hero-visual-cimke > span', heroAdatok.galeriaCimke);
+    const heroGaleriaLink = document.querySelector('.hero-visual-cimke > a');
+    if (heroGaleriaLink && heroAdatok.galeriaLink !== undefined) {
+        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">↗</span>`;
+    }
+
     const hero = document.getElementById('hero');
     const heroKep = hero?.querySelector('.hero-kep');
-    if (hero && fooldal.hero?.kep) {
-        const heroKepSrc = fooldal.hero.kep || '/kepek/hero-exact.jpg';
+    if (hero && heroAdatok.kep) {
+        const heroKepSrc = heroAdatok.kep || '/kepek/hero-exact.jpg';
 
         if (heroKep) {
             heroKep.src = heroKepSrc;
-            heroKep.alt = fooldal.hero.kepAlt || 'Lumi Nails nyitókép';
+            heroKep.alt = heroAdatok.kepAlt || 'Lumi Nails nyitókép';
             heroKep.loading = 'eager';
             heroKep.decoding = 'async';
             if ('fetchPriority' in heroKep) heroKep.fetchPriority = 'high';
@@ -307,12 +330,20 @@ function fooldalAdatokAlkalmazasa(fooldal) {
             hero.setAttribute('role', 'img');
         }
 
-        if (fooldal.hero.kepAlt) hero.setAttribute('aria-label', fooldal.hero.kepAlt);
+        if (heroAdatok.kepAlt) hero.setAttribute('aria-label', heroAdatok.kepAlt);
     }
 
-    szovegBeallitasa('.bemutatkozas-szoveg h2', fooldal.bemutatkozas?.cim);
-    bekezdesekRenderelese('.bemutatkozas-szoveg', fooldal.bemutatkozas?.bekezdesek);
-    kepBeallitasa('.bemutatkozas-kep img', fooldal.bemutatkozas?.kep, fooldal.bemutatkozas?.kepAlt);
+    const bemutatkozas = fooldal.bemutatkozas || {};
+    szovegBeallitasa('.bemutatkozas-szoveg > .szekcio-kicker', bemutatkozas.kicker);
+    szovegBeallitasa('.bemutatkozas-szoveg h2', bemutatkozas.cim);
+    bekezdesekRenderelese('.bemutatkozas-szoveg', bemutatkozas.bekezdesek);
+    const bemutatkozasLink = document.querySelector('.bemutatkozas-szoveg > .szoveges-link');
+    if (bemutatkozasLink && bemutatkozas.linkSzoveg !== undefined) {
+        bemutatkozasLink.innerHTML = `${html(bemutatkozas.linkSzoveg)} <span aria-hidden="true">→</span>`;
+    }
+    szovegBeallitasa('.bemutatkozas-kep-jelveny > span', bemutatkozas.jelvenyCim);
+    szovegBeallitasa('.bemutatkozas-kep-jelveny > small', bemutatkozas.jelvenyAlcim);
+    kepBeallitasa('.bemutatkozas-kep img', bemutatkozas.kep, bemutatkozas.kepAlt);
     const bemutatkozasKep = document.querySelector('.bemutatkozas-kep img');
     if (bemutatkozasKep) {
         bemutatkozasKep.loading = 'eager';
@@ -326,22 +357,22 @@ function fooldalAdatokAlkalmazasa(fooldal) {
 
 function bekezdesekRenderelese(selector, bekezdesek) {
     const kontener = document.querySelector(selector);
-    const cim = kontener?.querySelector('h2');
 
     if (!kontener || !Array.isArray(bekezdesek)) {
         return;
     }
 
-    kontener.querySelectorAll('p').forEach(p => p.remove());
+    kontener.querySelectorAll(':scope > p').forEach(p => p.remove());
+    const link = kontener.querySelector(':scope > .szoveges-link');
+    const fragment = document.createDocumentFragment();
+
     bekezdesek.forEach(szoveg => {
         const p = document.createElement('p');
         p.textContent = szoveg;
-        kontener.appendChild(p);
+        fragment.appendChild(p);
     });
 
-    if (cim && cim.parentElement !== kontener) {
-        kontener.prepend(cim);
-    }
+    kontener.insertBefore(fragment, link || null);
 }
 
 function kepBeallitasa(selector, src, alt) {
@@ -359,20 +390,23 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     const szekcio = document.getElementById('szolgaltatasok');
     const racs = szekcio?.querySelector('.szolgaltatas-lista');
 
-    if (!szekcio || !racs || !Array.isArray(szolgaltatasok?.kartyak)) {
+    if (!szekcio || !szolgaltatasok) {
         return;
     }
 
-    szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
+    szovegBeallitasa('.szekcio-fej .szekcio-kicker', szolgaltatasok.kicker, szekcio);
+    szovegBeallitasa('.szekcio-fej h2', szolgaltatasok.cim, szekcio);
+    szovegBeallitasa('.szekcio-fej > p', szolgaltatasok.leiras, szekcio);
+
+    if (!racs || !Array.isArray(szolgaltatasok.kartyak)) {
+        return;
+    }
+
     racs.innerHTML = '';
 
-    szolgaltatasok.kartyak.forEach((kartya, index) => {
+    szolgaltatasok.kartyak.forEach(kartya => {
         const doboz = document.createElement('div');
         doboz.className = 'szolgaltatas-kartya';
-
-        const szam = document.createElement('span');
-        szam.className = 'szolgaltatas-szam';
-        szam.textContent = String(index + 1).padStart(2, '0');
 
         const cim = document.createElement('h3');
         cim.textContent = kartya.cim || '';
@@ -382,10 +416,11 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
 
         const link = document.createElement('a');
         const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
+        const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
         link.href = galeriaKartya ? '/galeria/' : '/arlista/';
-        link.innerHTML = `${galeriaKartya ? 'Inspirációk' : 'Részletek és árak'} <span aria-hidden="true">↗</span>`;
+        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">↗</span>`;
 
-        doboz.append(szam, cim, leiras, link);
+        doboz.append(cim, leiras, link);
         racs.appendChild(doboz);
     });
 }
@@ -397,9 +432,16 @@ function galeriaAtvezetoAlkalmazasa(galeria) {
         return;
     }
 
-    szovegBeallitasa('.galeria-atvezeto-szoveg h2', galeria.cim);
-    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-leiras', galeria.leiras);
-    szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg);
+    szovegBeallitasa('.galeria-showcase-fej .szekcio-kicker', galeria.kicker, szekcio);
+    const kiemeltCim = szekcio.querySelector('.galeria-showcase-fej h2');
+    if (kiemeltCim) {
+        kiemeltCim.innerHTML = `${html(galeria.kiemeltCim || '')}<br><em>${html(galeria.kiemeltAkcentus || '')}</em>`;
+    }
+    szovegBeallitasa('.galeria-showcase-meta p', galeria.metaLeiras, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-kicker', galeria.belsoKicker, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg h2', galeria.cim, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-leiras', galeria.leiras, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg, szekcio);
 
     const kepek = szekcio.querySelectorAll('.galeria-atvezeto-kepek img');
     (galeria.kepek || []).forEach((kep, index) => {
@@ -421,11 +463,12 @@ function foglalasAtvezetoAlkalmazasa(foglalasAtvezeto) {
         return;
     }
 
-    szovegBeallitasa('h2', foglalasAtvezeto.cim, szekcio);
-    szovegBeallitasa('.szekcio-leiras', foglalasAtvezeto.leiras, szekcio);
-    szovegBeallitasa('.gomb', foglalasAtvezeto.gombSzoveg, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > .szekcio-kicker', foglalasAtvezeto.kicker, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > h2', foglalasAtvezeto.cim, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > .szekcio-leiras', foglalasAtvezeto.leiras, szekcio);
+    szovegBeallitasa('.kapcsolat-akcio > .gomb', foglalasAtvezeto.gombSzoveg, szekcio);
+    szovegBeallitasa('.kapcsolat-akcio > span', foglalasAtvezeto.megjegyzes, szekcio);
 }
-
 function arlistaAdatokAlkalmazasa(arlista) {
     const szekcio = document.querySelector('.arlista-oldal');
     const panel = szekcio?.querySelector('.arlista-panel');

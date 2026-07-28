@@ -79,14 +79,15 @@ as $$
         and not exists (
             select 1
             from public.bookings b
-            where b.status in ('pending', 'confirmed')
+            where b.status in ('pending', 'confirmed', 'done')
                 and tstzrange(b.starts_at, b.ends_at, '[)')
                     && tstzrange(slots.starts_at, slots.ends_at, '[)')
         )
         and not exists (
             select 1
             from public.blocked_times bt
-            where tstzrange(bt.starts_at, bt.ends_at, '[)')
+            where coalesce(bt.status, 'blocked') <> 'cancelled_by_customer'
+                and tstzrange(bt.starts_at, bt.ends_at, '[)')
                 && tstzrange(slots.starts_at, slots.ends_at, '[)')
         )
     order by slots.starts_at;

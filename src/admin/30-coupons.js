@@ -35,33 +35,48 @@
     }
 
     function kuponKartya(kupon) {
+        const ujKupon = String(kupon.title || '').trim().toLowerCase() === 'új kupon';
+        const ervenyesseg = [kupon.valid_from, kupon.valid_until].filter(Boolean).join(' – ') || 'Nincs dátumkorlát';
         const kartya = document.createElement('article');
-        kartya.className = 'admin-db-kartya admin-kupon-kartya';
+        kartya.className = `admin-db-kartya admin-kupon-kartya admin-szerkesztheto-kartya${ujKupon ? ' szerkeszt' : ''}`;
         kartya.dataset.id = kupon.id;
 
         kartya.innerHTML = `
-            <div class="admin-db-grid admin-db-grid-kupon">
-                <label class="admin-mezo admin-kupon-kod">Kuponk\u00f3d<input type="text" data-mezo="code" value="${attr(kupon.code || '')}" placeholder="pl. LUMI10"></label>
-                <label class="admin-mezo admin-kupon-cim">C\u00edm<input type="text" data-mezo="title" value="${attr(kupon.title || '')}" placeholder="pl. 10% kedvezm\u00e9ny \u00faj vend\u00e9geknek"></label>
-                <label class="admin-mezo admin-kupon-leiras">Le\u00edr\u00e1s<textarea data-mezo="description" rows="3" placeholder="Ez jelenik meg a f\u0151oldali akci\u00f3s k\u00e1rty\u00e1n.">${html(kupon.description || '')}</textarea></label>
-                <label class="admin-mezo admin-kupon-tipus">Kedvezm\u00e9ny t\u00edpusa<select data-mezo="discount_type">${kuponTipusOptions(kupon.discount_type)}</select></label>
-                <label class="admin-mezo admin-kupon-ertek">\u00c9rt\u00e9k<input type="number" min="0" step="1" data-mezo="discount_value" value="${Number(kupon.discount_value) || 0}"></label>
-                <label class="admin-mezo admin-kupon-szoveg">Megjelen\u0151 sz\u00f6veg<input type="text" data-mezo="discount_text" value="${attr(kupon.discount_text || '')}" placeholder="pl. 10% kedvezm\u00e9ny"></label>
-                <label class="admin-mezo admin-kupon-szolgaltatas">\u00c9rv\u00e9nyess\u00e9g<select data-mezo="service_scope">${kuponSzolgaltatasOptions(kupon)}</select></label>
-                <label class="admin-mezo admin-kupon-celkozonseg">Kinek \u00e9rv\u00e9nyes?<select data-mezo="customer_scope">${kuponKozonsegOptions(kupon.customer_scope)}</select></label>
-                <label class="admin-mezo admin-kupon-datum">\u00c9rv\u00e9nyes ett\u0151l<input type="date" data-mezo="valid_from" value="${attr(kupon.valid_from || '')}"></label>
-                <label class="admin-mezo admin-kupon-datum">\u00c9rv\u00e9nyes eddig<input type="date" data-mezo="valid_until" value="${attr(kupon.valid_until || '')}"></label>
-                <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="active" ${kupon.active ? 'checked' : ''}> Akt\u00edv</label>
-                <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="show_on_home" ${kupon.show_on_home ? 'checked' : ''}> F\u0151oldali k\u00e1rtya</label>
-                <label class="admin-mezo admin-kupon-sorrend">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(kupon.sort_order) || 0}"></label>
+            <div class="admin-kompakt-kartya-fej">
+                <div class="admin-kompakt-kartya-osszefoglalo">
+                    <span class="admin-kartya-tipus">Kupon</span>
+                    <h3>${html(kupon.code || 'Kód nélkül')}</h3>
+                    <p>${html(kupon.title || 'Névtelen kupon')} · ${html(kupon.discount_text || `${Number(kupon.discount_value) || 0}`)} · ${html(ervenyesseg)}</p>
+                </div>
+                <div class="admin-kompakt-kartya-vezerlok">
+                    <span class="admin-allapot-jelzo${kupon.active ? '' : ' inaktiv'}">${kupon.active ? 'Aktív' : 'Inaktív'}</span>
+                    ${kupon.show_on_home ? '<span class="admin-allapot-jelzo">Főoldalon</span>' : ''}
+                    <button type="button" class="admin-kis-gomb" data-admin-kartya-toggle aria-expanded="${String(ujKupon)}">${ujKupon ? 'Bezárás' : 'Szerkesztés'}</button>
+                </div>
             </div>
-            <div class="admin-db-akciok admin-kupon-akciok">
-                <button type="button" class="admin-kis-gomb" data-kupon-mozgat="fel" aria-label="Kupon feljebb">\u2191 Feljebb</button>
-                <button type="button" class="admin-kis-gomb" data-kupon-mozgat="le" aria-label="Kupon lejjebb">\u2193 Lejjebb</button>
-                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-kupon-torles>T\u00f6rl\u00e9s</button>
+            <div class="admin-kompakt-szerkeszto">
+                <div class="admin-db-grid admin-db-grid-kupon">
+                    <label class="admin-mezo admin-kupon-kod">Kuponkód<input type="text" data-mezo="code" value="${attr(kupon.code || '')}"></label>
+                    <label class="admin-mezo admin-kupon-cim">Cím<input type="text" data-mezo="title" value="${attr(kupon.title || '')}"></label>
+                    <label class="admin-mezo admin-kupon-leiras">Leírás<textarea data-mezo="description" rows="3">${html(kupon.description || '')}</textarea></label>
+                    <label class="admin-mezo admin-kupon-tipus">Kedvezmény típusa<select data-mezo="discount_type">${kuponTipusOptions(kupon.discount_type)}</select></label>
+                    <label class="admin-mezo admin-kupon-ertek">Érték<input type="number" min="0" step="1" data-mezo="discount_value" value="${Number(kupon.discount_value) || 0}"></label>
+                    <label class="admin-mezo admin-kupon-szoveg">Megjelenő szöveg<input type="text" data-mezo="discount_text" value="${attr(kupon.discount_text || '')}"></label>
+                    <label class="admin-mezo admin-kupon-szolgaltatas">Érvényesség<select data-mezo="service_scope">${kuponSzolgaltatasOptions(kupon)}</select></label>
+                    <label class="admin-mezo admin-kupon-celkozonseg">Kinek érvényes?<select data-mezo="customer_scope">${kuponKozonsegOptions(kupon.customer_scope)}</select></label>
+                    <label class="admin-mezo admin-kupon-datum">Érvényes ettől<input type="date" data-mezo="valid_from" value="${attr(kupon.valid_from || '')}"></label>
+                    <label class="admin-mezo admin-kupon-datum">Érvényes eddig<input type="date" data-mezo="valid_until" value="${attr(kupon.valid_until || '')}"></label>
+                    <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="active" ${kupon.active ? 'checked' : ''}> Aktív</label>
+                    <label class="admin-mezo admin-checkbox admin-kupon-checkbox"><input type="checkbox" data-mezo="show_on_home" ${kupon.show_on_home ? 'checked' : ''}> Főoldali kártya</label>
+                    <label class="admin-mezo admin-kupon-sorrend">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(kupon.sort_order) || 0}"></label>
+                </div>
+                <div class="admin-db-akciok admin-kupon-akciok">
+                    <button type="button" class="admin-kis-gomb" data-kupon-mozgat="fel">↑ Feljebb</button>
+                    <button type="button" class="admin-kis-gomb" data-kupon-mozgat="le">↓ Lejjebb</button>
+                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-kupon-torles>Törlés</button>
+                </div>
             </div>
         `;
-
         return kartya;
     }
 
@@ -174,6 +189,12 @@
     async function kuponListaKattintas(event) {
         const kartya = event.target.closest('.admin-kupon-kartya');
         if (!kartya) return;
+
+        const szerkesztes = event.target.closest('[data-admin-kartya-toggle]');
+        if (szerkesztes) {
+            adminKartyaSzerkesztesKapcsolasa(kartya, szerkesztes);
+            return;
+        }
 
         const mozgatas = event.target.closest('[data-kupon-mozgat]');
         if (mozgatas) {

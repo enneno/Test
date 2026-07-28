@@ -27,11 +27,22 @@
                 .limit(120));
         }
 
-        const { data: tiltasok, error: tiltasHiba } = await allapot.kliens
+        let { data: tiltasok, error: tiltasHiba } = await allapot.kliens
             .from('blocked_times')
-            .select('id,starts_at,ends_at,reason,created_at')
+            .select('id,starts_at,ends_at,reason,status,created_at')
             .order('starts_at', { ascending: false })
             .limit(120);
+
+        if (tiltasHiba && adatbazisOszlopHiany(tiltasHiba, ['status'])) {
+            allapot.tiltasStatuszTamogatott = false;
+            ({ data: tiltasok, error: tiltasHiba } = await allapot.kliens
+                .from('blocked_times')
+                .select('id,starts_at,ends_at,reason,created_at')
+                .order('starts_at', { ascending: false })
+                .limit(120));
+        } else if (!tiltasHiba) {
+            allapot.tiltasStatuszTamogatott = true;
+        }
 
         if (foglalasHiba || tiltasHiba) {
             onlineStatusz('Nem sikerült betölteni a foglalásokat.', true);
@@ -40,7 +51,11 @@
 
         allapot.foglalasElemek = [
             ...(foglalasok || []).map(foglalas => ({ tipus: 'booking', datum: foglalas.starts_at, adat: foglalas })),
-            ...(tiltasok || []).map(tiltas => ({ tipus: 'blocked', datum: tiltas.starts_at, adat: tiltas }))
+            ...(tiltasok || []).map(tiltas => ({
+                tipus: 'blocked',
+                datum: tiltas.starts_at,
+                adat: { ...tiltas, status: tiltasStatuszErtek(tiltas.status) }
+            }))
         ].sort((a, b) => new Date(b.datum) - new Date(a.datum));
 
         if (allapot.foglalasOldal > foglalasOsszesOldal()) {
@@ -120,9 +135,13 @@
 
         return allapot.foglalasElemek.filter(elem => {
             const adat = elem.adat || {};
+            const statusz = String(adat.status || '').toLowerCase();
             const statuszTalalat = statuszSzuro === 'all'
-                || statuszSzuro === 'blocked' && elem.tipus === 'blocked'
-                || elem.tipus === 'booking' && String(adat.status || '').toLowerCase() === statuszSzuro;
+                || statuszSzuro === 'blocked' && elem.tipus === 'blocked' && statusz === 'blocked'
+                || statuszSzuro === 'blocked_all' && elem.tipus === 'blocked'
+                || statuszSzuro === 'done' && statusz === 'done'
+                || statuszSzuro === 'cancelled_by_customer' && statusz === 'cancelled_by_customer'
+                || elem.tipus === 'booking' && statusz === statuszSzuro;
 
             if (!statuszTalalat) {
                 return false;
@@ -427,14 +446,16 @@
             email_flow_failed: 'Email folyamat hiba',
             admin_update_email: 'Módosítás email',
             booking_reminder_email: 'Emlékeztető email',
-            booking_review_request_email: 'Értékeléskérő email'
+            booking_review_request_email: 'Értékeléskérő email',
+            customer_cancelled: 'A vendég mondta le'
         }[tipus] || 'Esemény';
     }
 
     function foglalasKartya(foglalas) {
         const kartya = document.createElement('article');
         const fuggoben = foglalasFuggoben(foglalas);
-        kartya.className = `admin-db-kartya${fuggoben ? ' admin-foglalas-fuggoben' : ''}`;
+        const statuszOsztaly = String(foglalas.status || 'pending').replace(/[^a-z_]/g, '');
+        kartya.className = `admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-${statuszOsztaly}${fuggoben ? ' admin-foglalas-fuggoben' : ''}`;
         kartya.dataset.id = foglalas.id;
         kartya.dataset.tipus = 'booking';
         kartya.dataset.eredetiStatusz = foglalas.status || '';
@@ -457,7 +478,8 @@
                         ${statuszOption('pending', 'Függőben', foglalas.status)}
                         ${statuszOption('confirmed', 'Visszaigazolva', foglalas.status)}
                         ${statuszOption('done', 'Kész', foglalas.status)}
-                        ${statuszOption('cancelled', 'Lemondva', foglalas.status)}
+                        ${statuszOption('cancelled', 'Általam lemondva', foglalas.status)}
+                        ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
@@ -601,18 +623,25 @@
 
     function tiltasFoglalasKartya(tiltas) {
         const kartya = document.createElement('article');
-        kartya.className = 'admin-db-kartya admin-db-kartya-tiltas';
+        const statusz = tiltasStatuszErtek(tiltas.status);
+        kartya.className = `admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas admin-foglalas-statusz-${statusz}${statusz === 'done' ? ' admin-tiltas-kesz' : ''}${statusz === 'cancelled_by_customer' ? ' admin-tiltas-lemondva' : ''}`;
         kartya.dataset.id = tiltas.id;
         kartya.dataset.tipus = 'blocked';
+        kartya.dataset.eredetiStatusz = statusz;
         const megjegyzes = tiltas.reason?.trim() || 'Kézi foglalás';
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
+                    <span class="admin-kartya-tipus">Kézzel felvett idő</span>
                     <h3>${html(megjegyzes)}</h3>
                     <p class="admin-foglalas-idopont">${html(datumIdoRovid(tiltas.starts_at))} - ${html(datumIdoRovid(tiltas.ends_at, true))}</p>
                 </div>
                 <div class="admin-foglalas-vezerlok">
-                    <span class="admin-db-statusz admin-db-statusz-fix">Foglalt</span>
+                    <select class="admin-db-statusz" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
+                        <option value="blocked" ${statusz === 'blocked' ? 'selected' : ''}>Foglalt</option>
+                        <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
+                        <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
+                    </select>
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
@@ -629,7 +658,6 @@
 
         return kartya;
     }
-
     async function foglalasStatuszokMentese() {
         const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya'));
 
@@ -654,6 +682,7 @@
             const tabla = kartya.dataset.tipus === 'blocked' ? 'blocked_times' : 'bookings';
             const modositas = kartya.dataset.tipus === 'blocked'
                 ? {
+                    status: tiltasStatuszErtek(kartya.querySelector('[data-foglalas-statusz]')?.value),
                     starts_at: adatok.startsAt,
                     ends_at: adatok.endsAt,
                     reason: idopontMezo(kartya, 'reason')?.value.trim()
@@ -677,6 +706,14 @@
                 .eq('id', kartya.dataset.id);
 
             if (error) {
+                if (modositas.status === 'cancelled_by_customer') {
+                    onlineStatusz('A „Vendég mondta le” státusz használatához futtasd a supabase-blocked-time-status.sql frissítést a Supabase SQL Editorban.', true);
+                    return;
+                }
+                if (kartya.dataset.tipus === 'blocked' && adatbazisOszlopHiany(error, ['status'])) {
+                    onlineStatusz('A kézi időpontok státuszához futtasd a supabase-blocked-time-status.sql frissítést a Supabase SQL Editorban.', true);
+                    return;
+                }
                 onlineStatusz(`Nem sikerült menteni az egyik bejegyzést. ${error.message || ''}`, true);
                 return;
             }
@@ -686,6 +723,23 @@
             }
 
             if (kartya.dataset.tipus === 'booking') {
+                const vendegMondtaLe = kartya.dataset.eredetiStatusz !== modositas.status
+                    && modositas.status === 'cancelled_by_customer';
+
+                if (vendegMondtaLe) {
+                    await foglalasEsemenyRogzitese(kartya.dataset.id, {
+                        event_type: 'customer_cancelled',
+                        channel: 'admin',
+                        status: 'info',
+                        title: 'A vendég mondta le',
+                        message: 'A foglalást a vendég lemondásaként rögzítették. Automatikus email nem ment ki.',
+                        metadata: {
+                            from_status: kartya.dataset.eredetiStatusz,
+                            to_status: modositas.status
+                        }
+                    });
+                }
+
                 const emailModositas = foglalasEmailModositas(kartya, modositas);
 
                 if (emailModositas) {
@@ -773,6 +827,10 @@
             || kartya.dataset.eredetiVege !== idopontMezo(kartya, 'end_time')?.value;
 
         if (!statuszValtozott && !idopontValtozott) {
+            return null;
+        }
+
+        if (modositas.status === 'cancelled_by_customer') {
             return null;
         }
 

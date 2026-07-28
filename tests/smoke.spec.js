@@ -178,3 +178,30 @@ test('az eseménynapló exportja külön, egyetlen munkalapot készít', async (
     expect(raw).toContain('Foglalás rögzítve');
     expect(raw).not.toContain('Foglalások');
 });
+test('az admin munkafelület asztali és mobil nézetben rendezett marad', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => {
+        document.getElementById('admin-bejelentkezes-panel').hidden = true;
+        document.getElementById('admin-tartalom').hidden = false;
+    });
+
+    const workspace = page.locator('.admin-workspace-layout');
+    const sidebar = page.locator('.admin-sidebar');
+    const main = page.locator('.admin-workspace-main');
+    await expect(workspace).toBeVisible();
+    await expect(page.locator('#admin-panel-szovegek')).toHaveCount(1);
+    await expect(page.locator('.admin-workspace-main #admin-panel-szovegek')).toHaveCount(1);
+    await expect(page.locator('#admin-tiltas-statusz')).toHaveCount(0);
+    await expect(page.locator('#admin-foglalas-statusz-szuro option[value="cancelled_by_customer"]')).toHaveText('Vendég mondta le');
+
+    const desktopSidebar = await sidebar.boundingBox();
+    const desktopMain = await main.boundingBox();
+    expect(desktopSidebar.x + desktopSidebar.width).toBeLessThanOrEqual(desktopMain.x + 1);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobileSidebar = await sidebar.boundingBox();
+    const mobileMain = await main.boundingBox();
+    expect(mobileMain.y).toBeGreaterThanOrEqual(mobileSidebar.y + mobileSidebar.height - 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});

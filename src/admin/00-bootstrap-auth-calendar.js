@@ -17,7 +17,8 @@
         esemenynaploOldal: 1,
         esemenynaploOldalMeret: 10,
         esemenynaploElemek: [],
-        naptarKijelolesek: new Map()
+        naptarKijelolesek: new Map(),
+        tiltasStatuszTamogatott: true
     };
 
     window.LumiAdminExportData = Object.freeze({
@@ -520,6 +521,7 @@
 
         if (session) {
             authStatusz(elemek, '');
+            adminTabValtas(allapot.aktivTab);
             adatokFrissitese();
         }
     }

@@ -59,7 +59,7 @@
                 return [
                     'Kézzel hozzáadott idő', foglalas.reason, '', '', '', '', '', '', '', '',
                     datumIdoExport(foglalas.starts_at), datumIdoExport(foglalas.ends_at),
-                    idotartamPerc(foglalas.starts_at, foglalas.ends_at), 'Foglalt', '', '',
+                    idotartamPerc(foglalas.starts_at, foglalas.ends_at), foglalasStatusz(foglalas.status || 'blocked'), '', '',
                     datumIdoExport(foglalas.created_at), 'Kézzel hozzáadott'
                 ];
             }
@@ -143,7 +143,9 @@
             pending: 'Függőben',
             confirmed: 'Visszaigazolva',
             done: 'Kész',
-            cancelled: 'Lemondva'
+            cancelled: 'Általam lemondva',
+            cancelled_by_customer: 'Vendég mondta le',
+            blocked: 'Foglalt'
         })[statusz] || statusz || '';
     }
 

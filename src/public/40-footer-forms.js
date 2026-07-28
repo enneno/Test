@@ -27,12 +27,20 @@ function lablecAdatokAlkalmazasa(adatok) {
         cimLink.style.display = '';
     }
 
-    if (telefonLink && kapcsolat?.telefon) {
-        const telefonLathato = kapcsolat.telefonLathato !== false;
-        telefonLink.textContent = kapcsolat.telefon;
-        telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
-        telefonLink.hidden = !telefonLathato;
-        telefonLink.style.display = telefonLathato ? '' : 'none';
+    if (telefonLink) {
+        const telefonLathato = kapcsolat?.telefonLathato !== false && Boolean(kapcsolat?.telefon);
+
+        if (telefonLathato) {
+            telefonLink.textContent = kapcsolat.telefon;
+            telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
+            telefonLink.hidden = false;
+            telefonLink.style.display = '';
+        } else {
+            telefonLink.textContent = '';
+            telefonLink.removeAttribute('href');
+            telefonLink.hidden = true;
+            telefonLink.style.display = 'none';
+        }
     }
 
     if (emailLink && kapcsolat?.email) {
@@ -81,8 +89,21 @@ async function onlineTelefonLathatosagAlkalmazasa() {
         }
 
         const lathato = data.value?.visible !== false;
-        telefonLink.hidden = !lathato;
-        telefonLink.style.display = lathato ? '' : 'none';
+
+        if (lathato) {
+            const kapcsolat = window.lumiAdatok?.kapcsolat;
+            if (kapcsolat?.telefon) {
+                telefonLink.textContent = kapcsolat.telefon;
+                telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
+                telefonLink.hidden = false;
+                telefonLink.style.display = '';
+            }
+        } else {
+            telefonLink.textContent = '';
+            telefonLink.removeAttribute('href');
+            telefonLink.hidden = true;
+            telefonLink.style.display = 'none';
+        }
     } catch (_error) {
         // Ha az online beallitas meg nincs elesitve, a JSON szerinti alapertek marad.
     }
@@ -203,5 +224,5 @@ function foglalasOldal() {
 
 function adminOldal() {
     const utvonal = window.location.pathname.toLowerCase();
-    return utvonal === '/admin/' || utvonal.endsWith('/admin.html') || utvonal.endsWith('/admin/index.html');
+    return utvonal === '/admin' || utvonal === '/admin/' || utvonal.startsWith('/admin/') || utvonal.endsWith('/admin.html');
 }

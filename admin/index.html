@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=2327d629c140">
+    <link rel="stylesheet" href="/style.css?v=8f7b6ea908b9">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -38,10 +38,10 @@
         </section>
 
         <div id="admin-tartalom" class="admin-vedett" hidden>
-            <section class="admin-fejlec">
+            <section class="admin-fejlec admin-workspace-header">
                 <p class="admin-eyebrow">Lumi Nails szerkesztő</p>
-                <h1 class="admin-cim">Admin felület</h1>
-                <p class="admin-leiras">Itt kezelheted az online árlistát, foglalható dátumokat, foglalt idősávokat és beérkező foglalásokat.</p>
+                <h1 class="admin-cim">Lumi Nails kezelőfelület</h1>
+                <p class="admin-leiras">Minden foglalás, időpont, ár, kupon és weboldalszöveg egy átlátható munkafelületen.</p>
 
                 <div class="admin-akciok">
                     <button type="button" id="admin-kijelentkezes" class="gomb admin-gomb">Kijelentkezés</button>
@@ -59,26 +59,38 @@
 
             <section class="admin-panel admin-live-panel">
                 <div class="admin-panel-fej">
-                    <h2>Online foglalási rendszer</h2>
-                    <p>Itt kezelheted az adatbázisba érkező foglalásokat, a foglalható szolgáltatásokat és a szabad idősávokat.</p>
+                    <div>
+                        <span class="admin-panel-kicker">Napi működés és tartalom</span>
+                        <h2>Munkaterület</h2>
+                    </div>
+                    <p>Válassz egy területet bal oldalon. A mentés mindig az éppen megnyitott nézet módosításait rögzíti.</p>
                 </div>
 
-                <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
+                <div class="admin-workspace-layout">
+                    <aside class="admin-sidebar" aria-label="Admin navigáció">
+                        <div class="admin-sidebar-fej">
+                            <span>Kezelés</span>
+                            <small>7 terület</small>
+                        </div>
+                        <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
                     <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
                     <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
                     <button type="button" class="admin-tab" data-admin-tab="kuponok">Kuponok</button>
                     <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
                     <button type="button" class="admin-tab" data-admin-tab="tiltasok">Foglalt idők</button>
                     <button type="button" class="admin-tab" data-admin-tab="esemenynaplo">Eseménynapló</button>
-                    <button type="button" class="admin-tab" data-admin-tab="szovegek">Weboldal tartalma</button>
-                </div>
+                            <button type="button" class="admin-tab" data-admin-tab="szovegek">Weboldal tartalma</button>
+                        </div>
+                        <p class="admin-sidebar-tipp">A függő foglalások száma automatikusan megjelenik a menüpont mellett.</p>
+                    </aside>
 
-                <p id="admin-online-status" class="admin-status" aria-live="polite"></p>
+                    <div class="admin-workspace-main">
+                        <p id="admin-online-status" class="admin-status admin-workspace-status" aria-live="polite"></p>
 
                 <div id="admin-panel-foglalasok" class="admin-db-panel aktiv">
                     <div class="admin-panel-akciok admin-panel-akciok-keresessel">
                         <div class="admin-panel-gombcsoport">
-                            <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas">Foglal&aacute;sok friss&iacute;t&eacute;se</button>
+                            <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas" title="Foglalások frissítése">Frissítés</button>
                             <button type="button" id="admin-foglalas-export" class="admin-kis-gomb" data-admin-export="foglalasok" title="A jelenleg l&aacute;that&oacute; foglal&aacute;sok export&aacute;l&aacute;sa">Excel export</button>
                         </div>
                         <label class="admin-kereses-mezo" for="admin-foglalas-kereses">
@@ -92,8 +104,10 @@
                                 <option value="pending">F&uuml;gg&#337;ben</option>
                                 <option value="confirmed">Visszaigazolva</option>
                                 <option value="done">K&eacute;sz</option>
-                                <option value="cancelled">Lemondva</option>
-                                <option value="blocked">K&eacute;zzel felvett</option>
+                                <option value="cancelled">Általam lemondva</option>
+                                <option value="cancelled_by_customer">Vendég mondta le</option>
+                                <option value="blocked">Kézi – foglalt</option>
+                                <option value="blocked_all">Minden kézi idő</option>
                             </select>
                         </label>
                     </div>
@@ -105,7 +119,7 @@
                 <div id="admin-panel-szolgaltatasok" class="admin-db-panel">
                     <p class="admin-info">Ez az élő árlista. Amit itt módosítasz, azt használja az árlista oldal és az időpontfoglalás is, így nem kell két helyen átírni.</p>
                     <div class="admin-panel-akciok">
-                        <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas">Új árlista tétel</button>
+                        <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas" title="Új árlista tétel">Új tétel</button>
                     </div>
                     <div id="admin-szolgaltatas-lista" class="admin-db-lista"></div>
                 </div>
@@ -167,8 +181,8 @@
                         <p id="admin-naptar-status" class="admin-status" aria-live="polite"></p>
                     </div>
                     <div class="admin-panel-akciok admin-idosav-lista-akciok">
-                        <button type="button" id="admin-idosav-lepes-osszes" class="admin-kis-gomb">Lépés alkalmazása minden napra</button>
-                        <button type="button" id="admin-idosav-osszes-torles" class="admin-kis-gomb admin-veszely-gomb">Összes beállított nap törlése</button>
+                        <button type="button" id="admin-idosav-lepes-osszes" class="admin-kis-gomb" title="Lépés alkalmazása minden napra">Lépés minden napra</button>
+                        <button type="button" id="admin-idosav-osszes-torles" class="admin-kis-gomb admin-veszely-gomb" title="Összes beállított nap törlése">Összes nap törlése</button>
                     </div>
                     <div id="admin-idosav-lista" class="admin-db-lista"></div>
                 </div>
@@ -193,6 +207,7 @@
                                 Név / megjegyzés
                                 <input type="text" id="admin-tiltas-ok" placeholder="Pl. Anna Instagram, külső foglalás" required>
                             </label>
+
                         </div>
                     </form>
                     <div id="admin-tiltas-lista" class="admin-db-lista"></div>
@@ -202,7 +217,7 @@
                     <p class="admin-info">Itt l&aacute;tod a foglal&aacute;si rendszer fontos esem&eacute;nyeit: foglal&aacute;s l&eacute;trej&ouml;tt, email siker&uuml;lt, email hiba, admin m&oacute;dos&iacute;t&aacute;s. Ha valami furcsa t&ouml;rt&eacute;nik, itt &eacute;rdemes el&ouml;sz&ouml;r r&aacute;n&eacute;zni.</p>
                     <div class="admin-panel-akciok">
                         <div class="admin-panel-gombcsoport">
-                            <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas">Esem&eacute;nynapl&oacute; friss&iacute;t&eacute;se</button>
+                            <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas" title="Eseménynapló frissítése">Frissítés</button>
                             <button type="button" id="admin-esemenynaplo-export" class="admin-kis-gomb" data-admin-export="esemenyek" title="A jelenleg l&aacute;that&oacute; esem&eacute;nyek export&aacute;l&aacute;sa">Excel export</button>
                         </div>
                     </div>
@@ -211,14 +226,11 @@
                     <div id="admin-esemenynaplo-lapozo" class="admin-lapozo"></div>
                 </div>
 
-
-            </section>
-
-            <section id="admin-panel-szovegek" class="admin-panel admin-db-panel admin-cms-panel">
+                        <div id="admin-panel-szovegek" class="admin-db-panel admin-cms-panel">
                 <div class="admin-cms-heading">
                     <div>
-                        <h2>Weboldal tartalma és képei</h2>
-                        <p>A szövegek, elérhetőségek és képek innen közvetlenül szerkeszthetők. A feltöltött képek a Supabase Storage-ba kerülnek.</p>
+                        <h2>Tartalomszerkesztő</h2>
+                        <p>Válassz egy területet és szekciót. Egyszerre csak az éppen szerkesztett tartalom jelenik meg.</p>
                     </div>
                     <div class="admin-cms-main-actions">
                         <button type="button" id="admin-cms-reload" class="admin-kis-gomb">Újratöltés</button>
@@ -226,7 +238,10 @@
                 </div>
 
                 <p id="admin-cms-status" class="admin-status" aria-live="polite"></p>
-                <div id="admin-cms-root"></div>
+                            <div id="admin-cms-root"></div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <button type="button" id="admin-lebego-mentes" class="admin-lebego-mentes" hidden>Mentés</button>
@@ -238,10 +253,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=761a42173895"></script>
-    <script src="/admin-supabase.js?v=20b6f5ed211d"></script>
-    <script src="/admin-export.js?v=999fd618673a"></script>
-    <script src="/admin-content.js?v=03408c47acb2"></script>
+    <script src="/script.js?v=a9e74f07da20"></script>
+    <script src="/admin-supabase.js?v=9719411fb794"></script>
+    <script src="/admin-export.js?v=7f5a873b8293"></script>
+    <script src="/admin-content.js?v=4862d4845c10"></script>
 </body>
 
 </html>

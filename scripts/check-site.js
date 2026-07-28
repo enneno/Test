@@ -130,6 +130,39 @@ const unexpectedBreakpoints = Array.from(new Set(breakpoints.filter(value => !al
 if (unexpectedBreakpoints.length) {
     fail('Nem szabványos CSS töréspont: ' + unexpectedBreakpoints.join(', ') + ' px.');
 }
+const adminHtml = fs.readFileSync(path.join(ROOT, 'admin/index.html'), 'utf8');
+const adminJs = fs.readFileSync(path.join(ROOT, 'admin-supabase.js'), 'utf8');
+const adminContent = fs.readFileSync(path.join(ROOT, 'admin-content.js'), 'utf8');
+const statusMigration = fs.readFileSync(path.join(ROOT, 'supabase-blocked-time-status.sql'), 'utf8');
+
+for (const required of ['admin-workspace-layout', 'admin-sidebar', 'admin-workspace-main', 'cancelled_by_customer']) {
+    if (!adminHtml.includes(required)) fail('Admin: hiányzó új munkafelület- vagy státuszelem: ' + required + '.');
+}
+if (adminHtml.includes('id="admin-tiltas-statusz"')) {
+    fail('Admin: az új kézi időpont űrlapján nem maradhat státuszválasztó.');
+}
+for (const requiredPath of [
+    'fooldal.hero.gombSzoveg',
+    'fooldal.hero.elonyok.0.kiemeles',
+    'fooldal.bemutatkozas.kicker',
+    'fooldal.szolgaltatasok.leiras',
+    'fooldal.galeriaAtvezeto.kiemeltCim',
+    'fooldal.foglalasAtvezeto.megjegyzes'
+]) {
+    if (!adminContent.includes(requiredPath)) fail('Tartalomszerkesztő: hiányzó mező: ' + requiredPath + '.');
+}
+if (!adminJs.includes("modositas.status === 'cancelled_by_customer'") || !adminJs.includes("event_type: 'customer_cancelled'")) {
+    fail('Admin: a vendég általi lemondás emailmentes kezelése hiányzik.');
+}
+if (!statusMigration.includes("coalesce(bt.status, 'blocked') <> 'cancelled_by_customer'")) {
+    fail('Adatbázis: a vendég általi kézi lemondás nem szabadítja fel az időt.');
+}
+if (!statusMigration.includes("b.status in ('pending', 'confirmed', 'done')")) {
+    fail('Adatbázis: a Kész foglalásnak továbbra is blokkolnia kell az időt.');
+}
+if (statusMigration.includes("coalesce(bt.status, 'blocked') <> 'done'")) {
+    fail('Adatbázis: a Kész kézi időpont nem szabadíthatja fel az időt.');
+}
 if (errors.length) {
     console.error('\nEllenőrzési hibák:');
     for (const error of errors) console.error('- ' + error);

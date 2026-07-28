@@ -211,13 +211,29 @@
         onlineStatusz(error ? 'Nem sikerült menteni az online beállításokat. Futtasd a friss Supabase SQL-t.' : 'Online beállítások mentve.', Boolean(error));
     }
 
+    function tiltasStatuszErtek(statusz) {
+        const ertek = String(statusz || '').toLowerCase();
+        return ['done', 'cancelled_by_customer'].includes(ertek) ? ertek : 'blocked';
+    }
+
     async function tiltasokBetoltese() {
         const elemek = adminElemek();
-        const { data, error } = await allapot.kliens
+        let { data, error } = await allapot.kliens
             .from('blocked_times')
-            .select('id,starts_at,ends_at,reason')
+            .select('id,starts_at,ends_at,reason,status')
             .order('starts_at', { ascending: false })
             .limit(200);
+
+        if (error && adatbazisOszlopHiany(error, ['status'])) {
+            allapot.tiltasStatuszTamogatott = false;
+            ({ data, error } = await allapot.kliens
+                .from('blocked_times')
+                .select('id,starts_at,ends_at,reason')
+                .order('starts_at', { ascending: false })
+                .limit(200));
+        } else if (!error) {
+            allapot.tiltasStatuszTamogatott = true;
+        }
 
         if (error) {
             onlineStatusz('Nem sikerült betölteni a foglalt időket.', true);
@@ -231,7 +247,10 @@
             return;
         }
 
-        data.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya(tiltas)));
+        data.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya({
+            ...tiltas,
+            status: tiltasStatuszErtek(tiltas.status)
+        })));
     }
 
     function tiltasKartya(tiltas) {
@@ -242,6 +261,7 @@
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div>
+                    <span class="admin-kartya-tipus">Kézzel felvett idő</span>
                     <h3>${html(megjegyzes)}</h3>
                     <p>${html(datumIdoRovid(tiltas.starts_at))} - ${html(datumIdoRovid(tiltas.ends_at, true))}</p>
                 </div>
@@ -251,10 +271,8 @@
 
         return kartya;
     }
-
     async function tiltasHozzaadas() {
         const elemek = adminElemek();
-
         const megjegyzes = elemek.tiltasOk.value.trim();
 
         if (!elemek.tiltasDatum.value || !elemek.tiltasKezdes.value || !elemek.tiltasVege.value || !megjegyzes) {
@@ -267,26 +285,33 @@
             return;
         }
 
-        onlineStatusz('Foglalt idő mentése...');
+        onlineStatusz('Kézi foglalt idő mentése...');
 
-        const { error } = await allapot.kliens.from('blocked_times').insert({
+        const ujTiltas = {
             starts_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasKezdes.value),
             ends_at: helyiDatumIdoIso(elemek.tiltasDatum.value, elemek.tiltasVege.value),
-            reason: megjegyzes
-        });
+            reason: megjegyzes,
+            status: 'blocked'
+        };
+        let { error } = await allapot.kliens.from('blocked_times').insert(ujTiltas);
+
+        if (error && adatbazisOszlopHiany(error, ['status'])) {
+            allapot.tiltasStatuszTamogatott = false;
+            const { status: _status, ...regiSemaAdat } = ujTiltas;
+            ({ error } = await allapot.kliens.from('blocked_times').insert(regiSemaAdat));
+        }
 
         if (error) {
-            onlineStatusz('Nem sikerült menteni a foglalt időt.', true);
+            onlineStatusz('Nem sikerült menteni a kézi foglalt időt.', true);
             return;
         }
 
         elemek.tiltasForm.reset();
         idosavAlapertelmezes(adminElemek());
-        onlineStatusz('Foglalt idő mentve. Ez az idő már nem lesz foglalható.');
+        onlineStatusz('A kézi foglalt idő mentve. A státuszát a Foglalások nézetben módosíthatod.');
         tiltasokBetoltese();
         foglalasokBetoltese();
     }
-
     async function tiltasListaKattintas(event) {
         const kartya = event.target.closest('.admin-db-kartya');
 
@@ -294,9 +319,11 @@
             return;
         }
 
-        await rekordTorlese('blocked_times', kartya.dataset.id, tiltasokBetoltese);
+        await rekordTorlese('blocked_times', kartya.dataset.id, () => {
+            tiltasokBetoltese();
+            foglalasokBetoltese();
+        });
     }
-
     async function rekordTorlese(tabla, id, frissites) {
         if (!id) {
             return;
@@ -320,20 +347,49 @@
 
     function adminTabValtas(tab) {
         allapot.aktivTab = tab || 'foglalasok';
+        const aktivTab = allapot.aktivTab;
+        const mentesFeliratok = {
+            foglalasok: 'Módosítások mentése',
+            szolgaltatasok: 'Árlista mentése',
+            kuponok: 'Kuponok mentése',
+            idosavok: 'Dátumok mentése',
+            tiltasok: 'Új kézi idő mentése',
+            esemenynaplo: 'Napló frissítése',
+            szovegek: 'Tartalom mentése'
+        };
 
         document.querySelectorAll('.admin-tab').forEach(gomb => {
-            gomb.classList.toggle('aktiv', gomb.dataset.adminTab === tab);
+            const aktiv = gomb.dataset.adminTab === aktivTab;
+            gomb.classList.toggle('aktiv', aktiv);
+            gomb.setAttribute('role', 'tab');
+            gomb.setAttribute('aria-selected', String(aktiv));
         });
 
         document.querySelectorAll('.admin-db-panel').forEach(panel => {
-            panel.classList.toggle('aktiv', panel.id === `admin-panel-${tab}`);
+            const aktiv = panel.id === `admin-panel-${aktivTab}`;
+            panel.classList.toggle('aktiv', aktiv);
+            panel.setAttribute('aria-hidden', String(!aktiv));
         });
+
+        const mentes = adminElemek().lebegoMentes;
+        if (mentes) {
+            mentes.textContent = mentesFeliratok[aktivTab] || 'Mentés';
+            mentes.setAttribute('aria-label', mentes.textContent);
+        }
+    }
+    function adminKartyaSzerkesztesKapcsolasa(kartya, gomb) {
+        const nyitva = !kartya.classList.contains('szerkeszt');
+        kartya.classList.toggle('szerkeszt', nyitva);
+        gomb.textContent = nyitva ? 'Bezárás' : 'Szerkesztés';
+        gomb.setAttribute('aria-expanded', String(nyitva));
     }
 
     async function idopontUtkozesHiba(kartya, startsAt, endsAt, statusz) {
-        const aktivFoglalas = kartya.dataset.tipus !== 'booking' || ['pending', 'confirmed'].includes(statusz);
+        const aktivBejegyzes = kartya.dataset.tipus === 'booking'
+            ? ['pending', 'confirmed', 'done'].includes(statusz)
+            : tiltasStatuszErtek(statusz) !== 'cancelled_by_customer';
 
-        if (!aktivFoglalas) {
+        if (!aktivBejegyzes) {
             return '';
         }
 
@@ -359,18 +415,30 @@
             return `Ez az időpont ütközik egy másik foglalással: ${foglalasUtkozes[0].customer_name || 'név nélkül'}.`;
         }
 
-        const tiltasQuery = allapot.kliens
-            .from('blocked_times')
-            .select('id,reason')
-            .lt('starts_at', endsAt)
-            .gt('ends_at', startsAt)
-            .limit(1);
+        const tiltasQuery = statuszOszloppal => {
+            let query = allapot.kliens
+                .from('blocked_times')
+                .select(statuszOszloppal ? 'id,reason,status' : 'id,reason')
+                .lt('starts_at', endsAt)
+                .gt('ends_at', startsAt)
+                .limit(1);
 
-        if (kartya.dataset.tipus === 'blocked') {
-            tiltasQuery.neq('id', kartya.dataset.id);
+            if (statuszOszloppal) {
+                query = query.neq('status', 'cancelled_by_customer');
+            }
+
+            if (kartya.dataset.tipus === 'blocked') {
+                query = query.neq('id', kartya.dataset.id);
+            }
+
+            return query;
+        };
+
+        let { data: tiltasUtkozes, error: tiltasHiba } = await tiltasQuery(allapot.tiltasStatuszTamogatott);
+        if (tiltasHiba && adatbazisOszlopHiany(tiltasHiba, ['status'])) {
+            allapot.tiltasStatuszTamogatott = false;
+            ({ data: tiltasUtkozes, error: tiltasHiba } = await tiltasQuery(false));
         }
-
-        const { data: tiltasUtkozes, error: tiltasHiba } = await tiltasQuery;
 
         if (tiltasHiba) {
             return 'Nem sikerült ellenőrizni a kézzel felvett foglalt időket.';
@@ -382,7 +450,6 @@
 
         return '';
     }
-
     function idopontModositasAdatok(kartya) {
         const datum = idopontMezo(kartya, 'date')?.value;
         const kezdes = idopontMezo(kartya, 'start_time')?.value;

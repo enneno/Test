@@ -78,7 +78,9 @@ function lablecBetoltese() {
                     <h3>Elérhetőség</h3>
                     <address>
                         <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
-                        <a data-footer-phone href="#" hidden style="display: none;"></a>
+                        <span data-nosnippet style="display: contents;">
+                            <a data-footer-phone href="#" hidden style="display: none;"></a>
+                        </span>
                         <a data-footer-email href="#" hidden style="display: none;"></a>
                         <a class="footer-jogi-link" href="/adatkezeles/">Adatkezelési tájékoztató</a>
                     </address>

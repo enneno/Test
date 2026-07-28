@@ -40,28 +40,48 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
+                gombSzoveg: 'Időpontot foglalok',
+                elonyok: [
+                    { kiemeles: 'Személyes', szoveg: 'figyelem' },
+                    { kiemeles: 'Precíz', szoveg: 'kivitelezés' },
+                    { kiemeles: 'Online', szoveg: 'foglalás' }
+                ],
+                monogram: 'LN',
+                galeriaCimke: 'Aktuális munkák',
+                galeriaLink: 'Galéria megnyitása',
                 kep: '/kepek/hero-exact.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
+                kicker: 'A szalon mögött',
                 cim: 'Bemutatkozás',
                 bekezdesek: [
                     'Szia, Szofi vagyok, a Lumi Nails mögött álló körmös. Munka mellett, nagyjából egy éve foglalkozom körmökkel, és minden vendégnél arra figyelek, hogy a végeredmény igényes, hordható és a saját stílusához passzoló legyen.',
                     'A célom, hogy idővel főállásban is ezzel foglalkozhassak, ezért minden elkészült szett számomra fejlődés, figyelem és egy kis lépés afelé, amit igazán szeretek csinálni.'
                 ],
+                linkSzoveg: 'Találjuk meg a hozzád illő szettet',
+                jelvenyCim: 'LN',
+                jelvenyAlcim: 'Tatabánya',
                 kep: '/kepek/bemutatkozas-kep.jpg',
                 kepAlt: 'Lumi Nails köröm munka részlete'
             },
             szolgaltatasok: {
+                kicker: 'Amiben segíthetek',
                 cim: 'SZOLGÁLTATÁSOK',
+                leiras: 'Letisztult alapoktól az egyedi díszítésig — minden szett személyre szabva, nyugodt tempóban készül.',
                 kartyak: [
-                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.' },
-                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.' },
-                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.' },
-                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.' }
+                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', linkSzoveg: 'Részletek és árak' },
+                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', linkSzoveg: 'Inspirációk' },
+                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.', linkSzoveg: 'Részletek és árak' },
+                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.', linkSzoveg: 'Részletek és árak' }
                 ]
             },
             galeriaAtvezeto: {
+                kicker: 'Válogatott munkák',
+                kiemeltCim: 'Apró részletek.',
+                kiemeltAkcentus: 'Nagy hatás.',
+                metaLeiras: 'Formák, színek és személyre szabott részletek a Lumi Nails világából.',
+                belsoKicker: 'Részletek, színek, formák',
                 cim: 'Galéria',
                 leiras: 'Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.',
                 gombSzoveg: 'Galéria megnyitása',
@@ -74,9 +94,11 @@ function lumiAlapOldalAdatok() {
                 ]
             },
             foglalasAtvezeto: {
-                cim: 'Időpontfoglalás',
-                leiras: 'Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.',
-                gombSzoveg: 'Online Időpontfoglalás'
+                kicker: 'Következő lépés',
+                cim: 'Készen állsz az új szettedre?',
+                leiras: 'Válassz szolgáltatást és szabad időpontot néhány egyszerű lépésben.',
+                gombSzoveg: 'Időpontot foglalok',
+                megjegyzes: 'Gyors, online visszaigazolással'
             }
         },
         arlista: {

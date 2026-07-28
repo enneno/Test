@@ -77,28 +77,48 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
+                gombSzoveg: 'Időpontot foglalok',
+                elonyok: [
+                    { kiemeles: 'Személyes', szoveg: 'figyelem' },
+                    { kiemeles: 'Precíz', szoveg: 'kivitelezés' },
+                    { kiemeles: 'Online', szoveg: 'foglalás' }
+                ],
+                monogram: 'LN',
+                galeriaCimke: 'Aktuális munkák',
+                galeriaLink: 'Galéria megnyitása',
                 kep: '/kepek/hero-exact.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
+                kicker: 'A szalon mögött',
                 cim: 'Bemutatkozás',
                 bekezdesek: [
                     'Szia, Szofi vagyok, a Lumi Nails mögött álló körmös. Munka mellett, nagyjából egy éve foglalkozom körmökkel, és minden vendégnél arra figyelek, hogy a végeredmény igényes, hordható és a saját stílusához passzoló legyen.',
                     'A célom, hogy idővel főállásban is ezzel foglalkozhassak, ezért minden elkészült szett számomra fejlődés, figyelem és egy kis lépés afelé, amit igazán szeretek csinálni.'
                 ],
+                linkSzoveg: 'Találjuk meg a hozzád illő szettet',
+                jelvenyCim: 'LN',
+                jelvenyAlcim: 'Tatabánya',
                 kep: '/kepek/bemutatkozas-kep.jpg',
                 kepAlt: 'Lumi Nails köröm munka részlete'
             },
             szolgaltatasok: {
+                kicker: 'Amiben segíthetek',
                 cim: 'SZOLGÁLTATÁSOK',
+                leiras: 'Letisztult alapoktól az egyedi díszítésig — minden szett személyre szabva, nyugodt tempóban készül.',
                 kartyak: [
-                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.' },
-                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.' },
-                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.' },
-                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.' }
+                    { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', linkSzoveg: 'Részletek és árak' },
+                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', linkSzoveg: 'Inspirációk' },
+                    { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.', linkSzoveg: 'Részletek és árak' },
+                    { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.', linkSzoveg: 'Részletek és árak' }
                 ]
             },
             galeriaAtvezeto: {
+                kicker: 'Válogatott munkák',
+                kiemeltCim: 'Apró részletek.',
+                kiemeltAkcentus: 'Nagy hatás.',
+                metaLeiras: 'Formák, színek és személyre szabott részletek a Lumi Nails világából.',
+                belsoKicker: 'Részletek, színek, formák',
                 cim: 'Galéria',
                 leiras: 'Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.',
                 gombSzoveg: 'Galéria megnyitása',
@@ -111,9 +131,11 @@ function lumiAlapOldalAdatok() {
                 ]
             },
             foglalasAtvezeto: {
-                cim: 'Időpontfoglalás',
-                leiras: 'Válaszd ki a neked megfelelő szabad sávot online rendszerünkben.',
-                gombSzoveg: 'Online Időpontfoglalás'
+                kicker: 'Következő lépés',
+                cim: 'Készen állsz az új szettedre?',
+                leiras: 'Válassz szolgáltatást és szabad időpontot néhány egyszerű lépésben.',
+                gombSzoveg: 'Időpontot foglalok',
+                megjegyzes: 'Gyors, online visszaigazolással'
             }
         },
         arlista: {
@@ -333,7 +355,9 @@ function lablecBetoltese() {
                     <h3>Elérhetőség</h3>
                     <address>
                         <a href="https://www.google.com/maps/search/?api=1&query=2800%20Tatab%C3%A1nya%2C%20K%C3%B3s%20K%C3%A1roly%20%C3%BAt" target="_blank" rel="noopener">2800 Tatabánya, Kós Károly út</a>
-                        <a data-footer-phone href="#" hidden style="display: none;"></a>
+                        <span data-nosnippet style="display: contents;">
+                            <a data-footer-phone href="#" hidden style="display: none;"></a>
+                        </span>
                         <a data-footer-email href="#" hidden style="display: none;"></a>
                         <a class="footer-jogi-link" href="/adatkezeles/">Adatkezelési tájékoztató</a>
                     </address>
@@ -1019,17 +1043,40 @@ function fooldalAdatokAlkalmazasa(fooldal) {
         return;
     }
 
-    szovegBeallitasa('.hero-kicker', fooldal.hero?.kicker);
-    szovegBeallitasa('.hero-content h1', fooldal.hero?.cim);
-    szovegBeallitasa('.hero-content p', fooldal.hero?.leiras);
+    const heroAdatok = fooldal.hero || {};
+    szovegBeallitasa('.hero-kicker', heroAdatok.kicker);
+    szovegBeallitasa('.hero-content h1', heroAdatok.cim);
+    szovegBeallitasa('.hero-content > p', heroAdatok.leiras);
+    szovegBeallitasa('.hero-primary', heroAdatok.gombSzoveg);
+
+    const heroElonyok = document.querySelector('.hero-bizalom');
+    if (heroElonyok && Array.isArray(heroAdatok.elonyok)) {
+        heroElonyok.innerHTML = heroAdatok.elonyok.map(elony => `
+            <span><strong>${html(elony?.kiemeles || '')}</strong>${elony?.szoveg ? ` ${html(elony.szoveg)}` : ''}</span>
+        `).join('');
+    }
+
+    const heroMonogram = document.querySelector('.hero-monogram');
+    if (heroMonogram && heroAdatok.monogram !== undefined) {
+        heroMonogram.innerHTML = Array.from(String(heroAdatok.monogram || ''))
+            .map(betu => `<span>${html(betu)}</span>`)
+            .join('');
+    }
+
+    szovegBeallitasa('.hero-visual-cimke > span', heroAdatok.galeriaCimke);
+    const heroGaleriaLink = document.querySelector('.hero-visual-cimke > a');
+    if (heroGaleriaLink && heroAdatok.galeriaLink !== undefined) {
+        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">↗</span>`;
+    }
+
     const hero = document.getElementById('hero');
     const heroKep = hero?.querySelector('.hero-kep');
-    if (hero && fooldal.hero?.kep) {
-        const heroKepSrc = fooldal.hero.kep || '/kepek/hero-exact.jpg';
+    if (hero && heroAdatok.kep) {
+        const heroKepSrc = heroAdatok.kep || '/kepek/hero-exact.jpg';
 
         if (heroKep) {
             heroKep.src = heroKepSrc;
-            heroKep.alt = fooldal.hero.kepAlt || 'Lumi Nails nyitókép';
+            heroKep.alt = heroAdatok.kepAlt || 'Lumi Nails nyitókép';
             heroKep.loading = 'eager';
             heroKep.decoding = 'async';
             if ('fetchPriority' in heroKep) heroKep.fetchPriority = 'high';
@@ -1040,12 +1087,20 @@ function fooldalAdatokAlkalmazasa(fooldal) {
             hero.setAttribute('role', 'img');
         }
 
-        if (fooldal.hero.kepAlt) hero.setAttribute('aria-label', fooldal.hero.kepAlt);
+        if (heroAdatok.kepAlt) hero.setAttribute('aria-label', heroAdatok.kepAlt);
     }
 
-    szovegBeallitasa('.bemutatkozas-szoveg h2', fooldal.bemutatkozas?.cim);
-    bekezdesekRenderelese('.bemutatkozas-szoveg', fooldal.bemutatkozas?.bekezdesek);
-    kepBeallitasa('.bemutatkozas-kep img', fooldal.bemutatkozas?.kep, fooldal.bemutatkozas?.kepAlt);
+    const bemutatkozas = fooldal.bemutatkozas || {};
+    szovegBeallitasa('.bemutatkozas-szoveg > .szekcio-kicker', bemutatkozas.kicker);
+    szovegBeallitasa('.bemutatkozas-szoveg h2', bemutatkozas.cim);
+    bekezdesekRenderelese('.bemutatkozas-szoveg', bemutatkozas.bekezdesek);
+    const bemutatkozasLink = document.querySelector('.bemutatkozas-szoveg > .szoveges-link');
+    if (bemutatkozasLink && bemutatkozas.linkSzoveg !== undefined) {
+        bemutatkozasLink.innerHTML = `${html(bemutatkozas.linkSzoveg)} <span aria-hidden="true">→</span>`;
+    }
+    szovegBeallitasa('.bemutatkozas-kep-jelveny > span', bemutatkozas.jelvenyCim);
+    szovegBeallitasa('.bemutatkozas-kep-jelveny > small', bemutatkozas.jelvenyAlcim);
+    kepBeallitasa('.bemutatkozas-kep img', bemutatkozas.kep, bemutatkozas.kepAlt);
     const bemutatkozasKep = document.querySelector('.bemutatkozas-kep img');
     if (bemutatkozasKep) {
         bemutatkozasKep.loading = 'eager';
@@ -1059,22 +1114,22 @@ function fooldalAdatokAlkalmazasa(fooldal) {
 
 function bekezdesekRenderelese(selector, bekezdesek) {
     const kontener = document.querySelector(selector);
-    const cim = kontener?.querySelector('h2');
 
     if (!kontener || !Array.isArray(bekezdesek)) {
         return;
     }
 
-    kontener.querySelectorAll('p').forEach(p => p.remove());
+    kontener.querySelectorAll(':scope > p').forEach(p => p.remove());
+    const link = kontener.querySelector(':scope > .szoveges-link');
+    const fragment = document.createDocumentFragment();
+
     bekezdesek.forEach(szoveg => {
         const p = document.createElement('p');
         p.textContent = szoveg;
-        kontener.appendChild(p);
+        fragment.appendChild(p);
     });
 
-    if (cim && cim.parentElement !== kontener) {
-        kontener.prepend(cim);
-    }
+    kontener.insertBefore(fragment, link || null);
 }
 
 function kepBeallitasa(selector, src, alt) {
@@ -1092,20 +1147,23 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     const szekcio = document.getElementById('szolgaltatasok');
     const racs = szekcio?.querySelector('.szolgaltatas-lista');
 
-    if (!szekcio || !racs || !Array.isArray(szolgaltatasok?.kartyak)) {
+    if (!szekcio || !szolgaltatasok) {
         return;
     }
 
-    szovegBeallitasa('h2', szolgaltatasok.cim, szekcio);
+    szovegBeallitasa('.szekcio-fej .szekcio-kicker', szolgaltatasok.kicker, szekcio);
+    szovegBeallitasa('.szekcio-fej h2', szolgaltatasok.cim, szekcio);
+    szovegBeallitasa('.szekcio-fej > p', szolgaltatasok.leiras, szekcio);
+
+    if (!racs || !Array.isArray(szolgaltatasok.kartyak)) {
+        return;
+    }
+
     racs.innerHTML = '';
 
-    szolgaltatasok.kartyak.forEach((kartya, index) => {
+    szolgaltatasok.kartyak.forEach(kartya => {
         const doboz = document.createElement('div');
         doboz.className = 'szolgaltatas-kartya';
-
-        const szam = document.createElement('span');
-        szam.className = 'szolgaltatas-szam';
-        szam.textContent = String(index + 1).padStart(2, '0');
 
         const cim = document.createElement('h3');
         cim.textContent = kartya.cim || '';
@@ -1115,10 +1173,11 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
 
         const link = document.createElement('a');
         const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
+        const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
         link.href = galeriaKartya ? '/galeria/' : '/arlista/';
-        link.innerHTML = `${galeriaKartya ? 'Inspirációk' : 'Részletek és árak'} <span aria-hidden="true">↗</span>`;
+        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">↗</span>`;
 
-        doboz.append(szam, cim, leiras, link);
+        doboz.append(cim, leiras, link);
         racs.appendChild(doboz);
     });
 }
@@ -1130,9 +1189,16 @@ function galeriaAtvezetoAlkalmazasa(galeria) {
         return;
     }
 
-    szovegBeallitasa('.galeria-atvezeto-szoveg h2', galeria.cim);
-    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-leiras', galeria.leiras);
-    szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg);
+    szovegBeallitasa('.galeria-showcase-fej .szekcio-kicker', galeria.kicker, szekcio);
+    const kiemeltCim = szekcio.querySelector('.galeria-showcase-fej h2');
+    if (kiemeltCim) {
+        kiemeltCim.innerHTML = `${html(galeria.kiemeltCim || '')}<br><em>${html(galeria.kiemeltAkcentus || '')}</em>`;
+    }
+    szovegBeallitasa('.galeria-showcase-meta p', galeria.metaLeiras, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-kicker', galeria.belsoKicker, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg h2', galeria.cim, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .szekcio-leiras', galeria.leiras, szekcio);
+    szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg, szekcio);
 
     const kepek = szekcio.querySelectorAll('.galeria-atvezeto-kepek img');
     (galeria.kepek || []).forEach((kep, index) => {
@@ -1154,11 +1220,12 @@ function foglalasAtvezetoAlkalmazasa(foglalasAtvezeto) {
         return;
     }
 
-    szovegBeallitasa('h2', foglalasAtvezeto.cim, szekcio);
-    szovegBeallitasa('.szekcio-leiras', foglalasAtvezeto.leiras, szekcio);
-    szovegBeallitasa('.gomb', foglalasAtvezeto.gombSzoveg, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > .szekcio-kicker', foglalasAtvezeto.kicker, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > h2', foglalasAtvezeto.cim, szekcio);
+    szovegBeallitasa('.kapcsolat-tartalom > .szekcio-leiras', foglalasAtvezeto.leiras, szekcio);
+    szovegBeallitasa('.kapcsolat-akcio > .gomb', foglalasAtvezeto.gombSzoveg, szekcio);
+    szovegBeallitasa('.kapcsolat-akcio > span', foglalasAtvezeto.megjegyzes, szekcio);
 }
-
 function arlistaAdatokAlkalmazasa(arlista) {
     const szekcio = document.querySelector('.arlista-oldal');
     const panel = szekcio?.querySelector('.arlista-panel');
@@ -1579,12 +1646,20 @@ function lablecAdatokAlkalmazasa(adatok) {
         cimLink.style.display = '';
     }
 
-    if (telefonLink && kapcsolat?.telefon) {
-        const telefonLathato = kapcsolat.telefonLathato !== false;
-        telefonLink.textContent = kapcsolat.telefon;
-        telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
-        telefonLink.hidden = !telefonLathato;
-        telefonLink.style.display = telefonLathato ? '' : 'none';
+    if (telefonLink) {
+        const telefonLathato = kapcsolat?.telefonLathato !== false && Boolean(kapcsolat?.telefon);
+
+        if (telefonLathato) {
+            telefonLink.textContent = kapcsolat.telefon;
+            telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
+            telefonLink.hidden = false;
+            telefonLink.style.display = '';
+        } else {
+            telefonLink.textContent = '';
+            telefonLink.removeAttribute('href');
+            telefonLink.hidden = true;
+            telefonLink.style.display = 'none';
+        }
     }
 
     if (emailLink && kapcsolat?.email) {
@@ -1633,8 +1708,21 @@ async function onlineTelefonLathatosagAlkalmazasa() {
         }
 
         const lathato = data.value?.visible !== false;
-        telefonLink.hidden = !lathato;
-        telefonLink.style.display = lathato ? '' : 'none';
+
+        if (lathato) {
+            const kapcsolat = window.lumiAdatok?.kapcsolat;
+            if (kapcsolat?.telefon) {
+                telefonLink.textContent = kapcsolat.telefon;
+                telefonLink.href = `tel:${kapcsolat.telefonLink || kapcsolat.telefon.replace(/\s/g, '')}`;
+                telefonLink.hidden = false;
+                telefonLink.style.display = '';
+            }
+        } else {
+            telefonLink.textContent = '';
+            telefonLink.removeAttribute('href');
+            telefonLink.hidden = true;
+            telefonLink.style.display = 'none';
+        }
     } catch (_error) {
         // Ha az online beallitas meg nincs elesitve, a JSON szerinti alapertek marad.
     }
@@ -1755,7 +1843,7 @@ function foglalasOldal() {
 
 function adminOldal() {
     const utvonal = window.location.pathname.toLowerCase();
-    return utvonal === '/admin/' || utvonal.endsWith('/admin.html') || utvonal.endsWith('/admin/index.html');
+    return utvonal === '/admin' || utvonal === '/admin/' || utvonal.startsWith('/admin/') || utvonal.endsWith('/admin.html');
 }
 
 function fooldalGaleriaLapozasBekotese() {
@@ -1771,6 +1859,7 @@ function fooldalGaleriaLapozasBekotese() {
 
     let aktualisIndex = 0;
     let huzasKezdoX = null;
+    let lapozasFolyamatban = false;
 
     szinpad.dataset.kartyaLapozo = 'true';
     szinpad.classList.add('galeria-kartya-lapozo');
@@ -1805,8 +1894,7 @@ function fooldalGaleriaLapozasBekotese() {
 
         kartya.addEventListener('click', () => {
             if (index !== aktualisIndex) {
-                aktualisIndex = index;
-                kartyaAllapotFrissitese();
+                kartyaIndexValtasa(index);
             }
         });
 
@@ -1815,8 +1903,7 @@ function fooldalGaleriaLapozasBekotese() {
         pont.className = 'galeria-kartya-pont';
         pont.setAttribute('aria-label', `${index + 1}. kép megjelenítése`);
         pont.addEventListener('click', () => {
-            aktualisIndex = index;
-            kartyaAllapotFrissitese();
+            kartyaIndexValtasa(index);
         });
         pontok.appendChild(pont);
     });
@@ -1825,6 +1912,7 @@ function fooldalGaleriaLapozasBekotese() {
 
     function kartyaAllapotFrissitese() {
         const felTavolsag = Math.floor(kartyak.length / 2);
+        const atforduloKartyak = [];
 
         kartyak.forEach((kartya, index) => {
             let elteres = index - aktualisIndex;
@@ -1833,6 +1921,10 @@ function fooldalGaleriaLapozasBekotese() {
 
             const melyseg = Math.min(Math.abs(elteres), 2);
             const aktiv = elteres === 0;
+            const elozoHely = Number(kartya.dataset.hely);
+            const atfordulas = Number.isFinite(elozoHely) && Math.abs(elozoHely - elteres) > 1;
+            kartya.classList.toggle('galeria-kartya-atfordulas', atfordulas);
+            if (atfordulas) atforduloKartyak.push(kartya);
             kartya.style.setProperty('--kartya-eltolas', String(elteres));
             kartya.style.setProperty('--kartya-melyseg', String(melyseg));
             kartya.dataset.hely = String(elteres);
@@ -1841,6 +1933,14 @@ function fooldalGaleriaLapozasBekotese() {
             kartya.tabIndex = aktiv ? 0 : -1;
             kartya.setAttribute('aria-hidden', String(!aktiv));
         });
+
+        if (atforduloKartyak.length) {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    atforduloKartyak.forEach(kartya => kartya.classList.remove('galeria-kartya-atfordulas'));
+                });
+            });
+        }
 
         pontGombok.forEach((pont, index) => {
             const aktiv = index === aktualisIndex;
@@ -1851,9 +1951,44 @@ function fooldalGaleriaLapozasBekotese() {
         allapot.textContent = `${aktualisIndex + 1} / ${kartyak.length}`;
     }
 
+    function iosAtmenetSzukseges() {
+        return window.matchMedia('(max-width: 768px)').matches
+            && window.CSS?.supports?.('-webkit-touch-callout', 'none')
+            && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function kartyaIndexValtasa(ujIndex) {
+        if (lapozasFolyamatban || ujIndex === aktualisIndex) {
+            return;
+        }
+
+        if (!iosAtmenetSzukseges()) {
+            aktualisIndex = ujIndex;
+            kartyaAllapotFrissitese();
+            return;
+        }
+
+        lapozasFolyamatban = true;
+        szinpad.classList.add('galeria-kartya-ios-eltunes');
+
+        window.setTimeout(() => {
+            szinpad.classList.add('galeria-kartya-ios-atrendezes');
+            aktualisIndex = ujIndex;
+            kartyaAllapotFrissitese();
+            void szinpad.offsetWidth;
+
+            window.requestAnimationFrame(() => {
+                szinpad.classList.remove('galeria-kartya-ios-eltunes', 'galeria-kartya-ios-atrendezes');
+                window.setTimeout(() => {
+                    lapozasFolyamatban = false;
+                }, 220);
+            });
+        }, 140);
+    }
+
     function kartyaLepes(irany) {
-        aktualisIndex = (aktualisIndex + irany + kartyak.length) % kartyak.length;
-        kartyaAllapotFrissitese();
+        const ujIndex = (aktualisIndex + irany + kartyak.length) % kartyak.length;
+        kartyaIndexValtasa(ujIndex);
     }
 
     elozoGomb.addEventListener('click', () => kartyaLepes(-1));

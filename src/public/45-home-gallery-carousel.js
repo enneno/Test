@@ -11,6 +11,7 @@ function fooldalGaleriaLapozasBekotese() {
 
     let aktualisIndex = 0;
     let huzasKezdoX = null;
+    let lapozasFolyamatban = false;
 
     szinpad.dataset.kartyaLapozo = 'true';
     szinpad.classList.add('galeria-kartya-lapozo');
@@ -45,8 +46,7 @@ function fooldalGaleriaLapozasBekotese() {
 
         kartya.addEventListener('click', () => {
             if (index !== aktualisIndex) {
-                aktualisIndex = index;
-                kartyaAllapotFrissitese();
+                kartyaIndexValtasa(index);
             }
         });
 
@@ -55,8 +55,7 @@ function fooldalGaleriaLapozasBekotese() {
         pont.className = 'galeria-kartya-pont';
         pont.setAttribute('aria-label', `${index + 1}. kép megjelenítése`);
         pont.addEventListener('click', () => {
-            aktualisIndex = index;
-            kartyaAllapotFrissitese();
+            kartyaIndexValtasa(index);
         });
         pontok.appendChild(pont);
     });
@@ -65,6 +64,7 @@ function fooldalGaleriaLapozasBekotese() {
 
     function kartyaAllapotFrissitese() {
         const felTavolsag = Math.floor(kartyak.length / 2);
+        const atforduloKartyak = [];
 
         kartyak.forEach((kartya, index) => {
             let elteres = index - aktualisIndex;
@@ -73,6 +73,10 @@ function fooldalGaleriaLapozasBekotese() {
 
             const melyseg = Math.min(Math.abs(elteres), 2);
             const aktiv = elteres === 0;
+            const elozoHely = Number(kartya.dataset.hely);
+            const atfordulas = Number.isFinite(elozoHely) && Math.abs(elozoHely - elteres) > 1;
+            kartya.classList.toggle('galeria-kartya-atfordulas', atfordulas);
+            if (atfordulas) atforduloKartyak.push(kartya);
             kartya.style.setProperty('--kartya-eltolas', String(elteres));
             kartya.style.setProperty('--kartya-melyseg', String(melyseg));
             kartya.dataset.hely = String(elteres);
@@ -81,6 +85,14 @@ function fooldalGaleriaLapozasBekotese() {
             kartya.tabIndex = aktiv ? 0 : -1;
             kartya.setAttribute('aria-hidden', String(!aktiv));
         });
+
+        if (atforduloKartyak.length) {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    atforduloKartyak.forEach(kartya => kartya.classList.remove('galeria-kartya-atfordulas'));
+                });
+            });
+        }
 
         pontGombok.forEach((pont, index) => {
             const aktiv = index === aktualisIndex;
@@ -91,9 +103,44 @@ function fooldalGaleriaLapozasBekotese() {
         allapot.textContent = `${aktualisIndex + 1} / ${kartyak.length}`;
     }
 
+    function iosAtmenetSzukseges() {
+        return window.matchMedia('(max-width: 768px)').matches
+            && window.CSS?.supports?.('-webkit-touch-callout', 'none')
+            && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function kartyaIndexValtasa(ujIndex) {
+        if (lapozasFolyamatban || ujIndex === aktualisIndex) {
+            return;
+        }
+
+        if (!iosAtmenetSzukseges()) {
+            aktualisIndex = ujIndex;
+            kartyaAllapotFrissitese();
+            return;
+        }
+
+        lapozasFolyamatban = true;
+        szinpad.classList.add('galeria-kartya-ios-eltunes');
+
+        window.setTimeout(() => {
+            szinpad.classList.add('galeria-kartya-ios-atrendezes');
+            aktualisIndex = ujIndex;
+            kartyaAllapotFrissitese();
+            void szinpad.offsetWidth;
+
+            window.requestAnimationFrame(() => {
+                szinpad.classList.remove('galeria-kartya-ios-eltunes', 'galeria-kartya-ios-atrendezes');
+                window.setTimeout(() => {
+                    lapozasFolyamatban = false;
+                }, 220);
+            });
+        }, 140);
+    }
+
     function kartyaLepes(irany) {
-        aktualisIndex = (aktualisIndex + irany + kartyak.length) % kartyak.length;
-        kartyaAllapotFrissitese();
+        const ujIndex = (aktualisIndex + irany + kartyak.length) % kartyak.length;
+        kartyaIndexValtasa(ujIndex);
     }
 
     elozoGomb.addEventListener('click', () => kartyaLepes(-1));

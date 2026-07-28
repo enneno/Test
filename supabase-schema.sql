@@ -45,9 +45,33 @@ create table if not exists public.blocked_times (
     starts_at timestamptz not null,
     ends_at timestamptz not null,
     reason text default '',
+    status text not null default 'blocked',
     created_at timestamptz not null default now(),
+    constraint blocked_times_status_check check (status in ('blocked', 'done', 'cancelled_by_customer')),
     check (ends_at > starts_at)
 );
+
+alter table public.blocked_times
+    add column if not exists status text not null default 'blocked';
+
+update public.blocked_times
+set status = 'blocked'
+where status is null or status not in ('blocked', 'done', 'cancelled_by_customer');
+
+alter table public.blocked_times
+    alter column status set default 'blocked',
+    alter column status set not null;
+
+do $$
+begin
+    alter table public.blocked_times
+        drop constraint if exists blocked_times_status_check;
+
+    alter table public.blocked_times
+        add constraint blocked_times_status_check
+        check (status in ('blocked', 'done', 'cancelled_by_customer'));
+end
+$$;
 
 create table if not exists public.bookings (
     id uuid primary key default gen_random_uuid(),
@@ -58,7 +82,7 @@ create table if not exists public.bookings (
     note text default '',
     starts_at timestamptz not null,
     ends_at timestamptz not null,
-    status text not null default 'pending' check (status in ('pending', 'confirmed', 'done', 'cancelled')),
+    status text not null default 'pending' check (status in ('pending', 'confirmed', 'done', 'cancelled', 'cancelled_by_customer')),
     created_at timestamptz not null default now(),
     check (ends_at > starts_at)
 );
@@ -113,16 +137,13 @@ end $$;
 
 do $$
 begin
-    if not exists (
-        select 1
-        from pg_constraint
-        where conname = 'bookings_no_overlap'
-    ) then
-        alter table public.bookings
-            add constraint bookings_no_overlap
-            exclude using gist (tstzrange(starts_at, ends_at, '[)') with &&)
-            where (status in ('pending', 'confirmed'));
-    end if;
+    alter table public.bookings
+        drop constraint if exists bookings_no_overlap;
+
+    alter table public.bookings
+        add constraint bookings_no_overlap
+        exclude using gist (tstzrange(starts_at, ends_at, '[)') with &&)
+        where (status in ('pending', 'confirmed', 'done'));
 end $$;
 
 do $$
@@ -132,7 +153,7 @@ begin
 
     alter table public.bookings
         add constraint bookings_status_check
-        check (status in ('pending', 'confirmed', 'done', 'cancelled'));
+        check (status in ('pending', 'confirmed', 'done', 'cancelled', 'cancelled_by_customer'));
 end $$;
 
 alter table public.services enable row level security;
@@ -256,13 +277,14 @@ as $$
         and not exists (
             select 1
             from public.bookings b
-            where b.status in ('pending', 'confirmed')
+            where b.status in ('pending', 'confirmed', 'done')
                 and tstzrange(b.starts_at, b.ends_at, '[)') && tstzrange(slots.starts_at, slots.ends_at, '[)')
         )
         and not exists (
             select 1
             from public.blocked_times bt
-            where tstzrange(bt.starts_at, bt.ends_at, '[)') && tstzrange(slots.starts_at, slots.ends_at, '[)')
+            where coalesce(bt.status, 'blocked') <> 'cancelled_by_customer'
+                and tstzrange(bt.starts_at, bt.ends_at, '[)') && tstzrange(slots.starts_at, slots.ends_at, '[)')
         )
     order by slots.starts_at;
 $$;
