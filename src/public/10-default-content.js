@@ -85,13 +85,7 @@ function lumiAlapOldalAdatok() {
                 cim: 'Galéria',
                 leiras: 'Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.',
                 gombSzoveg: 'Galéria megnyitása',
-                kepek: [
-                    { src: '/kepek/galeria-atvezeto-1.jpg', alt: 'Lumi Nails köröm munka' },
-                    { src: '/kepek/galeria-atvezeto-2.jpg', alt: 'Lumi Nails díszített köröm' },
-                    { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' },
-                    { src: '/galeria/optimized/thumbs/image0.jpg', alt: 'Lumi Nails letisztult köröm' },
-                    { src: '/galeria/optimized/thumbs/image1.jpg', alt: 'Lumi Nails gél lakk köröm' }
-                ]
+                kivalasztottKepek: []
             },
             foglalasAtvezeto: {
                 kicker: 'Következő lépés',

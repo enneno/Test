@@ -523,8 +523,11 @@
                 }
             };
         } catch (error) {
-            console.error('Inspir?ci?s k?p felt?lt?si kiv?tel:', error);
-            return { ok: false, uzenet: 'A k?p felt?lt?se nem siker?lt. K?rlek pr?b?ld ?jra.' };
+            console.error('Inspirációs kép feltöltési kivétel:', error);
+            return {
+                ok: false,
+                uzenet: error?.message || 'A kép feltöltése nem sikerült. Kérlek próbáld újra.'
+            };
         }
     }
 

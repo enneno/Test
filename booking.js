@@ -10,8 +10,11 @@
     const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
     const MAX_IMAGE_COUNT = 5;
     const IMAGE_UPLOAD_MAX_SIDE = 1600;
-    const IMAGE_UPLOAD_WEBP_QUALITY = 0.84;
+    const IMAGE_UPLOAD_MAX_BYTES = 480 * 1024;
+    const IMAGE_UPLOAD_WEBP_QUALITY = 0.82;
+    const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
+    let bookingCanvasOutputFormatPromise = null;
 
     if (!document.body || document.body.dataset.bookingMode !== 'supabase') {
         return;
@@ -607,8 +610,11 @@
                 }
             };
         } catch (error) {
-            console.error('Inspir?ci?s k?p felt?lt?si kiv?tel:', error);
-            return { ok: false, uzenet: 'A k?p felt?lt?se nem siker?lt. K?rlek pr?b?ld ?jra.' };
+            console.error('Inspirációs kép feltöltési kivétel:', error);
+            return {
+                ok: false,
+                uzenet: error?.message || 'A kép feltöltése nem sikerült. Kérlek próbáld újra.'
+            };
         }
     }
 
@@ -1376,44 +1382,91 @@
     }
 
     async function kepOptimalizalasa(file, options = {}) {
-        const eredetiExt = kepKiterjesztes(file);
-        const eredeti = { file, extension: eredetiExt, optimized: false };
-        const type = String(file.type || '').toLowerCase();
-        const name = String(file.name || '').toLowerCase();
-
-        if (type === 'image/gif' || name.endsWith('.gif')) return eredeti;
+        const maxSide = Number(options.maxSide) || IMAGE_UPLOAD_MAX_SIDE;
+        const maxBytes = Number(options.maxBytes) || IMAGE_UPLOAD_MAX_BYTES;
+        const kezdoMinoseg = Number(options.quality) || IMAGE_UPLOAD_WEBP_QUALITY;
+        let kep;
 
         try {
-            const maxSide = Number(options.maxSide) || IMAGE_UPLOAD_MAX_SIDE;
-            const quality = Number(options.quality) || IMAGE_UPLOAD_WEBP_QUALITY;
-            const kep = await kepBetoltese(file);
-            const width = kep.width || kep.naturalWidth;
-            const height = kep.height || kep.naturalHeight;
+            kep = await kepBetoltese(file);
+            const outputFormat = await foglalasiCanvasFormatum();
+            const originalWidth = kep.width || kep.naturalWidth;
+            const originalHeight = kep.height || kep.naturalHeight;
+            if (!originalWidth || !originalHeight) throw new Error('A kép méretei nem olvashatók.');
 
-            if (!width || !height) return eredeti;
+            const kezdoArany = Math.min(1, maxSide / Math.max(originalWidth, originalHeight));
+            let width = Math.max(1, Math.round(originalWidth * kezdoArany));
+            let height = Math.max(1, Math.round(originalHeight * kezdoArany));
+            let legkisebbBlob = null;
 
-            const scale = Math.min(1, maxSide / Math.max(width, height));
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.max(1, Math.round(width * scale));
-            canvas.height = Math.max(1, Math.round(height * scale));
-            const context = canvas.getContext('2d', { alpha: true });
-            if (!context) return eredeti;
+            for (let meretezes = 0; meretezes < 7; meretezes += 1) {
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const context = canvas.getContext('2d', { alpha: !outputFormat.flatten });
+                if (!context) throw new Error('A böngésző nem tud képfeldolgozó felületet létrehozni.');
+                if (outputFormat.flatten) {
+                    context.fillStyle = '#ffffff';
+                    context.fillRect(0, 0, width, height);
+                }
+                context.imageSmoothingEnabled = true;
+                context.imageSmoothingQuality = 'high';
+                context.drawImage(kep, 0, 0, width, height);
 
-            context.drawImage(kep, 0, 0, canvas.width, canvas.height);
-            if (typeof kep.close === 'function') kep.close();
+                legkisebbBlob = null;
+                for (let quality = kezdoMinoseg; quality >= IMAGE_UPLOAD_MIN_QUALITY - 0.001; quality -= 0.05) {
+                    const blob = await canvasBlob(canvas, outputFormat.mimeType, quality);
+                    if (!blob || blob.type !== outputFormat.mimeType) {
+                        throw new Error(`A böngésző nem tud ${outputFormat.extension.toUpperCase()} képet készíteni.`);
+                    }
+                    if (!legkisebbBlob || blob.size < legkisebbBlob.size) legkisebbBlob = blob;
+                    if (blob.size <= maxBytes) {
+                        const nevAlap = String(file.name || 'kep')
+                            .replace(/\.[^.]+$/, '')
+                            .replace(/[^a-z0-9_-]+/gi, '-')
+                            .replace(/^-+|-+$/g, '') || 'kep';
+                        const optimizedFile = new File([blob], `${nevAlap}.${outputFormat.extension}`, {
+                            type: outputFormat.mimeType,
+                            lastModified: Date.now()
+                        });
+                        return { file: optimizedFile, extension: outputFormat.extension, optimized: true };
+                    }
+                }
 
-            const blob = await canvasBlob(canvas, 'image/webp', quality);
-            if (!blob) return eredeti;
+                if (!legkisebbBlob || Math.max(width, height) <= 320) break;
+                const celArany = Math.sqrt(maxBytes / legkisebbBlob.size) * 0.92;
+                const csokkentes = Math.min(0.86, Math.max(0.58, celArany));
+                width = Math.max(1, Math.round(width * csokkentes));
+                height = Math.max(1, Math.round(height * csokkentes));
+            }
 
-            if (scale >= 1 && blob.size > file.size * 1.05) return eredeti;
-
-            const nevAlap = String(file.name || 'kep').replace(/\.[^.]+$/, '') || 'kep';
-            const webpFile = new File([blob], `${nevAlap}.webp`, { type: 'image/webp', lastModified: Date.now() });
-            return { file: webpFile, extension: 'webp', optimized: true };
+            throw new Error(`A kép nem tömöríthető ${Math.ceil(maxBytes / 1024)} KB alá.`);
         } catch (error) {
-            console.warn('K?p optimaliz?l?sa nem siker?lt, eredeti f?jl ker?l felt?lt?sre:', error);
-            return eredeti;
+            console.error('A foglalási kép optimalizálása nem sikerült:', error);
+            throw new Error(`A képet nem sikerült optimalizálni, ezért az eredeti fájlt nem töltöttük fel. ${error?.message || ''}`.trim());
+        } finally {
+            if (typeof kep?.close === 'function') kep.close();
         }
+    }
+
+    async function foglalasiCanvasFormatum() {
+        if (!bookingCanvasOutputFormatPromise) {
+            bookingCanvasOutputFormatPromise = (async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 2;
+                canvas.height = 2;
+                const context = canvas.getContext('2d');
+                if (!context) throw new Error('A böngésző nem tud képfeldolgozó felületet létrehozni.');
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, 2, 2);
+                const webpBlob = await canvasBlob(canvas, 'image/webp', 0.8);
+                if (webpBlob?.type === 'image/webp') return { mimeType: 'image/webp', extension: 'webp', flatten: false };
+                const jpegBlob = await canvasBlob(canvas, 'image/jpeg', 0.8);
+                if (jpegBlob?.type === 'image/jpeg') return { mimeType: 'image/jpeg', extension: 'jpg', flatten: true };
+                throw new Error('A böngésző sem WebP-, sem JPG-kódolást nem támogat.');
+            })();
+        }
+        return bookingCanvasOutputFormatPromise;
     }
 
     async function kepBetoltese(file) {

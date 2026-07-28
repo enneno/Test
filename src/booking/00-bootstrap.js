@@ -8,8 +8,11 @@
     const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
     const MAX_IMAGE_COUNT = 5;
     const IMAGE_UPLOAD_MAX_SIDE = 1600;
-    const IMAGE_UPLOAD_WEBP_QUALITY = 0.84;
+    const IMAGE_UPLOAD_MAX_BYTES = 480 * 1024;
+    const IMAGE_UPLOAD_WEBP_QUALITY = 0.82;
+    const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
+    let bookingCanvasOutputFormatPromise = null;
 
     if (!document.body || document.body.dataset.bookingMode !== 'supabase') {
         return;

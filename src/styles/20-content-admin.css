@@ -106,8 +106,7 @@
     pointer-events: none;
 }
 .cms-image-url { font-size: 13px; }
-.cms-gallery-editor,
-.cms-home-gallery-editor {
+.cms-gallery-editor {
     margin-top: 26px;
     padding-top: 24px;
     border-top: 1px solid rgba(185, 133, 143, 0.25);
@@ -116,13 +115,12 @@
     justify-content: space-between;
     margin-bottom: 16px;
 }
-.cms-gallery-list,
-.cms-home-gallery-list {
+.cms-gallery-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
-.cms-gallery-header > span,
+.cms-gallery-selection-count,
 .cms-gallery-note {
     color: var(--szoveg);
     font-size: 13px;
@@ -138,10 +136,36 @@
     border-radius: 20px;
     background: rgba(255, 250, 244, 0.72);
 }
+.cms-gallery-item[data-home-selected="true"] {
+    border-color: rgba(163, 93, 117, 0.62);
+    box-shadow: inset 0 0 0 1px rgba(163, 93, 117, 0.16);
+}
 .cms-gallery-item h4 {
     margin: 0 0 14px;
     color: var(--akcentus);
     font-size: 16px;
+}
+.cms-gallery-home-choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.58);
+    color: var(--tinta);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    cursor: pointer;
+}
+.cms-gallery-home-choice input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--akcentus);
 }
 .cms-gallery-item .cms-image-field {
     padding: 0;
@@ -165,10 +189,9 @@
 
 @media screen and (max-width: 768px) {
     .admin-cms-heading { align-items: stretch; flex-direction: column; }
-    .admin-cms-main-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .admin-cms-main-actions { display: grid; grid-template-columns: 1fr; }
     .admin-cms-main-actions button { width: 100%; padding-inline: 12px; }
-    .cms-gallery-list,
-    .cms-home-gallery-list { grid-template-columns: 1fr; }
+    .cms-gallery-list { grid-template-columns: 1fr; }
     .cms-section-toggle { min-height: 58px; font-size: 16px; }
     .cms-section-body { padding-bottom: 22px; }
     .cms-image-field,

@@ -1,7 +1,12 @@
 (function () {
     const MAX_FILE_SIZE = 12 * 1024 * 1024;
-    const IMAGE_UPLOAD_MAX_SIDE = 1800;
-    const IMAGE_UPLOAD_WEBP_QUALITY = 0.85;
+    const IMAGE_UPLOAD_FULL_MAX_SIDE = 1600;
+    const IMAGE_UPLOAD_FULL_MAX_BYTES = 480 * 1024;
+    const IMAGE_UPLOAD_FULL_QUALITY = 0.82;
+    const IMAGE_UPLOAD_PREVIEW_MAX_SIDE = 720;
+    const IMAGE_UPLOAD_PREVIEW_MAX_BYTES = 110 * 1024;
+    const IMAGE_UPLOAD_PREVIEW_QUALITY = 0.76;
+    const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const BUCKET = window.LUMI_MEDIA_BUCKET || 'site-media';
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
@@ -16,6 +21,7 @@
         cmsViewScroll: 0,
         cmsSectionScroll: 0
     };
+    let canvasOutputFormatPromise = null;
 
     const GROUPS = [
         {
@@ -91,8 +97,7 @@
                 field('fooldal.galeriaAtvezeto.cim', 'Cím'),
                 field('fooldal.galeriaAtvezeto.leiras', 'Leírás', 'textarea'),
                 field('fooldal.galeriaAtvezeto.gombSzoveg', 'Gomb szövege')
-            ],
-            homepageGallery: true
+            ]
         },
         {
             title: 'Főoldal – időpontfoglalási blokk',
@@ -457,7 +462,6 @@
             const selected = groupIndex === state.cmsGroup;
             const shortTitle = group.title.replace(/^(Főoldal|Foglalás)\s+[–-]\s+/i, '');
             const itemCount = group.fields.length
-                + (group.homepageGallery ? 1 : 0)
                 + (group.gallery ? 1 : 0);
             button.type = 'button';
             button.className = 'cms-section-index-button';
@@ -484,7 +488,6 @@
         const body = document.createElement('div');
         body.className = 'cms-section-body';
         body.appendChild(renderFieldArea(state.cmsGroup, activeGroup.fields));
-        if (activeGroup.homepageGallery) body.appendChild(renderHomepageGallery());
         if (activeGroup.gallery) body.appendChild(renderGallery());
 
         editor.append(editorHeader, body);
@@ -568,7 +571,7 @@
         uploadLabel.textContent = 'Kép feltöltése';
         const file = document.createElement('input');
         file.type = 'file';
-        file.accept = 'image/jpeg,image/png,image/webp,image/avif,image/gif';
+        file.accept = 'image/jpeg,image/png,image/webp,image/avif';
         file.dataset.cmsUpload = path;
         uploadLabel.appendChild(file);
         const remove = document.createElement('button');
@@ -587,46 +590,19 @@
         return holder;
     }
 
-    function renderHomepageGallery() {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'cms-home-gallery-editor';
-        const heading = document.createElement('div');
-        heading.className = 'cms-gallery-header';
-        heading.innerHTML = '<h3>Főoldali galériakártyák</h3><span>Lapozási sorrend</span>';
-        wrapper.appendChild(heading);
-
-        const labels = [
-            ['1. galériakártya', 'Elsőként ez a kép jelenik meg.'],
-            ['2. galériakártya', 'Lapozással minden kijelzőn elérhető.'],
-            ['3. galériakártya', 'Lapozással minden kijelzőn elérhető.'],
-            ['4. galériakártya', 'Lapozással minden kijelzőn elérhető.'],
-            ['5. galériakártya', 'Lapozással minden kijelzőn elérhető.']
-        ];
-        const list = document.createElement('div');
-        list.className = 'cms-home-gallery-list';
-        labels.forEach(([titleText, noteText], index) => {
-            const card = document.createElement('article');
-            card.className = 'cms-gallery-item cms-home-gallery-item';
-            const title = document.createElement('h4');
-            title.textContent = titleText;
-            const note = document.createElement('p');
-            note.className = 'cms-gallery-note';
-            note.textContent = noteText;
-            card.append(title, note);
-            card.appendChild(renderImageField(`fooldal.galeriaAtvezeto.kepek.${index}.src`, 'Kép'));
-            card.appendChild(renderField(field(`fooldal.galeriaAtvezeto.kepek.${index}.alt`, 'Kép leírása')));
-            list.appendChild(card);
-        });
-        wrapper.appendChild(list);
-        return wrapper;
-    }
-
     function renderGallery() {
         const wrapper = document.createElement('div');
         wrapper.className = 'cms-gallery-editor';
         const header = document.createElement('div');
         header.className = 'cms-gallery-header';
-        header.innerHTML = '<h3>Galéria képei</h3>';
+        const kivalasztottAzonositok = new Set(
+            getPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
+        );
+        header.innerHTML = `
+            <div>
+                <h3>Galéria képei</h3>
+                <span class="cms-gallery-selection-count">${kivalasztottAzonositok.size} / 5 kép jelenik meg a főoldalon</span>
+            </div>`;
         const add = document.createElement('button');
         add.type = 'button';
         add.className = 'admin-hozzaadas';
@@ -640,12 +616,25 @@
         const items = state.content.galeria?.elemek || [];
         if (!items.length) list.innerHTML = '<p class="admin-ures">Még nincs galériakép.</p>';
         items.forEach((item, index) => {
+            const azonosito = item.id || item.kep;
             const card = document.createElement('article');
             card.className = 'cms-gallery-item';
             card.dataset.galleryIndex = String(index);
+            card.dataset.homeSelected = String(kivalasztottAzonositok.has(azonosito));
             const title = document.createElement('h4');
             title.textContent = `${index + 1}. kép`;
-            card.appendChild(title);
+
+            const homeChoice = document.createElement('label');
+            homeChoice.className = 'cms-gallery-home-choice';
+            const homeCheckbox = document.createElement('input');
+            homeCheckbox.type = 'checkbox';
+            homeCheckbox.dataset.cmsHomeGallerySelect = azonosito;
+            homeCheckbox.checked = kivalasztottAzonositok.has(azonosito);
+            const homeChoiceText = document.createElement('span');
+            homeChoiceText.textContent = 'Megjelenjen a főoldali galériaátvezetőben';
+            homeChoice.append(homeCheckbox, homeChoiceText);
+
+            card.append(title, homeChoice);
             card.appendChild(renderImageField(`galeria.elemek.${index}.kep`, 'Fotó'));
             card.appendChild(renderField(field(`galeria.elemek.${index}.kepAlt`, 'Kép leírása')));
             card.appendChild(renderField(checkbox(`galeria.elemek.${index}.magas`, 'Magas kiemelt csempe')));
@@ -670,6 +659,39 @@
     }
 
     async function cmsChange(event) {
+        const homeSelection = event.target.closest('[data-cms-home-gallery-select]');
+        if (homeSelection) {
+            const items = state.content.galeria?.elemek || [];
+            const kivalasztott = new Set(
+                getPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
+            );
+            const azonosito = homeSelection.dataset.cmsHomeGallerySelect;
+
+            if (homeSelection.checked && !kivalasztott.has(azonosito) && kivalasztott.size >= 5) {
+                homeSelection.checked = false;
+                status('Legfeljebb 5 képet választhatsz a főoldali galériaátvezetőhöz.', true);
+                return;
+            }
+
+            if (homeSelection.checked) kivalasztott.add(azonosito);
+            else kivalasztott.delete(azonosito);
+
+            const rendezettKivalasztas = items
+                .map(item => item.id || item.kep)
+                .filter(itemAzonosito => kivalasztott.has(itemAzonosito))
+                .slice(0, 5);
+            setPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek', rendezettKivalasztas);
+            document.querySelectorAll('[data-cms-home-gallery-select]').forEach(input => {
+                input.closest('.cms-gallery-item').dataset.homeSelected = String(input.checked);
+            });
+            const count = document.querySelector('.cms-gallery-selection-count');
+            if (count) count.textContent = `${rendezettKivalasztas.length} / 5 kép jelenik meg a főoldalon`;
+            state.dirty = true;
+            updateSaveLabel();
+            status(`${rendezettKivalasztas.length} kép kiválasztva a főoldali galériaátvezetőhöz.`);
+            return;
+        }
+
         const input = event.target.closest('[data-cms-upload]');
         if (!input || !input.files?.[0]) return;
         await uploadImage(input.dataset.cmsUpload, input.files[0], input);
@@ -714,7 +736,13 @@
             readForm();
             state.content.galeria ||= {};
             state.content.galeria.elemek ||= [];
-            state.content.galeria.elemek.push({ kep: '', eloKep: '', kepAlt: 'Lumi Nails köröm munka', magas: false });
+            state.content.galeria.elemek.push({
+                id: `galeria-${randomId()}`,
+                kep: '',
+                eloKep: '',
+                kepAlt: 'Lumi Nails köröm munka',
+                magas: false
+            });
             markDirtyAndRenderGallery();
             return;
         }
@@ -734,48 +762,93 @@
         if (deletion) {
             if (!window.confirm('Biztosan törlöd ezt a galériaelemet?')) return;
             readForm();
-            state.content.galeria.elemek.splice(Number(deletion.dataset.cmsGalleryDelete), 1);
+            const torlendoIndex = Number(deletion.dataset.cmsGalleryDelete);
+            const torlendoElem = state.content.galeria.elemek[torlendoIndex];
+            const torlendoAzonosito = torlendoElem?.id || torlendoElem?.kep;
+            state.content.galeria.elemek.splice(torlendoIndex, 1);
+            const kivalasztott = getPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || [];
+            setPath(
+                state.content,
+                'fooldal.galeriaAtvezeto.kivalasztottKepek',
+                kivalasztott.filter(azonosito => azonosito !== torlendoAzonosito)
+            );
             markDirtyAndRenderGallery();
         }
     }
 
     async function uploadImage(path, file, input) {
         if (!state.client || !state.session) return;
-        if (!file.type.startsWith('image/')) {
-            status('Csak k?pf?jl t?lthet? fel.', true);
+        const tamogatottTipusok = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
+        if (!tamogatottTipusok.has(String(file.type || '').toLowerCase())) {
+            status('JPG, PNG, WebP vagy AVIF képet tölthetsz fel. Az animált GIF nem támogatott.', true);
+            input.value = '';
             return;
         }
         if (file.size > MAX_FILE_SIZE) {
-            status('A k?p legfeljebb 12 MB lehet.', true);
+            status('A kép legfeljebb 12 MB lehet.', true);
+            input.value = '';
             return;
         }
 
+        const galeriaKep = /^galeria\.elemek\.\d+\.kep$/.test(path);
+        const feltoltottUtvonalak = [];
         input.disabled = true;
-        status(`K?p optimaliz?l?sa: ${file.name}...`);
-        const optimalizalt = await optimizeImageFile(file);
-        const uploadFile = optimalizalt.file;
-        const extension = optimalizalt.extension;
-        const objectPath = `uploads/${new Date().toISOString().slice(0, 10)}/${Date.now()}-${randomId()}.${extension}`;
-        status(`K?p felt?lt?se: ${file.name}...`);
-        const { error } = await state.client.storage.from(BUCKET)
-            .upload(objectPath, uploadFile, { cacheControl: '31536000', contentType: uploadFile.type || `image/${extension}`, upsert: false });
-        input.disabled = false;
-        input.value = '';
 
+        try {
+            status(`Kép optimalizálása: ${file.name}...`);
+            const valtozatok = await optimizeImageFile(file, { includePreview: galeriaKep });
+            const alapUtvonal = `uploads/${new Date().toISOString().slice(0, 10)}/${Date.now()}-${randomId()}`;
+
+            status(`Optimalizált kép feltöltése: ${file.name}...`);
+            const teljesUtvonal = `${alapUtvonal}-full.${optimizedImageExtension(valtozatok.full)}`;
+            const teljesUrl = await uploadOptimizedImage(valtozatok.full, teljesUtvonal);
+            feltoltottUtvonalak.push(teljesUtvonal);
+
+            let elonezetUrl = '';
+            if (valtozatok.preview) {
+                const elonezetUtvonal = `${alapUtvonal}-preview.${optimizedImageExtension(valtozatok.preview)}`;
+                elonezetUrl = await uploadOptimizedImage(valtozatok.preview, elonezetUtvonal);
+                feltoltottUtvonalak.push(elonezetUtvonal);
+            }
+
+            setImageValue(path, teljesUrl);
+            if (galeriaKep) {
+                setPath(state.content, path.replace(/\.kep$/, '.eloKep'), elonezetUrl || teljesUrl);
+            }
+
+            const teljesMeret = Math.ceil(valtozatok.full.size / 1024);
+            const elonezetMeret = valtozatok.preview ? `, előnézet: ${Math.ceil(valtozatok.preview.size / 1024)} KB` : '';
+            const formatum = valtozatok.full.type === 'image/webp' ? 'WebP' : 'tömörített JPG';
+            status(`A kép ${formatum} formátumban feltöltve (teljes: ${teljesMeret} KB${elonezetMeret}). A véglegesítéshez mentsd a tartalmat.`);
+        } catch (error) {
+            console.error('Képfeltöltési hiba:', error);
+            if (feltoltottUtvonalak.length) {
+                const { error: cleanupError } = await state.client.storage.from(BUCKET).remove(feltoltottUtvonalak);
+                if (cleanupError) console.warn('A félbemaradt képfeltöltés takarítása nem sikerült:', cleanupError);
+            }
+            status(error?.message || 'A kép feldolgozása vagy feltöltése nem sikerült.', true);
+        } finally {
+            input.disabled = false;
+            input.value = '';
+        }
+    }
+
+    function optimizedImageExtension(file) {
+        return file?.type === 'image/webp' ? 'webp' : 'jpg';
+    }
+    async function uploadOptimizedImage(file, objectPath) {
+        const { error } = await state.client.storage.from(BUCKET).upload(objectPath, file, {
+            cacheControl: '31536000',
+            contentType: file.type,
+            upsert: false
+        });
         if (error) {
-            console.error('K?pfelt?lt?si hiba:', error);
-            status('A k?p felt?lt?se nem siker?lt. Ellen?rizd, hogy lefuttattad-e a Storage SQL r?szt.', true);
-            return;
+            console.error('Storage feltöltési hiba:', error);
+            throw new Error('A kép feltöltése nem sikerült. Ellenőrizd a tárhely beállításait és próbáld újra.');
         }
-
         const { data } = state.client.storage.from(BUCKET).getPublicUrl(objectPath);
-        setImageValue(path, data.publicUrl);
-        if (/^galeria\.elemek\.\d+\.kep$/.test(path)) {
-            setPath(state.content, path.replace(/\.kep$/, '.eloKep'), data.publicUrl);
-        }
-        status(optimalizalt.optimized
-            ? 'A k?p WebP form?tumban, kisebb m?retben felt?ltve. A v?gleges?t?shez nyomd meg a Tartalom ment?se gombot.'
-            : 'A k?p felt?ltve. A v?gleges?t?shez nyomd meg a Tartalom ment?se gombot.');
+        if (!data?.publicUrl) throw new Error('A feltöltött kép nyilvános címe nem kérhető le.');
+        return data.publicUrl;
     }
 
     function setImageValue(path, value) {
@@ -915,12 +988,37 @@
         );
         setPath(normalized, 'fooldal.szolgaltatasok.kartyak', serviceCards);
 
-        const defaultImages = getPath(defaults, 'fooldal.galeriaAtvezeto.kepek') || [];
-        const storedImages = getPath(normalized, 'fooldal.galeriaAtvezeto.kepek') || [];
-        const homepageImages = Array.from({ length: 5 }, (_item, index) =>
-            deepMerge(clone(defaultImages[index] || { src: '', alt: '' }), storedImages[index] || {})
+        normalized.galeria ||= {};
+        normalized.galeria.elemek = Array.isArray(normalized.galeria.elemek)
+            ? normalized.galeria.elemek
+            : [];
+        const hasznaltAzonositok = new Set();
+        normalized.galeria.elemek.forEach(elem => {
+            if (!elem || typeof elem !== 'object') return;
+            let azonosito = String(elem.id || '').trim();
+            if (!azonosito || hasznaltAzonositok.has(azonosito)) {
+                azonosito = `galeria-${randomId()}`;
+            }
+            elem.id = azonosito;
+            hasznaltAzonositok.add(azonosito);
+        });
+
+        const kertKivalasztas = new Set(
+            getPath(normalized, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
         );
-        setPath(normalized, 'fooldal.galeriaAtvezeto.kepek', homepageImages);
+        let kivalasztottKepek = normalized.galeria.elemek
+            .filter(elem => elem?.kep && kertKivalasztas.has(elem.id))
+            .map(elem => elem.id)
+            .slice(0, 5);
+        if (!kivalasztottKepek.length) {
+            kivalasztottKepek = normalized.galeria.elemek
+                .filter(elem => elem?.kep)
+                .slice(0, 5)
+                .map(elem => elem.id);
+        }
+        setPath(normalized, 'fooldal.galeriaAtvezeto.kivalasztottKepek', kivalasztottKepek);
+        const galeriaAtvezeto = getPath(normalized, 'fooldal.galeriaAtvezeto');
+        if (galeriaAtvezeto && typeof galeriaAtvezeto === 'object') delete galeriaAtvezeto.kepek;
 
         const services = getPath(normalized, 'fooldal.szolgaltatasok');
         if (services && typeof services === 'object') {
@@ -932,40 +1030,121 @@
         return normalized;
     }
     function clone(value) { return JSON.parse(JSON.stringify(value)); }
-    async function optimizeImageFile(file) {
-        const original = { file, extension: safeExtension(file), optimized: false };
-        const type = String(file.type || '').toLowerCase();
-        const name = String(file.name || '').toLowerCase();
-
-        if (type === 'image/gif' || name.endsWith('.gif')) return original;
-
-        try {
-            const image = await loadImageFile(file);
-            const width = image.width || image.naturalWidth;
-            const height = image.height || image.naturalHeight;
-            if (!width || !height) return original;
-
-            const scale = Math.min(1, IMAGE_UPLOAD_MAX_SIDE / Math.max(width, height));
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.max(1, Math.round(width * scale));
-            canvas.height = Math.max(1, Math.round(height * scale));
-            const context = canvas.getContext('2d', { alpha: true });
-            if (!context) return original;
-
-            context.drawImage(image, 0, 0, canvas.width, canvas.height);
-            if (typeof image.close === 'function') image.close();
-
-            const blob = await canvasToBlob(canvas, 'image/webp', IMAGE_UPLOAD_WEBP_QUALITY);
-            if (!blob) return original;
-            if (scale >= 1 && blob.size > file.size * 1.05) return original;
-
-            const baseName = String(file.name || 'kep').replace(/\.[^.]+$/, '') || 'kep';
-            const webpFile = new File([blob], `${baseName}.webp`, { type: 'image/webp', lastModified: Date.now() });
-            return { file: webpFile, extension: 'webp', optimized: true };
-        } catch (error) {
-            console.warn('K?p optimaliz?l?sa nem siker?lt, eredeti f?jl ker?l felt?lt?sre:', error);
-            return original;
+    async function optimizeImageFile(file, { includePreview = false } = {}) {
+        const tamogatottTipusok = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
+        if (!tamogatottTipusok.has(String(file.type || '').toLowerCase())) {
+            throw new Error('Ez a képformátum nem alakítható át biztonságosan.');
         }
+
+        let image;
+        try {
+            image = await loadImageFile(file);
+            const outputFormat = await preferredCanvasOutputFormat();
+            const full = await createOptimizedVariant(image, file.name, {
+                maxSide: IMAGE_UPLOAD_FULL_MAX_SIDE,
+                maxBytes: IMAGE_UPLOAD_FULL_MAX_BYTES,
+                quality: IMAGE_UPLOAD_FULL_QUALITY,
+                suffix: 'full',
+                outputFormat
+            });
+            const preview = includePreview
+                ? await createOptimizedVariant(image, file.name, {
+                    maxSide: IMAGE_UPLOAD_PREVIEW_MAX_SIDE,
+                    maxBytes: IMAGE_UPLOAD_PREVIEW_MAX_BYTES,
+                    quality: IMAGE_UPLOAD_PREVIEW_QUALITY,
+                    suffix: 'preview',
+                    outputFormat
+                })
+                : null;
+            return { full, preview };
+        } catch (error) {
+            console.error('A kép optimalizálása nem sikerült:', error);
+            throw new Error(`A kép optimalizálása nem sikerült, ezért az eredeti fájlt nem töltöttem fel. ${error?.message || 'Próbáld másik képpel.'}`);
+        } finally {
+            if (typeof image?.close === 'function') image.close();
+        }
+    }
+
+    async function preferredCanvasOutputFormat() {
+        if (!canvasOutputFormatPromise) {
+            canvasOutputFormatPromise = (async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 2;
+                canvas.height = 2;
+                const context = canvas.getContext('2d');
+                if (!context) throw new Error('A böngésző nem tud képfeldolgozó felületet létrehozni.');
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, 2, 2);
+
+                const webpBlob = await canvasToBlob(canvas, 'image/webp', 0.8);
+                if (webpBlob?.type === 'image/webp') {
+                    return { mimeType: 'image/webp', extension: 'webp', flatten: false };
+                }
+
+                const jpegBlob = await canvasToBlob(canvas, 'image/jpeg', 0.8);
+                if (jpegBlob?.type === 'image/jpeg') {
+                    return { mimeType: 'image/jpeg', extension: 'jpg', flatten: true };
+                }
+                throw new Error('A böngésző sem WebP-, sem JPG-kódolást nem támogat.');
+            })();
+        }
+        return canvasOutputFormatPromise;
+    }
+
+    async function createOptimizedVariant(image, fileName, { maxSide, maxBytes, quality, suffix, outputFormat }) {
+        const originalWidth = image.width || image.naturalWidth;
+        const originalHeight = image.height || image.naturalHeight;
+        if (!originalWidth || !originalHeight) throw new Error('A kép méretei nem olvashatók.');
+
+        const kezdoArany = Math.min(1, maxSide / Math.max(originalWidth, originalHeight));
+        let width = Math.max(1, Math.round(originalWidth * kezdoArany));
+        let height = Math.max(1, Math.round(originalHeight * kezdoArany));
+        let legkisebbBlob = null;
+
+        for (let meretezes = 0; meretezes < 7; meretezes += 1) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const context = canvas.getContext('2d', { alpha: !outputFormat.flatten });
+            if (!context) throw new Error('A böngésző nem tud képfeldolgozó felületet létrehozni.');
+            if (outputFormat.flatten) {
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, width, height);
+            }
+            context.imageSmoothingEnabled = true;
+            context.imageSmoothingQuality = 'high';
+            context.drawImage(image, 0, 0, width, height);
+
+            legkisebbBlob = null;
+            for (let aktualisMinoseg = quality; aktualisMinoseg >= IMAGE_UPLOAD_MIN_QUALITY - 0.001; aktualisMinoseg -= 0.05) {
+                const blob = await canvasToBlob(canvas, outputFormat.mimeType, aktualisMinoseg);
+                if (!blob || blob.type !== outputFormat.mimeType) {
+                    throw new Error(`A böngésző nem tud ${outputFormat.extension.toUpperCase()} képet készíteni.`);
+                }
+                if (!legkisebbBlob || blob.size < legkisebbBlob.size) legkisebbBlob = blob;
+                if (blob.size <= maxBytes) return optimizedFileFromBlob(blob, fileName, suffix, outputFormat);
+            }
+
+            if (!legkisebbBlob || Math.max(width, height) <= 320) break;
+            const celArany = Math.sqrt(maxBytes / legkisebbBlob.size) * 0.92;
+            const csokkentes = Math.min(0.86, Math.max(0.58, celArany));
+            width = Math.max(1, Math.round(width * csokkentes));
+            height = Math.max(1, Math.round(height * csokkentes));
+        }
+
+        const maradekMeret = legkisebbBlob ? Math.ceil(legkisebbBlob.size / 1024) : 0;
+        throw new Error(`A kép nem tömöríthető a beállított ${Math.ceil(maxBytes / 1024)} KB-os határ alá (${maradekMeret} KB).`);
+    }
+
+    function optimizedFileFromBlob(blob, fileName, suffix, outputFormat) {
+        const alapNev = String(fileName || 'kep')
+            .replace(/\.[^.]+$/, '')
+            .replace(/[^a-z0-9_-]+/gi, '-')
+            .replace(/^-+|-+$/g, '') || 'kep';
+        return new File([blob], `${alapNev}-${suffix}.${outputFormat.extension}`, {
+            type: outputFormat.mimeType,
+            lastModified: Date.now()
+        });
     }
 
     async function loadImageFile(file) {
@@ -996,9 +1175,6 @@
         return new Promise(resolve => canvas.toBlob(resolve, type, quality));
     }
 
-    function safeExtension(file) {
-        return { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif', 'image/gif': 'gif' }[file.type] || 'jpg';
-    }
     function randomId() { return globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2); }
     function cssEscape(value) { return globalThis.CSS?.escape ? CSS.escape(value) : value.replace(/([."'\\[\]])/g, '\\$1'); }
     function escapeHtml(value) {

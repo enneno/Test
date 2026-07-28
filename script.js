@@ -122,13 +122,7 @@ function lumiAlapOldalAdatok() {
                 cim: 'Galéria',
                 leiras: 'Nézd meg a korábbi munkákat, színeket és formákat inspirációként a következő időpontodhoz.',
                 gombSzoveg: 'Galéria megnyitása',
-                kepek: [
-                    { src: '/kepek/galeria-atvezeto-1.jpg', alt: 'Lumi Nails köröm munka' },
-                    { src: '/kepek/galeria-atvezeto-2.jpg', alt: 'Lumi Nails díszített köröm' },
-                    { src: '/kepek/galeria-atvezeto-3.jpg', alt: 'Lumi Nails elegáns manikűr' },
-                    { src: '/galeria/optimized/thumbs/image0.jpg', alt: 'Lumi Nails letisztult köröm' },
-                    { src: '/galeria/optimized/thumbs/image1.jpg', alt: 'Lumi Nails gél lakk köröm' }
-                ]
+                kivalasztottKepek: []
             },
             foglalasAtvezeto: {
                 kicker: 'Következő lépés',
@@ -900,17 +894,25 @@ function oldalAdatokNormalizalasa(adatok, alap) {
     adatok.fooldal ||= {};
     adatok.fooldal.hero ||= {};
     adatok.fooldal.galeriaAtvezeto ||= {};
+    adatok.galeria ||= {};
+    adatok.galeria.elemek ||= [];
 
     const hero = String(adatok.fooldal.hero.kep || '');
     if (!hero || hero.includes('/kepek/hatter2.jpg') || hero.includes('/kepek/hero-hullamos.jpg')) {
         adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-exact.jpg';
     }
 
-    const alapKepek = alap?.fooldal?.galeriaAtvezeto?.kepek || [];
-    const mentettKepek = adatok.fooldal.galeriaAtvezeto.kepek || [];
-    adatok.fooldal.galeriaAtvezeto.kepek = Array.from({ length: 5 }, (_item, index) =>
-        melyOsszefesules(alapKepek[index] || { src: '', alt: '' }, mentettKepek[index] || {})
+    const ervenyesKulcsok = new Set(
+        adatok.galeria.elemek
+            .filter(elem => elem?.kep)
+            .map(elem => elem.id || elem.kep)
     );
+    const kivalasztottKepek = Array.isArray(adatok.fooldal.galeriaAtvezeto.kivalasztottKepek)
+        ? adatok.fooldal.galeriaAtvezeto.kivalasztottKepek
+        : [];
+    adatok.fooldal.galeriaAtvezeto.kivalasztottKepek = kivalasztottKepek
+        .filter(kulcs => ervenyesKulcsok.has(kulcs))
+        .slice(0, 5);
     return adatok;
 }
 
@@ -935,7 +937,7 @@ function oldalAdatokAlkalmazasa(adatok) {
     kapcsolatGyorsLinkekNormalizalasa(adatok);
     window.lumiAdatok = adatok;
     fejlecAdatokAlkalmazasa(adatok);
-    fooldalAdatokAlkalmazasa(adatok.fooldal);
+    fooldalAdatokAlkalmazasa(adatok.fooldal, adatok.galeria);
     arlistaAdatokAlkalmazasa(adatok.arlista);
     galeriaAdatokAlkalmazasa(adatok.galeria);
     foglalasAdatokAlkalmazasa(adatok.foglalas, adatok.arlista);
@@ -1038,7 +1040,7 @@ function attr(ertek) {
     return html(ertek).replace(/"/g, '&quot;');
 }
 
-function fooldalAdatokAlkalmazasa(fooldal) {
+function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     if (!fooldal) {
         return;
     }
@@ -1108,7 +1110,7 @@ function fooldalAdatokAlkalmazasa(fooldal) {
     }
 
     szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
-    galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto);
+    galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto, teljesGaleria);
     foglalasAtvezetoAlkalmazasa(fooldal.foglalasAtvezeto);
 }
 
@@ -1182,7 +1184,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     });
 }
 
-function galeriaAtvezetoAlkalmazasa(galeria) {
+function galeriaAtvezetoAlkalmazasa(galeria, teljesGaleria) {
     const szekcio = document.getElementById('galeria-atvezeto');
 
     if (!szekcio || !galeria) {
@@ -1201,14 +1203,39 @@ function galeriaAtvezetoAlkalmazasa(galeria) {
     szovegBeallitasa('.galeria-atvezeto-szoveg .gomb', galeria.gombSzoveg, szekcio);
 
     const kepek = szekcio.querySelectorAll('.galeria-atvezeto-kepek img');
-    (galeria.kepek || []).forEach((kep, index) => {
+    const galeriaElemek = Array.isArray(teljesGaleria?.elemek)
+        ? teljesGaleria.elemek.filter(elem => elem?.kep)
+        : [];
+    const kivalasztottKulcsok = Array.isArray(galeria.kivalasztottKepek)
+        ? galeria.kivalasztottKepek
+        : [];
+    const kivalasztottElemek = [];
+
+    kivalasztottKulcsok.forEach(kulcs => {
+        const elem = galeriaElemek.find(galeriaElem => (galeriaElem.id || galeriaElem.kep) === kulcs);
+        if (elem && !kivalasztottElemek.includes(elem)) kivalasztottElemek.push(elem);
+    });
+    galeriaElemek.forEach(elem => {
+        if (kivalasztottElemek.length < 5 && !kivalasztottElemek.includes(elem)) {
+            kivalasztottElemek.push(elem);
+        }
+    });
+
+    const atvezetoKepek = kivalasztottElemek.length
+        ? kivalasztottElemek.slice(0, 5).map(elem => ({
+            src: elem.eloKep || elem.kep,
+            alt: elem.kepAlt || 'Lumi Nails köröm munka'
+        }))
+        : (galeria.kepek || []);
+
+    atvezetoKepek.forEach((kep, index) => {
         if (!kepek[index]) {
             return;
         }
 
         if (kep.src) kepek[index].src = kep.src;
         if (kep.alt) kepek[index].alt = kep.alt;
-        kepek[index].loading = 'eager';
+        kepek[index].loading = index < 2 ? 'eager' : 'lazy';
         kepek[index].decoding = 'async';
     });
 }
