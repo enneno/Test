@@ -6507,6 +6507,41 @@ textarea:focus-visible {
     margin-top: 44px;
 }
 
+.arlista-ervenyesseg {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 20px 0 0;
+    color: var(--ui-muted);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+}
+
+.arlista-ervenyesseg[hidden] {
+    display: none;
+}
+
+.arlista-ervenyesseg::before {
+    content: '';
+    width: 42px;
+    height: 1px;
+    background: var(--ui-line-strong);
+}
+
+@media screen and (max-width: 640px) {
+    .arlista-ervenyesseg {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .arlista-ervenyesseg::before {
+        width: 24px;
+    }
+}
+
 /* Standalone gallery: CSS columns avoid empty grid holes. */
 .galeria-oldal {
     width: min(1360px, calc(100% - 32px));

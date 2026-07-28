@@ -9,12 +9,20 @@ create table if not exists public.services (
     name text not null unique,
     description text default '',
     price_text text default '',
+    price_amount integer,
+    price_unit text not null default 'Ft',
+    price_suffix text not null default '',
     duration_minutes integer not null default 60 check (duration_minutes >= 0),
     booking_enabled boolean not null default true,
     active boolean not null default true,
     sort_order integer not null default 0,
     created_at timestamptz not null default now()
 );
+
+alter table public.services
+    add column if not exists price_amount integer,
+    add column if not exists price_unit text not null default 'Ft',
+    add column if not exists price_suffix text not null default '';
 
 create table if not exists public.availability_rules (
     id uuid primary key default gen_random_uuid(),
@@ -104,6 +112,42 @@ create table if not exists public.site_settings (
     value jsonb not null default '{}'::jsonb,
     updated_at timestamptz not null default now()
 );
+
+insert into public.site_settings (key, value, updated_at)
+values (
+    'arlista_ervenyesseg',
+    jsonb_build_object('effective_since', now()),
+    now()
+)
+on conflict (key) do nothing;
+
+create or replace function public.lumi_arlista_ervenyesseg_frissitese()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    insert into public.site_settings (key, value, updated_at)
+    values (
+        'arlista_ervenyesseg',
+        jsonb_build_object('effective_since', now()),
+        now()
+    )
+    on conflict (key) do update
+    set value = excluded.value,
+        updated_at = excluded.updated_at;
+
+    return new;
+end;
+$$;
+
+drop trigger if exists lumi_arlista_ervenyesseg_trigger on public.services;
+create trigger lumi_arlista_ervenyesseg_trigger
+    after update of price_amount on public.services
+    for each row
+    when (old.price_amount is distinct from new.price_amount)
+    execute function public.lumi_arlista_ervenyesseg_frissitese();
 
 do $$
 begin

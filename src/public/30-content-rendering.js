@@ -777,10 +777,44 @@ async function onlineArlistaBetoltese() {
             return;
         }
 
-        arlistaSzolgaltatasokRenderelese(data.map(szolgaltatasArNormalizalasa));
+        const szolgaltatasok = data.map(szolgaltatasArNormalizalasa);
+        arlistaSzolgaltatasokRenderelese(szolgaltatasok);
+
+        const { data: ervenyesseg } = await kliens
+            .from('site_settings')
+            .select('value,updated_at')
+            .eq('key', 'arlista_ervenyesseg')
+            .maybeSingle();
+
+        arlistaErvenyessegMegjelenitese(
+            ervenyesseg?.value?.effective_since || ervenyesseg?.updated_at
+        );
     } catch (_error) {
         // Ha a Supabase nem elerheto, a statikus arlista marad lathato.
     }
+}
+
+function arlistaErvenyessegMegjelenitese(idopont) {
+    const elem = document.getElementById('arlista-ervenyesseg');
+    if (!elem) return;
+
+    const idoertek = new Date(idopont || '').getTime();
+
+    if (!Number.isFinite(idoertek)) {
+        elem.textContent = '';
+        elem.hidden = true;
+        return;
+    }
+
+    const datum = new Date(idoertek);
+    const felirat = new Intl.DateTimeFormat('hu-HU', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: 'Europe/Budapest'
+    }).format(datum);
+
+    elem.textContent = `Az árlista ${felirat} óta érvényes.`;
+    elem.hidden = false;
 }
 
 function arlistaSzolgaltatasokRenderelese(szolgaltatasok) {
