@@ -11,7 +11,6 @@ function fooldalGaleriaLapozasBekotese() {
 
     let aktualisIndex = 0;
     let huzasKezdoX = null;
-    let lapozasFolyamatban = false;
 
     szinpad.dataset.kartyaLapozo = 'true';
     szinpad.classList.add('galeria-kartya-lapozo');
@@ -103,41 +102,14 @@ function fooldalGaleriaLapozasBekotese() {
         allapot.textContent = `${aktualisIndex + 1} / ${kartyak.length}`;
     }
 
-    function iosAtmenetSzukseges() {
-        return window.matchMedia('(max-width: 768px)').matches
-            && window.CSS?.supports?.('-webkit-touch-callout', 'none')
-            && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    }
-
     function kartyaIndexValtasa(ujIndex) {
-        if (lapozasFolyamatban || ujIndex === aktualisIndex) {
+        if (ujIndex === aktualisIndex) {
             return;
         }
 
-        if (!iosAtmenetSzukseges()) {
-            aktualisIndex = ujIndex;
-            kartyaAllapotFrissitese();
-            return;
-        }
-
-        lapozasFolyamatban = true;
-        szinpad.classList.add('galeria-kartya-ios-eltunes');
-
-        window.setTimeout(() => {
-            szinpad.classList.add('galeria-kartya-ios-atrendezes');
-            aktualisIndex = ujIndex;
-            kartyaAllapotFrissitese();
-            void szinpad.offsetWidth;
-
-            window.requestAnimationFrame(() => {
-                szinpad.classList.remove('galeria-kartya-ios-eltunes', 'galeria-kartya-ios-atrendezes');
-                window.setTimeout(() => {
-                    lapozasFolyamatban = false;
-                }, 220);
-            });
-        }, 140);
+        aktualisIndex = ujIndex;
+        kartyaAllapotFrissitese();
     }
-
     function kartyaLepes(irany) {
         const ujIndex = (aktualisIndex + irany + kartyak.length) % kartyak.length;
         kartyaIndexValtasa(ujIndex);

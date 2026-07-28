@@ -7578,22 +7578,6 @@ textarea:focus-visible {
     }
 }
 
-@supports (-webkit-touch-callout: none) {
-    @media screen and (max-width: 768px) {
-        .galeria-kartya-lapozo.galeria-kartya-ios-eltunes img,
-        .galeria-kartya-lapozo.galeria-kartya-ios-eltunes img:nth-child(n+4) {
-            opacity: 0;
-            transition: opacity 0.14s ease;
-        }
-
-        .galeria-kartya-lapozo.galeria-kartya-ios-atrendezes img,
-        .galeria-kartya-lapozo.galeria-kartya-ios-atrendezes img:nth-child(n+4) {
-            opacity: 0;
-            transition: none;
-        }
-    }
-}
-
 /* Phone-only editorial refinement. Desktop layout remains unchanged. */
 @media screen and (max-width: 768px) {
     body.mobil-menu-nyitva {
@@ -9535,7 +9519,7 @@ body.admin-body {
 }
 
 #admin-panel-foglalasok .admin-foglalas-meta-grid {
-    grid-template-columns: minmax(150px, 1.25fr) minmax(118px, 0.75fr) minmax(130px, 0.85fr) minmax(190px, 1.2fr);
+    grid-template-columns: minmax(190px, 1.35fr) minmax(105px, 0.65fr) minmax(230px, 1.55fr) minmax(130px, 0.75fr);
     gap: 8px 18px;
 }
 
@@ -9629,7 +9613,13 @@ body.admin-body {
     }
 
     #admin-panel-foglalasok .admin-foglalas-meta-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1.45fr) minmax(132px, 0.75fr);
+    }
+
+    #admin-panel-foglalasok .admin-foglalas-meta-leadva,
+    #admin-panel-foglalasok .admin-foglalas-meta-telefon {
+        justify-self: end;
+        width: 132px;
     }
 }
 
@@ -9678,20 +9668,40 @@ body.admin-body {
         gap: 9px;
     }
 
-    #admin-panel-foglalasok .admin-foglalas-fosor,
+    #admin-panel-foglalasok .admin-foglalas-fosor {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+    }
+
+    #admin-panel-foglalasok .admin-foglalas-fosor h3 {
+        min-width: 0;
+        margin: 0;
+        font-size: clamp(18px, 5vw, 22px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #admin-panel-foglalasok .admin-foglalas-idopont {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        text-align: right;
+        white-space: nowrap;
+        font-size: 10.5px;
+    }
+
     #admin-panel-foglalasok .admin-db-kartya-tiltas .admin-foglalas-fosor {
         grid-template-columns: 1fr;
         gap: 3px;
     }
 
-    #admin-panel-foglalasok .admin-foglalas-fosor h3 {
-        font-size: 22px;
-    }
-
-    #admin-panel-foglalasok .admin-foglalas-idopont,
     #admin-panel-foglalasok .admin-db-kartya-tiltas .admin-foglalas-idopont {
         grid-column: 1;
         grid-row: auto;
+        justify-self: start;
+        text-align: left;
         font-size: 11.5px;
     }
 
@@ -9711,13 +9721,13 @@ body.admin-body {
     }
 
     #admin-panel-foglalasok .admin-foglalas-meta-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1.45fr) minmax(126px, 0.72fr);
         gap: 8px 10px;
     }
 
-    #admin-panel-foglalasok .admin-foglalas-meta-grid p:first-child,
-    #admin-panel-foglalasok .admin-foglalas-meta-grid p:last-child {
-        grid-column: 1 / -1;
+    #admin-panel-foglalasok .admin-foglalas-meta-leadva,
+    #admin-panel-foglalasok .admin-foglalas-meta-telefon {
+        width: 126px;
     }
 
     #admin-panel-foglalasok .admin-foglalas-meta-grid p {
