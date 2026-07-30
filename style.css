@@ -8381,11 +8381,33 @@ body.admin-body {
 }
 
 .admin-body .admin-workspace-status {
-    margin: 0 0 18px;
-    padding: 11px 14px;
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    z-index: 1400;
+    width: min(580px, calc(100vw - 32px));
+    margin: 0;
+    padding: 14px 18px;
     border: 1px solid rgba(183, 120, 140, 0.2);
-    border-radius: 12px;
-    background: rgba(183, 120, 140, 0.08);
+    border-radius: 14px;
+    background: rgba(252, 248, 244, 0.97);
+    box-shadow: 0 14px 34px rgba(45, 35, 31, 0.14);
+    color: var(--admin-ink);
+    line-height: 1.45;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -12px);
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        visibility 180ms ease;
+}
+
+.admin-body .admin-workspace-status.admin-toast-lathato {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
 }
 
 .admin-body .admin-status:empty {
@@ -8395,7 +8417,17 @@ body.admin-body {
 .admin-body .admin-status.hiba {
     color: #8a3547;
     border-color: rgba(138, 53, 71, 0.22);
-    background: rgba(138, 53, 71, 0.08);
+    background: rgba(252, 238, 241, 0.98);
+}
+
+@media (max-width: 768px) {
+    .admin-body .admin-workspace-status {
+        top: max(86px, calc(env(safe-area-inset-top) + 68px));
+        width: calc(100vw - 24px);
+        padding: 13px 15px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
 }
 
 .admin-body .admin-db-panel {

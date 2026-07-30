@@ -935,6 +935,14 @@
     function status(message, error = false) {
         const element = document.getElementById('admin-cms-status');
         if (!element) return;
+
+        if (typeof window.lumiAdminStatusz === 'function') {
+            element.textContent = '';
+            element.classList.remove('hiba');
+            window.lumiAdminStatusz(message, error);
+            return;
+        }
+
         element.textContent = message;
         element.classList.toggle('hiba', Boolean(error));
     }

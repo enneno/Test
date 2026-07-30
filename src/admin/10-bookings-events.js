@@ -693,7 +693,16 @@
                     ends_at: adatok.endsAt
                 };
 
-            const utkozesHiba = await idopontUtkozesHiba(kartya, adatok.startsAt, adatok.endsAt, modositas.status);
+            const utkozesHiba = await idopontUtkozesHiba({
+                tipus: kartya.dataset.tipus,
+                id: kartya.dataset.id,
+                nev: kartya.dataset.tipus === 'blocked'
+                    ? modositas.reason
+                    : kartya.querySelector('h3')?.textContent?.trim(),
+                startsAt: adatok.startsAt,
+                endsAt: adatok.endsAt,
+                statusz: modositas.status
+            });
 
             if (utkozesHiba) {
                 onlineStatusz(utkozesHiba, true);

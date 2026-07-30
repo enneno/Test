@@ -293,6 +293,20 @@
             reason: megjegyzes,
             status: 'blocked'
         };
+
+        const utkozesHiba = await idopontUtkozesHiba({
+            tipus: 'blocked',
+            nev: megjegyzes,
+            startsAt: ujTiltas.starts_at,
+            endsAt: ujTiltas.ends_at,
+            statusz: ujTiltas.status
+        });
+
+        if (utkozesHiba) {
+            onlineStatusz(utkozesHiba, true);
+            return;
+        }
+
         let { error } = await allapot.kliens.from('blocked_times').insert(ujTiltas);
 
         if (error && adatbazisOszlopHiany(error, ['status'])) {
@@ -384,8 +398,8 @@
         gomb.setAttribute('aria-expanded', String(nyitva));
     }
 
-    async function idopontUtkozesHiba(kartya, startsAt, endsAt, statusz) {
-        const aktivBejegyzes = kartya.dataset.tipus === 'booking'
+    async function idopontUtkozesHiba({ tipus, id = '', nev = '', startsAt, endsAt, statusz }) {
+        const aktivBejegyzes = tipus === 'booking'
             ? ['pending', 'confirmed', 'done'].includes(statusz)
             : tiltasStatuszErtek(statusz) !== 'cancelled_by_customer';
 
@@ -393,16 +407,17 @@
             return '';
         }
 
-        const bookingQuery = allapot.kliens
+        const sajatNev = nev.trim() || (tipus === 'booking' ? 'Név nélküli vendég' : 'Név nélküli kézi idő');
+        let bookingQuery = allapot.kliens
             .from('bookings')
             .select('id,customer_name')
-            .in('status', ['pending', 'confirmed'])
+            .in('status', ['pending', 'confirmed', 'done'])
             .lt('starts_at', endsAt)
             .gt('ends_at', startsAt)
             .limit(1);
 
-        if (kartya.dataset.tipus === 'booking') {
-            bookingQuery.neq('id', kartya.dataset.id);
+        if (tipus === 'booking' && id) {
+            bookingQuery = bookingQuery.neq('id', id);
         }
 
         const { data: foglalasUtkozes, error: foglalasHiba } = await bookingQuery;
@@ -412,7 +427,9 @@
         }
 
         if (foglalasUtkozes?.length) {
-            return `Ez az időpont ütközik egy másik foglalással: ${foglalasUtkozes[0].customer_name || 'név nélkül'}.`;
+            const masikNev = foglalasUtkozes[0].customer_name?.trim() || 'Név nélküli vendég';
+            const sajatTipus = tipus === 'booking' ? 'foglalása' : 'kézi ideje';
+            return `Nem menthető: „${sajatNev}” ${sajatTipus} ütközik „${masikNev}” foglalásával.`;
         }
 
         const tiltasQuery = statuszOszloppal => {
@@ -427,8 +444,8 @@
                 query = query.neq('status', 'cancelled_by_customer');
             }
 
-            if (kartya.dataset.tipus === 'blocked') {
-                query = query.neq('id', kartya.dataset.id);
+            if (tipus === 'blocked' && id) {
+                query = query.neq('id', id);
             }
 
             return query;
@@ -445,7 +462,9 @@
         }
 
         if (tiltasUtkozes?.length) {
-            return `Ez az időpont ütközik egy kézzel felvett foglalt idővel: ${tiltasUtkozes[0].reason || 'külső foglalás'}.`;
+            const masikNev = tiltasUtkozes[0].reason?.trim() || 'Név nélküli kézi idő';
+            const sajatTipus = tipus === 'booking' ? 'foglalása' : 'kézi ideje';
+            return `Nem menthető: „${sajatNev}” ${sajatTipus} ütközik az „${masikNev}” kézzel felvett idővel.`;
         }
 
         return '';
@@ -566,9 +585,38 @@
             return;
         }
 
+        window.clearTimeout(onlineStatusz.elrejtesIdozito);
+        window.clearTimeout(onlineStatusz.uritesIdozito);
+        window.cancelAnimationFrame(onlineStatusz.megjelenitesKeret);
+        elem.classList.remove('admin-toast-lathato');
+
+        if (!szoveg) {
+            elem.textContent = '';
+            elem.classList.remove('hiba');
+            return;
+        }
+
         elem.textContent = szoveg;
         elem.classList.toggle('hiba', Boolean(hiba));
+        elem.setAttribute('role', hiba ? 'alert' : 'status');
+        elem.setAttribute('aria-live', hiba ? 'assertive' : 'polite');
+
+        onlineStatusz.megjelenitesKeret = window.requestAnimationFrame(() => {
+            elem.classList.add('admin-toast-lathato');
+        });
+
+        onlineStatusz.elrejtesIdozito = window.setTimeout(() => {
+            elem.classList.remove('admin-toast-lathato');
+            onlineStatusz.uritesIdozito = window.setTimeout(() => {
+                if (!elem.classList.contains('admin-toast-lathato')) {
+                    elem.textContent = '';
+                    elem.classList.remove('hiba');
+                }
+            }, 220);
+        }, 5000);
     }
+
+    window.lumiAdminStatusz = onlineStatusz;
 
     function naptarStatusz(szoveg, hiba = false) {
         const elem = document.getElementById('admin-naptar-status');
