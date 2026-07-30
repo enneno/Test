@@ -59,6 +59,7 @@
         });
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
         elemek.esemenynaploFrissites?.addEventListener('click', esemenynaploBetoltese);
+        elemek.emailTesztKuldes?.addEventListener('click', emailTesztekKuldese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
         elemek.kuponHozzaadas?.addEventListener('click', kuponHozzaadas);
         elemek.lebegoMentes?.addEventListener('click', lebegoMentes);
@@ -123,6 +124,8 @@
             jelszoStatusz: document.getElementById('admin-jelszo-status'),
             lebegoMentes: document.getElementById('admin-lebego-mentes'),
             onlineStatusz: document.getElementById('admin-online-status'),
+            emailTesztKuldes: document.getElementById('admin-email-teszt-kuldes'),
+            emailTesztStatusz: document.getElementById('admin-email-teszt-statusz'),
             foglalasLista: document.getElementById('admin-foglalas-lista'),
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
             foglalasLapozoFelso: document.getElementById('admin-foglalas-lapozo-felso'),
@@ -2521,6 +2524,7 @@
             idosavok: 'Dátumok mentése',
             tiltasok: 'Új kézi idő mentése',
             esemenynaplo: 'Napló frissítése',
+            emailteszt: 'E-mail tesztek küldése',
             szovegek: 'Tartalom mentése'
         };
 
@@ -2541,8 +2545,102 @@
         if (mentes) {
             mentes.textContent = mentesFeliratok[aktivTab] || 'Mentés';
             mentes.setAttribute('aria-label', mentes.textContent);
+            mentes.hidden = aktivTab === 'emailteszt' || !allapot.session;
         }
     }
+    async function emailTesztekKuldese() {
+        const elemek = adminElemek();
+        const gomb = elemek.emailTesztKuldes;
+        const token = allapot.session?.access_token || '';
+
+        if (!gomb || !token) {
+            emailTesztStatusz('A teszt e-mailek k\u00fcld\u00e9s\u00e9hez jelentkezz be \u00fajra.', true);
+            onlineStatusz('A munkamenet lej\u00e1rt. Jelentkezz be \u00fajra.', true);
+            return;
+        }
+
+        const jovahagyva = window.confirm(
+            'A rendszer 9 teszt e-mailt k\u00fcld a luminails.xx@gmail.com c\u00edmre. Folytatod?'
+        );
+
+        if (!jovahagyva) {
+            return;
+        }
+
+        const eredetiFelirat = gomb.textContent;
+        gomb.disabled = true;
+        gomb.textContent = 'K\u00fcld\u00e9s folyamatban\u2026';
+        emailTesztStatusz('A 9 teszt e-mail k\u00fcld\u00e9se folyamatban van. Ez n\u00e9h\u00e1ny m\u00e1sodpercet ig\u00e9nybe vehet.');
+
+        try {
+            const { data, error } = await allapot.kliens.functions.invoke('send-email-previews', {
+                body: { request_source: 'admin' },
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
+
+            if (error) {
+                throw new Error(await edgeFunctionHibaUzenet(error));
+            }
+
+            const elkuldve = Number(data?.sent || 0);
+            const hibas = Number(data?.failed || 0);
+
+            if (!data?.ok || hibas > 0 || elkuldve !== 9) {
+                const reszletek = Array.isArray(data?.delivery)
+                    ? data.delivery.filter(item => !item.ok).map(item => item.label || item.type).filter(Boolean).join(', ')
+                    : '';
+                throw new Error(
+                    reszletek
+                        ? 'Nem ment ki minden teszt e-mail. Hib\u00e1s: ' + reszletek + '.'
+                        : 'Csak ' + elkuldve + ' / 9 teszt e-mail ment ki.'
+                );
+            }
+
+            const cimzett = data.recipient || 'luminails.xx@gmail.com';
+            const uzenet = 'Mind a 9 teszt e-mail elk\u00fcldve a ' + cimzett + ' c\u00edmre.';
+            emailTesztStatusz(uzenet);
+            onlineStatusz(uzenet);
+        } catch (error) {
+            const uzenet = error instanceof Error ? error.message : 'Nem siker\u00fclt elk\u00fcldeni a teszt e-maileket.';
+            emailTesztStatusz(uzenet, true);
+            onlineStatusz(uzenet, true);
+        } finally {
+            gomb.disabled = false;
+            gomb.textContent = eredetiFelirat;
+        }
+    }
+
+    async function edgeFunctionHibaUzenet(error) {
+        const context = error?.context;
+
+        if (context && typeof context.clone === 'function') {
+            try {
+                const valasz = await context.clone().json();
+                if (valasz?.error) {
+                    return String(valasz.error);
+                }
+            } catch (_hiba) {
+                // A Supabase kliens alap hiba\u00fczenete marad.
+            }
+        }
+
+        return String(error?.message || 'A Supabase e-mail tesztfunkci\u00f3 nem \u00e9rhet\u0151 el.');
+    }
+
+    function emailTesztStatusz(szoveg, hiba = false) {
+        const elem = adminElemek().emailTesztStatusz;
+
+        if (!elem) {
+            return;
+        }
+
+        elem.textContent = szoveg;
+        elem.classList.toggle('hiba', Boolean(hiba));
+        elem.setAttribute('role', hiba ? 'alert' : 'status');
+    }
+
     function adminKartyaSzerkesztesKapcsolasa(kartya, gomb) {
         const nyitva = !kartya.classList.contains('szerkeszt');
         kartya.classList.toggle('szerkeszt', nyitva);

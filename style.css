@@ -5593,6 +5593,117 @@ body.admin-modal-nyitva {
     }
 }
 
+/* Admin e-mail preview sender */
+.admin-email-teszt-panel {
+    max-width: 980px;
+}
+
+.admin-email-teszt-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 28px;
+    padding: 8px 2px 26px;
+    border-bottom: 1px solid rgba(88, 68, 61, 0.16);
+}
+
+.admin-email-teszt-fej h2 {
+    margin: 7px 0 8px;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--szin-szoveg);
+}
+
+.admin-email-teszt-fej p {
+    max-width: 660px;
+    margin: 0;
+    color: var(--szin-szoveg-halvany);
+    line-height: 1.6;
+}
+
+.admin-email-teszt-fej .admin-hozzaadas {
+    min-width: 210px;
+    white-space: nowrap;
+}
+
+.admin-email-teszt-fej .admin-hozzaadas:disabled {
+    cursor: wait;
+    opacity: 0.62;
+}
+
+.admin-email-teszt-lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    padding: 18px 0 0;
+    list-style: none;
+    counter-reset: email-preview;
+}
+
+.admin-email-teszt-lista li {
+    counter-increment: email-preview;
+    min-width: 0;
+    padding: 13px 18px 13px 38px;
+    border-bottom: 1px solid rgba(88, 68, 61, 0.12);
+    color: var(--szin-szoveg);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    position: relative;
+}
+
+.admin-email-teszt-lista li::before {
+    content: counter(email-preview, decimal-leading-zero);
+    position: absolute;
+    left: 2px;
+    top: 13px;
+    color: var(--szin-kiemeles);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.admin-email-teszt-statusz {
+    min-height: 22px;
+    margin: 18px 2px 0;
+    color: #486355;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.admin-email-teszt-statusz.hiba {
+    color: #9b4455;
+}
+
+@media screen and (max-width: 768px) {
+    .admin-email-teszt-fej {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 18px;
+        padding-top: 2px;
+    }
+
+    .admin-email-teszt-fej .admin-hozzaadas {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .admin-email-teszt-lista {
+        grid-template-columns: 1fr;
+        padding-top: 10px;
+    }
+
+    .admin-email-teszt-lista li {
+        padding-block: 11px;
+    }
+
+    .admin-email-teszt-lista li::before {
+        top: 11px;
+    }
+}
+
 /* Lumi Nails unified visual system.
    This is the only design layer above the functional component styles. */
 

@@ -404,7 +404,7 @@ function delay(ms: number) {
 }
 
 function appointmentRange(booking: BookingNotification) {
-  return `${formatDate(booking.starts_at)} - ${formatDate(booking.ends_at, true)}`;
+  return `${formatDate(booking.starts_at)}\n${formatDate(booking.starts_at, true)} – ${formatDate(booking.ends_at, true)}`;
 }
 
 function serviceName(booking: BookingNotification) {
@@ -414,7 +414,7 @@ function serviceName(booking: BookingNotification) {
 function formatDate(value: string, timeOnly = false) {
   return new Intl.DateTimeFormat("hu-HU", timeOnly
     ? { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Budapest" }
-    : { year: "numeric", month: "2-digit", day: "2-digit", weekday: "long", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Budapest" }
+    : { year: "numeric", month: "2-digit", day: "2-digit", weekday: "long", timeZone: "Europe/Budapest" }
   ).format(new Date(value));
 }
 
@@ -517,7 +517,7 @@ function detailTable(rows: Array<[string, unknown]>) {
       ${rows.map(([label, value]) => `
         <tr>
           <td class="lumi-detail-label" width="116" valign="top" style="width:116px;padding:13px 18px 13px 0;border-bottom:1px solid #eadfd9;color:#9d6878;font-size:11px;font-weight:700;letter-spacing:.9px;line-height:1.45;text-transform:uppercase;white-space:nowrap;">${escapeHtml(label)}</td>
-          <td class="lumi-detail-value" valign="top" style="padding:12px 0 13px;border-bottom:1px solid #eadfd9;color:#302824;font-size:16px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(value)}</td>
+          <td class="lumi-detail-value" valign="top" style="padding:12px 0 13px;border-bottom:1px solid #eadfd9;color:#302824;font-size:16px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(value).replace(/\r?\n/g, "<br>")}</td>
         </tr>
       `).join("")}
     </table>

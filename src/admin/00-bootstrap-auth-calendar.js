@@ -57,6 +57,7 @@
         });
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
         elemek.esemenynaploFrissites?.addEventListener('click', esemenynaploBetoltese);
+        elemek.emailTesztKuldes?.addEventListener('click', emailTesztekKuldese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
         elemek.kuponHozzaadas?.addEventListener('click', kuponHozzaadas);
         elemek.lebegoMentes?.addEventListener('click', lebegoMentes);
@@ -121,6 +122,8 @@
             jelszoStatusz: document.getElementById('admin-jelszo-status'),
             lebegoMentes: document.getElementById('admin-lebego-mentes'),
             onlineStatusz: document.getElementById('admin-online-status'),
+            emailTesztKuldes: document.getElementById('admin-email-teszt-kuldes'),
+            emailTesztStatusz: document.getElementById('admin-email-teszt-statusz'),
             foglalasLista: document.getElementById('admin-foglalas-lista'),
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
             foglalasLapozoFelso: document.getElementById('admin-foglalas-lapozo-felso'),

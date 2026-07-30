@@ -204,4 +204,10 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     const mobileMain = await main.boundingBox();
     expect(mobileMain.y).toBeGreaterThanOrEqual(mobileSidebar.y + mobileSidebar.height - 1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+
+    await page.locator('[data-admin-tab="emailteszt"]').click();
+    await expect(page.locator('#admin-panel-emailteszt')).toBeVisible();
+    await expect(page.locator('#admin-email-teszt-kuldes')).toBeVisible();
+    await expect(page.locator('#admin-lebego-mentes')).toBeHidden();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });

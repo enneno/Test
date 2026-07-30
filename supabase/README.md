@@ -118,3 +118,15 @@ x-lumi-cron-secret: ugyanaz_a_titok_mint_a_BOOKING_NOTIFICATIONS_SECRET
 ```
 
 Secret kulcsot továbbra se tegyél frontend fájlba vagy GitHub Pages kódba.
+
+## E-mail tesztküldés
+
+Az admin `E-mail teszt` nézete a `send-email-previews` Edge Functiont hívja. A funkció kizárólag a bejelentkezett admin e-mail-címével használható, a tesztcímzett rögzítve van, és nem módosít foglalási adatot.
+
+Telepítés CLI-ből:
+
+```bash
+supabase functions deploy send-email-previews
+```
+
+A funkció a meglévő `RESEND_API_KEY`, `FROM_EMAIL`, `REPLY_TO_EMAIL`, `OWNER_EMAIL` és `ADMIN_EMAIL` secret beállításokat használja.

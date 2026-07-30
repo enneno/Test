@@ -79,10 +79,11 @@ serve(async (req) => {
     });
 
     const serviceName = serviceNameFromRelation(booking.services);
-    const startsAt = formatDate(booking.starts_at);
+    const appointmentDate = formatDate(booking.starts_at);
+    const startsAt = formatDate(booking.starts_at, true);
     const endsAt = formatDate(booking.ends_at, true);
-    const submittedAt = formatDate(booking.created_at);
-    const appointmentText = `${startsAt} - ${endsAt}`;
+    const submittedAt = `${formatDate(booking.created_at)}\n${formatDate(booking.created_at, true)}`;
+    const appointmentText = `${appointmentDate}\n${startsAt} – ${endsAt}`;
     const coupon = couponSummary(booking.coupon_code, booking.coupon_title);
     const couponRows: Array<[string, unknown]> = coupon ? [["Kupon", coupon]] : [];
     const calendarAttachment = {
@@ -90,7 +91,7 @@ serve(async (req) => {
       content: base64FromUtf8(calendarEvent({
         id: bookingId,
         customerName: booking.customer_name,
-        customerPhone: booking.customer_phone,
+        customerPhone: formatPhone(booking.customer_phone),
         customerEmail: booking.customer_email,
         note: booking.note || "",
         serviceName,
@@ -163,7 +164,7 @@ serve(async (req) => {
       <h1>Új foglalás érkezett</h1>
       ${detailTable([
         ["Név", booking.customer_name],
-        ["Telefon", booking.customer_phone],
+        ["Telefon", formatPhone(booking.customer_phone)],
         ["Email", booking.customer_email],
         ["Szolgáltatás", serviceName],
         ...couponRows,
@@ -193,7 +194,7 @@ serve(async (req) => {
     const ownerText = [
       "Új Lumi Nails foglalás",
       `Név: ${booking.customer_name}`,
-      `Telefon: ${booking.customer_phone}`,
+      `Telefon: ${formatPhone(booking.customer_phone)}`,
       `Email: ${booking.customer_email}`,
       `Szolgáltatás: ${serviceName}`,
       ...(coupon ? [`Kupon: ${coupon}`] : []),
@@ -598,7 +599,7 @@ function detailTable(rows: Array<[string, unknown]>) {
       ${rows.map(([label, value]) => `
         <tr>
           <td class="lumi-detail-label" width="116" valign="top" style="width:116px;padding:13px 18px 13px 0;border-bottom:1px solid #eadfd9;color:#9d6878;font-size:11px;font-weight:700;letter-spacing:.9px;line-height:1.45;text-transform:uppercase;white-space:nowrap;">${escapeHtml(label)}</td>
-          <td class="lumi-detail-value" valign="top" style="padding:12px 0 13px;border-bottom:1px solid #eadfd9;color:#302824;font-size:16px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(value)}</td>
+          <td class="lumi-detail-value" valign="top" style="padding:12px 0 13px;border-bottom:1px solid #eadfd9;color:#302824;font-size:16px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(value).replace(/\r?\n/g, "<br>")}</td>
         </tr>
       `).join("")}
     </table>
@@ -630,8 +631,33 @@ function json(body: unknown, status = 200) {
 function formatDate(value: string, timeOnly = false) {
   return new Intl.DateTimeFormat("hu-HU", timeOnly
     ? { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Budapest" }
-    : { year: "numeric", month: "2-digit", day: "2-digit", weekday: "long", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Budapest" }
+    : { year: "numeric", month: "2-digit", day: "2-digit", weekday: "long", timeZone: "Europe/Budapest" }
   ).format(new Date(value));
+}
+
+function formatPhone(value: unknown) {
+  const raw = String(value ?? "").trim();
+  const digits = raw.replace(/\D/g, "");
+  let localNumber = "";
+
+  if (digits.length === 11 && digits.startsWith("36")) {
+    localNumber = digits.slice(2);
+  } else if (digits.length === 11 && digits.startsWith("06")) {
+    localNumber = digits.slice(2);
+  } else if (digits.length === 9) {
+    localNumber = digits;
+  }
+
+  if (localNumber.length !== 9) {
+    return raw;
+  }
+
+  return "+36\u00a0"
+    + localNumber.slice(0, 2)
+    + "\u00a0"
+    + localNumber.slice(2, 5)
+    + "\u00a0"
+    + localNumber.slice(5);
 }
 
 function escapeHtml(value: unknown) {
