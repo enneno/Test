@@ -28,9 +28,9 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "luminails.xx@gmail.com";
-    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <luminails.xx@gmail.com>";
-    const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || "luminails.xx@gmail.com";
+    const ownerEmail = Deno.env.get("OWNER_EMAIL") || "";
+    const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <foglalas@luminails.hu>";
+    const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
     const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
     const internalSecret = req.headers.get("x-lumi-internal-secret") || "";
 
@@ -62,7 +62,7 @@ serve(async (req) => {
 
     const { data: booking, error } = await supabase
       .from("bookings")
-      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,services(name,price_text)")
+      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,coupon_code,coupon_title,services(name,price_text)")
       .eq("id", bookingId)
       .single();
 
@@ -83,6 +83,8 @@ serve(async (req) => {
     const endsAt = formatDate(booking.ends_at, true);
     const submittedAt = formatDate(booking.created_at);
     const appointmentText = `${startsAt} - ${endsAt}`;
+    const coupon = couponSummary(booking.coupon_code, booking.coupon_title);
+    const couponRows: Array<[string, unknown]> = coupon ? [["Kupon", coupon]] : [];
     const calendarAttachment = {
       filename: "lumi-nails-foglalas.ics",
       content: base64FromUtf8(calendarEvent({
@@ -128,12 +130,13 @@ serve(async (req) => {
         ${paragraphsHtml(update.message)}
         ${detailTable([
           ["Szolgáltatás", serviceName],
+          ...couponRows,
           ["Időpont", appointmentText],
           ["Helyszín", location],
         ])}
         <p class="muted">Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
         <p style="margin:22px 0;">
-          <a href="${instagramUrl}" style="display:inline-block;padding:12px 18px;background:#b9858f;color:#fffaf4;border-radius:999px;text-decoration:none;font-weight:700;">Instagram üzenet</a>
+          <a href="${instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Instagram üzenet</a>
         </p>
         <p>Lumi Nails</p>
       `);
@@ -142,6 +145,7 @@ serve(async (req) => {
       update.message,
         "",
         `Szolgáltatás: ${serviceName}`,
+        ...(coupon ? [`Kupon: ${coupon}`] : []),
         `Időpont: ${appointmentText}`,
         `Helyszín: ${location}`,
         "",
@@ -162,6 +166,7 @@ serve(async (req) => {
         ["Telefon", booking.customer_phone],
         ["Email", booking.customer_email],
         ["Szolgáltatás", serviceName],
+        ...couponRows,
         ["Időpont", appointmentText],
         ["Beküldve", submittedAt],
         ["Megjegyzés", booking.note || "-"],
@@ -174,12 +179,13 @@ serve(async (req) => {
       ${paragraphsHtml(newBookingTemplate.message)}
       ${detailTable([
         ["Szolgáltatás", serviceName],
+        ...couponRows,
         ["Időpont", appointmentText],
         ["Helyszín", location],
       ])}
       <p class="muted">Ha valamit módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
       <p style="margin:22px 0;">
-        <a href="${instagramUrl}" style="display:inline-block;padding:12px 18px;background:#b9858f;color:#fffaf4;border-radius:999px;text-decoration:none;font-weight:700;">Instagram üzenet</a>
+        <a href="${instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Instagram üzenet</a>
       </p>
       <p>Lumi Nails</p>
     `);
@@ -190,6 +196,7 @@ serve(async (req) => {
       `Telefon: ${booking.customer_phone}`,
       `Email: ${booking.customer_email}`,
       `Szolgáltatás: ${serviceName}`,
+      ...(coupon ? [`Kupon: ${coupon}`] : []),
       `Időpont: ${appointmentText}`,
       `Beküldve: ${submittedAt}`,
       `Megjegyzés: ${booking.note || "-"}`,
@@ -199,6 +206,7 @@ serve(async (req) => {
       newBookingTemplate.message,
       "",
       `Szolgáltatás: ${serviceName}`,
+      ...(coupon ? [`Kupon: ${coupon}`] : []),
       `Időpont: ${appointmentText}`,
       `Helyszín: ${location}`,
       "",
@@ -498,6 +506,21 @@ function base64FromUtf8(value: string) {
   return btoa(binary);
 }
 
+function couponSummary(code: unknown, title: unknown) {
+  const couponCode = String(code || "").trim();
+  const couponTitle = String(title || "").trim();
+
+  if (!couponCode && !couponTitle) {
+    return "";
+  }
+
+  if (!couponCode || !couponTitle || couponCode.toLowerCase() === couponTitle.toLowerCase()) {
+    return couponCode || couponTitle;
+  }
+
+  return `${couponCode} – ${couponTitle}`;
+}
+
 function pageHtml(content: string) {
   return `
     <!doctype html>
@@ -505,14 +528,65 @@ function pageHtml(content: string) {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light">
+        <meta name="supported-color-schemes" content="light">
+        <style>
+          .lumi-email-main h1 {
+            margin: 14px 0 20px;
+            color: #302824;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 42px;
+            font-weight: 400;
+            letter-spacing: -0.7px;
+            line-height: 1.08;
+          }
+          .lumi-email-main p {
+            margin: 0 0 15px;
+            color: #625852;
+            font-size: 15px;
+            line-height: 1.65;
+          }
+          .lumi-email-main .muted {
+            color: #857771;
+            font-size: 13px;
+          }
+          @media only screen and (max-width: 520px) {
+            .lumi-email-outer { padding: 10px 6px !important; }
+            .lumi-email-main { padding: 25px 18px 22px !important; }
+            .lumi-email-footer { padding: 16px 18px 20px !important; }
+            .lumi-email-main h1 { font-size: 32px !important; line-height: 1.1 !important; }
+            .lumi-detail-label { width: 92px !important; padding-right: 10px !important; }
+            .lumi-detail-value { font-size: 15px !important; }
+            .lumi-email-button { display: block !important; text-align: center !important; }
+          }
+        </style>
       </head>
-      <body style="margin:0;background:#fdf4e2;color:#2b2521;font-family:Arial,sans-serif;">
-        <div style="max-width:620px;margin:0 auto;padding:28px 18px;">
-          <div style="background:#fffaf4;border:1px solid #ead4cf;border-radius:18px;padding:28px;">
-            <p style="margin:0 0 12px;color:#b9858f;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Lumi Nails</p>
-            ${content}
-          </div>
-        </div>
+      <body style="margin:0;background:#f5efe9;color:#302824;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#f5efe9;">
+          <tr>
+            <td class="lumi-email-outer" align="center" style="padding:28px 12px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:680px;margin:0 auto;border-collapse:collapse;background:#fffaf6;border-top:4px solid #bd7f91;border-bottom:1px solid #e5d8d1;">
+                <tr>
+                  <td class="lumi-email-main" style="padding:34px 40px 30px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">
+                      <tr>
+                        <td style="padding:0;color:#a96379;font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;">Lumi Nails</td>
+                        <td align="right" style="padding:0;color:#9a8b84;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;">Tatabánya</td>
+                      </tr>
+                    </table>
+                    ${content}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="lumi-email-footer" style="padding:17px 40px 21px;border-top:1px solid #eadfd9;color:#91817a;font-size:12px;line-height:1.55;">
+                    Lumi Nails · Körmös Tatabánya<br>
+                    <a href="https://luminails.hu" style="color:#a96379;text-decoration:none;">luminails.hu</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </body>
     </html>
   `;
@@ -520,11 +594,11 @@ function pageHtml(content: string) {
 
 function detailTable(rows: Array<[string, unknown]>) {
   return `
-    <table style="width:100%;border-collapse:collapse;margin:20px 0;">
+    <table role="presentation" style="width:100%;border-collapse:collapse;margin:22px 0 24px;">
       ${rows.map(([label, value]) => `
         <tr>
-          <td style="padding:10px 0;border-bottom:1px solid #f0ded9;color:#5d4d46;font-weight:700;width:38%;">${escapeHtml(label)}</td>
-          <td style="padding:10px 0;border-bottom:1px solid #f0ded9;color:#2b2521;">${escapeHtml(value)}</td>
+          <td class="lumi-detail-label" width="116" valign="top" style="width:116px;padding:13px 18px 13px 0;border-bottom:1px solid #eadfd9;color:#9d6878;font-size:11px;font-weight:700;letter-spacing:.9px;line-height:1.45;text-transform:uppercase;white-space:nowrap;">${escapeHtml(label)}</td>
+          <td class="lumi-detail-value" valign="top" style="padding:12px 0 13px;border-bottom:1px solid #eadfd9;color:#302824;font-size:16px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(value)}</td>
         </tr>
       `).join("")}
     </table>
