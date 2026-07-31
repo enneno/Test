@@ -20,8 +20,9 @@
             ['Időpont', [datum, ido].filter(Boolean).join(' · ')],
             ['Alapár', kupon.baseLabel || (szolgaltatasObj ? szolgaltatasArFelirat(szolgaltatasObj) : '')],
             ['Kupon', kupon.code ? `${kupon.code} - ${kupon.discountLabel}` : ''],
-            ['Kedvezmény', kupon.discountAmount > 0 ? `-${arFelirat(kupon.discountAmount, kupon.unit)}` : ''],
-            ['Végösszeg', kupon.finalLabel || ''],
+            ['Kedvezmény', !kupon.decorationOnly && kupon.discountAmount > 0 ? `-${arFelirat(kupon.discountAmount, kupon.unit)}` : ''],
+            ['Elszámolás', kupon.decorationOnly ? 'A kupon csak az extra díszítés árára vonatkozik; a végösszeg a választott minta alapján kerül meghatározásra.' : ''],
+            ['Végösszeg', kupon.decorationOnly ? '' : kupon.finalLabel || ''],
             ['Inspiráció', files.length ? `${files.length} kép kiválasztva` : 'Nincs kép kiválasztva'],
             ['Megjegyzés', megjegyzes],
             ['Elérhetőség', [nev, telefon ? `+36 ${telefon}` : '', email].filter(Boolean).join(' · ')]

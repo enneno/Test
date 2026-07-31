@@ -98,13 +98,20 @@
 
     function kuponSzolgaltatasOptions(kupon = {}) {
         const aktivErtek = kuponScopeAktivErtek(kupon);
-        const opciok = [`<option value="all" ${aktivErtek === 'all' ? 'selected' : ''}>Minden szolg\u00e1ltat\u00e1s</option>`];
+        const opciok = [
+            `<option value="all" ${aktivErtek === 'all' ? 'selected' : ''}>Minden szolg\u00e1ltat\u00e1s</option>`,
+            `<option value="category:D\u00edsz\u00edt\u00e9s" ${aktivErtek === 'category:D\u00edsz\u00edt\u00e9s' ? 'selected' : ''}>Extra d\u00edsz\u00edt\u00e9s b\u00e1rmely foglalhat\u00f3 szolg\u00e1ltat\u00e1s mell\u00e9</option>`
+        ];
         const kategoriak = SZOLGALTATAS_KUPON_KATEGORIAK.filter(kategoria =>
-            allapot.szolgaltatasok.some(szolgaltatas => szolgaltatasKuponKategoria(szolgaltatas) === kategoria)
+            kategoria !== 'D\u00edsz\u00edt\u00e9s'
+            && allapot.szolgaltatasok.some(szolgaltatas =>
+                szolgaltatas.booking_enabled
+                && szolgaltatasKuponKategoria(szolgaltatas) === kategoria
+            )
         );
 
         if (kategoriak.length) {
-            opciok.push('<optgroup label="Kateg\u00f3ri\u00e1k">');
+            opciok.push('<optgroup label="Foglalhat\u00f3 kateg\u00f3ri\u00e1k">');
             kategoriak.forEach(kategoria => {
                 const ertek = `category:${kategoria}`;
                 opciok.push(`<option value="${attr(ertek)}" ${aktivErtek === ertek ? 'selected' : ''}>${html(kategoria)} kateg\u00f3ria</option>`);
@@ -112,9 +119,13 @@
             opciok.push('</optgroup>');
         }
 
-        if (allapot.szolgaltatasok.length) {
-            opciok.push('<optgroup label="Konkr\u00e9t t\u00e9telek">');
-            allapot.szolgaltatasok.forEach(szolgaltatas => {
+        const foglalhatoSzolgaltatasok = allapot.szolgaltatasok.filter(szolgaltatas =>
+            szolgaltatas.booking_enabled
+            && szolgaltatasKuponKategoria(szolgaltatas) !== 'D\u00edsz\u00edt\u00e9s'
+        );
+        if (foglalhatoSzolgaltatasok.length) {
+            opciok.push('<optgroup label="Konkr\u00e9t foglalhat\u00f3 t\u00e9telek">');
+            foglalhatoSzolgaltatasok.forEach(szolgaltatas => {
                 const ertek = `service:${szolgaltatas.id}`;
                 opciok.push(`<option value="${attr(ertek)}" ${aktivErtek === ertek ? 'selected' : ''}>${html(szolgaltatas.name || '')}</option>`);
             });
@@ -125,11 +136,16 @@
     }
 
     function kuponScopeAktivErtek(kupon = {}) {
-        if (kupon.service_id) return `service:${kupon.service_id}`;
+        if (kupon.service_id) {
+            const szolgaltatas = allapot.szolgaltatasok.find(tetel => tetel.id === kupon.service_id);
+            if (szolgaltatasKuponKategoria(szolgaltatas) === 'D\u00edsz\u00edt\u00e9s') {
+                return 'category:D\u00edsz\u00edt\u00e9s';
+            }
+            return `service:${kupon.service_id}`;
+        }
         if (kupon.service_category) return `category:${kupon.service_category}`;
         return 'all';
     }
-
     function kuponScopePayload(scope) {
         const payload = { service_id: null, service_category: null };
         const ertek = String(scope || 'all');

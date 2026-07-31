@@ -85,7 +85,9 @@
         }
 
         if (szolgaltatasId && !kuponSzolgaltatasraErvenyes(kupon, szolgaltatasObj, szolgaltatasId)) {
-            kuponStatusz(elemek, kuponUzenet('masikSzolgaltatas', 'Ez a kupon nem ehhez a szolg\u00e1ltat\u00e1shoz vagy kateg\u00f3ri\u00e1hoz \u00e9rv\u00e9nyes.'), true);
+            kuponStatusz(elemek, kuponDiszitesKiegeszito(kupon)
+                ? 'Ez a kupon akkor \u00e9rv\u00e9nyes, ha a Fest\u00e9s / d\u00edsz\u00edt\u00e9s st\u00edlust v\u00e1lasztod.'
+                : kuponUzenet('masikSzolgaltatas', 'Ez a kupon nem ehhez a szolg\u00e1ltat\u00e1shoz vagy kateg\u00f3ri\u00e1hoz \u00e9rv\u00e9nyes.'), true);
             osszefoglaloFrissitese(elemek);
             return;
         }
@@ -129,7 +131,9 @@
 
         allapot.aktivKupon = kupon;
         kuponStatusz(elemek, szolgaltatasId
-            ? kuponUzenet('ervenyes', '{kod} kupon \u00e9rv\u00e9nyes\u00edtve.', { kod: kupon.code })
+            ? (kuponDiszitesKiegeszito(kupon)
+                ? `${kupon.code} kupon \u00e9rv\u00e9nyes az extra d\u00edsz\u00edt\u00e9sre. A v\u00e9g\u00f6sszeget a v\u00e1lasztott minta alapj\u00e1n egyeztetj\u00fck.`
+                : kuponUzenet('ervenyes', '{kod} kupon \u00e9rv\u00e9nyes\u00edtve.', { kod: kupon.code }))
             : kuponUzenet('ervenyes', '{kod} kupon el\u0151k\u00e9sz\u00edtve. V\u00e1lassz szolg\u00e1ltat\u00e1st, \u00e9s ellen\u0151rz\u00f6m.', { kod: kupon.code }));
         osszefoglaloFrissitese(elemek);
     }
@@ -138,9 +142,12 @@
         const szolgaltatasId = elemek.szolgaltatas.value;
         const szolgaltatasObj = allapot.szolgaltatasok.find(szolgaltatas => szolgaltatas.id === szolgaltatasId);
 
-        if (allapot.aktivKupon && !kuponSzolgaltatasraErvenyes(allapot.aktivKupon, szolgaltatasObj, szolgaltatasId)) {
+        const elozoKupon = allapot.aktivKupon;
+        if (elozoKupon && !kuponSzolgaltatasraErvenyes(elozoKupon, szolgaltatasObj, szolgaltatasId)) {
             allapot.aktivKupon = null;
-            kuponStatusz(elemek, kuponUzenet('szolgaltatasValtozott', 'A v\u00e1lasztott kupon m\u00e1sik szolg\u00e1ltat\u00e1shoz vagy kateg\u00f3ri\u00e1hoz tartozik.'), true);
+            kuponStatusz(elemek, kuponDiszitesKiegeszito(elozoKupon)
+                ? 'A d\u00edsz\u00edt\u00e9skupon csak a Fest\u00e9s / d\u00edsz\u00edt\u00e9s st\u00edlus mellett \u00e9rv\u00e9nyes.'
+                : kuponUzenet('szolgaltatasValtozott', 'A v\u00e1lasztott kupon m\u00e1sik szolg\u00e1ltat\u00e1shoz vagy kateg\u00f3ri\u00e1hoz tartozik.'), true);
         } else if (elemek.kuponInput?.value.trim() && !allapot.aktivKupon) {
             kuponEllenorzese(elemek).catch(error => {
                 console.warn('Kupon \u00fajraellen\u0151rz\u00e9si hiba:', error);
@@ -153,10 +160,28 @@
 
     function kuponSzolgaltatasraErvenyes(kupon, szolgaltatas, szolgaltatasId) {
         if (!kupon) return false;
+        if (kuponDiszitesKiegeszito(kupon)) return diszitettStilusKivalasztva();
         if (!kupon.service_id && !kupon.service_category) return true;
         if (!szolgaltatasId) return true;
         if (kupon.service_id) return kupon.service_id === szolgaltatasId;
         return szolgaltatasKuponKategoria(szolgaltatas) === kupon.service_category;
+    }
+
+    function kuponDiszitesKiegeszito(kupon) {
+        return normalizaltKuponSzoveg(kupon?.service_category) === 'diszites';
+    }
+
+    function diszitettStilusKivalasztva() {
+        const stilus = normalizaltKuponSzoveg(valasztottKoromStilus());
+        return stilus.includes('diszit') || stilus.includes('fest');
+    }
+
+    function normalizaltKuponSzoveg(ertek) {
+        return String(ertek || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLocaleLowerCase('hu-HU')
+            .trim();
     }
 
 
@@ -212,9 +237,13 @@
             return { baseAmount: amount, unit, baseLabel };
         }
 
-        const discountLabel = kupon.discount_text || kuponKedvezmenyFelirat(kupon);
-        const discountAmount = kuponKedvezmenyOsszeg(amount, kupon);
-        const finalAmount = amount ? Math.max(0, amount - discountAmount) : 0;
+        const decorationOnly = kuponDiszitesKiegeszito(kupon);
+        let discountLabel = kupon.discount_text || kuponKedvezmenyFelirat(kupon);
+        if (decorationOnly && !normalizaltKuponSzoveg(discountLabel).includes('diszit')) {
+            discountLabel = `${discountLabel} az extra d\u00edsz\u00edt\u00e9s \u00e1r\u00e1b\u00f3l`;
+        }
+        const discountAmount = decorationOnly ? 0 : kuponKedvezmenyOsszeg(amount, kupon);
+        const finalAmount = decorationOnly ? 0 : (amount ? Math.max(0, amount - discountAmount) : 0);
 
         return {
             id: kupon.id,
@@ -228,7 +257,8 @@
             baseLabel,
             discountAmount,
             finalAmount,
-            finalLabel: amount && kupon.discount_type !== 'text' ? arFelirat(finalAmount, unit) : ''
+            finalLabel: !decorationOnly && amount && kupon.discount_type !== 'text' ? arFelirat(finalAmount, unit) : '',
+            decorationOnly
         };
     }
 

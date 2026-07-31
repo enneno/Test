@@ -36,6 +36,7 @@
         document.querySelectorAll('input[name="korom-stilus"]').forEach(input => {
             input.addEventListener('change', () => {
                 stilusAllapotFrissitese(elemek);
+                kuponSzolgaltatasValtozott(elemek);
                 osszefoglaloFrissitese(elemek);
                 if (elemek.szolgaltatas.value) {
                     elemek.datum.value = '';
@@ -581,9 +582,13 @@
         if (megjegyzes) sorok.push(`Elképzelés / megjegyzés: ${megjegyzes}`);
         if (kupon?.code) {
             sorok.push(`Kupon: ${kupon.code} (${kupon.title || kupon.discountLabel || 'kedvezmény'})`);
-            if (kupon.baseLabel) sorok.push(`Alapár: ${kupon.baseLabel}`);
-            if (kupon.discountAmount > 0) sorok.push(`Kedvezmény: -${arFelirat(kupon.discountAmount, kupon.unit)}`);
-            if (kupon.finalLabel) sorok.push(`Végösszeg: ${kupon.finalLabel}`);
+            if (kupon.decorationOnly) {
+                sorok.push(`Kupon részlete: ${kupon.discountLabel}. A végösszeg a választott díszítés alapján kerül meghatározásra.`);
+            } else {
+                if (kupon.baseLabel) sorok.push(`Alapár: ${kupon.baseLabel}`);
+                if (kupon.discountAmount > 0) sorok.push(`Kedvezmény: -${arFelirat(kupon.discountAmount, kupon.unit)}`);
+                if (kupon.finalLabel) sorok.push(`Végösszeg: ${kupon.finalLabel}`);
+            }
         }
         return sorok.join('\n');
     }
