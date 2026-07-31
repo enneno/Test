@@ -4317,6 +4317,18 @@ select.urlap-mezo:invalid {
     cursor: pointer;
 }
 
+.admin-foglalas-reszlet-sor .admin-inspiracio-akciok {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.admin-inspiracio-torles {
+    min-height: 30px;
+    padding-inline: 12px;
+}
 .admin-inspiracio-modal {
     position: fixed;
     inset: 0;

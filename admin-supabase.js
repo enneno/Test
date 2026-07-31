@@ -1046,7 +1046,8 @@
             admin_update_email: 'Módosítás email',
             booking_reminder_email: 'Emlékeztető email',
             booking_review_request_email: 'Értékeléskérő email',
-            customer_cancelled: 'A vendég mondta le'
+            customer_cancelled: 'A vendég mondta le',
+            inspiration_deleted: 'Inspiráció törölve'
         }[tipus] || 'Esemény';
     }
 
@@ -1092,7 +1093,7 @@
                 </div>
                 ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon: ${html(kuponKod)}</strong></p>` : ''}
                 ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyz\u00e9s:</strong> ${html(megjegyzes)}</p>` : ''}
-                ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button></p>` : ''}
+                ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <span class="admin-inspiracio-akciok"><button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button><button type="button" class="admin-kis-gomb admin-veszely-gomb admin-inspiracio-torles" data-inspiracio-torles>Képek törlése</button></span></p>` : ''}
             </div>            <div class="admin-idopont-szerkeszto">
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(foglalas.starts_at))}" disabled></label>
@@ -1269,6 +1270,7 @@
 
         let emailKuldesek = 0;
         let emailHibak = 0;
+        let kepTorlesHibak = 0;
 
         for (const kartya of kartyak) {
             const adatok = idopontModositasAdatok(kartya);
@@ -1326,8 +1328,10 @@
                 return;
             }
 
-            if (kartya.dataset.tipus === 'booking' && modositas.status === 'done') {
-                await foglalasInspiraciokTorlese(kartya);
+            const inspiraciotTorloStatusz = ['done', 'cancelled', 'cancelled_by_customer'].includes(modositas.status);
+            if (kartya.dataset.tipus === 'booking' && inspiraciotTorloStatusz) {
+                const kepekTorolve = await foglalasInspiraciokTorlese(kartya);
+                if (!kepekTorolve) kepTorlesHibak += 1;
             }
 
             if (kartya.dataset.tipus === 'booking') {
@@ -1370,7 +1374,9 @@
             }
         }
 
-        if (emailHibak > 0) {
+        if (kepTorlesHibak > 0) {
+            onlineStatusz(`A módosítások mentve, de ${kepTorlesHibak} foglalás inspirációs képeit nem sikerült törölni.`, true);
+        } else if (emailHibak > 0) {
             onlineStatusz(`Foglalási módosítások mentve, de ${emailHibak} email értesítés nem ment ki.`, true);
         } else if (emailKuldesek > 0) {
             onlineStatusz(`Foglalási módosítások mentve, ${emailKuldesek} email értesítés elküldve.`);
@@ -1512,11 +1518,46 @@
 
     async function foglalasListaKattintas(event) {
         const inspiracio = event.target.closest('[data-inspiracio-megnyitas]');
+        const inspiracioTorles = event.target.closest('[data-inspiracio-torles]');
         const szerkesztes = event.target.closest('[data-foglalas-szerkesztes]');
         const torles = event.target.closest('[data-foglalas-torles]');
 
         if (inspiracio) {
             inspiracioModalNyitasa(inspiracio.closest('.admin-db-kartya'));
+            return;
+        }
+
+        if (inspiracioTorles) {
+            const kartya = inspiracioTorles.closest('.admin-db-kartya');
+            const kepek = inspiracioKepekKartyan(kartya);
+            if (!kepek.length) {
+                onlineStatusz('Ehhez a foglaláshoz már nem tartozik inspirációs kép.');
+                return;
+            }
+
+            if (!window.confirm(`Biztosan végleg törlöd a foglaláshoz tartozó ${kepek.length} inspirációs képet?`)) {
+                return;
+            }
+
+            onlineStatusz('Inspirációs képek törlése...');
+            inspiracioTorles.disabled = true;
+            const kepekTorolve = await foglalasInspiraciokTorlese(kartya);
+            if (!kepekTorolve) {
+                inspiracioTorles.disabled = false;
+                onlineStatusz('Az inspirációs képek törlése nem sikerült. Kérlek próbáld újra, vagy ellenőrizd a Supabase Storage jogosultságot.', true);
+                return;
+            }
+
+            await foglalasEsemenyRogzitese(kartya.dataset.id, {
+                event_type: 'inspiration_deleted',
+                channel: 'admin',
+                status: 'success',
+                title: 'Inspirációs képek törölve',
+                message: `${kepek.length} inspirációs kép véglegesen törölve lett.`,
+                metadata: { image_count: kepek.length }
+            });
+            onlineStatusz(`${kepek.length} inspirációs kép törölve.`);
+            esemenynaploBetoltese();
             return;
         }
 
