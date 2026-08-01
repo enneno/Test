@@ -3934,6 +3934,10 @@ body.admin-body {
     gap: 7px;
 }
 
+#admin-panel-foglalasok .admin-db-kartya-tiltas .admin-foglalas-vezerlok {
+    grid-template-columns: minmax(150px, 168px) auto auto;
+}
+
 #admin-panel-foglalasok .admin-db-statusz,
 #admin-panel-foglalasok .admin-foglalas-vezerlok .admin-kis-gomb {
     min-height: 34px;
@@ -4168,6 +4172,10 @@ body.admin-body {
     #admin-panel-foglalasok .admin-foglalas-vezerlok {
         grid-template-columns: minmax(0, 1fr) 94px;
         width: 100%;
+    }
+
+    #admin-panel-foglalasok .admin-db-kartya-tiltas .admin-foglalas-vezerlok {
+        grid-template-columns: minmax(0, 1fr) 82px 94px;
     }
 
     #admin-panel-foglalasok .admin-foglalas-vezerlok > *,

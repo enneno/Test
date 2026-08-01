@@ -643,6 +643,7 @@
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
                     </select>
+                    <button type="button" class="admin-kis-gomb admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
@@ -658,6 +659,69 @@
         `;
 
         return kartya;
+    }
+    function keziIdoNaptarMegnyitasa(kartya) {
+        const adatok = idopontModositasAdatok(kartya);
+        const cim = idopontMezo(kartya, 'reason')?.value.trim() || 'Kézi foglalás';
+
+        if (adatok.hiba) {
+            onlineStatusz(adatok.hiba, true);
+            return;
+        }
+
+        const kezdes = new Date(adatok.startsAt);
+        const vege = new Date(adatok.endsAt);
+        const most = new Date();
+        const azonosito = kartya.dataset.id || `${most.getTime()}-${Math.random().toString(36).slice(2, 10)}`;
+        const ics = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Lumi Nails//Manual booking//HU',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-TIMEZONE:Europe/Budapest',
+            'BEGIN:VEVENT',
+            `UID:${adminIcsSzoveg(azonosito)}@luminails.hu`,
+            `DTSTAMP:${adminIcsDatum(most)}`,
+            `DTSTART:${adminIcsDatum(kezdes)}`,
+            `DTEND:${adminIcsDatum(vege)}`,
+            `SUMMARY:${adminIcsSzoveg(cim)}`,
+            'STATUS:CONFIRMED',
+            'TRANSP:OPAQUE',
+            'END:VEVENT',
+            'END:VCALENDAR',
+            ''
+        ].join('\r\n');
+        const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const fajlNev = cim
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLocaleLowerCase('hu-HU')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '')
+            .slice(0, 48) || 'kezi-foglalas';
+
+        link.href = url;
+        link.download = `lumi-nails-${fajlNev}.ics`;
+        link.hidden = true;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
+
+    function adminIcsDatum(datum) {
+        return datum.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    }
+
+    function adminIcsSzoveg(szoveg) {
+        return String(szoveg || '')
+            .replace(/\\/g, '\\\\')
+            .replace(/\n/g, '\\n')
+            .replace(/,/g, '\\,')
+            .replace(/;/g, '\\;');
     }
     async function foglalasStatuszokMentese() {
         const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya'));
@@ -920,11 +984,17 @@
     async function foglalasListaKattintas(event) {
         const inspiracio = event.target.closest('[data-inspiracio-megnyitas]');
         const inspiracioTorles = event.target.closest('[data-inspiracio-torles]');
+        const keziIdoNaptar = event.target.closest('[data-kezi-ido-naptar]');
         const szerkesztes = event.target.closest('[data-foglalas-szerkesztes]');
         const torles = event.target.closest('[data-foglalas-torles]');
 
         if (inspiracio) {
             inspiracioModalNyitasa(inspiracio.closest('.admin-db-kartya'));
+            return;
+        }
+
+        if (keziIdoNaptar) {
+            keziIdoNaptarMegnyitasa(keziIdoNaptar.closest('.admin-db-kartya'));
             return;
         }
 
