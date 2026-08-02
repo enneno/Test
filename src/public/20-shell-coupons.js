@@ -27,7 +27,8 @@ function fejlecBetoltese() {
     fejlecHelye.innerHTML = `
         <header>
             <a href="/" class="logo" aria-label="Lumi Nails kezdőlap">
-                <img src="/kepek/luminails-logo.svg" alt="Lumi Nails" width="1366" height="495">
+                <span class="logo-lumi">Lumi</span>
+                <span class="logo-nails">Nails</span>
             </a>
 
             <nav class="menu-pontok" aria-label="Fő navigáció">

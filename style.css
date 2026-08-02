@@ -95,21 +95,43 @@ header {
 .logo {
     display: inline-flex;
     align-items: center;
-    min-width: 150px;
+    gap: 10px;
+    min-width: 138px;
     min-height: 42px;
-    font-family: 'Cormorant Garamond', serif;
     color: var(--tinta);
-    font-size: 34px;
-    font-weight: 700;
     text-decoration: none;
-    letter-spacing: 0.6px;
+    transition: color 0.25s ease;
 }
 
-.logo img {
-    display: block;
-    width: auto;
-    max-width: 150px;
-    max-height: 44px;
+.logo-lumi {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.logo-nails {
+    position: relative;
+    padding-left: 11px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.logo-nails::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 1px;
+    height: 22px;
+    background: currentColor;
+    opacity: 0.24;
+    transform: translateY(-50%);
 }
 
 .logo:hover {
@@ -5774,13 +5796,20 @@ header {
     backdrop-filter: blur(18px);
 }
 
-.logo,
-.logo img {
-    display: block;
-    width: 124px;
-    min-width: 124px;
-    max-width: 124px;
-    height: auto;
+.logo {
+    display: inline-flex;
+    width: auto;
+    min-width: 138px;
+    max-width: none;
+    height: 44px;
+}
+
+.logo-lumi {
+    font-size: 34px;
+}
+
+.logo-nails {
+    font-size: 9px;
 }
 
 .menu-pontok {
@@ -7272,11 +7301,26 @@ textarea:focus-visible {
         padding: 0 18px;
     }
 
-    .logo,
-    .logo img {
-        width: 108px;
-        min-width: 108px;
-        max-width: 108px;
+    .logo {
+        width: auto;
+        min-width: 124px;
+        max-width: none;
+        height: 42px;
+        gap: 8px;
+    }
+
+    .logo-lumi {
+        font-size: 31px;
+    }
+
+    .logo-nails {
+        padding-left: 9px;
+        font-size: 8px;
+        letter-spacing: 0.24em;
+    }
+
+    .logo-nails::before {
+        height: 19px;
     }
 
     #hero.hero-preview-refresh {
