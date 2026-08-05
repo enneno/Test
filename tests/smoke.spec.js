@@ -156,8 +156,14 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     const section = page.locator('#foglalas-ellenorzes');
     const desktopManageLink = page.locator('header .foglalas-kezelo-nav');
     const mobileManageLink = page.locator('#mobil-nav .foglalas-kezelo-nav');
+    const desktopBookingLink = page.locator('header .menu-pontok a[href="/foglalas/"]');
+    const mobileBookingLink = page.locator('#mobil-nav a[href="/foglalas/"]');
     await expect(desktopManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
     await expect(mobileManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
+    await expect(desktopBookingLink).toHaveText('Foglalás');
+    await expect(mobileBookingLink).toHaveText('Foglalás');
+    expect(await desktopBookingLink.evaluate(elem => elem === elem.parentElement.lastElementChild)).toBe(true);
+    expect(await mobileBookingLink.evaluate(elem => elem === elem.parentElement.lastElementChild)).toBe(true);
     expect(await page.evaluate(() =>
         Boolean(document.getElementById('online-foglalas').compareDocumentPosition(document.getElementById('foglalas-ellenorzes')) & Node.DOCUMENT_POSITION_FOLLOWING)
     )).toBe(true);

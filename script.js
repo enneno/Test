@@ -324,8 +324,8 @@ function fejlecBetoltese() {
                 <a href="/#szolgaltatasok">Szolgáltatások</a>
                 <a href="/arlista/">Árlista</a>
                 <a href="/galeria/">Galéria</a>
-                <a href="/foglalas/">Foglalás</a>
                 <a class="foglalas-kezelo-nav" href="/foglalas/#foglalas-ellenorzes">Foglal&aacute;som</a>
+                <a href="/foglalas/">Foglalás</a>
             </nav>
 
             <button type="button" class="hamburger" aria-label="Menü megnyitása">
@@ -340,8 +340,8 @@ function fejlecBetoltese() {
             <a href="/#szolgaltatasok">Szolgáltatások</a>
             <a href="/arlista/">Árlista</a>
             <a href="/galeria/">Galéria</a>
-            <a href="/foglalas/">Foglalás</a>
             <a class="foglalas-kezelo-nav" href="/foglalas/#foglalas-ellenorzes">Foglal&aacute;som</a>
+            <a href="/foglalas/">Foglalás</a>
         </nav>
     `;
 
