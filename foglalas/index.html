@@ -24,7 +24,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=dae58dbab3bc">
+    <link rel="stylesheet" href="/style.css?v=e10126965490">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,8 +81,16 @@
                     <span class="foglalas-ut-leiras">Ha már megvan, mit szeretnél, válaszd ki a szabad időpontot pár kattintással.</span>
                     <span class="foglalas-ut-gomb">Online foglalás indítása</span>
                 </a>
+
+                <a class="foglalas-ut-kartya foglalas-ut-kartya-kezelo" href="#foglalas-ellenorzes" data-booking-path="manage">
+                    <span class="foglalas-ut-ikon">#</span>
+                    <span class="foglalas-ut-cim">Foglal&aacute;som ellen&#337;rz&eacute;se</span>
+                    <span class="foglalas-ut-leiras">A visszaigazol&oacute; emailben kapott r&ouml;vid LUMI azonos&iacute;t&oacute;val megn&eacute;zheted az id&#337;pontod r&eacute;szleteit, &eacute;s b&aacute;rmikor le is mondhatod.</span>
+                    <span class="foglalas-ut-gomb">Foglal&aacute;s kezel&eacute;se</span>
+                </a>
             </div>
         </section>
+
 
         <section id="online-foglalas" class="foglalas-asszisztens-szekcio" aria-labelledby="online-foglalas-cim">
             <div class="foglalas-asszisztens-fej">
@@ -214,6 +222,31 @@
                 </div>
             </form>
         </section>
+
+        <section id="foglalas-ellenorzes" class="foglalas-kezelo-szekcio" aria-labelledby="foglalas-ellenorzes-cim">
+            <div class="foglalas-kezelo-bevezeto">
+                <p class="foglalas-kicker">Meglev&#337; foglal&aacute;s</p>
+                <h2 id="foglalas-ellenorzes-cim">Ellen&#337;rizd vagy mondd le az id&#337;pontod</h2>
+                <p>&Iacute;rd be a visszaigazol&oacute; emailben tal&aacute;lhat&oacute;, r&ouml;vid LUMI azonos&iacute;t&oacute;t. Itt a foglal&aacute;s r&eacute;szleteit is l&aacute;tod, szem&eacute;lyes el&eacute;rhet&#337;s&eacute;gek n&eacute;lk&uuml;l.</p>
+            </div>
+
+            <form id="foglalas-ellenorzes-urlap" class="foglalas-kezelo-kartya">
+                <label for="foglalas-azonosito">Foglal&aacute;si azonos&iacute;t&oacute;</label>
+                <div class="foglalas-kezelo-bevitel">
+                    <input type="text" id="foglalas-azonosito" class="urlap-mezo" placeholder="LUMI-XXXX" maxlength="29" autocomplete="off" autocapitalize="characters" spellcheck="false">
+                    <button type="submit" class="gomb">Foglal&aacute;s lek&eacute;r&eacute;se</button>
+                </div>
+                <p class="foglalas-kezelo-segitseg">Az &uacute;j azonos&iacute;t&oacute; n&eacute;gy k&ouml;nnyen olvashat&oacute; karakterb&#337;l &aacute;ll. A kor&aacute;bbi, hosszabb LUMI k&oacute;dok is haszn&aacute;lhat&oacute;k maradnak.</p>
+                <p id="foglalas-ellenorzes-status" class="urlap-status" aria-live="polite"></p>
+                <div id="foglalas-ellenorzes-eredmeny" class="foglalas-kezelo-eredmeny" aria-live="polite" hidden>
+                    <label id="foglalas-lemondas-megjegyzes-blokk" class="foglalas-lemondas-megjegyzes" for="foglalas-lemondas-megjegyzes" hidden>
+                        <span>Lemond&aacute;s oka vagy megjegyz&eacute;s (opcion&aacute;lis)</span>
+                        <textarea id="foglalas-lemondas-megjegyzes" class="urlap-mezo" rows="3" maxlength="500" placeholder="Ha szeretn&eacute;l, &iacute;rd meg r&ouml;viden a lemond&aacute;s ok&aacute;t."></textarea>
+                    </label>
+                    <button type="button" id="foglalas-lemondas" class="gomb foglalas-lemondas-gomb" hidden>Foglal&aacute;s lemond&aacute;sa</button>
+                </div>
+            </form>
+        </section>
     </main>
 
     <div id="lablec-helye"></div>
@@ -222,6 +255,13 @@
         <div class="popup-doboz">
             <h3 class="popup-cim">Foglalás elküldve</h3>
             <p class="popup-szoveg">Köszönöm, megkaptam a foglalásodat. A részleteket emailben is elküldöm, kérlek ellenőrizd a spam mappát is.</p>
+
+            <div id="foglalas-popup-azonosito" class="foglalas-popup-azonosito" hidden>
+                <span>Foglal&aacute;si azonos&iacute;t&oacute;d</span>
+                <strong id="foglalas-popup-kod"></strong>
+                <p>Mentsd el ezt a k&oacute;dot: ezzel k&eacute;s&#337;bb ellen&#337;rizheted vagy b&aacute;rmikor lemondhatod a foglal&aacute;sodat.</p>
+                <a id="foglalas-popup-kezeles" href="#foglalas-ellenorzes">Foglal&aacute;s kezel&eacute;se</a>
+            </div>
 
             <div class="popup-gomb-sor">
                 <a href="/" class="gomb popup-gomb">Kezdőlap</a>
@@ -235,8 +275,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=869e3e1ee2dc"></script>
-    <script src="/booking.js?v=a8d8c1d69e51"></script>
+    <script src="/script.js?v=505bbfc75ade"></script>
+    <script src="/booking.js?v=1059652bfcae"></script>
 </body>
 
 </html>

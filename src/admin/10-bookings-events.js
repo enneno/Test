@@ -26,6 +26,23 @@
                 .order('starts_at', { ascending: false })
                 .limit(120));
         }
+        if (!foglalasHiba && Array.isArray(foglalasok) && foglalasok.length) {
+            const { data: referenciaAdatok, error: referenciaHiba } = await allapot.kliens
+                .from('bookings')
+                .select('id,public_reference,starts_at')
+                .order('starts_at', { ascending: false })
+                .limit(120);
+
+            if (!referenciaHiba) {
+                const referenciaMap = new Map((referenciaAdatok || []).map(adat => [adat.id, adat.public_reference]));
+                foglalasok = foglalasok.map(foglalas => ({
+                    ...foglalas,
+                    public_reference: referenciaMap.get(foglalas.id) || ''
+                }));
+            } else if (!adatbazisOszlopHiany(referenciaHiba, ['public_reference'])) {
+                console.warn('Foglalási azonosítók betöltési hiba:', referenciaHiba);
+            }
+        }
 
         let { data: tiltasok, error: tiltasHiba } = await allapot.kliens
             .from('blocked_times')
@@ -57,6 +74,8 @@
                 adat: { ...tiltas, status: tiltasStatuszErtek(tiltas.status) }
             }))
         ].sort((a, b) => new Date(b.datum) - new Date(a.datum));
+
+        await vendegLemondasEsemenyekBetoltese();
 
         if (allapot.foglalasOldal > foglalasOsszesOldal()) {
             allapot.foglalasOldal = foglalasOsszesOldal();
@@ -176,7 +195,142 @@
         return allapot.foglalasElemek.filter(elem => elem.tipus === 'booking' && foglalasFuggoben(elem.adat)).length;
     }
 
+    function vendegAltalLemondottFoglalasok() {
+        return allapot.foglalasElemek.filter(elem => elem.tipus === 'booking'
+            && String(elem.adat?.status || '').toLowerCase() === 'cancelled_by_customer');
+    }
+
+    async function vendegLemondasEsemenyekBetoltese() {
+        const foglalasIds = vendegAltalLemondottFoglalasok()
+            .map(elem => elem.adat?.id)
+            .filter(Boolean);
+
+        allapot.lemondasEsemenyek = new Map();
+
+        if (!foglalasIds.length) {
+            return;
+        }
+
+        const { data, error } = await allapot.kliens
+            .from('booking_events')
+            .select('booking_id,event_type,created_at')
+            .in('booking_id', foglalasIds)
+            .in('event_type', ['customer_cancelled', 'customer_cancellation_acknowledged'])
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.warn('Vendéglemondások értesítési állapota nem tölthető be:', error);
+            return;
+        }
+
+        (data || []).forEach(esemeny => {
+            const bookingId = String(esemeny.booking_id || '');
+            if (!bookingId) {
+                return;
+            }
+
+            const allapotAdat = allapot.lemondasEsemenyek.get(bookingId) || {};
+            if (esemeny.event_type === 'customer_cancelled') {
+                allapotAdat.lemondas = esemeny.created_at;
+            }
+            if (esemeny.event_type === 'customer_cancellation_acknowledged') {
+                allapotAdat.tudomasulvetel = esemeny.created_at;
+            }
+            allapot.lemondasEsemenyek.set(bookingId, allapotAdat);
+        });
+    }
+
+    function vendegLemondasOlvasatlan(foglalas) {
+        const esemenyek = allapot.lemondasEsemenyek.get(String(foglalas?.id || ''));
+
+        if (!esemenyek?.tudomasulvetel) {
+            return true;
+        }
+
+        if (!esemenyek.lemondas) {
+            return false;
+        }
+
+        return Date.parse(esemenyek.lemondas) > Date.parse(esemenyek.tudomasulvetel);
+    }
+
+    function vendegLemondasOlvasatlanFoglalasok() {
+        return vendegAltalLemondottFoglalasok()
+            .map(elem => elem.adat)
+            .filter(vendegLemondasOlvasatlan);
+    }
+
+    function vendegLemondasJelzesFrissitese() {
+        const elemek = adminElemek();
+        const darab = vendegLemondasOlvasatlanFoglalasok().length;
+
+        if (!elemek.vendegLemondasJelzes) {
+            return;
+        }
+
+        elemek.vendegLemondasJelzes.hidden = darab === 0;
+        elemek.vendegLemondasDarab.textContent = String(darab);
+        elemek.vendegLemondasUzenet.setAttribute('aria-label', darab + ' új vendéglemondás vár arra, hogy átnézd.');
+    }
+
+    function vendegLemondasokMegnyitasa() {
+        const elemek = adminElemek();
+        allapot.foglalasKereses = '';
+        allapot.foglalasStatuszSzuro = 'cancelled_by_customer';
+        allapot.foglalasOldal = 1;
+        elemek.foglalasKereses.value = '';
+        elemek.foglalasStatuszSzuro.value = 'cancelled_by_customer';
+        foglalasListaRenderelese();
+        elemek.foglalasLista?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function vendegLemondasokTudomasulvetele() {
+        const elemek = adminElemek();
+        const olvasatlanFoglalasok = vendegLemondasOlvasatlanFoglalasok();
+
+        if (!olvasatlanFoglalasok.length) {
+            vendegLemondasJelzesFrissitese();
+            return;
+        }
+
+        elemek.vendegLemondasTudomasulvetel.disabled = true;
+        onlineStatusz('Vendéglemondások tudomásulvételének mentése...');
+
+        const { data, error } = await allapot.kliens
+            .from('booking_events')
+            .insert(olvasatlanFoglalasok.map(foglalas => ({
+                booking_id: foglalas.id,
+                event_type: 'customer_cancellation_acknowledged',
+                channel: 'admin',
+                status: 'success',
+                title: 'Vendéglemondás tudomásul véve',
+                message: 'Az admin a lemondást átnézte és tudomásul vette.',
+                metadata: {}
+            })))
+            .select('booking_id,created_at');
+
+        if (error) {
+            elemek.vendegLemondasTudomasulvetel.disabled = false;
+            onlineStatusz('A tudomásulvételt nem sikerült elmenteni. Próbáld újra.', true);
+            return;
+        }
+
+        const mentettIdopontok = new Map((data || []).map(esemeny => [String(esemeny.booking_id), esemeny.created_at]));
+        const most = new Date().toISOString();
+        olvasatlanFoglalasok.forEach(foglalas => {
+            const bookingId = String(foglalas.id);
+            const esemenyek = allapot.lemondasEsemenyek.get(bookingId) || {};
+            esemenyek.tudomasulvetel = mentettIdopontok.get(bookingId) || most;
+            allapot.lemondasEsemenyek.set(bookingId, esemenyek);
+        });
+
+        elemek.vendegLemondasTudomasulvetel.disabled = false;
+        vendegLemondasJelzesFrissitese();
+        onlineStatusz(olvasatlanFoglalasok.length + ' vendéglemondás tudomásul véve.');
+    }
+
     function foglalasTabJelzesFrissitese() {
+        vendegLemondasJelzesFrissitese();
         const tab = document.querySelector('.admin-tab[data-admin-tab="foglalasok"]');
 
         if (!tab) {
@@ -299,6 +453,7 @@
         const { data, error } = await allapot.kliens
             .from('booking_events')
             .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at,bookings(customer_name,customer_email,customer_phone,starts_at)')
+            .neq('event_type', 'customer_cancellation_acknowledged')
             .order('created_at', { ascending: false })
             .limit(200);
 
@@ -466,6 +621,7 @@
         const inspiracioKepek = foglalasInspiracioKepek(foglalas);
         const kuponKod = foglalasKuponKod(foglalas);
         const megjegyzes = foglalasMegjegyzesMegjelenites(foglalas);
+        const foglalasAzonosito = String(foglalas.public_reference || '').trim();
         kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
 
         kartya.innerHTML = `
@@ -492,6 +648,7 @@
                     <p class="admin-foglalas-meta-email"><strong>Email</strong><a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
                     <p class="admin-foglalas-meta-telefon"><strong>Tel</strong><a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
                 </div>
+                <p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-azonosito${foglalasAzonosito ? '' : ' hianyzo'}"><strong>Foglalási azonosító</strong><code>${html(foglalasAzonosito || 'A Supabase migráció után jelenik meg')}</code></p>
                 ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon: ${html(kuponKod)}</strong></p>` : ''}
                 ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyz\u00e9s:</strong> ${html(megjegyzes)}</p>` : ''}
                 ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <span class="admin-inspiracio-akciok"><button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button><button type="button" class="admin-kis-gomb admin-veszely-gomb admin-inspiracio-torles" data-inspiracio-torles>Képek törlése</button></span></p>` : ''}

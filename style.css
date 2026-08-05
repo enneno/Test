@@ -9621,6 +9621,72 @@ body.admin-body {
     min-height: 40px;
 }
 
+#admin-panel-foglalasok .admin-vendeg-lemondas-jelzes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    margin: 14px 0 12px;
+    padding: 16px 18px;
+    border: 1px solid rgba(149, 92, 112, 0.28);
+    border-left: 4px solid var(--admin-rose-dark);
+    border-radius: 10px;
+    background: linear-gradient(135deg, #fff8fa, #fbf4ef);
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-jelzes[hidden] {
+    display: none;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-szoveg {
+    min-width: 0;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-kicker {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--admin-rose-dark);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-szoveg strong {
+    display: block;
+    color: var(--admin-ink);
+    font-size: 16px;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-szoveg p {
+    margin: 5px 0 0;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+#admin-panel-foglalasok #admin-vendeg-lemondas-darab {
+    color: var(--admin-rose-dark);
+    font-weight: 800;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-akciok {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-akciok .admin-kis-gomb {
+    min-height: 40px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+#admin-panel-foglalasok .admin-vendeg-lemondas-nyugtazas {
+    border-color: var(--admin-rose-dark);
+    color: #fff;
+    background: var(--admin-rose-dark);
+}
+
 #admin-panel-foglalasok .admin-lapozo-felso {
     margin: 8px 0 10px;
 }
@@ -9769,6 +9835,42 @@ body.admin-body {
     font-size: 11.5px;
     line-height: 1.4;
 }
+#admin-panel-foglalasok .admin-foglalas-azonosito {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 11px;
+    border: 1px solid rgba(149, 92, 112, 0.2);
+    border-radius: 7px;
+    background: #fbf5f6;
+}
+
+#admin-panel-foglalasok .admin-foglalas-azonosito strong {
+    color: var(--admin-rose-dark);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+#admin-panel-foglalasok .admin-foglalas-azonosito code {
+    color: var(--admin-ink);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+#admin-panel-foglalasok .admin-foglalas-azonosito.hianyzo code {
+    color: var(--admin-muted);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
 
 #admin-panel-foglalasok .admin-foglalas-kupon {
     display: inline-flex;
@@ -9831,6 +9933,12 @@ body.admin-body {
 }
 
 @media (max-width: 900px) {
+    #admin-panel-foglalasok .admin-vendeg-lemondas-jelzes {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 13px;
+    }
+
     #admin-panel-foglalasok .admin-panel-akciok-keresessel {
         grid-template-columns: minmax(0, 1fr) minmax(150px, 180px);
         grid-template-areas:
@@ -9850,6 +9958,21 @@ body.admin-body {
 }
 
 @media (max-width: 520px) {
+    #admin-panel-foglalasok .admin-vendeg-lemondas-jelzes {
+        margin: 12px 0 10px;
+        padding: 14px;
+    }
+
+    #admin-panel-foglalasok .admin-vendeg-lemondas-akciok {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    #admin-panel-foglalasok .admin-vendeg-lemondas-akciok .admin-kis-gomb {
+        width: 100%;
+        white-space: normal;
+    }
+
     #admin-panel-foglalasok .admin-panel-akciok-keresessel {
         grid-template-columns: minmax(0, 1fr) 128px;
         grid-template-areas:
@@ -10811,5 +10934,277 @@ body.admin-body {
         grid-row: 3;
         margin-top: 2px;
         font-size: 9.5px;
+    }
+}
+/* Booking self-service */
+.foglalas-ut-kartya-kezelo {
+    grid-column: 1 / -1;
+    min-height: 190px;
+}
+
+.foglalas-kezelo-szekcio {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(380px, 1.2fr);
+    gap: clamp(42px, 7vw, 86px);
+    align-items: start;
+    margin: 110px 0 0;
+    padding: 74px 0;
+    border-top: 1px solid var(--ui-line-strong);
+    border-bottom: 1px solid var(--ui-line-strong);
+    scroll-margin-top: calc(var(--ui-header-height) + 24px);
+}
+
+.foglalas-kezelo-bevezeto h2 {
+    margin: 16px 0 24px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(46px, 5vw, 68px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.94;
+}
+
+.foglalas-kezelo-bevezeto > p:last-child,
+.foglalas-kezelo-segitseg {
+    color: var(--ui-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.foglalas-kezelo-kartya {
+    padding: clamp(24px, 4vw, 42px);
+    border: 1px solid var(--ui-line);
+    border-radius: 4px;
+    background: var(--ui-surface);
+    box-shadow: var(--ui-shadow);
+}
+
+.foglalas-kezelo-kartya > label,
+.foglalas-popup-azonosito > span {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--ui-rose-dark);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.foglalas-kezelo-bevitel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+}
+
+.foglalas-kezelo-bevitel input {
+    min-width: 0;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+}
+
+.foglalas-kezelo-segitseg {
+    margin: 12px 0 0;
+    font-size: 11px;
+}
+
+.foglalas-kezelo-eredmeny {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--ui-line);
+}
+
+.foglalas-kezelo-fej {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.foglalas-kezelo-fej strong,
+.foglalas-popup-azonosito strong {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+}
+
+.foglalas-kezelo-eredmeny dl {
+    margin: 0;
+}
+
+.foglalas-kezelo-eredmeny dl > div {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--ui-line);
+}
+
+.foglalas-kezelo-eredmeny dt {
+    color: var(--ui-muted);
+    font-size: 11px;
+}
+
+.foglalas-kezelo-eredmeny dd {
+    margin: 0;
+    color: var(--ui-ink);
+    font-weight: 650;
+}
+
+.foglalas-lemondas-megjegyzes {
+    display: grid;
+    gap: 8px;
+    margin: 18px 0 12px;
+}
+
+.foglalas-lemondas-megjegyzes[hidden] {
+    display: none;
+}
+
+.foglalas-lemondas-megjegyzes > span {
+    color: var(--ui-rose-dark);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.foglalas-lemondas-megjegyzes textarea {
+    min-height: 92px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.foglalas-lemondas-megjegyzes + .foglalas-lemondas-gomb {
+    margin-top: 0;
+}
+
+.foglalas-statusz-jelzo {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--ui-soft);
+    color: var(--ui-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.foglalas-statusz-pending {
+    background: #f5ead8;
+    color: #8a622b;
+}
+
+.foglalas-statusz-confirmed {
+    background: #e5f0e7;
+    color: #4c7357;
+}
+
+.foglalas-statusz-cancelled,
+.foglalas-statusz-cancelled_by_customer,
+.foglalas-statusz-done {
+    background: #efedeb;
+    color: #6e6661;
+}
+
+.foglalas-lemondas-hatarido {
+    margin: 18px 0;
+    color: var(--ui-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.foglalas-lemondas-gomb {
+    width: 100%;
+    border-color: #a45d65;
+    background: transparent;
+    color: #8b3f49;
+}
+
+.foglalas-lemondas-gomb[hidden] {
+    display: none;
+}
+
+.foglalas-popup-azonosito {
+    margin: 22px 0 0;
+    padding: 18px;
+    border: 1px solid rgba(255, 250, 244, 0.22);
+    border-radius: 3px;
+    background: rgba(255, 250, 244, 0.08);
+}
+
+.foglalas-popup-azonosito > span,
+.foglalas-popup-azonosito strong,
+.foglalas-popup-azonosito p,
+.foglalas-popup-azonosito a {
+    color: #fffaf4;
+}
+
+.foglalas-popup-azonosito strong {
+    display: block;
+    font-size: 16px;
+}
+
+.foglalas-popup-azonosito p {
+    margin: 10px 0;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.foglalas-popup-azonosito a {
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+#sikeres-popup .popup-doboz {
+    width: min(460px, calc(100% - 28px));
+}
+
+@media (max-width: 768px) {
+    .foglalas-ut-kartya-kezelo {
+        grid-column: auto;
+    }
+
+    .foglalas-kezelo-szekcio {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        margin: 72px 0 0;
+        padding: 54px 0;
+    }
+
+    .foglalas-kezelo-bevitel {
+        grid-template-columns: 1fr;
+    }
+
+    .foglalas-kezelo-bevitel .gomb {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .foglalas-kezelo-kartya {
+        padding: 22px 16px;
+    }
+
+    .foglalas-kezelo-fej {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .foglalas-kezelo-eredmeny dl > div {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .foglalas-popup-azonosito strong {
+        font-size: 13px;
     }
 }

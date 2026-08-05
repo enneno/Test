@@ -12,6 +12,7 @@
         foglalasElemek: [],
         foglalasKereses: '',
         foglalasStatuszSzuro: 'all',
+        lemondasEsemenyek: new Map(),
         szolgaltatasok: [],
         kuponok: [],
         esemenynaploOldal: 1,
@@ -56,6 +57,8 @@
             jelszoModositasa();
         });
         elemek.foglalasFrissites?.addEventListener('click', foglalasokBetoltese);
+        elemek.vendegLemondasMegnyitas?.addEventListener('click', vendegLemondasokMegnyitasa);
+        elemek.vendegLemondasTudomasulvetel?.addEventListener('click', vendegLemondasokTudomasulvetele);
         elemek.esemenynaploFrissites?.addEventListener('click', esemenynaploBetoltese);
         elemek.emailTesztKuldes?.addEventListener('click', emailTesztekKuldese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
@@ -130,6 +133,11 @@
             foglalasKereses: document.getElementById('admin-foglalas-kereses'),
             foglalasStatuszSzuro: document.getElementById('admin-foglalas-statusz-szuro'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
+            vendegLemondasJelzes: document.getElementById('admin-vendeg-lemondas-jelzes'),
+            vendegLemondasDarab: document.getElementById('admin-vendeg-lemondas-darab'),
+            vendegLemondasUzenet: document.getElementById('admin-vendeg-lemondas-uzenet'),
+            vendegLemondasMegnyitas: document.getElementById('admin-vendeg-lemondas-megnyitas'),
+            vendegLemondasTudomasulvetel: document.getElementById('admin-vendeg-lemondas-tudomasulvetel'),
             esemenynaploLista: document.getElementById('admin-esemenynaplo-lista'),
             esemenynaploFrissites: document.getElementById('admin-esemenynaplo-frissites'),
             esemenynaploLapozo: document.getElementById('admin-esemenynaplo-lapozo'),

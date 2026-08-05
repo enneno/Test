@@ -63,6 +63,19 @@ serve(async (req) => {
     }
 
     console.log("create-booking-with-email booking created", { bookingId, startsAt });
+    const { data: bookingReferenceRow, error: bookingReferenceError } = await supabase
+      .from("bookings")
+      .select("public_reference")
+      .eq("id", bookingId)
+      .single();
+    const bookingReference = String(bookingReferenceRow?.public_reference || "").trim() || null;
+
+    if (bookingReferenceError || !bookingReference) {
+      console.warn("create-booking-with-email booking reference lookup failed", {
+        bookingId,
+        error: bookingReferenceError?.message || "missing public_reference",
+      });
+    }
 
     const email = await sendBookingEmail(supabaseUrl, serviceRoleKey, String(bookingId));
 
@@ -84,6 +97,7 @@ serve(async (req) => {
     return json({
       ok: true,
       booking_id: bookingId,
+      booking_reference: bookingReference,
       email,
     });
   } catch (error) {

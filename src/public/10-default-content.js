@@ -9,7 +9,8 @@ function lumiAlapOldalAdatok() {
             szolgaltatasok: 'Szolgáltatások',
             arlista: 'Árlista',
             galeria: 'Galéria',
-            foglalas: 'Foglalás'
+            foglalas: 'Foglalás',
+            foglalasom: 'Foglalásom'
         },
         lablec: {
             jogiLink: 'Adatkezelési tájékoztató',
@@ -130,7 +131,8 @@ function lumiAlapOldalAdatok() {
                     instagram: { cim: 'Instagramon írok', leiras: 'Ha Instán kényelmesebb, ott is tudsz írni gyorsan.', gomb: 'Instagram megnyitása' },
                     messenger: { cim: 'Messengeren írok', leiras: 'Ha előbb átbeszélnéd, mit szeretnél, írj rám nyugodtan Messengerben.', gomb: 'Messenger megnyitása' },
                     sms: { cim: 'SMS-t küldök', leiras: 'Ha a sima szöveges üzenet kényelmesebb, erre a számra tudsz írni: +36 20 563 6494.', gomb: 'SMS írása' },
-                    online: { cim: 'Online foglalok', leiras: 'Ha már megvan, mit szeretnél, válaszd ki a szabad időpontot pár kattintással.', gomb: 'Online foglalás indítása' }
+                    online: { cim: 'Online foglalok', leiras: 'Ha már megvan, mit szeretnél, válaszd ki a szabad időpontot pár kattintással.', gomb: 'Online foglalás indítása' },
+                    kezeles: { cim: 'Foglalásom ellenőrzése', leiras: 'A visszaigazoló emailben kapott rövid LUMI azonosítóval megnézheted az időpontod részleteit, és bármikor le is mondhatod.', gomb: 'Foglalás kezelése' }
                 },
                 onlineKicker: 'Online foglalás',
                 onlineCim: 'Online időpontfoglalás',
@@ -151,7 +153,19 @@ function lumiAlapOldalAdatok() {
                 kepFeltoltesCim: 'Kép feltöltése',
                 kepFeltoltesLeiras: 'Akár több kép is jöhet. JPG, PNG, WebP, AVIF vagy HEIC, képenként legfeljebb 12 MB.',
                 osszefoglaloCim: 'Összefoglaló',
-                osszefoglaloUres: 'Ahogy választasz, itt egyben látod majd a foglalásodat.'
+                osszefoglaloUres: 'Ahogy választasz, itt egyben látod majd a foglalásodat.',
+                kezeles: {
+                    kicker: 'Meglevő foglalás',
+                    cim: 'Ellenőrizd vagy mondd le az időpontod',
+                    leiras: 'Írd be a visszaigazoló emailben található, rövid LUMI azonosítót. Itt a foglalás részleteit is látod, személyes elérhetőségek nélkül.',
+                    kodCimke: 'Foglalási azonosító',
+                    kodSegitseg: 'Az új azonosító négy könnyen olvasható karakterből áll. A korábbi, hosszabb LUMI kódok is használhatók maradnak.',
+                    lekeresGomb: 'Foglalás lekérése',
+                    lemondasLeiras: 'Ha mégsem megfelelő az időpont, itt bármikor lemondhatod.',
+                    lemondasMegjegyzesCimke: 'Lemondás oka vagy megjegyzés (opcionális)',
+                    lemondasMegjegyzesPlaceholder: 'Ha szeretnél, írd meg röviden a lemondás okát.',
+                    lemondasGomb: 'Foglalás lemondása'
+                }
             },
             kuponUzenetek: {
                 ures: '\u00cdrd be a kuponk\u00f3dot.',
@@ -182,7 +196,10 @@ function lumiAlapOldalAdatok() {
                 naptarGomb: 'Naptárba mentés',
                 bezarasGomb: 'Bezárás',
                 messengerGomb: 'Messenger',
-                instagramGomb: 'Instagram'
+                instagramGomb: 'Instagram',
+                azonositoCimke: 'Foglalási azonosítód',
+                azonositoLeiras: 'Mentsd el ezt a kódot: ezzel később ellenőrizheted vagy bármikor lemondhatod a foglalásodat.',
+                kezelesGomb: 'Foglalás kezelése'
             }
         },
         email: {

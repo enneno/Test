@@ -62,7 +62,7 @@ serve(async (req) => {
 
     const { data: booking, error } = await supabase
       .from("bookings")
-      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,coupon_code,coupon_title,services(name,price_text)")
+      .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,coupon_code,coupon_title,public_reference,services(name,price_text)")
       .eq("id", bookingId)
       .single();
 
@@ -86,6 +86,13 @@ serve(async (req) => {
     const appointmentText = `${appointmentDate}\n${startsAt} – ${endsAt}`;
     const coupon = couponSummary(booking.coupon_code, booking.coupon_title);
     const couponRows: Array<[string, unknown]> = coupon ? [["Kupon", coupon]] : [];
+    const bookingReference = String(booking.public_reference || "").trim();
+    const bookingManageUrl = bookingReference
+      ? `https://luminails.hu/foglalas/?foglalas=${encodeURIComponent(bookingReference)}#foglalas-ellenorzes`
+      : "";
+    const bookingReferenceRows: Array<[string, unknown]> = bookingReference
+      ? [["Foglal\u00e1si azonos\u00edt\u00f3", bookingReference]]
+      : [];
     const calendarAttachment = {
       filename: "lumi-nails-foglalas.ics",
       content: base64FromUtf8(calendarEvent({
@@ -133,8 +140,10 @@ serve(async (req) => {
           ["Szolgáltatás", serviceName],
           ...couponRows,
           ["Időpont", appointmentText],
+          ...bookingReferenceRows,
           ["Helyszín", location],
         ])}
+        ${bookingManageUrl ? `<p style="margin:22px 0;"><a href="${escapeHtml(bookingManageUrl)}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Foglal&aacute;s ellen&#337;rz&eacute;se vagy lemond&aacute;sa</a></p>` : ""}
         <p class="muted">Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
         <p style="margin:22px 0;">
           <a href="${instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Instagram üzenet</a>
@@ -148,7 +157,9 @@ serve(async (req) => {
         `Szolgáltatás: ${serviceName}`,
         ...(coupon ? [`Kupon: ${coupon}`] : []),
         `Időpont: ${appointmentText}`,
+        ...(bookingReference ? [`Foglal\u00e1si azonos\u00edt\u00f3: ${bookingReference}`] : []),
         `Helyszín: ${location}`,
+        ...(bookingManageUrl ? [`Foglal\u00e1s kezel\u00e9se: ${bookingManageUrl}`] : []),
         "",
         `Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
         "",
@@ -169,6 +180,7 @@ serve(async (req) => {
         ["Szolgáltatás", serviceName],
         ...couponRows,
         ["Időpont", appointmentText],
+        ...bookingReferenceRows,
         ["Beküldve", submittedAt],
         ["Megjegyzés", booking.note || "-"],
       ])}
@@ -182,8 +194,10 @@ serve(async (req) => {
         ["Szolgáltatás", serviceName],
         ...couponRows,
         ["Időpont", appointmentText],
+        ...bookingReferenceRows,
         ["Helyszín", location],
       ])}
+      ${bookingManageUrl ? `<p style="margin:22px 0;"><a href="${escapeHtml(bookingManageUrl)}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Foglal&aacute;s ellen&#337;rz&eacute;se vagy lemond&aacute;sa</a></p>` : ""}
       <p class="muted">Ha valamit módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
       <p style="margin:22px 0;">
         <a href="${instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Instagram üzenet</a>
@@ -199,6 +213,7 @@ serve(async (req) => {
       `Szolgáltatás: ${serviceName}`,
       ...(coupon ? [`Kupon: ${coupon}`] : []),
       `Időpont: ${appointmentText}`,
+      ...(bookingReference ? [`Foglal\u00e1si azonos\u00edt\u00f3: ${bookingReference}`] : []),
       `Beküldve: ${submittedAt}`,
       `Megjegyzés: ${booking.note || "-"}`,
     ].join("\n");
@@ -209,7 +224,9 @@ serve(async (req) => {
       `Szolgáltatás: ${serviceName}`,
       ...(coupon ? [`Kupon: ${coupon}`] : []),
       `Időpont: ${appointmentText}`,
+      ...(bookingReference ? [`Foglal\u00e1si azonos\u00edt\u00f3: ${bookingReference}`] : []),
       `Helyszín: ${location}`,
+      ...(bookingManageUrl ? [`Foglal\u00e1s kezel\u00e9se: ${bookingManageUrl}`] : []),
       "",
       `Ha valamit módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
       "",

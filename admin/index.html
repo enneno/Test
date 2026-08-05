@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=dae58dbab3bc">
+    <link rel="stylesheet" href="/style.css?v=e10126965490">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -111,6 +111,17 @@
                                 <option value="blocked_all">Minden kézi idő</option>
                             </select>
                         </label>
+                    </div>
+                    <div id="admin-vendeg-lemondas-jelzes" class="admin-vendeg-lemondas-jelzes" role="status" aria-live="polite" hidden>
+                        <div class="admin-vendeg-lemondas-szoveg">
+                            <span class="admin-vendeg-lemondas-kicker">Új lemondás</span>
+                            <strong>Vendég által lemondott időpontok</strong>
+                            <p id="admin-vendeg-lemondas-uzenet"><span id="admin-vendeg-lemondas-darab">0</span> új vendéglemondás vár arra, hogy átnézd.</p>
+                        </div>
+                        <div class="admin-vendeg-lemondas-akciok">
+                            <button type="button" id="admin-vendeg-lemondas-megnyitas" class="admin-kis-gomb">Lemondások megnyitása</button>
+                            <button type="button" id="admin-vendeg-lemondas-tudomasulvetel" class="admin-kis-gomb admin-vendeg-lemondas-nyugtazas">Tudomásul vettem</button>
+                        </div>
                     </div>
                     <div id="admin-foglalas-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
                     <div id="admin-foglalas-lista" class="admin-db-lista"></div>
@@ -287,10 +298,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=869e3e1ee2dc"></script>
-    <script src="/admin-supabase.js?v=c4993f84a885"></script>
+    <script src="/script.js?v=505bbfc75ade"></script>
+    <script src="/admin-supabase.js?v=c672ce06752c"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
-    <script src="/admin-content.js?v=c5867b4638d8"></script>
+    <script src="/admin-content.js?v=a76ab2a8a78c"></script>
 </body>
 
 </html>

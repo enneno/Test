@@ -46,6 +46,7 @@
         }
 
         allapot.kliens = window.lumiSupabaseClient();
+        foglalasKezeloBekotese();
 
         elemek.urlap.addEventListener('submit', event => {
             event.preventDefault();

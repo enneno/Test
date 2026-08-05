@@ -383,7 +383,7 @@
 
         const emailEredmeny = eredmeny.email || { ok: false, error: 'missing_email_result' };
         naptarLinkFrissitese(adatok);
-        sikeresPopupNyitasa(emailEredmeny);
+        sikeresPopupNyitasa(emailEredmeny, eredmeny.booking_reference);
         elemek.urlap.reset();
         kepValasztasTorlese(elemek);
         stilusAllapotFrissitese(elemek);
@@ -453,9 +453,22 @@
 
         console.info('Lumi Nails booking saved with fallback RPC:', data);
 
+        const { data: bookingReference, error: bookingReferenceError } = await allapot.kliens.rpc(
+            'get_booking_reference_after_creation',
+            {
+                p_booking_id: data,
+                p_customer_email: adatok.email
+            }
+        );
+
+        if (bookingReferenceError) {
+            console.warn('Lumi Nails booking reference fallback lookup failed:', bookingReferenceError);
+        }
+
         return {
             ok: true,
             booking_id: data,
+            booking_reference: bookingReference || null,
             fallback: true,
             email: {
                 ok: false,

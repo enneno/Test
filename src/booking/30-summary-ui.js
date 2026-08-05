@@ -118,12 +118,16 @@
         gomb.textContent = szoveg;
     }
 
-    function sikeresPopupNyitasa(emailEredmeny = { ok: false }) {
+    function sikeresPopupNyitasa(emailEredmeny = { ok: false }, bookingReference = '') {
         const popup = document.getElementById('sikeres-popup');
         const popupCim = popup?.querySelector('.popup-cim');
         const popupSzoveg = popup?.querySelector('.popup-szoveg');
+        const kodBlokk = document.getElementById('foglalas-popup-azonosito');
+        const kodElem = document.getElementById('foglalas-popup-kod');
+        const kezeloLink = document.getElementById('foglalas-popup-kezeles');
         const popupAdatok = window.lumiAdatok?.foglalas?.popup || {};
         const emailSikerult = Boolean(emailEredmeny.ok);
+        const kod = foglalasAzonositoFormazasa(bookingReference);
 
         if (popupCim) {
             popupCim.textContent = emailSikerult
@@ -135,6 +139,12 @@
             popupSzoveg.textContent = emailSikerult
                 ? (popupAdatok.emailSikeresSzoveg || 'Köszönöm, megkaptam a foglalásodat. A visszaigazoló emailt is elküldtük.')
                 : (popupAdatok.emailHibaSzoveg || 'A foglalásod bekerült a rendszerbe, de a visszaigazoló email most nem biztos, hogy elment.');
+        }
+
+        if (kodBlokk) kodBlokk.hidden = !kod;
+        if (kodElem) kodElem.textContent = kod;
+        if (kezeloLink && kod) {
+            kezeloLink.href = `/foglalas/?foglalas=${encodeURIComponent(kod)}#foglalas-ellenorzes`;
         }
 
         if (popup) popup.style.display = 'flex';

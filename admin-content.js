@@ -33,7 +33,8 @@
                 field('navigacio.szolgaltatasok', 'Szolgáltatások menüpont'),
                 field('navigacio.arlista', 'Árlista menüpont'),
                 field('navigacio.galeria', 'Galéria menüpont'),
-                field('navigacio.foglalas', 'Foglalás menüpont')
+                field('navigacio.foglalas', 'Foglalás menüpont'),
+                field('navigacio.foglalasom', 'Foglalásom menüpont')
             ]
         },
         {
@@ -130,7 +131,7 @@
         },
         {
             title: 'Foglalás – kapcsolatfelvételi lehetőségek',
-            description: 'A foglalási oldal bevezetője, valamint az Instagram, Messenger, SMS és online foglalás kártyái.',
+            description: 'A foglalási oldal bevezetője, valamint az Instagram, Messenger, SMS, online foglalás és foglaláskezelő kártyák.',
             fields: [
                 field('foglalas.oldal.nyitoKicker', 'Nyitó kis felső szöveg'),
                 field('foglalas.oldal.nyitoCim', 'Nyitó cím'),
@@ -146,7 +147,10 @@
                 field('foglalas.oldal.utak.sms.gomb', 'SMS gomb'),
                 field('foglalas.oldal.utak.online.cim', 'Online foglalás kártya címe'),
                 field('foglalas.oldal.utak.online.leiras', 'Online foglalás kártya szövege', 'textarea'),
-                field('foglalas.oldal.utak.online.gomb', 'Online foglalás kártya gomb')
+                field('foglalas.oldal.utak.online.gomb', 'Online foglalás kártya gomb'),
+                field('foglalas.oldal.utak.kezeles.cim', 'Foglaláskezelő kártya címe'),
+                field('foglalas.oldal.utak.kezeles.leiras', 'Foglaláskezelő kártya szövege', 'textarea'),
+                field('foglalas.oldal.utak.kezeles.gomb', 'Foglaláskezelő kártya gomb')
             ]
         },
         {
@@ -202,7 +206,7 @@
         },
         {
             title: 'Foglalás – gombok és visszajelző ablak',
-            description: 'A foglalás elküldése gomb, a lebegő gomb és a sikeres vagy hibás foglalás után megjelenő ablak szövegei.',
+            description: 'A foglalás elküldése, a sikeres visszajelző ablak, valamint a foglalás ellenőrzésének és lemondásának szövegei.',
             fields: [
                 field('foglalas.kuldesGomb', 'Foglalás elküldése gomb'),
                 field('foglalas.lebegoGomb', 'Lebegő foglalás gomb'),
@@ -213,7 +217,20 @@
                 field('foglalas.popup.kezdolapGomb', 'Popup kezdőlap gomb'),
                 field('foglalas.popup.galeriaGomb', 'Popup galéria gomb'),
                 field('foglalas.popup.naptarGomb', 'Popup naptár gomb'),
-                field('foglalas.popup.bezarasGomb', 'Popup bezárás gomb')
+                field('foglalas.popup.bezarasGomb', 'Popup bezárás gomb'),
+                field('foglalas.popup.azonositoCimke', 'Popup azonosító címkéje'),
+                field('foglalas.popup.azonositoLeiras', 'Popup azonosító leírása', 'textarea'),
+                field('foglalas.popup.kezelesGomb', 'Popup foglaláskezelő gomb'),
+                field('foglalas.oldal.kezeles.kicker', 'Foglaláskezelő kis felső szöveg'),
+                field('foglalas.oldal.kezeles.cim', 'Foglaláskezelő címe'),
+                field('foglalas.oldal.kezeles.leiras', 'Foglaláskezelő bevezetője', 'textarea'),
+                field('foglalas.oldal.kezeles.kodCimke', 'Azonosító mező címkéje'),
+                field('foglalas.oldal.kezeles.kodSegitseg', 'Azonosító alatti segítség', 'textarea'),
+                field('foglalas.oldal.kezeles.lekeresGomb', 'Foglalás lekérése gomb'),
+                field('foglalas.oldal.kezeles.lemondasLeiras', 'Lemondási lehetőség szövege', 'textarea'),
+                field('foglalas.oldal.kezeles.lemondasMegjegyzesCimke', 'Lemondási megjegyzés címkéje'),
+                field('foglalas.oldal.kezeles.lemondasMegjegyzesPlaceholder', 'Lemondási megjegyzés helykitöltője', 'textarea'),
+                field('foglalas.oldal.kezeles.lemondasGomb', 'Foglalás lemondása gomb')
             ]
         },
         {
@@ -334,7 +351,8 @@
             ['Instagram', 3, 5],
             ['Messenger', 6, 8],
             ['SMS', 9, 11],
-            ['Online foglalás', 12, 14]
+            ['Online foglalás', 12, 14],
+            ['Foglalás ellenőrzése', 15, 17]
         ],
         9: [
             ['Online rész bevezetője', 0, 2],
@@ -350,7 +368,9 @@
         ],
         11: [
             ['Foglalási gombok', 0, 1],
-            ['Visszajelző ablak', 2, 9]
+            ['Visszajelző ablak', 2, 9],
+            ['Azonosító a visszajelző ablakban', 10, 12],
+            ['Foglalás ellenőrzése és lemondása', 13, 22]
         ],
         12: [
             ['Új foglalás', 0, 2],

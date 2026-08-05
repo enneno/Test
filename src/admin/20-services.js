@@ -89,6 +89,35 @@
         return kartya;
     }
 
+    function ujSzolgaltatasNev(szolgaltatasok = allapot.szolgaltatasok) {
+        const alapNev = 'Új kategória - új tétel';
+        const hasznaltNevek = new Set(szolgaltatasok.map(szolgaltatas =>
+            String(szolgaltatas?.name || '').trim().toLocaleLowerCase('hu-HU')));
+        let sorszam = 1;
+        let nev = alapNev;
+
+        while (hasznaltNevek.has(nev.toLocaleLowerCase('hu-HU'))) {
+            sorszam += 1;
+            nev = alapNev + ' ' + sorszam;
+        }
+
+        return nev;
+    }
+
+    function szolgaltatasInsertPayload(tetel, regiArSchema) {
+        if (!regiArSchema) {
+            return tetel;
+        }
+
+        const { price_amount, price_unit, price_suffix, ...regiTetel } = tetel;
+        return regiTetel;
+    }
+
+    function szolgaltatasNevUtkozes(error) {
+        return String(error?.code || '') === '23505'
+            || String(error?.message || '').toLowerCase().includes('services_name_key');
+    }
+
     async function szolgaltatasHozzaadas() {
         onlineStatusz('Új árlista tétel létrehozása...');
 
@@ -103,15 +132,31 @@
             active: true,
             sort_order: 999
         };
+        ujTetel.name = ujSzolgaltatasNev();
 
+        let regiArSchema = false;
         let { error } = await allapot.kliens.from('services').insert(ujTetel);
 
         if (error && adatbazisOszlopHiany(error, ['price_amount', 'price_unit', 'price_suffix'])) {
-            const { price_amount, price_unit, price_suffix, ...regiTetel } = ujTetel;
-            ({ error } = await allapot.kliens.from('services').insert(regiTetel));
+            regiArSchema = true;
+            ({ error } = await allapot.kliens.from('services').insert(szolgaltatasInsertPayload(ujTetel, true)));
+        }
+
+        if (error && szolgaltatasNevUtkozes(error)) {
+            const { data: nevAdatok, error: nevHiba } = await allapot.kliens
+                .from('services')
+                .select('name');
+
+            if (!nevHiba) {
+                ujTetel.name = ujSzolgaltatasNev(nevAdatok || []);
+                ({ error } = await allapot.kliens
+                    .from('services')
+                    .insert(szolgaltatasInsertPayload(ujTetel, regiArSchema)));
+            }
         }
 
         if (error) {
+            console.error('Új árlista tétel létrehozási hiba:', error);
             onlineStatusz('Nem sikerült létrehozni az új árlista tételt.', true);
             return;
         }

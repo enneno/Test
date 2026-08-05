@@ -206,7 +206,8 @@ function fejlecAdatokAlkalmazasa(adatok) {
         ['a[href="/#szolgaltatasok"]', navigacio?.szolgaltatasok],
         ['a[href="/arlista/"]', navigacio?.arlista],
         ['a[href="/galeria/"]', navigacio?.galeria],
-        ['a[href="/foglalas/"]', navigacio?.foglalas]
+        ['a[href="/foglalas/"]', navigacio?.foglalas],
+        ['a.foglalas-kezelo-nav', navigacio?.foglalasom]
     ];
     ['header .menu-pontok', '#mobil-nav'].forEach(gyokerSelector => {
         const gyoker = document.querySelector(gyokerSelector);
@@ -613,6 +614,9 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         szovegBeallitasa('.popup-gomb[href="/"]', foglalas.popup?.kezdolapGomb);
         szovegBeallitasa('.popup-gomb[href="/galeria/"]', foglalas.popup?.galeriaGomb);
         szovegBeallitasa('#naptar-link', foglalas.popup?.naptarGomb);
+        szovegBeallitasa('#foglalas-popup-azonosito > span', foglalas.popup?.azonositoCimke);
+        htmlSzovegBeallitasa('#foglalas-popup-azonosito > p', foglalas.popup?.azonositoLeiras);
+        szovegBeallitasa('#foglalas-popup-kezeles', foglalas.popup?.kezelesGomb);
     }
 
     szovegBeallitasa('#lebego-foglalas-gomb', foglalas.lebegoGomb);
@@ -630,6 +634,7 @@ function supabaseFoglalasSzovegekAlkalmazasa(foglalas) {
     foglalasUtSzovegAlkalmazasa('[data-booking-contact="sms"]', oldal.utak?.sms);
     foglalasUtSzovegAlkalmazasa('[data-booking-path="online"]', oldal.utak?.online);
 
+    foglalasUtSzovegAlkalmazasa('[data-booking-path="manage"]', oldal.utak?.kezeles);
     szovegBeallitasa('.foglalas-asszisztens-fej .foglalas-kicker', oldal.onlineKicker);
     szovegBeallitasa('#online-foglalas-cim', oldal.onlineCim);
     htmlSzovegBeallitasa('.foglalas-asszisztens-fej p:not(.foglalas-kicker)', oldal.onlineLeiras);
@@ -652,6 +657,25 @@ function supabaseFoglalasSzovegekAlkalmazasa(foglalas) {
     htmlSzovegBeallitasa('.foglalas-kepfeltoltes small', oldal.kepFeltoltesLeiras);
     szovegBeallitasa('#foglalas-osszefoglalo h3', oldal.osszefoglaloCim);
     htmlSzovegBeallitasa('#foglalas-osszefoglalo p', oldal.osszefoglaloUres);
+
+    const kezeles = oldal.kezeles || {};
+    szovegBeallitasa('#foglalas-ellenorzes .foglalas-kicker', kezeles.kicker);
+    szovegBeallitasa('#foglalas-ellenorzes-cim', kezeles.cim);
+    htmlSzovegBeallitasa('.foglalas-kezelo-bevezeto > p:last-child', kezeles.leiras);
+    szovegBeallitasa('label[for="foglalas-azonosito"]', kezeles.kodCimke);
+    szovegBeallitasa('.foglalas-kezelo-segitseg', kezeles.kodSegitseg);
+    szovegBeallitasa('#foglalas-ellenorzes-urlap button[type="submit"]', kezeles.lekeresGomb);
+    szovegBeallitasa('#foglalas-lemondas-megjegyzes-blokk > span', kezeles.lemondasMegjegyzesCimke);
+    const megjegyzes = document.getElementById('foglalas-lemondas-megjegyzes');
+    if (megjegyzes && kezeles.lemondasMegjegyzesPlaceholder) {
+        megjegyzes.placeholder = kezeles.lemondasMegjegyzesPlaceholder;
+    }
+    const lemondas = document.getElementById('foglalas-lemondas');
+    if (lemondas && kezeles.lemondasGomb) {
+        lemondas.dataset.felirat = kezeles.lemondasGomb;
+        lemondas.textContent = kezeles.lemondasGomb;
+    }
+    if (lemondas && kezeles.lemondasLeiras) lemondas.dataset.leiras = kezeles.lemondasLeiras;
 }
 
 function foglalasUtSzovegAlkalmazasa(selector, adatok) {

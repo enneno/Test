@@ -93,6 +93,8 @@ function buildPreviews(siteContent: any): EmailPreview[] {
   const submitted = "2026. július 30., csütörtök\n14:24";
   const coupon = "LUMI1000 – 1000 Ft kedvezmény";
   const note = "Köröm stílus: elegáns, világos árnyalat apró köves díszítéssel.";
+  const bookingReference = "LUMI-7K3M";
+  const bookingManageUrl = "https://luminails.hu/foglalas/?foglalas=LUMI-7K3M#foglalas-ellenorzes";
   const variables = {
     nev: customerName,
     szolgaltatas: service,
@@ -107,6 +109,11 @@ function buildPreviews(siteContent: any): EmailPreview[] {
     ["Időpont", appointment],
     ["Helyszín", location],
   ];
+  const bookingCustomerRows: Array<[string, unknown]> = [
+    ...customerRows.slice(0, 3),
+    ["Foglalási azonosító", bookingReference],
+    ...customerRows.slice(3),
+  ];
 
   const ownerHtml = pageHtml(`
     ${testBadgeHtml("Új foglalás – tulajdonos")}
@@ -119,6 +126,7 @@ function buildPreviews(siteContent: any): EmailPreview[] {
       ["Kupon", coupon],
       ["Időpont", appointment],
       ["Beküldve", submitted],
+      ["Foglalási azonosító", bookingReference],
       ["Megjegyzés", note],
     ])}
     <p class="muted">Ez egy biztonságos teszt. Nem jött létre valódi foglalás az admin felületen.</p>
@@ -139,6 +147,7 @@ function buildPreviews(siteContent: any): EmailPreview[] {
       `Kupon: ${coupon}`,
       `Időpont: ${appointment}`,
       `Beküldve: ${submitted}`,
+      "Foglalási azonosító: " + bookingReference,
       `Megjegyzés: ${note}`,
     ].join("\n"),
     attachments: [testCalendarAttachment(customerName, customerPhone, customerEmail, service)],
@@ -153,9 +162,11 @@ function buildPreviews(siteContent: any): EmailPreview[] {
     type: "new_booking_customer",
     label: "Foglalás beérkezett – vendég",
     template: received,
-    rows: customerRows,
-    actionUrl: instagramUrl,
-    actionLabel: "Instagram üzenet",
+    rows: bookingCustomerRows,
+    actionUrl: bookingManageUrl,
+    actionLabel: "Foglalás ellenőrzése vagy lemondása",
+    secondaryActionUrl: instagramUrl,
+    secondaryActionLabel: "Instagram üzenet",
   }));
 
   const updateSpecs = [
@@ -217,9 +228,11 @@ function buildPreviews(siteContent: any): EmailPreview[] {
       type: spec.type,
       label: spec.label,
       template: emailTemplate(spec.source, spec.fallback, variables),
-      rows: customerRows,
-      actionUrl: instagramUrl,
-      actionLabel: "Instagram üzenet",
+      rows: bookingCustomerRows,
+      actionUrl: bookingManageUrl,
+      actionLabel: "Foglalás ellenőrzése vagy lemondása",
+      secondaryActionUrl: instagramUrl,
+      secondaryActionLabel: "Instagram üzenet",
       adminMessage: spec.adminMessage || "",
     }));
   });
