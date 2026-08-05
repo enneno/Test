@@ -414,6 +414,8 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     const adminBundle = fs.readFileSync(path.resolve(__dirname, '..', 'admin-supabase.js'), 'utf8');
     expect(adminBundle).toContain("select('id,public_reference,starts_at')");
     expect(adminBundle).toContain('admin-foglalas-azonosito');
+    expect(adminBundle).toContain('admin-foglalas-nev-blokk');
+    expect(adminBundle).not.toContain('admin-foglalas-reszlet-szeles admin-foglalas-azonosito');
 
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
@@ -430,6 +432,42 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     await expect(page.locator('.admin-workspace-main #admin-panel-szovegek')).toHaveCount(1);
     await expect(page.locator('#admin-tiltas-statusz')).toHaveCount(0);
     await expect(page.locator('#admin-foglalas-statusz-szuro option[value="cancelled_by_customer"]')).toHaveText('Vendég mondta le');
+
+    await page.locator('#admin-panel-foglalasok').evaluate((panel) => {
+        panel.hidden = false;
+        panel.insertAdjacentHTML('beforeend', `
+            <article data-azonosito-elrendezes-teszt>
+                <div class="admin-foglalas-fosor">
+                    <div class="admin-foglalas-nev-blokk">
+                        <h3>Teszt Vendég</h3>
+                        <p class="admin-foglalas-azonosito"><span>Azonosító:</span><code>A2B4</code></p>
+                    </div>
+                    <p class="admin-foglalas-idopont">2026. aug. 5. 10:00 - 11:00</p>
+                </div>
+            </article>
+        `);
+    });
+    const azonositoElrendezes = await page.locator('[data-azonosito-elrendezes-teszt] .admin-foglalas-azonosito').evaluate((elem) => {
+        const stilus = getComputedStyle(elem);
+        const cimkeStilus = getComputedStyle(elem.querySelector('span'));
+        const kodStilus = getComputedStyle(elem.querySelector('code'));
+        return {
+            nevBlokkban: Boolean(elem.closest('.admin-foglalas-nev-blokk')),
+            teljesSzelesseg: elem.getBoundingClientRect().width >= elem.parentElement.getBoundingClientRect().width,
+            cimkeBetumeret: cimkeStilus.fontSize,
+            kodBetumeret: kodStilus.fontSize,
+            keret: stilus.borderTopWidth,
+            hatter: stilus.backgroundColor
+        };
+    });
+    expect(azonositoElrendezes).toEqual({
+        nevBlokkban: true,
+        teljesSzelesseg: false,
+        cimkeBetumeret: '8px',
+        kodBetumeret: '9px',
+        keret: '0px',
+        hatter: 'rgba(0, 0, 0, 0)'
+    });
 
     const desktopSidebar = await sidebar.boundingBox();
     const desktopMain = await main.boundingBox();

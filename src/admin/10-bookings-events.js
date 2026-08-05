@@ -627,7 +627,10 @@
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
-                    <h3>${html(foglalas.customer_name)}</h3>
+                    <div class="admin-foglalas-nev-blokk">
+                        <h3>${html(foglalas.customer_name)}</h3>
+                        <p class="admin-foglalas-azonosito${foglalasAzonosito ? '' : ' hianyzo'}"><span>Azonosító:</span><code>${html(foglalasAzonosito || 'még nincs')}</code></p>
+                    </div>
                     <p class="admin-foglalas-idopont">${html(datumIdoRovid(foglalas.starts_at))} - ${html(datumIdoRovid(foglalas.ends_at, true))}</p>
                 </div>
                 <div class="admin-foglalas-vezerlok">
@@ -648,7 +651,6 @@
                     <p class="admin-foglalas-meta-email"><strong>Email</strong><a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
                     <p class="admin-foglalas-meta-telefon"><strong>Tel</strong><a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
                 </div>
-                <p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-azonosito${foglalasAzonosito ? '' : ' hianyzo'}"><strong>Foglalási azonosító</strong><code>${html(foglalasAzonosito || 'A Supabase migráció után jelenik meg')}</code></p>
                 ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon: ${html(kuponKod)}</strong></p>` : ''}
                 ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyz\u00e9s:</strong> ${html(megjegyzes)}</p>` : ''}
                 ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <span class="admin-inspiracio-akciok"><button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button><button type="button" class="admin-kis-gomb admin-veszely-gomb admin-inspiracio-torles" data-inspiracio-torles>Képek törlése</button></span></p>` : ''}
