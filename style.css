@@ -7234,6 +7234,34 @@ textarea:focus-visible {
     padding: 24px;
 }
 
+.foglalas-kuldes-akciok {
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.foglalas-kuldes-akciok .urlap-kuldes-gomb {
+    width: min(100%, 280px);
+    margin: 0;
+}
+
+.foglalas-kuldes-akciok .urlap-status {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+}
+
+.foglalas-kuldes-akciok .urlap-status:empty {
+    display: none;
+}
+
+@media screen and (max-width: 640px) {
+    .foglalas-kuldes-akciok .urlap-kuldes-gomb {
+        width: 100%;
+    }
+}
+
 .foglalas-oldal .urlap-mezo,
 .foglalas-oldal .tel-csoport,
 .admin-body input,

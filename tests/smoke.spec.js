@@ -222,6 +222,13 @@ test('a teljes oldalas foglalási felület asztalon és mobilon is tömör vála
     await expect(page.locator('.foglalas-lepes:visible')).toHaveCount(5);
     const desktopKartya = await page.locator('#foglalas-szolgaltatas-kartyak .foglalas-valaszto-kartya').first().boundingBox();
     expect(desktopKartya.height).toBeLessThanOrEqual(96);
+    const desktopOsszefoglalo = await page.locator('#foglalas-osszefoglalo').boundingBox();
+    const desktopKuldes = await page.locator('#foglalas-kuldes').boundingBox();
+    expect(desktopKuldes.y - (desktopOsszefoglalo.y + desktopOsszefoglalo.height)).toBeGreaterThanOrEqual(20);
+    expect(Math.abs(
+        (desktopKuldes.x + desktopKuldes.width) - (desktopOsszefoglalo.x + desktopOsszefoglalo.width)
+    )).toBeLessThanOrEqual(1);
+    expect(desktopKuldes.width).toBeLessThanOrEqual(280);
 
     await page.locator('[data-booking-path="online"]').click();
     await expect(page.locator('body')).not.toHaveClass(/foglalas-folyamat-aktiv/);
@@ -281,6 +288,12 @@ test('a teljes oldalas foglalási felület asztalon és mobilon is tömör vála
         belsoKeret: '0px',
         betumeret: 22
     });
+    const mobilOsszefoglalo = await page.locator('#foglalas-osszefoglalo').boundingBox();
+    const mobilKuldes = await page.locator('#foglalas-kuldes').boundingBox();
+    expect(mobilKuldes.y - (mobilOsszefoglalo.y + mobilOsszefoglalo.height)).toBeGreaterThanOrEqual(20);
+    expect(Math.abs(mobilKuldes.x - mobilOsszefoglalo.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(mobilKuldes.width - mobilOsszefoglalo.width)).toBeLessThanOrEqual(1);
+    await expect(page.locator('#foglalas-status')).toBeHidden();
 
     await page.setViewportSize({ width: 375, height: 812 });
     await page.reload({ waitUntil: 'domcontentloaded' });
