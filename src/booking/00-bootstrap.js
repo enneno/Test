@@ -10,6 +10,8 @@
     const IMAGE_UPLOAD_MAX_SIDE = 1600;
     const IMAGE_UPLOAD_MAX_BYTES = 480 * 1024;
     const IMAGE_UPLOAD_WEBP_QUALITY = 0.82;
+    const LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY = 'lumi:foglalasi-tartalom-kesz';
+    const LUMI_TARTALOM_KESZ_ESEMENY = 'lumi:tartalom-kesz';
     const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
     let bookingCanvasOutputFormatPromise = null;
@@ -35,13 +37,14 @@
         }
 
         kapcsolatLinkekFrissitese();
-        window.setTimeout(kapcsolatLinkekFrissitese, 900);
+        document.addEventListener(LUMI_TARTALOM_KESZ_ESEMENY, kapcsolatLinkekFrissitese, { once: true });
         feluletBekotese(elemek);
         osszefoglaloFrissitese(elemek);
 
         if (!config?.url || !config?.publishableKey || !supabaseLib?.createClient) {
             statuszKiirasa(elemek.statusz, 'A foglalási rendszer még nincs összekötve a Supabase projekttel.', true);
             mezokTiltasa(elemek, true);
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
@@ -53,7 +56,7 @@
             foglalasKuldes(elemek).catch(error => {
                 console.error('Lumi Nails foglalás beküldési hiba:', error);
                 statuszKiirasa(elemek.statusz, supabaseHiba(error), true);
-                kovetkezoReszhezGordit(elemek.statusz, 0);
+                kovetkezoReszhezGordit(elemek.statusz);
                 gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             });
         });

@@ -1,37 +1,78 @@
 function oldalTartalomMegjelenitese() {
     document.body.classList.remove('tartalom-toltes');
+    document.dispatchEvent(new CustomEvent(LUMI_TARTALOM_KESZ_ESEMENY));
 }
+
+const LUMI_MENU_BEZARVA_ESEMENY = 'lumi:menu-bezarva';
+const LUMI_TARTALOM_KESZ_ESEMENY = 'lumi:tartalom-kesz';
+const LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY = 'lumi:foglalasi-tartalom-kesz';
+let belsoHorgonyNavigacioBekotve = false;
 
 function menuEsemenyekBekotese() {
     const hamburger = document.querySelector('.hamburger');
-    const mobilLinkek = document.querySelectorAll('#mobil-nav a');
 
     if (hamburger) {
         hamburger.addEventListener('click', menuToggle);
     }
 
-    mobilLinkek.forEach(link => {
-        link.addEventListener('click', menuBezarasa);
-    });
+    if (!belsoHorgonyNavigacioBekotve) {
+        document.addEventListener('click', navigaciosLinkKattintas);
+        kezdetiHorgonyPontositasaBekotese();
+        belsoHorgonyNavigacioBekotve = true;
+    }
 }
 
 function menuToggle() {
     const menu = document.getElementById('mobil-nav');
     const hamburger = document.querySelector('.hamburger');
-    const nyitva = menu ? menu.classList.toggle('open') : false;
 
-    if (hamburger) {
-        hamburger.classList.toggle('open', nyitva);
-        hamburger.setAttribute('aria-controls', 'mobil-nav');
-        hamburger.setAttribute('aria-expanded', String(nyitva));
+    if (!menu) {
+        return;
     }
 
-    document.body.classList.toggle('mobil-menu-nyitva', nyitva);
+    if (menu.classList.contains('open')) {
+        menuBezarasa();
+        return;
+    }
+
+    menu.classList.add('open');
+
+    if (hamburger) {
+        hamburger.classList.add('open');
+        hamburger.setAttribute('aria-controls', 'mobil-nav');
+        hamburger.setAttribute('aria-expanded', 'true');
+        hamburger.setAttribute('aria-label', 'Menü bezárása');
+    }
+
+    document.body.classList.add('mobil-menu-nyitva');
 }
 
 function menuBezarasa() {
     const menu = document.getElementById('mobil-nav');
     const hamburger = document.querySelector('.hamburger');
+    const nyitva = Boolean(menu?.classList.contains('open'));
+    const csokkentettMozgas = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const atmenetAktiv = nyitva && !csokkentettMozgas && menuAtmenetAktiv(menu);
+    let befejezve = false;
+
+    const befejezes = () => {
+        if (befejezve) return;
+        befejezve = true;
+        menu?.removeEventListener('transitionend', atmenetVege);
+        menu?.removeEventListener('transitioncancel', atmenetVege);
+        document.dispatchEvent(new CustomEvent(LUMI_MENU_BEZARVA_ESEMENY));
+    };
+
+    const atmenetVege = event => {
+        if (event.target === menu) {
+            befejezes();
+        }
+    };
+
+    if (atmenetAktiv) {
+        menu.addEventListener('transitionend', atmenetVege);
+        menu.addEventListener('transitioncancel', atmenetVege);
+    }
 
     if (menu) {
         menu.classList.remove('open');
@@ -40,21 +81,130 @@ function menuBezarasa() {
     if (hamburger) {
         hamburger.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Menü megnyitása');
     }
 
     document.body.classList.remove('mobil-menu-nyitva');
+
+    if (!atmenetAktiv) {
+        befejezes();
+    }
+}
+
+function menuAtmenetAktiv(menu) {
+    if (!menu) return false;
+
+    return window.getComputedStyle(menu).transitionDuration
+        .split(',')
+        .some(ido => Number.parseFloat(ido) > 0);
+}
+
+function navigaciosLinkKattintas(event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+    }
+
+    const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+    if (!link || link.hasAttribute('download') || link.target && link.target !== '_self') {
+        return;
+    }
+
+    const horgony = azonosOldaliHorgony(link);
+    const mobilMenuben = Boolean(link.closest('#mobil-nav'));
+
+    if (!horgony) {
+        if (mobilMenuben) menuBezarasa();
+        return;
+    }
+
+    event.preventDefault();
+    const menuNyitva = Boolean(document.getElementById('mobil-nav')?.classList.contains('open'));
+    const gordites = () => horgonyhozGordites(horgony);
+
+    if (menuNyitva) {
+        document.addEventListener(LUMI_MENU_BEZARVA_ESEMENY, gordites, { once: true });
+        menuBezarasa();
+        return;
+    }
+
+    if (mobilMenuben) menuBezarasa();
+    gordites();
+}
+
+function azonosOldaliHorgony(link) {
+    let url;
+
+    try {
+        url = new URL(link.href, window.location.href);
+    } catch (_error) {
+        return null;
+    }
+
+    if (url.origin !== window.location.origin
+        || !url.hash
+        || normalizaltUtvonal(url.pathname) !== normalizaltUtvonal(window.location.pathname)
+        || url.search !== window.location.search) {
+        return null;
+    }
+
+    let azonosito;
+    try {
+        azonosito = decodeURIComponent(url.hash.slice(1));
+    } catch (_error) {
+        return null;
+    }
+
+    const cel = document.getElementById(azonosito);
+    return cel ? { cel, url } : null;
+}
+
+function horgonyhozGordites({ cel, url }) {
+    const celUrl = `${url.pathname}${url.search}${url.hash}`;
+    const jelenlegiUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (celUrl !== jelenlegiUrl) {
+        window.history.pushState(null, '', celUrl);
+    }
+
+    const csokkentettMozgas = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    cel.scrollIntoView({
+        behavior: csokkentettMozgas ? 'auto' : 'smooth',
+        block: 'start'
+    });
+    aktivMenuJelolese();
+}
+
+function kezdetiHorgonyPontositasaBekotese() {
+    if (!window.location.hash) return;
+
+    const keszEsemeny = window.location.hash === '#foglalas-ellenorzes'
+        ? LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY
+        : LUMI_TARTALOM_KESZ_ESEMENY;
+
+    document.addEventListener(keszEsemeny, aktualisHorgonyPontositasa, { once: true });
+}
+
+function aktualisHorgonyPontositasa() {
+    const horgony = azonosOldaliHorgony({ href: window.location.href });
+    if (!horgony) return;
+
+    horgony.cel.scrollIntoView({
+        behavior: 'auto',
+        block: 'start'
+    });
+    aktivMenuJelolese();
 }
 
 function aktivMenuJelolese() {
     const aktualis = normalizaltUtvonal(window.location.pathname);
     const hash = window.location.hash;
 
-    document.querySelectorAll('header nav a').forEach(link => {
+    document.querySelectorAll('header nav a, #mobil-nav a').forEach(link => {
         const linkUtvonal = normalizaltUtvonal(new URL(link.href).pathname);
-        const szolgaltatasLink = link.hash === '#szolgaltatasok';
-        const aktiv = szolgaltatasLink && hash === '#szolgaltatasok'
-            ? true
-            : !szolgaltatasLink && linkUtvonal === aktualis;
+        const azonosUtvonal = linkUtvonal === aktualis;
+        const aktiv = link.hash
+            ? azonosUtvonal && link.hash === hash
+            : azonosUtvonal && !hash;
 
         link.classList.toggle('aktiv', aktiv);
     });

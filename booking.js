@@ -12,6 +12,8 @@
     const IMAGE_UPLOAD_MAX_SIDE = 1600;
     const IMAGE_UPLOAD_MAX_BYTES = 480 * 1024;
     const IMAGE_UPLOAD_WEBP_QUALITY = 0.82;
+    const LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY = 'lumi:foglalasi-tartalom-kesz';
+    const LUMI_TARTALOM_KESZ_ESEMENY = 'lumi:tartalom-kesz';
     const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
     let bookingCanvasOutputFormatPromise = null;
@@ -37,13 +39,14 @@
         }
 
         kapcsolatLinkekFrissitese();
-        window.setTimeout(kapcsolatLinkekFrissitese, 900);
+        document.addEventListener(LUMI_TARTALOM_KESZ_ESEMENY, kapcsolatLinkekFrissitese, { once: true });
         feluletBekotese(elemek);
         osszefoglaloFrissitese(elemek);
 
         if (!config?.url || !config?.publishableKey || !supabaseLib?.createClient) {
             statuszKiirasa(elemek.statusz, 'A foglalási rendszer még nincs összekötve a Supabase projekttel.', true);
             mezokTiltasa(elemek, true);
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
@@ -55,7 +58,7 @@
             foglalasKuldes(elemek).catch(error => {
                 console.error('Lumi Nails foglalás beküldési hiba:', error);
                 statuszKiirasa(elemek.statusz, supabaseHiba(error), true);
-                kovetkezoReszhezGordit(elemek.statusz, 0);
+                kovetkezoReszhezGordit(elemek.statusz);
                 gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             });
         });
@@ -117,7 +120,7 @@
             const cel = document.getElementById('online-foglalas');
             if (cel) {
                 event.preventDefault();
-                kovetkezoReszhezGordit(cel, 0);
+                kovetkezoReszhezGordit(cel);
             }
         });
 
@@ -154,7 +157,7 @@
             hibakTorlese(elemek);
             kepEloNezetFrissitese(elemek);
             osszefoglaloFrissitese(elemek);
-            if (elemek.kepInput.files?.length) kovetkezoReszhezGordit('[data-step="5"]', 260);
+            if (elemek.kepInput.files?.length) kovetkezoReszhezGordit('[data-step="5"]');
         });
 
         elemek.kepEloNezet?.addEventListener('click', event => {
@@ -275,6 +278,7 @@
             statuszKiirasa(elemek.statusz, 'A szolgáltatások még nem tölthetők be. Futtasd a Supabase SQL fájlt, majd próbáld újra.', true);
             selectAllapot(elemek.szolgaltatas, 'A szolgáltatások nem érhetők el');
             kartyaUzenet(elemek.szolgaltatasKartyak, 'A szolgáltatások most nem érhetők el.');
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
@@ -296,10 +300,16 @@
         if (allapot.szolgaltatasok.length === 0) {
             selectAllapot(elemek.szolgaltatas, 'Nincs aktív foglalható szolgáltatás');
             kartyaUzenet(elemek.szolgaltatasKartyak, 'Nincs aktív foglalható szolgáltatás.');
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
         szolgaltatasKartyakRenderelese(elemek);
+        foglalasiTartalomKeszJelzese();
+    }
+
+    function foglalasiTartalomKeszJelzese() {
+        document.dispatchEvent(new CustomEvent(LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY));
     }
 
     function szolgaltatasKartyakRenderelese(elemek) {
@@ -545,7 +555,7 @@
 
         if (!eredmeny.ok) {
             statuszKiirasa(elemek.statusz, supabaseHiba(eredmeny.error), true);
-            kovetkezoReszhezGordit(elemek.statusz, 0);
+            kovetkezoReszhezGordit(elemek.statusz);
             gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             idopontokBetoltese(elemek);
             return;
@@ -860,10 +870,10 @@
         elem?.classList.add('foglalas-hibas-mezo');
         elem?.setAttribute?.('aria-invalid', 'true');
 
-        kovetkezoReszhezGordit(cel || elem, 0);
+        kovetkezoReszhezGordit(cel || elem);
 
         if (hiba.fokusz && typeof hiba.fokusz.focus === 'function') {
-            window.setTimeout(() => hiba.fokusz.focus({ preventScroll: true }), 260);
+            hiba.fokusz.focus({ preventScroll: true });
         }
     }
 
@@ -1358,22 +1368,24 @@
         return option.textContent.trim();
     }
 
-    function kovetkezoReszhezGordit(cel, kesleltetes = 120) {
+    function kovetkezoReszhezGordit(cel) {
         const elem = typeof cel === 'string' ? document.querySelector(cel) : cel;
         if (!elem) return;
 
-        window.setTimeout(() => {
+        window.cancelAnimationFrame(kovetkezoReszhezGordit.renderKeret);
+        kovetkezoReszhezGordit.renderKeret = window.requestAnimationFrame(() => {
             const fejlec = document.querySelector('header');
             const fejlecMagassag = fejlec ? Math.ceil(fejlec.offsetHeight) : 0;
             const res = window.matchMedia('(max-width: 760px)').matches ? 18 : 24;
             const aktualisPozicio = window.scrollY || document.documentElement.scrollTop || 0;
             const celPozicio = elem.getBoundingClientRect().top + aktualisPozicio - fejlecMagassag - res;
+            const csokkentettMozgas = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             window.scrollTo({
                 top: Math.max(0, Math.min(celPozicio, document.documentElement.scrollHeight - window.innerHeight)),
-                behavior: 'smooth'
+                behavior: csokkentettMozgas ? 'auto' : 'smooth'
             });
-        }, kesleltetes);
+        });
     }
     function selectAllapot(select, szoveg) {
         if (!select) return;

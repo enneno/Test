@@ -29,7 +29,7 @@
             const cel = document.getElementById('online-foglalas');
             if (cel) {
                 event.preventDefault();
-                kovetkezoReszhezGordit(cel, 0);
+                kovetkezoReszhezGordit(cel);
             }
         });
 
@@ -66,7 +66,7 @@
             hibakTorlese(elemek);
             kepEloNezetFrissitese(elemek);
             osszefoglaloFrissitese(elemek);
-            if (elemek.kepInput.files?.length) kovetkezoReszhezGordit('[data-step="5"]', 260);
+            if (elemek.kepInput.files?.length) kovetkezoReszhezGordit('[data-step="5"]');
         });
 
         elemek.kepEloNezet?.addEventListener('click', event => {
@@ -187,6 +187,7 @@
             statuszKiirasa(elemek.statusz, 'A szolgáltatások még nem tölthetők be. Futtasd a Supabase SQL fájlt, majd próbáld újra.', true);
             selectAllapot(elemek.szolgaltatas, 'A szolgáltatások nem érhetők el');
             kartyaUzenet(elemek.szolgaltatasKartyak, 'A szolgáltatások most nem érhetők el.');
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
@@ -208,10 +209,16 @@
         if (allapot.szolgaltatasok.length === 0) {
             selectAllapot(elemek.szolgaltatas, 'Nincs aktív foglalható szolgáltatás');
             kartyaUzenet(elemek.szolgaltatasKartyak, 'Nincs aktív foglalható szolgáltatás.');
+            foglalasiTartalomKeszJelzese();
             return;
         }
 
         szolgaltatasKartyakRenderelese(elemek);
+        foglalasiTartalomKeszJelzese();
+    }
+
+    function foglalasiTartalomKeszJelzese() {
+        document.dispatchEvent(new CustomEvent(LUMI_FOGLALASI_TARTALOM_KESZ_ESEMENY));
     }
 
     function szolgaltatasKartyakRenderelese(elemek) {
@@ -457,7 +464,7 @@
 
         if (!eredmeny.ok) {
             statuszKiirasa(elemek.statusz, supabaseHiba(eredmeny.error), true);
-            kovetkezoReszhezGordit(elemek.statusz, 0);
+            kovetkezoReszhezGordit(elemek.statusz);
             gombAllapot(elemek.kuldes, false, 'Foglalás elküldése');
             idopontokBetoltese(elemek);
             return;
@@ -772,10 +779,10 @@
         elem?.classList.add('foglalas-hibas-mezo');
         elem?.setAttribute?.('aria-invalid', 'true');
 
-        kovetkezoReszhezGordit(cel || elem, 0);
+        kovetkezoReszhezGordit(cel || elem);
 
         if (hiba.fokusz && typeof hiba.fokusz.focus === 'function') {
-            window.setTimeout(() => hiba.fokusz.focus({ preventScroll: true }), 260);
+            hiba.fokusz.focus({ preventScroll: true });
         }
     }
 

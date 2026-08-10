@@ -278,6 +278,8 @@ function popupMegnyitasa(sikeresMasolas, uzenet) {
     const popupUzenet = document.getElementById('popup-uzenet');
     const popupAdatok = window.lumiAdatok?.foglalas?.popup || {};
 
+    popup.style.display = 'flex';
+
     if (sikeresMasolas) {
         popupCim.textContent = popupAdatok.emailSikeresCim || 'Adatok másolva!';
         popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.emailSikeresSzoveg || 'A foglalás adatai előkészítve.');
@@ -288,10 +290,8 @@ function popupMegnyitasa(sikeresMasolas, uzenet) {
         popupSzoveg.innerHTML = sortoresesSzoveg(popupAdatok.emailHibaSzoveg || 'A foglalás bekerült a rendszerbe, de az email értesítést ellenőrizni kell.');
         popupUzenet.value = uzenet;
         popupUzenet.classList.add('lathato');
-        setTimeout(() => popupUzenet.select(), 100);
+        window.requestAnimationFrame(() => popupUzenet.select());
     }
-
-    popup.style.display = 'flex';
 }
 
 function popupBezarasa() {

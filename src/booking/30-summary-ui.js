@@ -45,22 +45,24 @@
         return option.textContent.trim();
     }
 
-    function kovetkezoReszhezGordit(cel, kesleltetes = 120) {
+    function kovetkezoReszhezGordit(cel) {
         const elem = typeof cel === 'string' ? document.querySelector(cel) : cel;
         if (!elem) return;
 
-        window.setTimeout(() => {
+        window.cancelAnimationFrame(kovetkezoReszhezGordit.renderKeret);
+        kovetkezoReszhezGordit.renderKeret = window.requestAnimationFrame(() => {
             const fejlec = document.querySelector('header');
             const fejlecMagassag = fejlec ? Math.ceil(fejlec.offsetHeight) : 0;
             const res = window.matchMedia('(max-width: 760px)').matches ? 18 : 24;
             const aktualisPozicio = window.scrollY || document.documentElement.scrollTop || 0;
             const celPozicio = elem.getBoundingClientRect().top + aktualisPozicio - fejlecMagassag - res;
+            const csokkentettMozgas = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             window.scrollTo({
                 top: Math.max(0, Math.min(celPozicio, document.documentElement.scrollHeight - window.innerHeight)),
-                behavior: 'smooth'
+                behavior: csokkentettMozgas ? 'auto' : 'smooth'
             });
-        }, kesleltetes);
+        });
     }
     function selectAllapot(select, szoveg) {
         if (!select) return;

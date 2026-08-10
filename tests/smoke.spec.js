@@ -123,6 +123,55 @@ test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-ír�
     expect(writeRequest).toBe(false);
 });
 
+test('a foglalási kapcsolati linkek a tényleges tartalombetöltéskor frissülnek', async ({ page }) => {
+    const instagramUrl = 'https://www.instagram.com/lumi-event-test/';
+    const messengerUrl = 'https://m.me/lumi-event-test';
+    const smsUrl = 'sms:+36123456789';
+
+    await page.route('**/rest/v1/site_settings*', async route => {
+        const key = new URL(route.request().url()).searchParams.get('key') || '';
+
+        if (key.includes('site_content')) {
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            return route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    value: {
+                        kapcsolat: {
+                            instagramUzenet: instagramUrl,
+                            messenger: messengerUrl,
+                            smsUzenet: smsUrl
+                        }
+                    }
+                })
+            });
+        }
+
+        return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ value: { visible: true } })
+        });
+    });
+    await page.route('**/rest/v1/services*', route => route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '[]'
+    }));
+    await page.route('**/rest/v1/coupons*', route => route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '[]'
+    }));
+
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+
+    await expect(page.locator('[data-booking-contact="instagram"]')).toHaveAttribute('href', instagramUrl);
+    await expect(page.locator('[data-booking-contact="messenger"]')).toHaveAttribute('href', messengerUrl);
+    await expect(page.locator('[data-booking-contact="sms"]')).toHaveAttribute('href', smsUrl);
+});
+
 test('a teljes oldalas foglalási űrlap minden részt egyben mutat és megőrzi a választásokat', async ({ page }) => {
     await page.route('**/rest/v1/services*', route => route.fulfill({
         status: 200,
@@ -385,6 +434,55 @@ test('a mobil főoldal címei törnek, a térközei és a CTA nyilai egységesek
     expect(szekcioTavolsagok).toEqual([64, 64, 64]);
 });
 
+test('a belső menülinkek első kattintásra, menüzárás után finoman a megfelelő szakaszhoz görgetnek', async ({ page }) => {
+    await page.addInitScript(() => {
+        const eredetiScrollIntoView = Element.prototype.scrollIntoView;
+        Element.prototype.scrollIntoView = function (opciok) {
+            window.__lumiScrollHivasok = window.__lumiScrollHivasok || [];
+            window.__lumiScrollHivasok.push({ id: this.id, opciok });
+            return eredetiScrollIntoView.call(this, opciok);
+        };
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    await page.locator('.hamburger').click();
+    await page.locator('#mobil-nav .foglalas-kezelo-nav').click();
+
+    await expect(page.locator('#mobil-nav')).not.toHaveClass(/open/);
+    await expect(page).toHaveURL(/\/foglalas\/#foglalas-ellenorzes$/);
+    await expect.poll(() => page.evaluate(() => {
+        return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'foglalas-ellenorzes');
+    })).toEqual([{ id: 'foglalas-ellenorzes', opciok: { behavior: 'smooth', block: 'start' } }]);
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.locator('.hamburger').click();
+    await page.locator('#mobil-nav a[href="/#szolgaltatasok"]').click();
+
+    await expect(page.locator('#mobil-nav')).not.toHaveClass(/open/);
+    await expect(page).toHaveURL(/\/#szolgaltatasok$/);
+    await expect.poll(() => page.evaluate(() => {
+        return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'szolgaltatasok');
+    })).toEqual([{ id: 'szolgaltatasok', opciok: { behavior: 'smooth', block: 'start' } }]);
+
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.locator('header .menu-pontok a[href="/#szolgaltatasok"]').click();
+    await expect.poll(() => page.evaluate(() => {
+        return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'szolgaltatasok');
+    })).toEqual([{ id: 'szolgaltatasok', opciok: { behavior: 'smooth', block: 'start' } }]);
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#mobil-nav')).toHaveCSS('transition-duration', '0s');
+    await page.locator('.hamburger').click();
+    await page.locator('#mobil-nav .foglalas-kezelo-nav').click();
+    await expect.poll(() => page.evaluate(() => {
+        return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'foglalas-ellenorzes');
+    })).toEqual([{ id: 'foglalas-ellenorzes', opciok: { behavior: 'auto', block: 'start' } }]);
+});
+
 test('a galéria képnézegető fókusza bent marad, majd visszatér a megnyitó képre', async ({ page }) => {
     await page.goto('/galeria/', { waitUntil: 'domcontentloaded' });
     const elsoKep = page.locator('.galeria-kep-gomb').first();
@@ -538,6 +636,13 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     await desktopManageLink.click();
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
     await expect(section).toBeVisible();
+    await expect.poll(() => page.evaluate(() => {
+        const header = document.querySelector('header').getBoundingClientRect();
+        const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        return target.top >= header.bottom
+            && (target.top <= header.bottom + 48 || Math.abs(window.scrollY - maxScroll) <= 2);
+    })).toBe(true);
     const desktopTargetOffset = await page.evaluate(() => {
         const header = document.querySelector('header').getBoundingClientRect();
         const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
@@ -568,6 +673,11 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     await page.locator('.hamburger').click();
     await mobileManageLink.click();
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
+    await expect.poll(() => page.evaluate(() => {
+        const header = document.querySelector('header').getBoundingClientRect();
+        const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
+        return target.top >= header.bottom && target.top <= header.bottom + 48;
+    })).toBe(true);
     const mobileColumns = await section.evaluate(element =>
         getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
     );

@@ -2275,6 +2275,10 @@ textarea:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
     .galeria-kartya-lapozo img,
     .galeria-kartya-pont {
         transition: none;
@@ -2763,6 +2767,13 @@ textarea:focus-visible {
 
     .lebego-foglalas-gomb.rejtve {
         transform: translateY(12px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .hamburger span {
+        transition: none;
     }
 }
 
