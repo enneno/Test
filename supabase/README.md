@@ -19,6 +19,10 @@ A foglalási oldal a `get_available_dates` függvénnyel csak azokat a dátumoka
 
 Ha a régi adatbázis már fut, elég a gyökérben lévő `supabase-date-availability-migration.sql` friss tartalmát újra futtatni. Ez hozzáadja a `Kész` foglalási státuszt és az online telefonszám láthatóság beállítását is.
 
+A rövid, `LUMI-XXXX` foglalási azonosítókhoz futtasd újra a gyökérben lévő `supabase-booking-self-service.sql` teljes tartalmát is. Ez az új foglalásoknak négykarakteres kódot ad, a meglévő hosszú kódokat pedig rövidre cseréli. A régi emailben szereplő hosszú kód továbbra is használható marad, és a frissítés nem küld új emailt a vendégeknek.
+
+A foglalások közötti kötelező 30 perces szünethez futtasd a `supabase-booking-buffer.sql` fájlt. A frissítés után például egy 12:30-kor végződő foglalást követően 13:00 lesz az első foglalható időpont. A védelem a megjelenített időpontokra és a tényleges adatbázis-mentésre is érvényes.
+
 ## 2. Admin belépés
 
 Supabase Dashboard > Authentication > Users alatt hozz létre egy admin felhasználót email + jelszóval.

@@ -8,6 +8,7 @@ let galeriaKepek = [];
 let galeriaHuzasKezdoX = 0;
 let galeriaHuzasKezdoY = 0;
 let galeriaHuzasAktiv = false;
+let galeriaElozoFokusz = null;
 
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();

@@ -32,6 +32,7 @@ end;
 $$;
 
 alter table public.bookings add column if not exists public_reference text;
+alter table public.bookings add column if not exists legacy_public_reference text;
 alter table public.bookings alter column public_reference set default public.lumi_new_booking_reference();
 
 update public.bookings
@@ -42,6 +43,35 @@ alter table public.bookings alter column public_reference set not null;
 
 create unique index if not exists bookings_public_reference_key
     on public.bookings (public_reference);
+
+-- A korabbi, hosszu kodokat csendben rovidre csereli az admin es az uj
+-- visszaigazolasok szamara. A regi kod aliaszkent megmarad, igy a mar
+-- kikuldott emailekben szereplo azonosito tovabbra is hasznalhato.
+do $$
+declare
+    v_booking record;
+begin
+    for v_booking in
+        select b.id, b.public_reference, b.legacy_public_reference
+        from public.bookings b
+        where b.public_reference ~* '^LUMI(?:-[A-Z0-9]{4}){5}$'
+        order by b.id
+        for update
+    loop
+        update public.bookings
+        set legacy_public_reference = coalesce(
+                nullif(trim(v_booking.legacy_public_reference), ''),
+                v_booking.public_reference
+            ),
+            public_reference = public.lumi_new_booking_reference()
+        where id = v_booking.id;
+    end loop;
+end;
+$$;
+
+create unique index if not exists bookings_legacy_public_reference_key
+    on public.bookings (legacy_public_reference)
+    where legacy_public_reference is not null;
 
 create or replace function public.get_booking_reference_after_creation(p_booking_id uuid, p_customer_email text)
 returns text
@@ -103,8 +133,12 @@ as $$
         (b.status in ('pending', 'confirmed'))
     from public.bookings b
     left join public.services s on s.id = b.service_id
-    where upper(replace(b.public_reference, '-', '')) =
-          upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+    where (
+        upper(replace(b.public_reference, '-', '')) =
+            upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+        or upper(replace(coalesce(b.legacy_public_reference, ''), '-', '')) =
+            upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+    )
     limit 1;
 $$;
 
@@ -123,8 +157,12 @@ declare
 begin
     select b.* into v_booking
     from public.bookings b
-    where upper(replace(b.public_reference, '-', '')) =
-          upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+    where (
+        upper(replace(b.public_reference, '-', '')) =
+            upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+        or upper(replace(coalesce(b.legacy_public_reference, ''), '-', '')) =
+            upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
+    )
     for update;
 
     if not found then

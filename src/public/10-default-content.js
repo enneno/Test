@@ -37,6 +37,11 @@ function lumiAlapOldalAdatok() {
             instagramUzenet: 'https://ig.me/m/luminails.xx'
         },
         fooldal: {
+            ertesito: {
+                aktiv: false,
+                cimke: 'Aktuális információ',
+                szoveg: ''
+            },
             hero: {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',

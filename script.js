@@ -10,6 +10,7 @@ let galeriaKepek = [];
 let galeriaHuzasKezdoX = 0;
 let galeriaHuzasKezdoY = 0;
 let galeriaHuzasAktiv = false;
+let galeriaElozoFokusz = null;
 
 document.addEventListener('DOMContentLoaded', function () {
     tisztaUrlBeallitasa();
@@ -74,6 +75,11 @@ function lumiAlapOldalAdatok() {
             instagramUzenet: 'https://ig.me/m/luminails.xx'
         },
         fooldal: {
+            ertesito: {
+                aktiv: false,
+                cimke: 'Aktuális információ',
+                szoveg: ''
+            },
             hero: {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
@@ -992,7 +998,7 @@ function galeriaAdatokAlkalmazasa(galeria) {
     const racs = szekcio?.querySelector('.galeria-racs');
     if (!szekcio || !galeria || !racs) return;
 
-    szovegBeallitasa('h2', galeria.cim, szekcio);
+    szovegBeallitasa('h1', galeria.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', galeria.leiras, szekcio);
     szovegBeallitasa('a.gomb[href*="foglalas"]', galeria.foglalasGomb, szekcio);
 
@@ -1066,6 +1072,8 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
         return;
     }
 
+    vendegertesitoAlkalmazasa(fooldal.ertesito);
+
     const heroAdatok = fooldal.hero || {};
     szovegBeallitasa('.hero-kicker', heroAdatok.kicker);
     szovegBeallitasa('.hero-content h1', heroAdatok.cim);
@@ -1089,7 +1097,7 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     szovegBeallitasa('.hero-visual-cimke > span', heroAdatok.galeriaCimke);
     const heroGaleriaLink = document.querySelector('.hero-visual-cimke > a');
     if (heroGaleriaLink && heroAdatok.galeriaLink !== undefined) {
-        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">↗</span>`;
+        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">→</span>`;
     }
 
     const hero = document.getElementById('hero');
@@ -1133,6 +1141,21 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
     galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto, teljesGaleria);
     foglalasAtvezetoAlkalmazasa(fooldal.foglalasAtvezeto);
+}
+
+function vendegertesitoAlkalmazasa(ertesito) {
+    const sav = document.getElementById('vendegertesito');
+    if (!sav) return;
+
+    const szoveg = String(ertesito?.szoveg || '').trim();
+    const aktiv = ertesito?.aktiv === true && Boolean(szoveg);
+    sav.hidden = !aktiv;
+    if (!aktiv) return;
+
+    const cimke = String(ertesito?.cimke || '').trim() || 'Aktuális információ';
+    szovegBeallitasa('.vendegertesito-cimke', cimke, sav);
+    szovegBeallitasa('.vendegertesito-szoveg', szoveg, sav);
+    sav.setAttribute('aria-label', cimke);
 }
 
 function bekezdesekRenderelese(selector, bekezdesek) {
@@ -1198,7 +1221,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
         const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
         link.href = galeriaKartya ? '/galeria/' : '/arlista/';
-        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">↗</span>`;
+        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">→</span>`;
 
         doboz.append(cim, leiras, link);
         racs.appendChild(doboz);
@@ -1282,7 +1305,7 @@ function arlistaAdatokAlkalmazasa(arlista) {
         return;
     }
 
-    szovegBeallitasa('h2', arlista.cim, szekcio);
+    szovegBeallitasa('h1', arlista.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', arlista.leiras, szekcio);
 
     if (!panel || !Array.isArray(arlista.csoportok)) {
@@ -1363,7 +1386,7 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         if (supabaseFoglalas) {
             supabaseFoglalasSzovegekAlkalmazasa(foglalas);
         } else {
-            szovegBeallitasa('h2', foglalas.cim, szekcio);
+            szovegBeallitasa('h1', foglalas.cim, szekcio);
             htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
             foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
             szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);
@@ -2152,8 +2175,15 @@ function galeriaBekotese() {
     }));
 
     galeriaGombok.forEach((gomb, index) => {
+        if (gomb.dataset.galeriaBekotve === 'true') return;
+        gomb.dataset.galeriaBekotve = 'true';
         gomb.addEventListener('click', () => galeriaMegnyitasa(index));
     });
+
+    if (lightbox.dataset.galeriaVezerlesBekotve === 'true') {
+        return;
+    }
+    lightbox.dataset.galeriaVezerlesBekotve = 'true';
 
     lightbox.querySelector('.galeria-lightbox-bezar').addEventListener('click', galeriaBezarasa);
     lightbox.querySelector('.galeria-lightbox-elozo').addEventListener('click', () => galeriaLepes(-1));
@@ -2179,6 +2209,10 @@ function galeriaBekotese() {
             return;
         }
 
+        if (event.key === 'Tab') {
+            galeriaFokuszBentTartasa(event, lightbox);
+            return;
+        }
         if (event.key === 'Escape') galeriaBezarasa();
         if (event.key === 'ArrowLeft') galeriaLepes(-1);
         if (event.key === 'ArrowRight') galeriaLepes(1);
@@ -2190,21 +2224,52 @@ function galeriaMegnyitasa(index) {
     galeriaKepFrissitese();
 
     const lightbox = document.getElementById('galeria-lightbox');
+    galeriaElozoFokusz = document.activeElement;
     lightbox.classList.add('nyitva');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    window.requestAnimationFrame(() => {
+        lightbox.querySelector('.galeria-lightbox-bezar')?.focus();
+    });
 }
 
 function galeriaBezarasa() {
     const lightbox = document.getElementById('galeria-lightbox');
 
-    if (!lightbox) {
+    if (!lightbox || !lightbox.classList.contains('nyitva')) {
         return;
     }
 
     lightbox.classList.remove('nyitva');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (galeriaElozoFokusz?.isConnected) {
+        galeriaElozoFokusz.focus();
+    }
+    galeriaElozoFokusz = null;
+}
+
+function galeriaFokuszBentTartasa(event, lightbox) {
+    const fokuszolhato = Array.from(lightbox.querySelectorAll(
+        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(elem => elem.offsetParent !== null);
+
+    if (!fokuszolhato.length) {
+        event.preventDefault();
+        lightbox.focus();
+        return;
+    }
+
+    const elso = fokuszolhato[0];
+    const utolso = fokuszolhato[fokuszolhato.length - 1];
+
+    if (event.shiftKey && document.activeElement === elso) {
+        event.preventDefault();
+        utolso.focus();
+    } else if (!event.shiftKey && document.activeElement === utolso) {
+        event.preventDefault();
+        elso.focus();
+    }
 }
 
 function galeriaLepes(irany) {

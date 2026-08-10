@@ -179,6 +179,38 @@ begin
     end if;
 end $$;
 
+create or replace function public.lumi_enforce_booking_buffer()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+    if new.status in ('pending', 'confirmed', 'done') then
+        perform pg_catalog.pg_advisory_xact_lock(1280266226::bigint);
+
+        if exists (
+            select 1
+            from public.bookings b
+            where b.id is distinct from new.id
+                and b.status in ('pending', 'confirmed', 'done')
+                and b.starts_at < new.ends_at + interval '30 minutes'
+                and b.ends_at + interval '30 minutes' > new.starts_at
+        ) then
+            raise exception 'A foglalasok kozott legalabb 30 perc szunet szukseges.'
+                using errcode = '23P01';
+        end if;
+    end if;
+
+    return new;
+end;
+$$;
+
+drop trigger if exists bookings_enforce_buffer on public.bookings;
+create trigger bookings_enforce_buffer
+before insert or update of starts_at, ends_at, status on public.bookings
+for each row execute function public.lumi_enforce_booking_buffer();
+
 do $$
 begin
     alter table public.bookings
@@ -322,7 +354,8 @@ as $$
             select 1
             from public.bookings b
             where b.status in ('pending', 'confirmed', 'done')
-                and tstzrange(b.starts_at, b.ends_at, '[)') && tstzrange(slots.starts_at, slots.ends_at, '[)')
+                and tstzrange(b.starts_at, b.ends_at + interval '30 minutes', '[)')
+                    && tstzrange(slots.starts_at, slots.ends_at + interval '30 minutes', '[)')
         )
         and not exists (
             select 1

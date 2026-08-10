@@ -221,7 +221,7 @@ function galeriaAdatokAlkalmazasa(galeria) {
     const racs = szekcio?.querySelector('.galeria-racs');
     if (!szekcio || !galeria || !racs) return;
 
-    szovegBeallitasa('h2', galeria.cim, szekcio);
+    szovegBeallitasa('h1', galeria.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', galeria.leiras, szekcio);
     szovegBeallitasa('a.gomb[href*="foglalas"]', galeria.foglalasGomb, szekcio);
 
@@ -295,6 +295,8 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
         return;
     }
 
+    vendegertesitoAlkalmazasa(fooldal.ertesito);
+
     const heroAdatok = fooldal.hero || {};
     szovegBeallitasa('.hero-kicker', heroAdatok.kicker);
     szovegBeallitasa('.hero-content h1', heroAdatok.cim);
@@ -318,7 +320,7 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     szovegBeallitasa('.hero-visual-cimke > span', heroAdatok.galeriaCimke);
     const heroGaleriaLink = document.querySelector('.hero-visual-cimke > a');
     if (heroGaleriaLink && heroAdatok.galeriaLink !== undefined) {
-        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">↗</span>`;
+        heroGaleriaLink.innerHTML = `${html(heroAdatok.galeriaLink)} <span aria-hidden="true">→</span>`;
     }
 
     const hero = document.getElementById('hero');
@@ -362,6 +364,21 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     szolgaltatasKartyakRenderelese(fooldal.szolgaltatasok);
     galeriaAtvezetoAlkalmazasa(fooldal.galeriaAtvezeto, teljesGaleria);
     foglalasAtvezetoAlkalmazasa(fooldal.foglalasAtvezeto);
+}
+
+function vendegertesitoAlkalmazasa(ertesito) {
+    const sav = document.getElementById('vendegertesito');
+    if (!sav) return;
+
+    const szoveg = String(ertesito?.szoveg || '').trim();
+    const aktiv = ertesito?.aktiv === true && Boolean(szoveg);
+    sav.hidden = !aktiv;
+    if (!aktiv) return;
+
+    const cimke = String(ertesito?.cimke || '').trim() || 'Aktuális információ';
+    szovegBeallitasa('.vendegertesito-cimke', cimke, sav);
+    szovegBeallitasa('.vendegertesito-szoveg', szoveg, sav);
+    sav.setAttribute('aria-label', cimke);
 }
 
 function bekezdesekRenderelese(selector, bekezdesek) {
@@ -427,7 +444,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
         const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
         link.href = galeriaKartya ? '/galeria/' : '/arlista/';
-        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">↗</span>`;
+        link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">→</span>`;
 
         doboz.append(cim, leiras, link);
         racs.appendChild(doboz);
@@ -511,7 +528,7 @@ function arlistaAdatokAlkalmazasa(arlista) {
         return;
     }
 
-    szovegBeallitasa('h2', arlista.cim, szekcio);
+    szovegBeallitasa('h1', arlista.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', arlista.leiras, szekcio);
 
     if (!panel || !Array.isArray(arlista.csoportok)) {
@@ -592,7 +609,7 @@ function foglalasAdatokAlkalmazasa(foglalas, arlista) {
         if (supabaseFoglalas) {
             supabaseFoglalasSzovegekAlkalmazasa(foglalas);
         } else {
-            szovegBeallitasa('h2', foglalas.cim, szekcio);
+            szovegBeallitasa('h1', foglalas.cim, szekcio);
             htmlSzovegBeallitasa('.urlap-leiras', foglalas.leiras, szekcio);
             foglalasiSzolgaltatasokRenderelese(arlistaSzolgaltatasokLetrehozasa(arlista));
             szovegBeallitasa('.popup-gomb[href*="m.me"]', foglalas.popup?.messengerGomb);

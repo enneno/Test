@@ -80,8 +80,8 @@ as $$
             select 1
             from public.bookings b
             where b.status in ('pending', 'confirmed', 'done')
-                and tstzrange(b.starts_at, b.ends_at, '[)')
-                    && tstzrange(slots.starts_at, slots.ends_at, '[)')
+                and tstzrange(b.starts_at, b.ends_at + interval '30 minutes', '[)')
+                    && tstzrange(slots.starts_at, slots.ends_at + interval '30 minutes', '[)')
         )
         and not exists (
             select 1

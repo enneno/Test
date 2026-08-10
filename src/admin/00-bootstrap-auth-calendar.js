@@ -3,6 +3,7 @@
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
     const SZOLGALTATAS_KUPON_KATEGORIAK = ['\u00c9p\u00edt\u00e9s', 'T\u00f6lt\u00e9s', 'G\u00e9l lakk', 'Manik\u0171r', 'D\u00edsz\u00edt\u00e9s', 'Leszed\u00e9s'];
+    const ADMIN_FOGLALAS_LIMIT = 500;
     const allapot = {
         kliens: null,
         session: null,
@@ -12,6 +13,9 @@
         foglalasElemek: [],
         foglalasKereses: '',
         foglalasStatuszSzuro: 'all',
+        foglalasNezet: 'lista',
+        foglalasNaptarHonap: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        foglalasNaptarKijeloltDatum: '',
         lemondasEsemenyek: new Map(),
         szolgaltatasok: [],
         kuponok: [],
@@ -75,15 +79,22 @@
         });
 
         elemek.foglalasLista?.addEventListener('click', foglalasListaKattintas);
+        elemek.foglalasNezetGombok.forEach(gomb => {
+            gomb.addEventListener('click', () => foglalasNezetValtasa(gomb.dataset.foglalasNezet));
+        });
+        elemek.foglalasNaptar?.addEventListener('click', foglalasNaptarKattintas);
         elemek.foglalasLapozo?.addEventListener('click', foglalasLapozoKattintas);
         elemek.foglalasLapozo?.addEventListener('change', foglalasLapozoKattintas);
         elemek.foglalasLapozoFelso?.addEventListener('click', foglalasLapozoKattintas);
         elemek.foglalasLapozoFelso?.addEventListener('change', foglalasLapozoKattintas);
+        elemek.foglalasKeresesTorles?.addEventListener('click', foglalasKeresesTorlese);
         elemek.foglalasKereses?.addEventListener('input', () => {
             allapot.foglalasKereses = elemek.foglalasKereses.value.trim();
             allapot.foglalasOldal = 1;
+            foglalasKeresesTorlesGombFrissitese(elemek);
             foglalasListaRenderelese();
         });
+        foglalasKeresesTorlesGombFrissitese(elemek);
         elemek.foglalasStatuszSzuro?.addEventListener('change', () => {
             allapot.foglalasStatuszSzuro = elemek.foglalasStatuszSzuro.value || 'all';
             allapot.foglalasOldal = 1;
@@ -128,9 +139,19 @@
             emailTesztKuldes: document.getElementById('admin-email-teszt-kuldes'),
             emailTesztStatusz: document.getElementById('admin-email-teszt-statusz'),
             foglalasLista: document.getElementById('admin-foglalas-lista'),
+            foglalasListaNezet: document.getElementById('admin-foglalas-lista-nezet'),
+            foglalasNezetGombok: Array.from(document.querySelectorAll('[data-foglalas-nezet]')),
+            foglalasOsszefoglalo: document.getElementById('admin-foglalas-osszefoglalo'),
+            foglalasNaptar: document.getElementById('admin-foglalas-naptar'),
+            foglalasNaptarCim: document.getElementById('admin-foglalas-naptar-cim'),
+            foglalasNaptarRacs: document.getElementById('admin-foglalas-naptar-racs'),
+            foglalasNapiCim: document.getElementById('admin-foglalas-napi-cim'),
+            foglalasNapiDarab: document.getElementById('admin-foglalas-napi-darab'),
+            foglalasNapiLista: document.getElementById('admin-foglalas-napi-lista'),
             foglalasLapozo: document.getElementById('admin-foglalas-lapozo'),
             foglalasLapozoFelso: document.getElementById('admin-foglalas-lapozo-felso'),
             foglalasKereses: document.getElementById('admin-foglalas-kereses'),
+            foglalasKeresesTorles: document.getElementById('admin-foglalas-kereses-torles'),
             foglalasStatuszSzuro: document.getElementById('admin-foglalas-statusz-szuro'),
             foglalasFrissites: document.getElementById('admin-foglalas-frissites'),
             vendegLemondasJelzes: document.getElementById('admin-vendeg-lemondas-jelzes'),
@@ -168,6 +189,23 @@
             tiltasLista: document.getElementById('admin-tiltas-lista'),
             telefonLathato: document.getElementById('admin-telefon-lathato')
         };
+    }
+
+    function foglalasKeresesTorlesGombFrissitese(elemek = adminElemek()) {
+        if (!elemek.foglalasKeresesTorles || !elemek.foglalasKereses) return;
+        elemek.foglalasKeresesTorles.hidden = !elemek.foglalasKereses.value.trim();
+    }
+
+    function foglalasKeresesTorlese() {
+        const elemek = adminElemek();
+        if (!elemek.foglalasKereses) return;
+
+        elemek.foglalasKereses.value = '';
+        allapot.foglalasKereses = '';
+        allapot.foglalasOldal = 1;
+        foglalasKeresesTorlesGombFrissitese(elemek);
+        foglalasListaRenderelese();
+        elemek.foglalasKereses.focus({ preventScroll: true });
     }
 
     function idosavAlapertelmezes(elemek) {

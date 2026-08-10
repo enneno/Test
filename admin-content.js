@@ -17,7 +17,7 @@
         dirty: false,
         saving: false,
         cmsView: 'fooldal',
-        cmsGroup: 1,
+        cmsGroup: 15,
         cmsViewScroll: 0,
         cmsSectionScroll: 0
     };
@@ -293,6 +293,15 @@
                 field('seo.fooldalLeiras', 'Főoldal keresőleírása', 'textarea'),
                 image('seo.megosztasiKep', 'Megosztási kép')
             ]
+        },
+        {
+            title: 'Főoldal – vendégértesítő',
+            description: 'Ide írhatsz szabadságról vagy más aktuális tudnivalóról. Például: „Kedves Vendégeim! Augusztus 20–24. között szabadság miatt nem leszek elérhető.”',
+            fields: [
+                checkbox('fooldal.ertesito.aktiv', 'Az értesítő megjelenítése a főoldalon'),
+                field('fooldal.ertesito.cimke', 'Kis felső felirat'),
+                field('fooldal.ertesito.szoveg', 'Üzenet a vendégeknek', 'textarea')
+            ]
         }
     ];
 
@@ -301,7 +310,7 @@
             id: 'fooldal',
             title: 'Főoldal',
             description: 'A nyitóoldal minden fontos tartalmi blokkja.',
-            groups: [1, 2, 3, 4, 5]
+            groups: [15, 1, 2, 3, 4, 5]
         },
         {
             id: 'foglalas',

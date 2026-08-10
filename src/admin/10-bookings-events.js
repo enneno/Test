@@ -9,14 +9,14 @@
             .from('bookings')
             .select(inspiracioSelect)
             .order('starts_at', { ascending: false })
-            .limit(120);
+            .limit(ADMIN_FOGLALAS_LIMIT);
 
         if (foglalasHiba && hianyzoInspiracioOszlop(foglalasHiba)) {
             ({ data: foglalasok, error: foglalasHiba } = await allapot.kliens
                 .from('bookings')
                 .select(kuponSelect)
                 .order('starts_at', { ascending: false })
-                .limit(120));
+                .limit(ADMIN_FOGLALAS_LIMIT));
         }
 
         if (foglalasHiba && hianyzoKuponOszlop(foglalasHiba)) {
@@ -24,14 +24,14 @@
                 .from('bookings')
                 .select(alapSelect)
                 .order('starts_at', { ascending: false })
-                .limit(120));
+                .limit(ADMIN_FOGLALAS_LIMIT));
         }
         if (!foglalasHiba && Array.isArray(foglalasok) && foglalasok.length) {
             const { data: referenciaAdatok, error: referenciaHiba } = await allapot.kliens
                 .from('bookings')
                 .select('id,public_reference,starts_at')
                 .order('starts_at', { ascending: false })
-                .limit(120);
+                .limit(ADMIN_FOGLALAS_LIMIT);
 
             if (!referenciaHiba) {
                 const referenciaMap = new Map((referenciaAdatok || []).map(adat => [adat.id, adat.public_reference]));
@@ -48,7 +48,7 @@
             .from('blocked_times')
             .select('id,starts_at,ends_at,reason,status,created_at')
             .order('starts_at', { ascending: false })
-            .limit(120);
+            .limit(ADMIN_FOGLALAS_LIMIT);
 
         if (tiltasHiba && adatbazisOszlopHiany(tiltasHiba, ['status'])) {
             allapot.tiltasStatuszTamogatott = false;
@@ -56,7 +56,7 @@
                 .from('blocked_times')
                 .select('id,starts_at,ends_at,reason,created_at')
                 .order('starts_at', { ascending: false })
-                .limit(120));
+                .limit(ADMIN_FOGLALAS_LIMIT));
         } else if (!tiltasHiba) {
             allapot.tiltasStatuszTamogatott = true;
         }
@@ -114,6 +114,8 @@
             : szurtElemek.slice(kezd, kezd + meret);
 
         elemek.foglalasLista.innerHTML = '';
+        foglalasAttekintesFrissitese(szurtElemek);
+        foglalasNaptarRenderelese(szurtElemek);
 
         if (!oldalElemek.length) {
             const aktivSzuro = Boolean(allapot.foglalasKereses) || (allapot.foglalasStatuszSzuro || 'all') !== 'all';
@@ -136,6 +138,11 @@
     }
 
     function aktualisFoglalasExportAdatok() {
+        if (allapot.foglalasNezet === 'naptar') {
+            return foglalasNaptarHonapElemei()
+                .map(elem => ({ ...elem.adat, __tipus: elem.tipus }));
+        }
+
         return aktualisListaOldal(
             foglalasSzurtElemek(),
             allapot.foglalasOldal,
@@ -175,6 +182,8 @@
                 adat.customer_name,
                 adat.customer_email,
                 adat.customer_phone,
+                adat.public_reference,
+                adat.id,
                 adat.note,
                 adat.nail_style,
                 adat.reason,
@@ -279,8 +288,10 @@
         allapot.foglalasStatuszSzuro = 'cancelled_by_customer';
         allapot.foglalasOldal = 1;
         elemek.foglalasKereses.value = '';
+        foglalasKeresesTorlesGombFrissitese(elemek);
         elemek.foglalasStatuszSzuro.value = 'cancelled_by_customer';
         foglalasListaRenderelese();
+        foglalasNezetValtasa('lista');
         elemek.foglalasLista?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -607,6 +618,17 @@
         }[tipus] || 'Esemény';
     }
 
+    function foglalasKartyaIdopont(kezdes, vege) {
+        const datum = datumIdoRovid(kezdes).split(' ')[0];
+
+        return `
+            <p class="admin-foglalas-idopont">
+                <span class="admin-foglalas-datum">${html(datum)}</span>
+                <span class="admin-foglalas-ido">${html(datumIdoRovid(kezdes, true))} – ${html(datumIdoRovid(vege, true))}</span>
+            </p>
+        `;
+    }
+
     function foglalasKartya(foglalas) {
         const kartya = document.createElement('article');
         const fuggoben = foglalasFuggoben(foglalas);
@@ -628,10 +650,11 @@
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <div class="admin-foglalas-nev-blokk">
+                        <p class="admin-kartya-tipus admin-foglalas-azonosito${foglalasAzonosito ? '' : ' hianyzo'}" aria-label="Foglalási azonosító: ${attr(foglalasAzonosito || 'még nincs')}"><code>${html(foglalasAzonosito || 'Azonosító nélkül')}</code></p>
                         <h3>${html(foglalas.customer_name)}</h3>
-                        <p class="admin-foglalas-azonosito${foglalasAzonosito ? '' : ' hianyzo'}"><span>Azonosító:</span><code>${html(foglalasAzonosito || 'még nincs')}</code></p>
+                        <p class="admin-foglalas-rovid-szolgaltatas">${html(foglalas.services?.name || 'Törölt szolgáltatás')}</p>
                     </div>
-                    <p class="admin-foglalas-idopont">${html(datumIdoRovid(foglalas.starts_at))} - ${html(datumIdoRovid(foglalas.ends_at, true))}</p>
+                    ${foglalasKartyaIdopont(foglalas.starts_at, foglalas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
                     <select class="admin-db-statusz" data-foglalas-statusz disabled>
@@ -641,6 +664,7 @@
                         ${statuszOption('cancelled', 'Általam lemondva', foglalas.status)}
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
+                    <button type="button" class="admin-kis-gomb" data-foglalas-reszletek aria-expanded="false">Részletek</button>
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
@@ -792,9 +816,12 @@
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
-                    <span class="admin-kartya-tipus">Kézzel felvett idő</span>
-                    <h3>${html(megjegyzes)}</h3>
-                    <p class="admin-foglalas-idopont">${html(datumIdoRovid(tiltas.starts_at))} - ${html(datumIdoRovid(tiltas.ends_at, true))}</p>
+                    <div class="admin-foglalas-nev-blokk">
+                        <span class="admin-kartya-tipus">Kézzel felvett idő</span>
+                        <h3>${html(megjegyzes)}</h3>
+                        <p class="admin-foglalas-rovid-szolgaltatas">Kézzel rögzített időpont</p>
+                    </div>
+                    ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
                     <select class="admin-db-statusz" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
@@ -1141,11 +1168,17 @@
     }
 
     async function foglalasListaKattintas(event) {
+        const reszletek = event.target.closest('[data-foglalas-reszletek]');
         const inspiracio = event.target.closest('[data-inspiracio-megnyitas]');
         const inspiracioTorles = event.target.closest('[data-inspiracio-torles]');
         const keziIdoNaptar = event.target.closest('[data-kezi-ido-naptar]');
         const szerkesztes = event.target.closest('[data-foglalas-szerkesztes]');
         const torles = event.target.closest('[data-foglalas-torles]');
+
+        if (reszletek) {
+            foglalasReszletekKapcsolasa(reszletek.closest('.admin-db-kartya'));
+            return;
+        }
 
         if (inspiracio) {
             inspiracioModalNyitasa(inspiracio.closest('.admin-db-kartya'));
@@ -1234,6 +1267,7 @@
 
         const aktiv = !kartya.classList.contains('szerkeszt');
         kartya.classList.toggle('szerkeszt', aktiv);
+        if (aktiv) foglalasReszletekKapcsolasa(kartya, true);
 
         kartya.querySelectorAll('[data-idopont-mezo], [data-foglalas-statusz]').forEach(mezoElem => {
             mezoElem.disabled = !aktiv;

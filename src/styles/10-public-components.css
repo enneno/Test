@@ -257,13 +257,14 @@
     visibility: hidden;
     pointer-events: none;
     touch-action: pan-x pan-y pinch-zoom;
-    transition: opacity 0.22s ease, visibility 0.22s ease;
+    transition: opacity 0.22s ease, visibility 0s linear 0.22s;
 }
 
 .galeria-lightbox.nyitva {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition-delay: 0s;
 }
 
 .galeria-lightbox img {
@@ -2394,8 +2395,8 @@
     }
 
     .social-gomb {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
     }
 
     .social-gomb svg {

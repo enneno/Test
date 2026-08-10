@@ -12,10 +12,6 @@
 }
 
 
-.admin-body #admin-tartalom {
-    padding-bottom: calc(124px + env(safe-area-inset-bottom));
-}
-
 @media (max-width: 768px) {
     .admin-body .admin-lebego-mentes {
         left: 50%;
@@ -36,7 +32,7 @@
     }
 
     .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
-        margin-bottom: 92px;
+        margin-bottom: 0;
         padding-bottom: 0;
     }
 }
@@ -357,7 +353,7 @@
     flex-wrap: nowrap;
     gap: 7px;
     margin-top: 18px;
-    padding-bottom: 72px;
+    padding-bottom: 0;
     color: var(--barna);
     font-weight: 800;
     overflow: visible;
@@ -547,7 +543,7 @@
 
     .admin-lapozo {
         gap: 5px;
-        padding-bottom: 72px;
+        padding-bottom: 0;
     }
 
     .admin-lapozo-felso {

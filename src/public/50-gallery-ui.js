@@ -12,8 +12,15 @@ function galeriaBekotese() {
     }));
 
     galeriaGombok.forEach((gomb, index) => {
+        if (gomb.dataset.galeriaBekotve === 'true') return;
+        gomb.dataset.galeriaBekotve = 'true';
         gomb.addEventListener('click', () => galeriaMegnyitasa(index));
     });
+
+    if (lightbox.dataset.galeriaVezerlesBekotve === 'true') {
+        return;
+    }
+    lightbox.dataset.galeriaVezerlesBekotve = 'true';
 
     lightbox.querySelector('.galeria-lightbox-bezar').addEventListener('click', galeriaBezarasa);
     lightbox.querySelector('.galeria-lightbox-elozo').addEventListener('click', () => galeriaLepes(-1));
@@ -39,6 +46,10 @@ function galeriaBekotese() {
             return;
         }
 
+        if (event.key === 'Tab') {
+            galeriaFokuszBentTartasa(event, lightbox);
+            return;
+        }
         if (event.key === 'Escape') galeriaBezarasa();
         if (event.key === 'ArrowLeft') galeriaLepes(-1);
         if (event.key === 'ArrowRight') galeriaLepes(1);
@@ -50,21 +61,52 @@ function galeriaMegnyitasa(index) {
     galeriaKepFrissitese();
 
     const lightbox = document.getElementById('galeria-lightbox');
+    galeriaElozoFokusz = document.activeElement;
     lightbox.classList.add('nyitva');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    window.requestAnimationFrame(() => {
+        lightbox.querySelector('.galeria-lightbox-bezar')?.focus();
+    });
 }
 
 function galeriaBezarasa() {
     const lightbox = document.getElementById('galeria-lightbox');
 
-    if (!lightbox) {
+    if (!lightbox || !lightbox.classList.contains('nyitva')) {
         return;
     }
 
     lightbox.classList.remove('nyitva');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (galeriaElozoFokusz?.isConnected) {
+        galeriaElozoFokusz.focus();
+    }
+    galeriaElozoFokusz = null;
+}
+
+function galeriaFokuszBentTartasa(event, lightbox) {
+    const fokuszolhato = Array.from(lightbox.querySelectorAll(
+        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(elem => elem.offsetParent !== null);
+
+    if (!fokuszolhato.length) {
+        event.preventDefault();
+        lightbox.focus();
+        return;
+    }
+
+    const elso = fokuszolhato[0];
+    const utolso = fokuszolhato[fokuszolhato.length - 1];
+
+    if (event.shiftKey && document.activeElement === elso) {
+        event.preventDefault();
+        utolso.focus();
+    } else if (!event.shiftKey && document.activeElement === utolso) {
+        event.preventDefault();
+        elso.focus();
+    }
 }
 
 function galeriaLepes(irany) {

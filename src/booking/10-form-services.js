@@ -100,6 +100,63 @@
         }
     }
 
+    function szolgaltatasCsoportKulcs(ertek) {
+        return String(ertek || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .toLowerCase();
+    }
+
+    function szolgaltatasNevBontasa(szolgaltatas) {
+        const teljesNev = String(szolgaltatas?.name || '').trim();
+        const leiras = String(szolgaltatas?.description || '').trim();
+        const nevReszek = teljesNev.split(/\s+-\s+/).filter(Boolean);
+        let csoport = '';
+        let tetel = leiras || teljesNev;
+
+        if (nevReszek.length > 1) {
+            csoport = nevReszek.shift().trim();
+            if (!leiras) tetel = nevReszek.join(' - ').trim();
+        } else {
+            const kulcs = szolgaltatasCsoportKulcs(tetel);
+            if (kulcs.startsWith('epites')) csoport = 'Építés';
+            else if (kulcs.startsWith('toltes')) csoport = 'Töltés';
+            else if (kulcs.includes('manikur')) csoport = 'Manikűr';
+            else if (kulcs.includes('gel lakk')) csoport = 'Gél lakk';
+            else csoport = 'Szolgáltatások';
+        }
+
+        const tetelReszek = tetel.split(/\s+-\s+/).filter(Boolean);
+        if (
+            tetelReszek.length > 1
+            && szolgaltatasCsoportKulcs(tetelReszek[0]) === szolgaltatasCsoportKulcs(csoport)
+        ) {
+            tetelReszek.shift();
+            tetel = tetelReszek.join(' - ').trim();
+        }
+
+        return {
+            csoport: csoport || 'Szolgáltatások',
+            tetel: tetel || teljesNev || 'Szolgáltatás'
+        };
+    }
+
+    function szolgaltatasCsoportokLetrehozasa(szolgaltatasok) {
+        const csoportok = new Map();
+
+        szolgaltatasok.forEach(szolgaltatas => {
+            const bontas = szolgaltatasNevBontasa(szolgaltatas);
+            const kulcs = szolgaltatasCsoportKulcs(bontas.csoport);
+            if (!csoportok.has(kulcs)) {
+                csoportok.set(kulcs, { cim: bontas.csoport, tetelek: [] });
+            }
+            csoportok.get(kulcs).tetelek.push({ szolgaltatas, cim: bontas.tetel });
+        });
+
+        return Array.from(csoportok.values());
+    }
+
 
     async function szolgaltatasokBetoltese(elemek) {
         selectAllapot(elemek.szolgaltatas, 'Szolgáltatások betöltése...');
@@ -136,11 +193,16 @@
         allapot.szolgaltatasok = (Array.isArray(data) ? data : []).map(szolgaltatasArNormalizalasa);
         elemek.szolgaltatas.innerHTML = '<option value="" disabled selected>Válassz szolgáltatást...</option>';
 
-        allapot.szolgaltatasok.forEach(szolgaltatas => {
-            const option = document.createElement('option');
-            option.value = szolgaltatas.id;
-            option.textContent = szolgaltatasFelirat(szolgaltatas);
-            elemek.szolgaltatas.appendChild(option);
+        szolgaltatasCsoportokLetrehozasa(allapot.szolgaltatasok).forEach(csoport => {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = csoport.cim;
+            csoport.tetelek.forEach(({ szolgaltatas }) => {
+                const option = document.createElement('option');
+                option.value = szolgaltatas.id;
+                option.textContent = szolgaltatasFelirat(szolgaltatas);
+                optgroup.appendChild(option);
+            });
+            elemek.szolgaltatas.appendChild(optgroup);
         });
 
         if (allapot.szolgaltatasok.length === 0) {
@@ -156,24 +218,50 @@
         if (!elemek.szolgaltatasKartyak) return;
         elemek.szolgaltatasKartyak.innerHTML = '';
 
-        allapot.szolgaltatasok.forEach(szolgaltatas => {
-            const kartya = document.createElement('button');
-            kartya.type = 'button';
-            kartya.className = 'foglalas-valaszto-kartya';
-            kartya.dataset.value = szolgaltatas.id;
-            kartya.innerHTML = `
-                <span class="foglalas-kartya-cim">${html(szolgaltatas.description?.trim() || szolgaltatas.name)}</span>
-                <span class="foglalas-kartya-meta">${html([szolgaltatas.price_text, idoFelirat(szolgaltatas.duration_minutes)].filter(Boolean).join(' • '))}</span>
-            `;
-            kartya.addEventListener('click', () => {
-                elemek.szolgaltatas.value = szolgaltatas.id;
-                kuponSzolgaltatasValtozott(elemek);
-                kartyaAktivAllapot(elemek.szolgaltatasKartyak, szolgaltatas.id);
-                szabadDatumokBetoltese(elemek);
-                osszefoglaloFrissitese(elemek);
-                kovetkezoReszhezGordit('[data-step="2"]');
+        szolgaltatasCsoportokLetrehozasa(allapot.szolgaltatasok).forEach((csoport, index) => {
+            const szekcio = document.createElement('section');
+            const cimAzonosito = `foglalas-szolgaltatas-csoport-${index}`;
+            szekcio.className = 'foglalas-szolgaltatas-csoport';
+            szekcio.setAttribute('role', 'group');
+            szekcio.setAttribute('aria-labelledby', cimAzonosito);
+
+            const cim = document.createElement('h4');
+            cim.id = cimAzonosito;
+            cim.className = 'foglalas-szolgaltatas-csoport-cim';
+            cim.textContent = csoport.cim;
+
+            const racs = document.createElement('div');
+            const darab = Math.min(csoport.tetelek.length, 3);
+            const rovidCimek = csoport.tetelek.every(tetel => tetel.cim.length <= 12);
+            racs.className = `foglalas-szolgaltatas-csoport-racs foglalas-szolgaltatas-csoport-racs-${darab}`;
+            racs.classList.toggle('foglalas-szolgaltatas-csoport-racs-rovid', rovidCimek);
+
+            csoport.tetelek.forEach(({ szolgaltatas, cim: tetelCim }) => {
+                const meta = [szolgaltatas.price_text, idoFelirat(szolgaltatas.duration_minutes)]
+                    .filter(Boolean)
+                    .join(' • ');
+                const kartya = document.createElement('button');
+                kartya.type = 'button';
+                kartya.className = 'foglalas-valaszto-kartya';
+                kartya.dataset.value = szolgaltatas.id;
+                kartya.setAttribute('aria-label', [csoport.cim, tetelCim, meta].filter(Boolean).join(', '));
+                kartya.innerHTML = `
+                    <span class="foglalas-kartya-cim">${html(tetelCim)}</span>
+                    <span class="foglalas-kartya-meta">${html(meta)}</span>
+                `;
+                kartya.addEventListener('click', () => {
+                    elemek.szolgaltatas.value = szolgaltatas.id;
+                    kuponSzolgaltatasValtozott(elemek);
+                    kartyaAktivAllapot(elemek.szolgaltatasKartyak, szolgaltatas.id);
+                    szabadDatumokBetoltese(elemek);
+                    osszefoglaloFrissitese(elemek);
+                    kovetkezoReszhezGordit('[data-step="2"]');
+                });
+                racs.appendChild(kartya);
             });
-            elemek.szolgaltatasKartyak.appendChild(kartya);
+
+            szekcio.append(cim, racs);
+            elemek.szolgaltatasKartyak.appendChild(szekcio);
         });
     }
 
