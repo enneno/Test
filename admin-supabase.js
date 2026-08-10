@@ -1458,6 +1458,10 @@
         kartya.dataset.tipus = 'blocked';
         kartya.dataset.eredetiStatusz = statusz;
         const megjegyzes = tiltas.reason?.trim() || 'Kézi foglalás';
+        kartya.dataset.eredetiDatum = datumInputErtek(tiltas.starts_at);
+        kartya.dataset.eredetiKezdes = idoInputErtek(tiltas.starts_at);
+        kartya.dataset.eredetiVege = idoInputErtek(tiltas.ends_at);
+        kartya.dataset.eredetiReason = megjegyzes;
         kartya.innerHTML = `
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
@@ -1554,6 +1558,22 @@
             .replace(/,/g, '\\,')
             .replace(/;/g, '\\;');
     }
+
+    function foglalasIdopontValtozott(kartya) {
+        return kartya.dataset.eredetiDatum !== idopontMezo(kartya, 'date')?.value
+            || kartya.dataset.eredetiKezdes !== idopontMezo(kartya, 'start_time')?.value
+            || kartya.dataset.eredetiVege !== idopontMezo(kartya, 'end_time')?.value;
+    }
+
+    function foglalasKartyaModosult(kartya, modositas) {
+        if (kartya.dataset.eredetiStatusz !== modositas.status || foglalasIdopontValtozott(kartya)) {
+            return true;
+        }
+
+        return kartya.dataset.tipus === 'blocked'
+            && String(kartya.dataset.eredetiReason || '').trim() !== String(modositas.reason || '').trim();
+    }
+
     async function foglalasStatuszokMentese() {
         const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya'));
 
@@ -1567,6 +1587,7 @@
         let emailKuldesek = 0;
         let emailHibak = 0;
         let kepTorlesHibak = 0;
+        let mentettModositasok = 0;
 
         for (const kartya of kartyak) {
             const adatok = idopontModositasAdatok(kartya);
@@ -1589,6 +1610,10 @@
                     starts_at: adatok.startsAt,
                     ends_at: adatok.endsAt
                 };
+
+            if (!foglalasKartyaModosult(kartya, modositas)) {
+                continue;
+            }
 
             const utkozesHiba = await idopontUtkozesHiba({
                 tipus: kartya.dataset.tipus,
@@ -1623,6 +1648,8 @@
                 onlineStatusz(`Nem sikerült menteni az egyik bejegyzést. ${error.message || ''}`, true);
                 return;
             }
+
+            mentettModositasok += 1;
 
             const inspiraciotTorloStatusz = ['done', 'cancelled', 'cancelled_by_customer'].includes(modositas.status);
             if (kartya.dataset.tipus === 'booking' && inspiraciotTorloStatusz) {
@@ -1668,6 +1695,11 @@
                     }
                 }
             }
+        }
+
+        if (!mentettModositasok) {
+            onlineStatusz('Nem történt módosítás.');
+            return;
         }
 
         if (kepTorlesHibak > 0) {
@@ -1732,9 +1764,7 @@
 
     function foglalasEmailModositas(kartya, modositas) {
         const statuszValtozott = kartya.dataset.eredetiStatusz !== modositas.status;
-        const idopontValtozott = kartya.dataset.eredetiDatum !== idopontMezo(kartya, 'date')?.value
-            || kartya.dataset.eredetiKezdes !== idopontMezo(kartya, 'start_time')?.value
-            || kartya.dataset.eredetiVege !== idopontMezo(kartya, 'end_time')?.value;
+        const idopontValtozott = foglalasIdopontValtozott(kartya);
 
         if (!statuszValtozott && !idopontValtozott) {
             return null;

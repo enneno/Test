@@ -311,6 +311,7 @@ test('a foglalások között kötelező a 30 perces szünet', () => {
     const schema = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-schema.sql'), 'utf8');
     const styleMigration = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-booking-style-duration.sql'), 'utf8');
     const blockedTimeMigration = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-blocked-time-status.sql'), 'utf8');
+    const statusFix = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-booking-buffer-status-fix.sql'), 'utf8');
     const bufferedRange = "b.ends_at + interval '30 minutes'";
     const bufferedSlot = "slots.ends_at + interval '30 minutes'";
 
@@ -320,10 +321,26 @@ test('a foglalások között kötelező a 30 perces szünet', () => {
     });
     expect(migration).toContain('create trigger bookings_enforce_buffer');
     expect(migration).toContain("new.ends_at + interval '30 minutes'");
+    expect(migration).toContain("if tg_op = 'UPDATE' then");
+    expect(migration).toContain('new.starts_at is not distinct from old.starts_at');
+    expect(migration).toContain("old.status in ('pending', 'confirmed', 'done')");
+    expect(schema).toContain('new.starts_at is not distinct from old.starts_at');
+    expect(statusFix).toContain('create or replace function public.lumi_enforce_booking_buffer()');
+    expect(statusFix).toContain('new.starts_at is not distinct from old.starts_at');
+    expect(statusFix).toContain('create trigger bookings_enforce_buffer');
 
     const utkozik = (meglevoVege, ujKezdete) => ujKezdete < meglevoVege + 30;
     expect(utkozik(12 * 60 + 30, 12 * 60 + 30)).toBe(true);
     expect(utkozik(12 * 60 + 30, 13 * 60)).toBe(false);
+});
+
+test('az admin csak a ténylegesen módosított foglalási kártyákat menti', () => {
+    const adminForras = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'admin', '10-bookings-events.js'), 'utf8');
+
+    expect(adminForras).toContain('function foglalasKartyaModosult(kartya, modositas)');
+    expect(adminForras).toContain('if (!foglalasKartyaModosult(kartya, modositas))');
+    expect(adminForras).toContain('kartya.dataset.eredetiReason = megjegyzes');
+    expect(adminForras).toContain("onlineStatusz('Nem történt módosítás.')");
 });
 
 test('a fő publikus oldalak nagyíthatók és helyes főcím-struktúrát használnak', async ({ page }) => {
