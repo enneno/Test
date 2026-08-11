@@ -93,7 +93,7 @@ function lumiAlapOldalAdatok() {
                 monogram: 'LN',
                 galeriaCimke: 'Aktuális munkák',
                 galeriaLink: 'Galéria megnyitása',
-                kep: '/kepek/hero-exact.jpg',
+                kep: '/kepek/hero-turkiz.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {
@@ -1075,7 +1075,7 @@ function oldalAdatokNormalizalasa(adatok, alap) {
 
     const hero = String(adatok.fooldal.hero.kep || '');
     if (!hero || hero.includes('/kepek/hatter2.jpg') || hero.includes('/kepek/hero-hullamos.jpg')) {
-        adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-exact.jpg';
+        adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-turkiz.jpg';
     }
 
     const ervenyesKulcsok = new Set(
@@ -1253,7 +1253,8 @@ function fooldalAdatokAlkalmazasa(fooldal, teljesGaleria) {
     const hero = document.getElementById('hero');
     const heroKep = hero?.querySelector('.hero-kep');
     if (hero && heroAdatok.kep) {
-        const heroKepSrc = heroAdatok.kep || '/kepek/hero-exact.jpg';
+        const heroKepSrc = heroAdatok.kep === '/kepek/hero-exact.jpg'
+            ? '/kepek/hero-turkiz.jpg' : (heroAdatok.kep || '/kepek/hero-turkiz.jpg');
 
         if (heroKep) {
             heroKep.src = heroKepSrc;
@@ -1349,17 +1350,37 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
 
     szovegBeallitasa('.szekcio-fej .szekcio-kicker', szolgaltatasok.kicker, szekcio);
     szovegBeallitasa('.szekcio-fej h2', szolgaltatasok.cim, szekcio);
-    szovegBeallitasa('.szekcio-fej > p', szolgaltatasok.leiras, szekcio);
+    szovegBeallitasa('.szolgaltatas-bevezeto > p', szolgaltatasok.leiras, szekcio);
 
     if (!racs || !Array.isArray(szolgaltatasok.kartyak)) {
         return;
     }
 
     racs.innerHTML = '';
+    const megjelenesek = [
+        { valtozat: 'epites', tipus: 'Építés & karbantartás', minta: /epit|tolt/ },
+        { valtozat: 'diszites', tipus: 'Egyedi részletek', minta: /diszit|nail art/ },
+        { valtozat: 'gel-lakk', tipus: 'Tartós szín', minta: /gel lakk/ },
+        { valtozat: 'manikur', tipus: 'Ápolás & eltávolítás', minta: /manikur|apolas|eltavolit/ }
+    ];
 
-    szolgaltatasok.kartyak.forEach(kartya => {
-        const doboz = document.createElement('div');
-        doboz.className = 'szolgaltatas-kartya';
+
+    szolgaltatasok.kartyak.forEach((kartya, index) => {
+        const cimKulcs = String(kartya.cim || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const megjelenes = megjelenesek.find(({ minta }) => minta.test(cimKulcs))
+            || megjelenesek[index % megjelenesek.length];
+        const doboz = document.createElement('article');
+        doboz.className = `szolgaltatas-kartya szolgaltatas-kartya--${megjelenes.valtozat}`;
+
+        const fej = document.createElement('div');
+        fej.className = 'szolgaltatas-kartya-fej';
+
+
+        const tipus = document.createElement('span');
+        tipus.className = 'szolgaltatas-tipus';
+        tipus.textContent = megjelenes.tipus;
+
+        fej.append(tipus);
 
         const cim = document.createElement('h3');
         cim.textContent = kartya.cim || '';
@@ -1373,7 +1394,7 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         link.href = galeriaKartya ? '/galeria/' : '/arlista/';
         link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">→</span>`;
 
-        doboz.append(cim, leiras, link);
+        doboz.append(fej, cim, leiras, link);
         racs.appendChild(doboz);
     });
 }

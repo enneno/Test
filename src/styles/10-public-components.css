@@ -1546,38 +1546,40 @@
 }
 
 
-/* A HAMBURGER GOMB */
+/* Mobil navigáció */
 .hamburger {
     display: none;
     position: relative;
+    z-index: 10001;
     width: 44px;
     height: 44px;
-    border: none;
-    border-radius: var(--lumi-radius-pill);
-    background-color: rgba(185, 133, 143, 0.12);
-    box-shadow: inset 0 0 0 1px rgba(185, 133, 143, 0.18);
-    z-index: 9999;
+    padding: 0;
+    border: 1px solid var(--ui-line-strong, rgba(145, 118, 110, 0.3));
+    border-radius: 3px;
+    background: var(--ui-accent, #f0d7d5);
+    box-shadow: 0 8px 24px rgba(55, 40, 35, 0.06);
+    color: var(--ui-off-black, #211b19);
     cursor: pointer;
-    color: var(--akcentus-vilagos);
-    transition: background-color 0.25s ease, transform 0.25s ease;
+    transition: background-color 0.2s ease;
 }
 
 .hamburger:hover {
-    background-color: rgba(185, 133, 143, 0.18);
+    background: var(--ui-accent, #f0d7d5);
+    transform: none;
 }
 
 .hamburger span {
     position: absolute;
-    left: 12px;
     right: 12px;
-    height: 2px;
-    background-color: var(--tinta);
-    border-radius: var(--lumi-radius-pill);
+    left: 12px;
+    height: 1px;
+    border-radius: 0;
+    background: currentColor;
     transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
 }
 
 .hamburger span:nth-child(1) {
-    top: 14px;
+    top: 15px;
 }
 
 .hamburger span:nth-child(2) {
@@ -1585,11 +1587,15 @@
 }
 
 .hamburger span:nth-child(3) {
-    top: 28px;
+    top: 27px;
+}
+
+.hamburger.open span:nth-child(1),
+.hamburger.open span:nth-child(3) {
+    top: 21px;
 }
 
 .hamburger.open span:nth-child(1) {
-    top: 21px;
     transform: rotate(45deg);
 }
 
@@ -1598,88 +1604,102 @@
 }
 
 .hamburger.open span:nth-child(3) {
-    top: 21px;
     transform: rotate(-45deg);
 }
 
-/* 1. AZ ALAP DOBOZ MINDEN DIZÁJNNAL */
 .mobile-menu {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 88px;
-    right: 16px;
-    width: min(270px, calc(100vw - 32px));
-    background-color: rgba(255, 250, 244, 0.94);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(185, 133, 143, 0.24);
-    border-radius: 22px;
-    padding: 10px;
     z-index: 9998;
-    box-shadow: 0 20px 46px rgba(70, 48, 42, 0.16);
+    top: var(--ui-header-height, 72px);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px 20px calc(28px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    border: 0;
+    border-top: 1px solid var(--ui-line, rgba(145, 118, 110, 0.18));
+    border-radius: 0;
+    background: rgba(250, 247, 241, 0.985);
+    box-shadow: 0 24px 70px rgba(55, 40, 35, 0.12);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px) scale(0.98);
-    transition: all 0.25s ease-in-out;
+    transform: translateY(-12px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    backdrop-filter: blur(22px);
 }
 
-/* 2. A LINKEK VÉGLEGES KINÉZETE (Minden itt van, .open nélkül!) */
-.mobile-menu a {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 14px 16px;
-    margin-left: 0;
-    margin-bottom: 4px;
-    border-radius: 16px;
-    color: var(--tinta);
-    font-size: 13px;
-    font-weight: 700;
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-decoration: none;
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-
-/* 3. AZ UTOLSÓ ELEM (.open nélkül) */
-.mobile-menu a:last-child {
-    margin-bottom: 0;
-}
-
-/* 4. HOVER EFFEKTUS (.open nélkül) */
-.mobile-menu a:hover {
-    color: var(--tinta);
-    background-color: rgba(185, 133, 143, 0.12);
-    transform: translateX(2px);
-}
-
-.mobile-menu a.aktiv {
-    color: var(--tinta);
-    background-color: rgba(185, 133, 143, 0.14);
-}
-
-/* 5. A NYITOTT ÁLLAPOT (CSAK a doboz megjelenítése) */
 .mobile-menu.open {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+}
+
+.mobile-menu a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 58px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0 4px;
+    border-bottom: 1px solid var(--ui-line, rgba(145, 118, 110, 0.18));
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-off-black, #211b19);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(27px, 8vw, 34px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-align: left;
+    text-decoration: none;
+    text-transform: none;
+    transition: padding-left 0.2s ease;
+}
+
+.mobile-menu a:hover,
+.mobile-menu a.aktiv {
+    padding-left: 10px;
+    background: transparent;
+    color: var(--ui-off-black, #211b19);
+    transform: none;
+}
+
+.mobile-menu a:last-child {
+    justify-content: center;
+    min-height: 52px;
+    margin-top: 20px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--ui-ink, #91766e);
+    color: var(--ui-off-white, #fff9f5);
+    font-family: "Manrope", sans-serif;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.mobile-menu a:last-child:hover,
+.mobile-menu a:last-child.aktiv {
+    padding-left: 18px;
+    background: var(--ui-rose-dark, #91766e);
+    color: var(--ui-off-white, #fff9f5);
+}
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .hamburger span {
+        transition: none;
+    }
 }
 
 @media screen and (max-width: 768px) {
-    header {
-        width: calc(100% - 24px);
-        top: 10px;
-        padding: 10px 12px 10px 18px;
-    }
-
-    .logo {
-        min-width: 130px;
-        font-size: 31px;
-    }
-
-    .menu-pontok {
-        display: none;
+    body.mobil-menu-nyitva {
+        overflow: hidden;
     }
 
     .hamburger {

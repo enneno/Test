@@ -72,31 +72,33 @@ textarea {
             ===================================== */
 header {
     position: fixed;
-    top: 12px;
-    left: 50%;
-    width: var(--lumi-container-width);
-    background-color: rgba(255, 250, 244, 0.88);
-    backdrop-filter: blur(18px);
-    padding: 10px 18px 10px 24px;
-    box-sizing: border-box;
     z-index: 1000;
+    top: 0;
+    left: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(185, 133, 143, 0.24);
-    border-radius: var(--lumi-radius-pill);
-    box-shadow: 0 14px 34px rgba(70, 48, 42, 0.12);
-    height: 64px;
-    transform: translateX(-50%);
+    justify-content: space-between;
+    width: 100%;
+    height: var(--ui-header-height, 82px);
+    box-sizing: border-box;
+    padding: 0 var(--ui-gutter, clamp(20px, 4vw, 56px));
+    border: 0;
+    border-bottom: 1px solid var(--ui-line, rgba(145, 118, 110, 0.18));
+    border-radius: 0;
+    background: var(--ui-header-bg, rgba(240, 215, 213, 0.96));
+    box-shadow: none;
+    backdrop-filter: blur(18px);
 }
 
 .logo {
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    width: auto;
     min-width: 138px;
-    min-height: 42px;
-    color: var(--tinta);
+    max-width: none;
+    height: 44px;
+    color: var(--ui-off-black, #211b19);
     text-decoration: none;
     transition: color 0.25s ease;
 }
@@ -133,54 +135,87 @@ header {
 }
 
 .logo:hover {
-    color: var(--akcentus);
+    color: var(--ui-rose-dark, #91766e);
 }
 
 /* Az asztali szöveges menü */
 .menu-pontok {
     display: flex;
     align-items: center;
+    gap: 22px;
 }
 
 .menu-pontok a {
-    position: relative;
-    color: rgba(43, 37, 33, 0.72);
-    text-decoration: none;
-    margin-left: 8px;
-    padding: 12px 14px;
-    border-radius: var(--lumi-radius-pill);
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--ui-off-black, #211b19);
+    font-family: "Manrope", sans-serif;
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.07em;
+    text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 1.8px;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.menu-pontok a::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: -8px;
-    width: 0;
-    height: 1px;
-    background-color: var(--akcentus);
-    transition: width 0.25s ease;
-}
 
-.menu-pontok a:hover {
-    background-color: rgba(185, 133, 143, 0.12);
-    color: var(--tinta);
-}
-
+.menu-pontok a:hover,
 .menu-pontok a.aktiv {
-    background-color: rgba(185, 133, 143, 0.14);
-    color: var(--tinta);
+    background: transparent;
+    box-shadow: inset 0 -2px 0 var(--ui-rose, #f0d7d5);
+    color: var(--ui-off-black, #211b19);
 }
 
-.menu-pontok a:hover::after {
-    left: 0;
-    right: auto;
-    width: 100%;
+.menu-pontok a:last-child {
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 3px;
+    background: var(--ui-ink, #91766e);
+    color: var(--ui-on-primary, #fff9f5);
+}
+
+.menu-pontok a:last-child:hover {
+    background: var(--ui-rose-dark, #91766e);
+    box-shadow: inset 0 -3px 0 var(--ui-warm, #f0d7d5);
+    color: var(--ui-on-primary, #fff9f5);
+}
+
+@media screen and (max-width: 768px) {
+    header {
+        height: var(--ui-header-height, 72px);
+        padding: 0 18px;
+    }
+
+    .logo {
+        min-width: 124px;
+        height: 42px;
+        gap: 8px;
+    }
+
+    .logo-lumi {
+        font-size: 31px;
+    }
+
+    .logo-nails {
+        padding-left: 9px;
+        font-size: 8px;
+        letter-spacing: 0.24em;
+    }
+
+    .logo-nails::before {
+        height: 19px;
+    }
+
+    .menu-pontok {
+        display: none;
+    }
 }
 
 /* =========================================
@@ -196,9 +231,7 @@ header {
     aspect-ratio: 1179 / 420;
     position: relative;
     padding: 0;
-    border: 1px solid rgba(185, 133, 143, 0.22);
     border-radius: 22px;
-    box-shadow: 0 18px 44px rgba(78, 54, 48, 0.12);
     overflow: hidden;
 }
 
@@ -684,11 +717,11 @@ select.urlap-mezo:invalid {
     align-items: center;
     flex: 0 0 auto;
     padding: 15px;
-    color: var(--akcentus-vilagos);
+    color: var(--ui-off-black, #211b19);
     font-weight: 600;
     font-size: 14px;
-    border-right: 1px solid rgba(185, 133, 143, 0.28);
-    background-color: rgba(185, 133, 143, 0.08);
+    border-right: 1px solid var(--ui-line-strong, rgba(145, 118, 110, 0.3));
+    background-color: var(--ui-bg, #f3ece3);
     user-select: none;
 }
 
@@ -699,37 +732,44 @@ select.urlap-mezo:invalid {
 }
 
 .gomb {
-    display: flex;
-    align-self: center;
+    display: inline-flex;
+    align-self: auto;
     align-items: center;
     justify-content: center;
-    width: var(--lumi-button-width);
-    min-height: var(--lumi-button-height);
+    width: auto;
+    max-width: 100%;
+    min-height: 48px;
     box-sizing: border-box;
-    margin: 20px auto;
-    padding: 0 var(--lumi-button-padding);
-    border: 1px solid rgba(185, 133, 143, 0.42);
-    border-radius: var(--lumi-radius-pill);
-    background: var(--akcentus);
-    color: #fffaf4;
-    box-shadow: var(--lumi-button-shadow);
-    font-family: var(--lumi-button-font);
+    margin: 0;
+    padding: 0 22px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--ui-rose-dark, #91766e);
+    box-shadow: none;
+    color: var(--ui-on-primary, #fff9f5);
+    font-family: "Manrope", sans-serif;
     font-size: 12px;
     font-weight: 700;
     line-height: 1.15;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.04em;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .gomb:hover {
-    border-color: rgba(185, 133, 143, 0.58);
-    background: var(--akcentus-vilagos);
-    color: #fffaf4;
+    background: var(--ui-ink, #91766e);
+    color: var(--ui-on-primary, #fff9f5);
     transform: translateY(-1px);
+    box-shadow: inset 0 -3px 0 var(--ui-warm, #f0d7d5), 0 12px 28px rgba(145, 118, 110, 0.18);
+}
+
+.oldal-foglalas-cta {
+    display: flex;
+    width: min(100%, 286px);
+    margin: 48px auto 72px;
 }
 
 .gomb:disabled {

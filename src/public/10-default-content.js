@@ -55,7 +55,7 @@ function lumiAlapOldalAdatok() {
                 monogram: 'LN',
                 galeriaCimke: 'Aktuális munkák',
                 galeriaLink: 'Galéria megnyitása',
-                kep: '/kepek/hero-exact.jpg',
+                kep: '/kepek/hero-turkiz.jpg',
                 kepAlt: 'Lumi Nails nyitókép'
             },
             bemutatkozas: {

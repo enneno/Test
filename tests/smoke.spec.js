@@ -473,6 +473,109 @@ test('a mobil főoldal címei törnek, a térközei és a CTA nyilai egységesek
     ));
     expect(szekcioTavolsagok).toEqual([64, 64, 64]);
 });
+test('a főoldali szolgáltatásrész a Barna-Beige-Rosy rendszerben asztalon és mobilon is rendezett', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const hatterKepSzelessegek = await page.locator('.szolgaltatas-kartya').evaluateAll(async (kartyak) =>
+        Promise.all(kartyak.map(async (kartya) => {
+            const hatter = getComputedStyle(kartya, '::before').backgroundImage;
+            const kepUrl = hatter.match(/url\(["']?(.*?)["']?\)/)?.[1];
+            if (!kepUrl) return 0;
+            const kep = new Image();
+            kep.src = kepUrl;
+            await kep.decode();
+            return kep.naturalWidth;
+        }))
+    );
+
+    const asztali = await page.locator('#szolgaltatasok').evaluate((szekcio) => {
+        const gyokerStilus = getComputedStyle(document.documentElement);
+        const lista = szekcio.querySelector('.szolgaltatas-lista');
+        const kartyak = Array.from(szekcio.querySelectorAll('.szolgaltatas-kartya'));
+        return {
+            primary: gyokerStilus.getPropertyValue('--ui-primary').trim(),
+            accent: gyokerStilus.getPropertyValue('--ui-accent').trim(),
+            highlight: gyokerStilus.getPropertyValue('--ui-highlight').trim(),
+            warm: gyokerStilus.getPropertyValue('--ui-warm').trim(),
+            hatter: getComputedStyle(szekcio).backgroundColor,
+            oszlopok: getComputedStyle(lista).gridTemplateColumns.split(/\s+/).length,
+            listaOverflow: getComputedStyle(lista).overflow,
+            kartyak: kartyak.length,
+            kepHatters: kartyak.map((kartya) => getComputedStyle(kartya, '::before').backgroundImage),
+            fedoretegek: kartyak.map((kartya) => getComputedStyle(kartya, '::after').backgroundImage),
+            keretSzinek: kartyak.map((kartya) => getComputedStyle(kartya).borderColor),
+            keretSzelessegek: kartyak.map((kartya) => getComputedStyle(kartya).borderWidth),
+            keretIvek: kartyak.map((kartya) => ({
+                kartya: getComputedStyle(kartya).borderRadius,
+                keret: getComputedStyle(kartya, '::after').borderRadius
+            })),
+            szamok: kartyak.reduce((darab, kartya) => darab + kartya.querySelectorAll('.szolgaltatas-szam').length, 0),
+            cimSzinek: kartyak.map((kartya) => getComputedStyle(kartya.querySelector('h3')).color),
+            linkMagassagok: kartyak.map((kartya) =>
+                Math.round(kartya.querySelector('a').getBoundingClientRect().height))
+        };
+    });
+
+    expect(asztali).toMatchObject({
+        primary: '#91766e',
+        accent: '#f0d7d5',
+        highlight: '#f3ece3',
+        warm: '#f0d7d5',
+        hatter: 'rgb(145, 118, 110)',
+        listaOverflow: 'visible',
+        oszlopok: 2,
+        kartyak: 4
+    });
+    expect(asztali.linkMagassagok.every((magassag) => magassag >= 44)).toBe(true);
+    expect(hatterKepSzelessegek.every((szelesseg) => szelesseg > 0)).toBe(true);
+    expect(asztali.kepHatters.every((kep) => kep !== 'none')).toBe(true);
+    expect(asztali.fedoretegek.every((reteg) => reteg.includes('linear-gradient'))).toBe(true);
+    expect(asztali.keretSzinek.every((szin) => szin === 'rgb(240, 215, 213)')).toBe(true);
+    expect(asztali.keretSzelessegek.every((szelesseg) => szelesseg === '2px')).toBe(true);
+    expect(asztali.keretIvek.every(({ kartya, keret }) => kartya === keret)).toBe(true);
+    expect(asztali.szamok).toBe(0);
+    expect(asztali.cimSzinek.every((szin) => szin === 'rgb(255, 249, 245)')).toBe(true);
+
+    const elsoKartya = page.locator('.szolgaltatas-kartya').first();
+    await elsoKartya.hover();
+    await expect.poll(async () => elsoKartya.evaluate((kartya) =>
+        new DOMMatrixReadOnly(getComputedStyle(kartya).transform).a
+    )).toBeGreaterThan(1.01);
+    await expect.poll(async () => elsoKartya.evaluate((kartya) =>
+        new DOMMatrixReadOnly(getComputedStyle(kartya, '::before').transform).a
+    )).toBeGreaterThan(1.03);
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect.poll(async () => elsoKartya.evaluate((kartya) =>
+        new DOMMatrixReadOnly(getComputedStyle(kartya).transform).a
+    )).toBe(1);
+    await expect.poll(async () => elsoKartya.evaluate((kartya) =>
+        new DOMMatrixReadOnly(getComputedStyle(kartya, '::before').transform).a
+    )).toBe(1);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const mobil = await page.locator('#szolgaltatasok').evaluate((szekcio) => {
+        const lista = szekcio.querySelector('.szolgaltatas-lista');
+        const zaras = szekcio.querySelector('.szolgaltatas-zaras');
+        const gomb = zaras.querySelector('.gomb');
+        return {
+            oszlopok: getComputedStyle(lista).gridTemplateColumns.split(/\s+/).length,
+            szekcioSzelesseg: Math.round(szekcio.getBoundingClientRect().width),
+            listaSzelesseg: Math.round(lista.getBoundingClientRect().width),
+            gombSzelesseg: Math.round(gomb.getBoundingClientRect().width),
+            zarasSzelesseg: Math.round(zaras.getBoundingClientRect().width),
+            dokumentumSzelesseg: document.documentElement.scrollWidth
+        };
+    });
+
+    expect(mobil.oszlopok).toBe(1);
+    expect(mobil.dokumentumSzelesseg).toBeLessThanOrEqual(390);
+    expect(mobil.szekcioSzelesseg).toBe(390);
+    expect(mobil.listaSzelesseg).toBeLessThan(mobil.szekcioSzelesseg);
+    expect(Math.abs(mobil.gombSzelesseg - mobil.zarasSzelesseg)).toBeLessThanOrEqual(1);
+});
 
 test('a belső menülinkek első kattintásra, menüzárás után finoman a megfelelő szakaszhoz görgetnek', async ({ page }) => {
     await page.addInitScript(() => {
@@ -1108,7 +1211,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         statuszSzinek.cancelled.hatter,
         statuszSzinek.cancelled_by_customer.hatter
     ]).size).toBe(5);
-    expect(statuszSzinek.cancelled).toEqual({ hatter: 'rgb(46, 41, 39)', szoveg: 'rgb(255, 255, 255)' });
+    expect(statuszSzinek.cancelled).toEqual({ hatter: 'rgb(46, 41, 39)', szoveg: 'rgb(255, 249, 245)' });
     expect(statuszSzinek.done.hatter).toBe('rgb(226, 239, 229)');
 
     const naptarStatuszSzinek = await page.locator('#admin-panel-foglalasok').evaluate((panel) => {
@@ -1359,4 +1462,83 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     await expect(page.locator('#admin-email-teszt-kuldes')).toBeVisible();
     await expect(page.locator('#admin-lebego-mentes')).toBeHidden();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('a header, CTA es telefonszam komponens egyseges', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(243, 236, 227)');
+    await expect(page.locator('.menu-pontok a').first()).toHaveCSS('color', 'rgb(33, 27, 25)');
+    await expect(page.locator('#kapcsolat h2')).toHaveCSS('color', 'rgb(33, 27, 25)');
+    await expect(page.locator('#kapcsolat .szekcio-leiras')).toHaveCSS('color', 'rgb(33, 27, 25)');
+    await expect(page.locator('.hero-primary')).toHaveCSS('background-color', 'rgb(240, 215, 213)');
+    await expect(page.locator('.hero-primary')).toHaveCSS('color', 'rgb(33, 27, 25)');
+    await expect(page.locator('.bemutatkozas-szoveg p').first()).toHaveCSS('text-align', 'justify');
+    await expect(page.locator('.bemutatkozas-szoveg p').first()).toHaveCSS('hyphens', 'none');
+
+    const asztaliIllesztes = await page.evaluate(() => {
+        const hero = document.querySelector('#hero').getBoundingClientRect();
+        const heroKep = document.querySelector('.hero-visual').getBoundingClientRect();
+        const bemutatkozasKep = document.querySelector('.bemutatkozas-kep').getBoundingClientRect();
+        return {
+            heroEsBemutatkozas: Math.abs(hero.bottom - bemutatkozasKep.top),
+            heroKepTeteje: Math.abs(hero.top - heroKep.top),
+            heroKepAlja: Math.abs(hero.bottom - heroKep.bottom)
+        };
+    });
+    expect(asztaliIllesztes.heroEsBemutatkozas).toBeGreaterThanOrEqual(40);
+    expect(asztaliIllesztes.heroEsBemutatkozas).toBeLessThanOrEqual(72.1);
+    expect(asztaliIllesztes.heroKepTeteje).toBeLessThanOrEqual(0.1);
+    expect(asztaliIllesztes.heroKepAlja).toBeLessThanOrEqual(0.1);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.locator('.hamburger')).toHaveCSS('background-color', 'rgb(240, 215, 213)');
+    await expect(page.locator('.hero-primary')).toHaveCSS('background-color', 'rgb(240, 215, 213)');
+
+    const mobilIllesztes = await page.evaluate(() => {
+        const hero = document.querySelector('#hero').getBoundingClientRect();
+        const heroKep = document.querySelector('.hero-visual').getBoundingClientRect();
+        const monogram = document.querySelector('.hero-monogram').getBoundingClientRect();
+        const bemutatkozasKep = document.querySelector('.bemutatkozas-kep').getBoundingClientRect();
+        return {
+            heroEsBemutatkozas: Math.abs(hero.bottom - bemutatkozasKep.top),
+            heroKepEsHeroAlja: Math.abs(hero.bottom - heroKep.bottom),
+            monogramBalTavolsag: Math.abs((monogram.left - heroKep.left) - 14)
+        };
+    });
+    expect(mobilIllesztes.heroEsBemutatkozas).toBeGreaterThanOrEqual(39.9);
+    expect(mobilIllesztes.heroEsBemutatkozas).toBeLessThanOrEqual(40.1);
+    expect(mobilIllesztes.heroKepEsHeroAlja).toBeLessThanOrEqual(0.1);
+    expect(mobilIllesztes.monogramBalTavolsag).toBeLessThanOrEqual(0.1);
+    await page.locator('.hamburger').click();
+    await expect(page.locator('.mobile-menu.open a').first()).toHaveCSS('color', 'rgb(33, 27, 25)');
+
+    for (const url of ['/arlista/', '/galeria/']) {
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        const cta = page.locator('.oldal-foglalas-cta');
+        const footer = page.locator('.site-footer');
+        await expect(cta).toBeVisible();
+        await expect(footer).toBeVisible();
+
+        const meretek = await page.evaluate(() => {
+            const gomb = document.querySelector('.oldal-foglalas-cta').getBoundingClientRect();
+            const lablec = document.querySelector('.site-footer').getBoundingClientRect();
+            return {
+                gombSzelesseg: Math.round(gomb.width),
+                kozepElteres: Math.abs((gomb.left + gomb.width / 2) - window.innerWidth / 2),
+                lablecTavolsag: lablec.top - gomb.bottom,
+                dokumentumSzelesseg: document.documentElement.scrollWidth
+            };
+        });
+
+        expect(meretek.gombSzelesseg).toBe(286);
+        expect(meretek.kozepElteres).toBeLessThanOrEqual(1);
+        expect(meretek.lablecTavolsag).toBeGreaterThanOrEqual(64);
+        expect(meretek.dokumentumSzelesseg).toBeLessThanOrEqual(390);
+    }
+
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.tel-prefix')).toHaveCSS('color', 'rgb(33, 27, 25)');
+    await expect(page.locator('.tel-prefix')).toHaveCSS('background-color', 'rgb(243, 236, 227)');
 });

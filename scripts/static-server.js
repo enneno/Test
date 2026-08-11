@@ -7,7 +7,8 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const portIndex = process.argv.indexOf('--port');
 const PORT = Number(portIndex >= 0 ? process.argv[portIndex + 1] : process.env.PORT || 8101);
-const HOST = process.env.HOST || '127.0.0.1';
+const hostIndex = process.argv.indexOf('--host');
+const HOST = hostIndex >= 0 ? process.argv[hostIndex + 1] : process.env.HOST || '127.0.0.1';
 const MIME = {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
@@ -22,6 +23,36 @@ const MIME = {
     '.txt': 'text/plain; charset=utf-8',
     '.xml': 'application/xml; charset=utf-8'
 };
+
+const PUBLIC_ROOT_FILES = new Set([
+    'index.html',
+    'adatkezeles.html',
+    'admin.html',
+    'arlista.html',
+    'foglalas.html',
+    'galeria.html',
+    'admin-content.js',
+    'admin-export.js',
+    'admin-supabase.js',
+    'booking.js',
+    'script.js',
+    'style.css',
+    'supabase-config.js',
+    'favicon.ico',
+    'robots.txt',
+    'sitemap.xml'
+]);
+const PUBLIC_DIRECTORIES = new Set(['adatkezeles', 'admin', 'arlista', 'foglalas', 'galeria', 'kepek']);
+const PUBLIC_NESTED_EXTENSIONS = new Set(['.html', '.jpg', '.jpeg', '.png', '.webp', '.svg', '.ico']);
+
+function isPublicFile(filePath) {
+    const relativePath = path.relative(ROOT, filePath);
+    const segments = relativePath.split(path.sep);
+    if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) return false;
+    if (segments.length === 1) return PUBLIC_ROOT_FILES.has(segments[0]);
+    return PUBLIC_DIRECTORIES.has(segments[0])
+        && PUBLIC_NESTED_EXTENSIONS.has(path.extname(filePath).toLowerCase());
+}
 
 const server = http.createServer((request, response) => {
     try {
@@ -40,6 +71,11 @@ const server = http.createServer((request, response) => {
         if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
             filePath = path.join(filePath, 'index.html');
         }
+        if (!isPublicFile(filePath)) {
+            response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
+            return;
+        }
+
         if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
             response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
             return;
@@ -47,7 +83,8 @@ const server = http.createServer((request, response) => {
 
         response.writeHead(200, {
             'Content-Type': MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream',
-            'Cache-Control': 'no-store'
+            'Cache-Control': 'no-store',
+            'X-Content-Type-Options': 'nosniff'
         });
         fs.createReadStream(filePath).pipe(response);
     } catch (error) {
