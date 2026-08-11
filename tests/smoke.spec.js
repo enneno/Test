@@ -391,6 +391,46 @@ test('az admin csak a ténylegesen módosított foglalási kártyákat menti', (
     expect(adminForras).toContain('kartya.dataset.eredetiReason = megjegyzes');
     expect(adminForras).toContain("onlineStatusz('Nem történt módosítás.')");
 });
+test('a foglalási biztonsági folyamatok idempotensek, privátak és tartósan újrapróbálhatók', () => {
+    const bookingForras = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'booking', '10-form-services.js'), 'utf8');
+    const adminForras = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'admin', '10-bookings-events.js'), 'utf8');
+    const migration = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-booking-reliability.sql'), 'utf8');
+    const createFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'create-booking-with-email', 'index.ts'), 'utf8');
+    const uploadFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'upload-booking-inspirations', 'index.ts'), 'utf8');
+    const sendFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'send-booking-email', 'index.ts'), 'utf8');
+    const updateFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'send-booking-update-email', 'index.ts'), 'utf8');
+    const workerFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'process-booking-notifications', 'index.ts'), 'utf8');
+
+    expect(bookingForras).toContain("functions.invoke('create-booking-with-email'");
+    expect(bookingForras).toContain("functions.invoke('upload-booking-inspirations'");
+    expect(bookingForras).not.toContain("rpc('create_booking'");
+    expect(bookingForras).not.toContain(".from('site-media').upload");
+    expect(bookingForras).toContain('keresAzonosito !== allapot.datumKeresAzonosito');
+    expect(bookingForras).toContain('keresAzonosito !== allapot.idoKeresAzonosito');
+
+    expect(migration).toContain("'booking-inspirations'");
+    expect(migration).toContain('false,');
+    expect(migration).toContain('create_booking_idempotent');
+    expect(migration).toContain('booking_email_jobs');
+    expect(migration).toContain('claim_due_booking_email_jobs');
+    expect(migration).toContain('apply_admin_booking_changes');
+    expect(migration).toContain('admin_booking_change_operations');
+
+    expect(createFunction).toContain('p_request_key: requestKey');
+    expect(uploadFunction).toContain('.eq("request_key", requestKey)');
+    expect(uploadFunction).toContain('inspiration_upload_started_at');
+    expect(uploadFunction).not.toContain('getPublicUrl');
+    expect(adminForras).toContain("rpc('apply_admin_booking_changes'");
+    expect(adminForras).toContain('foglalasMentesMuvelet');
+
+    for (const source of [sendFunction, updateFunction, workerFunction]) {
+        expect(source).toContain('Idempotency-Key');
+    }
+    expect(sendFunction).toContain('finish_booking_email_job');
+    expect(updateFunction).toContain('finish_booking_email_job');
+    expect(workerFunction).toContain('claim_due_booking_email_jobs');
+});
+
 
 test('a fő publikus oldalak nagyíthatók és helyes főcím-struktúrát használnak', async ({ page }) => {
     for (const path of ['/', '/arlista/', '/galeria/', '/foglalas/']) {

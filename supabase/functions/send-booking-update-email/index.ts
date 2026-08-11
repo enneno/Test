@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-internal-secret",
 };
 
 serve(async (req) => {
@@ -12,16 +12,22 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  let activeEmailJobId = "";
+  let activeSupabase: any = null;
+
   try {
     const body = await req.json().catch(() => ({}));
     const bookingId = String(body.booking_id || "").trim();
-    const notification = body.notification && typeof body.notification === "object"
-      ? body.notification as Record<string, unknown>
-      : {};
+    const emailJobId = String(body.email_job_id || "").trim();
+    activeEmailJobId = emailJobId;
 
     if (!bookingId) {
       return json({ ok: false, error: "Missing booking_id" }, 400);
     }
+    if (!isUuid(emailJobId)) {
+      return json({ ok: false, error: "Missing or invalid email_job_id" }, 400);
+    }
+
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -31,19 +37,48 @@ serve(async (req) => {
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || ownerEmail;
     const adminEmail = Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com";
 
+    const internalSecret = req.headers.get("x-lumi-internal-secret") || "";
     if (!supabaseUrl || !serviceRoleKey) {
       return json({ ok: false, error: "Missing Supabase environment variables" }, 500);
     }
 
-    if (!resendApiKey || !ownerEmail) {
-      return json({ ok: false, email: "missing_email_environment" });
-    }
-
     const supabase = createClient(supabaseUrl, serviceRoleKey);
-    const adminOk = await isAdminRequest(req, supabase, adminEmail);
+    activeSupabase = supabase;
+    const adminOk = internalSecret === serviceRoleKey || await isAdminRequest(req, supabase, adminEmail);
 
     if (!adminOk) {
       return json({ ok: false, error: "not_authorized" }, 401);
+    }
+
+
+    const { data: emailJob, error: emailJobError } = await supabase
+      .from("booking_email_jobs")
+      .select("id,booking_id,kind,status,payload")
+      .eq("id", emailJobId)
+      .maybeSingle();
+
+    if (emailJobError || !emailJob || emailJob.booking_id !== bookingId || emailJob.kind !== "admin_update") {
+      return json({ ok: false, error: "Email job not found" }, 404);
+    }
+
+    if (emailJob.status === "sent") {
+      return json({ ok: true, email: "already_sent" });
+    }
+
+    if (emailJob.status === "failed") {
+      return json({ ok: false, email: "retry_limit_reached", queued: false }, 409);
+    }
+
+    const notificationSource = emailJob.payload && typeof emailJob.payload === "object"
+      ? (emailJob.payload as Record<string, unknown>).notification
+      : null;
+    const notification = notificationSource && typeof notificationSource === "object"
+      ? notificationSource as Record<string, unknown>
+      : {};
+
+    if (!resendApiKey || !ownerEmail) {
+      await finishEmailJob(supabase, emailJobId, false, "Missing email environment variables");
+      return json({ ok: false, email: "missing_email_environment", queued: true }, 500);
     }
 
     const { data: booking, error } = await supabase
@@ -53,6 +88,7 @@ serve(async (req) => {
       .single();
 
     if (error || !booking) {
+      await finishEmailJob(supabase, emailJobId, false, "Booking not found");
       return json({ ok: false, error: "Booking not found" }, 404);
     }
 
@@ -76,6 +112,7 @@ serve(async (req) => {
     const update = adminUpdateMessage(status, statusChanged, timeChanged, siteContent?.email || {}, variables);
 
     if (!update) {
+      await finishEmailJob(supabase, emailJobId, true);
       return json({ ok: true, email: "skipped" });
     }
 
@@ -114,36 +151,24 @@ serve(async (req) => {
       "Lumi Nails",
     ].join("\n");
 
-    await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText);
-    await logBookingEvent(supabase, {
-      booking_id: bookingId,
-      event_type: "admin_update_email",
-      channel: "email",
-      status: "success",
-      title: "Modositas email elkuldve",
-      message: "A vendeg ertesito emailt kapott az adminban vegzett modositasrol.",
-      metadata: {
-        status,
-        status_changed: statusChanged,
-        time_changed: timeChanged,
-        admin_message: adminMessage || null,
-      },
-    });
+    try {
+      await sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText, `booking-admin-update/${emailJobId}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      await finishEmailJob(supabase, emailJobId, false, message);
+      return json({ ok: false, email: "queued_for_retry", queued: true, error: message }, 500);
+    }
+
+    await finishEmailJob(supabase, emailJobId, true);
     return json({ ok: true, email: "admin_update_sent" });
   } catch (error) {
-    return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
+    const message = error instanceof Error ? error.message : String(error);
+    if (activeSupabase && isUuid(activeEmailJobId)) {
+      await finishEmailJob(activeSupabase, activeEmailJobId, false, message);
+    }
+    return json({ ok: false, error: message }, 500);
   }
 });
-
-async function logBookingEvent(supabase: any, row: Record<string, unknown>) {
-  const { error } = await supabase
-    .from("booking_events")
-    .insert(row);
-
-  if (error) {
-    console.warn("send-booking-update-email event log failed", error.message);
-  }
-}
 
 async function isAdminRequest(req: Request, supabase: any, adminEmail: string) {
   const authHeader = req.headers.get("Authorization") || "";
@@ -242,39 +267,13 @@ function paragraphsHtml(value: string) {
     .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
     .join("");
 }
-async function sendEmailWithRetry(
-  apiKey: string,
-  from: string,
-  to: string,
-  replyTo: string,
-  subject: string,
-  html: string,
-  text: string,
-) {
-  let lastError: unknown;
-
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
-    try {
-      await sendEmail(apiKey, from, to, replyTo, subject, html, text);
-      return;
-    } catch (error) {
-      lastError = error;
-
-      if (attempt < 2) {
-        await delay(700);
-      }
-    }
-  }
-
-  throw lastError;
-}
-
-async function sendEmail(apiKey: string, from: string, to: string, replyTo: string, subject: string, html: string, text: string) {
+async function sendEmail(apiKey: string, from: string, to: string, replyTo: string, subject: string, html: string, text: string, idempotencyKey: string) {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      "Idempotency-Key": idempotencyKey,
     },
     body: JSON.stringify({ from, to, subject, html, text, reply_to: replyTo }),
   });
@@ -284,8 +283,24 @@ async function sendEmail(apiKey: string, from: string, to: string, replyTo: stri
   }
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function finishEmailJob(supabase: any, emailJobId: string, success: boolean, lastError = "") {
+  const { error } = await supabase.rpc("finish_booking_email_job", {
+    p_job_id: emailJobId,
+    p_success: success,
+    p_error: lastError,
+  });
+
+  if (error) {
+    console.warn("send-booking-update-email could not finish email job", {
+      emailJobId,
+      success,
+      error: error.message,
+    });
+  }
+}
+
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 function couponSummary(code: unknown, title: unknown) {

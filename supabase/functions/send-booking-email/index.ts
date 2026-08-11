@@ -6,16 +6,19 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-internal-secret",
 };
-const EMAIL_RETRY_ATTEMPTS = 5;
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  let activeEmailJobId = "";
+  let activeSupabase: any = null;
+
   try {
     const body = await req.json().catch(() => ({}));
     const bookingId = String(body.booking_id || "").trim();
+    const emailJobId = String(body.email_job_id || "").trim();
+    activeEmailJobId = emailJobId;
     const mode = String(body.mode || "new_booking").trim();
     const notification = body.notification && typeof body.notification === "object"
       ? body.notification as Record<string, unknown>
@@ -24,6 +27,10 @@ serve(async (req) => {
     if (!bookingId) {
       return json({ ok: false, error: "Missing booking_id" }, 400);
     }
+    if (mode !== "admin_update" && !isUuid(emailJobId)) {
+      return json({ ok: false, error: "Missing or invalid email_job_id" }, 400);
+    }
+
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -38,17 +45,9 @@ serve(async (req) => {
       return json({ ok: false, error: "Missing Supabase environment variables" }, 500);
     }
 
-    if (!resendApiKey || !ownerEmail) {
-      console.error("send-booking-email missing email environment", {
-        bookingId,
-        mode,
-        missingResendApiKey: !resendApiKey,
-        missingOwnerEmail: !ownerEmail,
-      });
-      return json({ ok: false, email: "missing_email_environment" });
-    }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
+    activeSupabase = supabase;
     if (mode === "admin_update") {
       const adminOk = await isAdminRequest(req, supabase, adminEmail);
 
@@ -60,6 +59,38 @@ serve(async (req) => {
       return json({ ok: false, error: "not_authorized" }, 401);
     }
 
+    if (mode !== "admin_update") {
+      const { data: emailJob, error: emailJobError } = await supabase
+        .from("booking_email_jobs")
+        .select("id,booking_id,kind,status")
+        .eq("id", emailJobId)
+        .maybeSingle();
+
+      if (emailJobError || !emailJob || emailJob.booking_id !== bookingId || emailJob.kind !== "new_booking") {
+        console.warn("send-booking-email invalid email job", { bookingId, emailJobId });
+        return json({ ok: false, error: "Email job not found" }, 404);
+      }
+
+      if (emailJob.status === "sent") {
+        return json({ ok: true, email: "already_sent" });
+      }
+
+      if (emailJob.status === "failed") {
+        return json({ ok: false, email: "retry_limit_reached", queued: false }, 409);
+      }
+    }
+
+    if (!resendApiKey || !ownerEmail) {
+      console.error("send-booking-email missing email environment", {
+        bookingId,
+        mode,
+        missingResendApiKey: !resendApiKey,
+        missingOwnerEmail: !ownerEmail,
+      });
+      if (mode !== "admin_update") await finishEmailJob(supabase, emailJobId, false, "Missing email environment variables");
+      return json({ ok: false, email: "missing_email_environment", queued: mode !== "admin_update" }, 500);
+    }
+
     const { data: booking, error } = await supabase
       .from("bookings")
       .select("customer_name,customer_phone,customer_email,note,starts_at,ends_at,created_at,status,coupon_code,coupon_title,public_reference,services(name,price_text)")
@@ -68,6 +99,7 @@ serve(async (req) => {
 
     if (error || !booking) {
       console.error("send-booking-email booking not found", { bookingId, mode });
+      if (mode !== "admin_update") await finishEmailJob(supabase, emailJobId, false, "Booking not found");
       return json({ ok: false, error: "Booking not found" }, 404);
     }
 
@@ -166,7 +198,17 @@ serve(async (req) => {
         "Lumi Nails",
       ].join("\n");
 
-      await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText);
+      await sendEmail(
+        resendApiKey,
+        fromEmail,
+        booking.customer_email,
+        replyToEmail,
+        update.subject,
+        customerHtml,
+        customerText,
+        [],
+        `booking-admin-update-legacy/${bookingId}`,
+      );
       console.log("send-booking-email admin_update sent", { bookingId, target: "customer" });
       return json({ ok: true, email: "admin_update_sent" });
     }
@@ -234,8 +276,8 @@ serve(async (req) => {
     ].join("\n");
 
     const results = await Promise.allSettled([
-      sendEmailWithRetry(resendApiKey, fromEmail, ownerEmail, replyToEmail, ownerSubject, ownerHtml, ownerText, [calendarAttachment]),
-      sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, customerSubject, customerHtml, customerText),
+      sendEmail(resendApiKey, fromEmail, ownerEmail, replyToEmail, ownerSubject, ownerHtml, ownerText, [calendarAttachment], `new-booking-owner/${bookingId}`),
+      sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, customerSubject, customerHtml, customerText, [], `new-booking-customer/${bookingId}`),
     ]);
 
     const delivery = results.map((result, index) => {
@@ -249,12 +291,12 @@ serve(async (req) => {
     });
 
     console.log("send-booking-email new_booking delivery", { bookingId, delivery });
-    await logEmailDeliveryEvents(supabase, bookingId, delivery);
 
     const failed = delivery.filter((item) => !item.ok);
 
     if (failed.length > 0) {
       console.error("send-booking-email new_booking failed", { bookingId, failed });
+      await finishEmailJob(supabase, emailJobId, false, failed.map((item) => `${item.target}: ${item.error}`).join("; "));
       return json({
         ok: false,
         email: "partial_or_failed",
@@ -263,79 +305,17 @@ serve(async (req) => {
       }, 500);
     }
 
+    await finishEmailJob(supabase, emailJobId, true);
     return json({ ok: true, email: "sent", delivery });
   } catch (error) {
-    console.error("send-booking-email unexpected error", errorMessage(error));
-    return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
+    const message = errorMessage(error);
+    console.error("send-booking-email unexpected error", message);
+    if (activeSupabase && isUuid(activeEmailJobId)) {
+      await finishEmailJob(activeSupabase, activeEmailJobId, false, message);
+    }
+    return json({ ok: false, error: message }, 500);
   }
 });
-
-async function logEmailDeliveryEvents(
-  supabase: any,
-  bookingId: string,
-  delivery: Array<{ target: string; ok: boolean; error?: string }>,
-) {
-  const rows = delivery.map((item) => ({
-    booking_id: bookingId,
-    event_type: item.target === "owner" ? "owner_email" : "customer_email",
-    channel: "email",
-    status: item.ok ? "success" : "error",
-    title: item.target === "owner"
-      ? (item.ok ? "Tulaj email elkuldve" : "Tulaj email hiba")
-      : (item.ok ? "Vendeg email elkuldve" : "Vendeg email hiba"),
-    message: item.ok
-      ? "Az automatikus email sikeresen atadasra kerult a kuldo szolgaltatonak."
-      : `Az automatikus email nem ment ki: ${item.error || "ismeretlen hiba"}`,
-    metadata: {
-      target: item.target,
-      ok: item.ok,
-      error: item.error || null,
-    },
-  }));
-
-  const { error } = await supabase
-    .from("booking_events")
-    .insert(rows);
-
-  if (error) {
-    console.warn("send-booking-email event log failed", error.message);
-  }
-}
-
-async function sendEmailWithRetry(
-  apiKey: string,
-  from: string,
-  to: string,
-  replyTo: string,
-  subject: string,
-  html: string,
-  text: string,
-  attachments: Array<{ filename: string; content: string }> = [],
-) {
-  let lastError: unknown;
-
-  for (let attempt = 1; attempt <= EMAIL_RETRY_ATTEMPTS; attempt += 1) {
-    try {
-      await sendEmail(apiKey, from, to, replyTo, subject, html, text, attachments);
-      return;
-    } catch (error) {
-      lastError = error;
-      console.warn("send-booking-email resend attempt failed", {
-        to,
-        subject,
-        attempt,
-        maxAttempts: EMAIL_RETRY_ATTEMPTS,
-        error: errorMessage(error),
-      });
-
-      if (attempt < EMAIL_RETRY_ATTEMPTS) {
-        await delay(700);
-      }
-    }
-  }
-
-  throw lastError;
-}
 
 async function sendEmail(
   apiKey: string,
@@ -346,6 +326,7 @@ async function sendEmail(
   html: string,
   text: string,
   attachments: Array<{ filename: string; content: string }> = [],
+  idempotencyKey = "",
 ) {
   const payload: Record<string, unknown> = { from, to, subject, html, text, reply_to: replyTo };
 
@@ -358,6 +339,7 @@ async function sendEmail(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: JSON.stringify(payload),
   });
@@ -367,8 +349,24 @@ async function sendEmail(
   }
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function finishEmailJob(supabase: any, emailJobId: string, success: boolean, lastError = "") {
+  const { error } = await supabase.rpc("finish_booking_email_job", {
+    p_job_id: emailJobId,
+    p_success: success,
+    p_error: lastError,
+  });
+
+  if (error) {
+    console.warn("send-booking-email could not finish email job", {
+      emailJobId,
+      success,
+      error: error.message,
+    });
+  }
+}
+
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 function errorMessage(error: unknown) {

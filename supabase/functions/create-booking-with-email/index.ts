@@ -6,7 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-internal-secret",
 };
-const EMAIL_FUNCTION_RETRY_ATTEMPTS = 5;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -15,6 +14,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json().catch(() => ({}));
+    const requestKey = stringValue(body.request_key);
     const serviceId = stringValue(body.service_id);
     const customerName = stringValue(body.customer_name);
     const customerPhone = stringValue(body.customer_phone);
@@ -23,6 +23,10 @@ serve(async (req) => {
     const startsAt = stringValue(body.starts_at);
     const couponId = stringValue(body.coupon_id);
     const couponCode = stringValue(body.coupon_code).toUpperCase();
+
+    if (!isUuid(requestKey)) {
+      return json({ ok: false, error: "Érvénytelen foglalási műveletazonosító." }, 400);
+    }
 
     if (!serviceId || !customerName || !customerPhone || !customerEmail || !startsAt) {
       return json({ ok: false, error: "Hiányzó foglalási adat." }, 400);
@@ -38,6 +42,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
     const bookingRpcBody = {
+      p_request_key: requestKey,
       p_service_id: serviceId,
       p_customer_name: customerName,
       p_customer_phone: customerPhone,
@@ -47,12 +52,7 @@ serve(async (req) => {
       p_coupon_id: couponId || null,
       p_coupon_code: couponCode || null,
     };
-    let { data: bookingId, error } = await supabase.rpc("create_booking", bookingRpcBody);
-
-    if (error && isCouponSchemaError(error)) {
-      const { p_coupon_id: _couponId, p_coupon_code: _couponCode, ...legacyBookingRpcBody } = bookingRpcBody;
-      ({ data: bookingId, error } = await supabase.rpc("create_booking", legacyBookingRpcBody));
-    }
+    const { data: bookingId, error } = await supabase.rpc("create_booking_idempotent", bookingRpcBody);
 
     if (error || !bookingId) {
       console.error("create-booking-with-email booking failed", {
@@ -77,19 +77,37 @@ serve(async (req) => {
       });
     }
 
-    const email = await sendBookingEmail(supabaseUrl, serviceRoleKey, String(bookingId));
+    const { data: emailJobs, error: enqueueError } = await supabase.rpc("enqueue_new_booking_email", {
+      p_booking_id: bookingId,
+    });
+    const emailJob = Array.isArray(emailJobs) ? emailJobs[0] : null;
+
+    if (enqueueError || !emailJob?.id) {
+      console.error("create-booking-with-email queue creation failed", { bookingId, error: enqueueError?.message || "email_job_missing" });
+      return json({
+        ok: false,
+        booking_created: true,
+        booking_id: bookingId,
+        booking_reference: bookingReference,
+        request_key: requestKey,
+        error: "A foglalás létrejött, de az értesítés előkészítése megszakadt. Kérlek, küldd el újra; az időpont nem fog duplázódni.",
+      });
+    }
+
+    let email: Record<string, unknown>;
+    if (emailJob.status === "sent") {
+      email = { ok: true, queued: true, reused: true };
+    } else {
+      email = await sendBookingEmail(
+        supabaseUrl,
+        serviceRoleKey,
+        String(bookingId),
+        String(emailJob.id),
+      );
+    }
 
     if (!email.ok) {
       console.error("create-booking-with-email email failed", { bookingId, email });
-      await logBookingEvent(supabase, {
-        booking_id: bookingId,
-        event_type: "email_flow_failed",
-        channel: "email",
-        status: "warning",
-        title: "Email folyamat hiba",
-        message: "A foglalas bekerult, de az emailkuldo folyamat nem futott vegig.",
-        metadata: { email },
-      });
     } else {
       console.log("create-booking-with-email email sent", { bookingId, email });
     }
@@ -98,6 +116,7 @@ serve(async (req) => {
       ok: true,
       booking_id: bookingId,
       booking_reference: bookingReference,
+      request_key: requestKey,
       email,
     });
   } catch (error) {
@@ -106,64 +125,33 @@ serve(async (req) => {
   }
 });
 
-async function logBookingEvent(supabase: any, row: Record<string, unknown>) {
-  const { error } = await supabase
-    .from("booking_events")
-    .insert(row);
 
-  if (error) {
-    console.warn("create-booking-with-email event log failed", error.message);
-  }
-}
+async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, bookingId: string, emailJobId: string) {
+  try {
+    const response = await fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${serviceRoleKey}`,
+        apikey: serviceRoleKey,
+        "x-lumi-internal-secret": serviceRoleKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ booking_id: bookingId, email_job_id: emailJobId }),
+    });
+    const data = await responseJson(response);
 
-async function sendBookingEmail(supabaseUrl: string, serviceRoleKey: string, bookingId: string) {
-  let lastResult: unknown = null;
-
-  for (let attempt = 1; attempt <= EMAIL_FUNCTION_RETRY_ATTEMPTS; attempt += 1) {
-    try {
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${serviceRoleKey}`,
-          apikey: serviceRoleKey,
-          "x-lumi-internal-secret": serviceRoleKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ booking_id: bookingId }),
-      });
-
-      const data = await responseJson(response);
-
-      if (response.ok && data?.ok) {
-        return data;
-      }
-
-      lastResult = {
-        status: response.status,
-        data,
-      };
-      console.warn("create-booking-with-email email function attempt failed", {
-        bookingId,
-        attempt,
-        maxAttempts: EMAIL_FUNCTION_RETRY_ATTEMPTS,
-        result: lastResult,
-      });
-    } catch (error) {
-      lastResult = errorMessage(error);
-      console.warn("create-booking-with-email email function attempt failed", {
-        bookingId,
-        attempt,
-        maxAttempts: EMAIL_FUNCTION_RETRY_ATTEMPTS,
-        error: lastResult,
-      });
+    if (response.ok && data?.ok) {
+      return { ...data, queued: true };
     }
 
-    if (attempt < EMAIL_FUNCTION_RETRY_ATTEMPTS) {
-      await delay(700);
-    }
+    return {
+      ok: false,
+      queued: true,
+      error: { status: response.status, data },
+    };
+  } catch (error) {
+    return { ok: false, queued: true, error: errorMessage(error) };
   }
-
-  return { ok: false, error: lastResult };
 }
 
 async function responseJson(response: Response) {
@@ -180,21 +168,16 @@ async function responseJson(response: Response) {
   }
 }
 
-function isCouponSchemaError(error: unknown) {
-  const message = errorMessage(error).toLowerCase();
-  return message.includes("p_coupon") || message.includes("coupon") && (message.includes("schema cache") || message.includes("function") || message.includes("column"));
-}
-
 function stringValue(value: unknown) {
   return String(value || "").trim();
 }
 
-function cleanError(message: string) {
-  return message.replace(/^ERROR:\s*/i, "").trim();
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function cleanError(message: string) {
+  return message.replace(/^ERROR:\s*/i, "").trim();
 }
 
 function errorMessage(error: unknown) {

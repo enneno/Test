@@ -22,6 +22,13 @@ const JS_FILES = [
     'admin-export.js',
     'admin-content.js'
 ];
+const EDGE_FUNCTION_FILES = [
+    'supabase/functions/create-booking-with-email/index.ts',
+    'supabase/functions/upload-booking-inspirations/index.ts',
+    'supabase/functions/send-booking-email/index.ts',
+    'supabase/functions/send-booking-update-email/index.ts',
+    'supabase/functions/process-booking-notifications/index.ts'
+];
 const VERSIONED_ASSETS = ['style.css'].concat(JS_FILES);
 const errors = [];
 
@@ -46,6 +53,12 @@ for (const relativePath of HTML_FILES.concat(JS_FILES, ['style.css'])) {
     }
 }
 
+
+for (const relativePath of EDGE_FUNCTION_FILES.concat(['supabase-booking-reliability.sql'])) {
+    if (!fs.existsSync(path.join(ROOT, relativePath))) {
+        fail('Hiányzó foglalási megbízhatósági fájl: ' + relativePath);
+    }
+}
 for (const htmlFile of HTML_FILES) {
     const filePath = path.join(ROOT, htmlFile);
     const html = fs.readFileSync(filePath, 'utf8');
@@ -134,6 +147,9 @@ const adminHtml = fs.readFileSync(path.join(ROOT, 'admin/index.html'), 'utf8');
 const adminJs = fs.readFileSync(path.join(ROOT, 'admin-supabase.js'), 'utf8');
 const adminContent = fs.readFileSync(path.join(ROOT, 'admin-content.js'), 'utf8');
 const statusMigration = fs.readFileSync(path.join(ROOT, 'supabase-blocked-time-status.sql'), 'utf8');
+const reliabilityMigration = fs.readFileSync(path.join(ROOT, 'supabase-booking-reliability.sql'), 'utf8');
+const bookingSource = fs.readFileSync(path.join(ROOT, 'src/booking/10-form-services.js'), 'utf8');
+const emailFunctionSources = EDGE_FUNCTION_FILES.slice(2).map(file => fs.readFileSync(path.join(ROOT, file), 'utf8')).join('\n');
 
 for (const required of ['admin-workspace-layout', 'admin-sidebar', 'admin-workspace-main', 'cancelled_by_customer']) {
     if (!adminHtml.includes(required)) fail('Admin: hiányzó új munkafelület- vagy státuszelem: ' + required + '.');
@@ -151,8 +167,20 @@ for (const requiredPath of [
 ]) {
     if (!adminContent.includes(requiredPath)) fail('Tartalomszerkesztő: hiányzó mező: ' + requiredPath + '.');
 }
-if (!adminJs.includes("modositas.status === 'cancelled_by_customer'") || !adminJs.includes("event_type: 'customer_cancelled'")) {
-    fail('Admin: a vendég általi lemondás emailmentes kezelése hiányzik.');
+if (!adminJs.includes("rpc('apply_admin_booking_changes'")) {
+    fail('Admin: a foglalások tranzakciós mentése hiányzik.');
+}
+for (const required of ['booking-inspirations', 'create_booking_idempotent', 'booking_email_jobs', 'apply_admin_booking_changes']) {
+    if (!reliabilityMigration.includes(required)) fail('Adatbázis: hiányzó megbízhatósági elem: ' + required + '.');
+}
+if (!reliabilityMigration.includes("then 'customer_cancelled'")) {
+    fail('Adatbázis: a vendég általi lemondás emailmentes eseménykezelése hiányzik.');
+}
+if (bookingSource.includes("rpc('create_booking'")) {
+    fail('Foglalás: közvetlen, nem idempotens create_booking tartalékútvonal maradt.');
+}
+if (!emailFunctionSources.includes('Idempotency-Key') || !emailFunctionSources.includes('finish_booking_email_job')) {
+    fail('Email: a tartós újrapróbálás vagy a szolgáltatói idempotencia nincs bekötve.');
 }
 if (!statusMigration.includes("coalesce(bt.status, 'blocked') <> 'cancelled_by_customer'")) {
     fail('Adatbázis: a vendég általi kézi lemondás nem szabadítja fel az időt.');

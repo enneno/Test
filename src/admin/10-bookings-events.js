@@ -66,6 +66,8 @@
             return;
         }
 
+        foglalasok = await foglalasInspiracioLinkekAlairasa(foglalasok || []);
+
         allapot.foglalasElemek = [
             ...(foglalasok || []).map(foglalas => ({ tipus: 'booking', datum: foglalas.starts_at, adat: foglalas })),
             ...(tiltasok || []).map(tiltas => ({
@@ -718,6 +720,48 @@
             .trim();
     }
 
+    async function foglalasInspiracioLinkekAlairasa(foglalasok) {
+        const masolatok = foglalasok.map(foglalas => ({
+            ...foglalas,
+            inspiration_images: Array.isArray(foglalas.inspiration_images)
+                ? foglalas.inspiration_images.map(kep => ({ ...kep }))
+                : foglalas.inspiration_images
+        }));
+        const bucketBejegyzesek = new Map();
+
+        masolatok.forEach((foglalas, foglalasIndex) => {
+            if (!Array.isArray(foglalas.inspiration_images)) return;
+
+            foglalas.inspiration_images.forEach((kep, kepIndex) => {
+                const bucket = inspiracioKepStorageBucket(kep);
+                const path = inspiracioKepStoragePath(kep);
+                if (bucket !== 'booking-inspirations' || !path) return;
+                if (!bucketBejegyzesek.has(bucket)) bucketBejegyzesek.set(bucket, []);
+                bucketBejegyzesek.get(bucket).push({ foglalasIndex, kepIndex, path });
+            });
+        });
+
+        for (const [bucket, bejegyzesek] of bucketBejegyzesek) {
+            const { data, error } = await allapot.kliens.storage
+                .from(bucket)
+                .createSignedUrls(bejegyzesek.map(bejegyzes => bejegyzes.path), 3600);
+
+            if (error) {
+                console.warn('Inspirációs képek ideiglenes linkje nem készült el:', error);
+                continue;
+            }
+
+            bejegyzesek.forEach((bejegyzes, index) => {
+                const signedUrl = data?.[index]?.signedUrl || '';
+                if (signedUrl) {
+                    masolatok[bejegyzes.foglalasIndex].inspiration_images[bejegyzes.kepIndex].url = signedUrl;
+                }
+            });
+        }
+
+        return masolatok;
+    }
+
     function foglalasInspiracioKepek(foglalas) {
         const kepek = [];
         const ujKepek = Array.isArray(foglalas.inspiration_images) ? foglalas.inspiration_images : [];
@@ -727,7 +771,8 @@
                 kepek.push({
                     url: kep.url,
                     path: kep.path || '',
-                    name: kep.name || 'Inspirációs kép'
+                    name: kep.name || 'Inspirációs kép',
+                    bucket: kep.bucket || inspiracioKepStorageBucket(kep),
                 });
             }
         });
@@ -736,7 +781,8 @@
             kepek.push({
                 url: foglalas.inspiration_image_url,
                 path: foglalas.inspiration_image_path || '',
-                name: foglalas.inspiration_image_name || 'Inspirációs kép'
+                name: foglalas.inspiration_image_name || 'Inspirációs kép',
+                bucket: 'site-media',
             });
         }
 
@@ -765,6 +811,20 @@
         } catch (_error) {
             return '';
         }
+    }
+
+    function inspiracioKepStorageBucket(kep) {
+        const explicitBucket = String(kep?.bucket || '').trim();
+        if (explicitBucket) return explicitBucket;
+
+        try {
+            const url = new URL(kep?.url || '', window.location.origin);
+            if (url.pathname.includes('/storage/v1/object/public/site-media/')) return 'site-media';
+        } catch (_error) {
+            // A régi rekordok a nyilvános site-media bucketben vannak.
+        }
+
+        return 'site-media';
     }
 
     function inspiracioModalNyitasa(kartya) {
@@ -928,6 +988,14 @@
         return kartya.dataset.tipus === 'blocked'
             && String(kartya.dataset.eredetiReason || '').trim() !== String(modositas.reason || '').trim();
     }
+    function ujAdminMuveletAzonosito() {
+        if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+    }
 
     async function foglalasStatuszokMentese() {
         const kartyak = Array.from(document.querySelectorAll('#admin-foglalas-lista .admin-db-kartya'));
@@ -937,12 +1005,9 @@
             return;
         }
 
-        onlineStatusz('Foglalási módosítások mentése...');
+        onlineStatusz('Foglalási módosítások ellenőrzése...');
 
-        let emailKuldesek = 0;
-        let emailHibak = 0;
-        let kepTorlesHibak = 0;
-        let mentettModositasok = 0;
+        const valtozasok = [];
 
         for (const kartya of kartyak) {
             const adatok = idopontModositasAdatok(kartya);
@@ -952,7 +1017,6 @@
                 return;
             }
 
-            const tabla = kartya.dataset.tipus === 'blocked' ? 'blocked_times' : 'bookings';
             const modositas = kartya.dataset.tipus === 'blocked'
                 ? {
                     status: tiltasStatuszErtek(kartya.querySelector('[data-foglalas-statusz]')?.value),
@@ -986,110 +1050,122 @@
                 return;
             }
 
-            const { error } = await allapot.kliens
-                .from(tabla)
-                .update(modositas)
-                .eq('id', kartya.dataset.id);
+            const emailModositas = kartya.dataset.tipus === 'booking'
+                ? foglalasEmailModositas(kartya, modositas)
+                : null;
 
-            if (error) {
-                if (modositas.status === 'cancelled_by_customer') {
-                    onlineStatusz('A „Vendég mondta le” státusz használatához futtasd a supabase-blocked-time-status.sql frissítést a Supabase SQL Editorban.', true);
-                    return;
-                }
-                if (kartya.dataset.tipus === 'blocked' && adatbazisOszlopHiany(error, ['status'])) {
-                    onlineStatusz('A kézi időpontok státuszához futtasd a supabase-blocked-time-status.sql frissítést a Supabase SQL Editorban.', true);
-                    return;
-                }
-                onlineStatusz(`Nem sikerült menteni az egyik bejegyzést. ${error.message || ''}`, true);
-                return;
-            }
-
-            mentettModositasok += 1;
-
-            const inspiraciotTorloStatusz = ['done', 'cancelled', 'cancelled_by_customer'].includes(modositas.status);
-            if (kartya.dataset.tipus === 'booking' && inspiraciotTorloStatusz) {
-                const kepekTorolve = await foglalasInspiraciokTorlese(kartya);
-                if (!kepekTorolve) kepTorlesHibak += 1;
-            }
-
-            if (kartya.dataset.tipus === 'booking') {
-                const vendegMondtaLe = kartya.dataset.eredetiStatusz !== modositas.status
-                    && modositas.status === 'cancelled_by_customer';
-
-                if (vendegMondtaLe) {
-                    await foglalasEsemenyRogzitese(kartya.dataset.id, {
-                        event_type: 'customer_cancelled',
-                        channel: 'admin',
-                        status: 'info',
-                        title: 'A vendég mondta le',
-                        message: 'A foglalást a vendég lemondásaként rögzítették. Automatikus email nem ment ki.',
-                        metadata: {
-                            from_status: kartya.dataset.eredetiStatusz,
-                            to_status: modositas.status
-                        }
-                    });
-                }
-
-                const emailModositas = foglalasEmailModositas(kartya, modositas);
-
-                if (emailModositas) {
-                    await foglalasEsemenyRogzitese(kartya.dataset.id, {
-                        event_type: 'admin_booking_updated',
-                        channel: 'admin',
-                        status: 'info',
-                        title: 'Admin módosítás mentve',
-                        message: 'A foglalás adatai az admin felületen módosultak.',
-                        metadata: emailModositas
-                    });
-
-                    const emailEredmeny = await foglalasModositasEmailKuldese(kartya.dataset.id, emailModositas);
-                    emailKuldesek += 1;
-
-                    if (!emailEredmeny.ok) {
-                        emailHibak += 1;
-                    }
-                }
-            }
+            valtozasok.push({
+                kartya,
+                modositas,
+                emailModositas,
+                inspiraciotTorol: kartya.dataset.tipus === 'booking'
+                    && ['done', 'cancelled', 'cancelled_by_customer'].includes(modositas.status)
+            });
         }
 
-        if (!mentettModositasok) {
+        if (!valtozasok.length) {
             onlineStatusz('Nem történt módosítás.');
             return;
         }
 
+        onlineStatusz('Foglalási módosítások mentése...');
+
+        const rpcChanges = valtozasok.map(({ kartya, modositas, emailModositas }) => ({
+            id: kartya.dataset.id,
+            type: kartya.dataset.tipus,
+            status: modositas.status,
+            starts_at: modositas.starts_at,
+            ends_at: modositas.ends_at,
+            reason: modositas.reason || '',
+            email_notification: emailModositas
+        }));
+        const muveletUjjlenyomat = JSON.stringify(rpcChanges);
+        const elozoMuvelet = allapot.foglalasMentesMuvelet;
+        const operationId = elozoMuvelet?.ujjlenyomat === muveletUjjlenyomat
+            ? elozoMuvelet.id
+            : ujAdminMuveletAzonosito();
+        allapot.foglalasMentesMuvelet = { id: operationId, ujjlenyomat: muveletUjjlenyomat };
+
+        const { data, error } = await allapot.kliens.rpc('apply_admin_booking_changes', {
+            p_operation_id: operationId,
+            p_changes: rpcChanges
+        });
+
+        if (error) {
+            const uzenet = String(error.message || '');
+            if (/ütközik|utkozik|szünet|szunet|exclusion/i.test(uzenet)) {
+                onlineStatusz('Nem sikerült menteni: az egyik módosított időpont ütközik egy másik foglalással vagy a kötelező szünettel.', true);
+                return;
+            }
+            onlineStatusz(`Egyetlen módosítás sem lett mentve. ${uzenet}`, true);
+            return;
+        }
+
+        allapot.foglalasMentesMuvelet = null;
+        let kepTorlesHibak = 0;
+        for (const valtozas of valtozasok) {
+            if (!valtozas.inspiraciotTorol) continue;
+            const kepekTorolve = await foglalasInspiraciokTorlese(valtozas.kartya);
+            if (!kepekTorolve) kepTorlesHibak += 1;
+        }
+
+        const emailJobs = Array.isArray(data?.email_jobs) ? data.email_jobs : [];
+        let emailAzonnalElkuldve = 0;
+        let emailUjraprobalasraVar = 0;
+
+        for (const job of emailJobs) {
+            const eredmeny = await foglalasModositasEmailKuldese(job.booking_id, job.id);
+            if (eredmeny.ok) {
+                emailAzonnalElkuldve += 1;
+            } else {
+                emailUjraprobalasraVar += 1;
+            }
+        }
+
         if (kepTorlesHibak > 0) {
             onlineStatusz(`A módosítások mentve, de ${kepTorlesHibak} foglalás inspirációs képeit nem sikerült törölni.`, true);
-        } else if (emailHibak > 0) {
-            onlineStatusz(`Foglalási módosítások mentve, de ${emailHibak} email értesítés nem ment ki.`, true);
-        } else if (emailKuldesek > 0) {
-            onlineStatusz(`Foglalási módosítások mentve, ${emailKuldesek} email értesítés elküldve.`);
+        } else if (emailUjraprobalasraVar > 0) {
+            onlineStatusz(`A módosítások mentve. ${emailUjraprobalasraVar} email automatikus újrapróbálásra vár.`);
+        } else if (emailAzonnalElkuldve > 0) {
+            onlineStatusz(`Foglalási módosítások mentve, ${emailAzonnalElkuldve} email értesítés elküldve.`);
         } else {
             onlineStatusz('Foglalási módosítások mentve. A szabad idősávok ehhez igazodnak.');
         }
 
-        foglalasokBetoltese();
-        esemenynaploBetoltese();
+        await Promise.all([
+            foglalasokBetoltese(),
+            esemenynaploBetoltese()
+        ]);
     }
 
     async function foglalasInspiraciokTorlese(kartya, opciok = {}) {
         const kepek = inspiracioKepekKartyan(kartya);
-        const paths = Array.from(new Set(kepek.map(inspiracioKepStoragePath).filter(Boolean)));
+        const pathsByBucket = new Map();
+        kepek.forEach(kep => {
+            const path = inspiracioKepStoragePath(kep);
+            if (!path) return;
+            const bucket = inspiracioKepStorageBucket(kep);
+            if (!pathsByBucket.has(bucket)) pathsByBucket.set(bucket, new Set());
+            pathsByBucket.get(bucket).add(path);
+        });
         const mezokUritese = opciok.mezokUritese !== false;
 
         if (!kepek.length) return true;
 
-        if (!paths.length) {
+        if (!pathsByBucket.size) {
             console.warn('Inspirációs kép van a foglaláson, de nincs törölhető Storage path.');
             return false;
         }
 
-        const { error: torlesHiba } = await allapot.kliens.storage
-            .from('site-media')
-            .remove(paths);
+        for (const [bucket, pathSet] of pathsByBucket) {
+            const { error: torlesHiba } = await allapot.kliens.storage
+                .from(bucket)
+                .remove(Array.from(pathSet));
 
-        if (torlesHiba) {
-            console.warn('Inspirációs képek Storage törlése nem sikerült:', torlesHiba);
-            return false;
+            if (torlesHiba) {
+                console.warn('Inspirációs képek Storage törlése nem sikerült:', { bucket, error: torlesHiba });
+                return false;
+            }
         }
 
         if (!mezokUritese) {
@@ -1163,8 +1239,8 @@
         }
     }
 
-    async function foglalasModositasEmailKuldese(bookingId, modositas) {
-        if (!bookingId || !allapot.kliens.functions?.invoke) {
+    async function foglalasModositasEmailKuldese(bookingId, emailJobId) {
+        if (!bookingId || !emailJobId || !allapot.kliens.functions?.invoke) {
             return { ok: false, skipped: true };
         }
 
@@ -1172,8 +1248,7 @@
             const invokeOptions = {
                 body: {
                     booking_id: bookingId,
-                    mode: 'admin_update',
-                    notification: modositas
+                    email_job_id: emailJobId
                 }
             };
 

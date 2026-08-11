@@ -32,3 +32,17 @@ A `verify` sikeres futása nélkül ne készüljön commit vagy push.
 ## Biztonság
 
 A böngészőben csak a Supabase nyilvános publishable kulcsa szerepelhet. Service role kulcsot, e-mail szolgáltatói kulcsot és más titkot kizárólag Supabase Secretként szabad tárolni.
+## Foglalási megbízhatósági frissítés telepítése
+
+1. Futtasd a Supabase SQL Editorban a `supabase-booking-reliability.sql` fájlt.
+2. Telepítsd újra ezeket az Edge Functionöket:
+   - `create-booking-with-email`
+   - `upload-booking-inspirations`
+   - `send-booking-email`
+   - `send-booking-update-email`
+   - `process-booking-notifications`
+3. A már beállított `process-booking-notifications` cron ezután az új foglalási és admin módosítási e-mailek tartós újrapróbálását is elvégzi.
+
+A vendég továbbra is regisztráció nélkül tölthet fel inspirációs képet. A böngésző azonban nem kap közvetlen Storage-írási jogot: az Edge Function ellenőrzi a foglaláshoz tartozó egyszer használatos műveleti kulcsot, majd a képet privát bucketbe menti.
+
+Az 1–2. külön auditpont (admin jogosultsági modell és a rövid önkiszolgáló kód próbálkozáskorlátozása) szándékosan nincs ebben a migrációban.

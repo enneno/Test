@@ -7,8 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lumi-cron-secret",
 };
 
-const EMAIL_RETRY_ATTEMPTS = 3;
-
 type BookingNotification = {
   id: string;
   customer_name: string;
@@ -23,6 +21,12 @@ type BookingNotification = {
   service_price_text?: string;
   coupon_code?: string;
   coupon_title?: string;
+};
+
+type EmailJob = {
+  id: string;
+  booking_id: string;
+  kind: "new_booking" | "admin_update";
 };
 
 serve(async (req) => {
@@ -90,9 +94,13 @@ serve(async (req) => {
       await finishRow(supabase, "finish_booking_review_request", booking.id, false, errorMessage(error));
     });
 
+
+    const emailJobs = await claimEmailJobs(supabase, limit);
+    const emailJobResults = await processEmailJobs(emailJobs, supabaseUrl, serviceRoleKey);
     return json({
       ok: true,
       reminders: reminderResults,
+      email_jobs: emailJobResults,
       review_requests: reviewResults,
     });
   } catch (error) {
@@ -109,6 +117,53 @@ async function claimRows(supabase: any, rpcName: string, limit: number): Promise
   }
 
   return Array.isArray(data) ? data : [];
+}
+
+async function claimEmailJobs(supabase: any, limit: number): Promise<EmailJob[]> {
+  const { data, error } = await supabase.rpc("claim_due_booking_email_jobs", { p_limit: limit });
+
+  if (error) {
+    throw new Error(`claim_due_booking_email_jobs: ${error.message}`);
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+async function processEmailJobs(jobs: EmailJob[], supabaseUrl: string, serviceRoleKey: string) {
+  const results: Array<{ job_id: string; booking_id: string; ok: boolean; error?: string }> = [];
+
+  for (const job of jobs) {
+    const functionName = job.kind === "admin_update" ? "send-booking-update-email" : "send-booking-email";
+
+    try {
+      const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${serviceRoleKey}`,
+          apikey: serviceRoleKey,
+          "Content-Type": "application/json",
+          "x-lumi-internal-secret": serviceRoleKey,
+        },
+        body: JSON.stringify({ booking_id: job.booking_id, email_job_id: job.id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) {
+        throw new Error(String(data?.error || data?.email || `HTTP ${response.status}`));
+      }
+      results.push({ job_id: job.id, booking_id: job.booking_id, ok: true });
+    } catch (error) {
+      const message = errorMessage(error);
+      console.error("queued booking email failed", { jobId: job.id, bookingId: job.booking_id, kind: job.kind, error: message });
+      results.push({ job_id: job.id, booking_id: job.booking_id, ok: false, error: message });
+    }
+  }
+
+  return {
+    found: jobs.length,
+    sent: results.filter((item) => item.ok).length,
+    failed: results.filter((item) => !item.ok).length,
+    results,
+  };
 }
 
 async function enrichBookingCoupon(supabase: any, booking: BookingNotification): Promise<BookingNotification> {
@@ -218,7 +273,7 @@ async function sendReminderEmail(options: {
     "Lumi Nails",
   ].join("\n");
 
-  await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, template.subject, html, text);
+  await sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, template.subject, html, text, `booking-reminder/${booking.id}`);
 }
 
 async function sendReviewRequestEmail(options: {
@@ -275,7 +330,7 @@ async function sendReviewRequestEmail(options: {
     "Lumi Nails",
   ].join("\n");
 
-  await sendEmailWithRetry(resendApiKey, fromEmail, booking.customer_email, replyToEmail, template.subject, html, text);
+  await sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, template.subject, html, text, `booking-review/${booking.id}`);
 }
 
 async function loadSiteContent(supabase: any) {
@@ -350,46 +405,13 @@ function removeReviewLinkLine(value: string) {
     .join("\n")
     .trim();
 }
-async function sendEmailWithRetry(
-  apiKey: string,
-  from: string,
-  to: string,
-  replyTo: string,
-  subject: string,
-  html: string,
-  text: string,
-) {
-  let lastError: unknown;
-
-  for (let attempt = 1; attempt <= EMAIL_RETRY_ATTEMPTS; attempt += 1) {
-    try {
-      await sendEmail(apiKey, from, to, replyTo, subject, html, text);
-      return;
-    } catch (error) {
-      lastError = error;
-      console.warn("process-booking-notifications email attempt failed", {
-        to,
-        subject,
-        attempt,
-        maxAttempts: EMAIL_RETRY_ATTEMPTS,
-        error: errorMessage(error),
-      });
-
-      if (attempt < EMAIL_RETRY_ATTEMPTS) {
-        await delay(700);
-      }
-    }
-  }
-
-  throw lastError;
-}
-
-async function sendEmail(apiKey: string, from: string, to: string, replyTo: string, subject: string, html: string, text: string) {
+async function sendEmail(apiKey: string, from: string, to: string, replyTo: string, subject: string, html: string, text: string, idempotencyKey: string) {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      "Idempotency-Key": idempotencyKey,
     },
     body: JSON.stringify({ from, to, subject, html, text, reply_to: replyTo }),
   });
@@ -399,9 +421,6 @@ async function sendEmail(apiKey: string, from: string, to: string, replyTo: stri
   }
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 function appointmentRange(booking: BookingNotification) {
   return `${formatDate(booking.starts_at)}\n${formatDate(booking.starts_at, true)} – ${formatDate(booking.ends_at, true)}`;

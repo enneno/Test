@@ -3,8 +3,6 @@
 
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
-    const MEDIA_BUCKET = 'site-media';
-    const INSPIRATION_FOLDER = 'booking-inspirations';
     const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
     const MAX_IMAGE_COUNT = 5;
     const IMAGE_UPLOAD_MAX_SIDE = 1600;
@@ -26,6 +24,10 @@
         kuponok: [],
         aktivKupon: null,
         kuponEllenorzesAzonosito: 0,
+        datumKeresAzonosito: 0,
+        idoKeresAzonosito: 0,
+        foglalasKeresKulcs: '',
+        foglalasKeresUjjlenyomat: '',
         kepPreviewUrls: []
     };
 
