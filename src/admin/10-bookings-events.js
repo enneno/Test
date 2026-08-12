@@ -188,6 +188,7 @@
                 adat.id,
                 adat.note,
                 adat.nail_style,
+                vendegLemondasMegjegyzese(adat),
                 adat.reason,
                 szolgaltatasNev,
                 elem.tipus === 'blocked' ? 'k\u00e9zzel felvett foglalt id\u0151' : 'foglal\u00e1s'
@@ -224,7 +225,7 @@
 
         const { data, error } = await allapot.kliens
             .from('booking_events')
-            .select('booking_id,event_type,created_at')
+            .select('booking_id,event_type,message,metadata,created_at')
             .in('booking_id', foglalasIds)
             .in('event_type', ['customer_cancelled', 'customer_cancellation_acknowledged'])
             .order('created_at', { ascending: true });
@@ -243,12 +244,33 @@
             const allapotAdat = allapot.lemondasEsemenyek.get(bookingId) || {};
             if (esemeny.event_type === 'customer_cancelled') {
                 allapotAdat.lemondas = esemeny.created_at;
+                allapotAdat.megjegyzes = vendegLemondasMegjegyzesEsemenybol(esemeny);
             }
             if (esemeny.event_type === 'customer_cancellation_acknowledged') {
                 allapotAdat.tudomasulvetel = esemeny.created_at;
             }
             allapot.lemondasEsemenyek.set(bookingId, allapotAdat);
         });
+    }
+
+    function vendegLemondasMegjegyzesEsemenybol(esemeny) {
+        const metadata = esemeny?.metadata;
+        const metadataMegjegyzes = metadata && typeof metadata === 'object'
+            ? String(metadata.cancellation_note || '').trim()
+            : '';
+
+        if (metadataMegjegyzes) {
+            return metadataMegjegyzes;
+        }
+
+        const uzenet = String(esemeny?.message || '').trim();
+        const talalat = uzenet.match(/^Vend[eé]g megjegyz[eé]se:\s*([\s\S]+)$/i);
+        return talalat?.[1]?.trim() || '';
+    }
+
+    function vendegLemondasMegjegyzese(foglalas) {
+        const esemenyek = allapot.lemondasEsemenyek.get(String(foglalas?.id || ''));
+        return String(esemenyek?.megjegyzes || '').trim();
     }
 
     function vendegLemondasOlvasatlan(foglalas) {
@@ -645,6 +667,7 @@
         const inspiracioKepek = foglalasInspiracioKepek(foglalas);
         const kuponKod = foglalasKuponKod(foglalas);
         const megjegyzes = foglalasMegjegyzesMegjelenites(foglalas);
+        const lemondasiMegjegyzes = vendegLemondasMegjegyzese(foglalas);
         const foglalasAzonosito = String(foglalas.public_reference || '').trim();
         kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
 
@@ -670,6 +693,12 @@
                     <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
+            ${lemondasiMegjegyzes ? `
+                <p class="admin-foglalas-lemondasi-megjegyzes">
+                    <strong>Lemondási megjegyzés</strong>
+                    <span>${html(lemondasiMegjegyzes)}</span>
+                </p>
+            ` : ''}
             <div class="admin-foglalas-reszletek admin-foglalas-reszletek-kompakt">
                 <div class="admin-foglalas-meta-grid">
                     <p class="admin-foglalas-meta-szolgaltatas"><strong>Szolgáltatás</strong><span>${html(foglalas.services?.name || 'Törölt szolgáltatás')}</span></p>

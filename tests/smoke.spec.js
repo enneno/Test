@@ -924,6 +924,9 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
     expect(adminForras).toContain("event_type: 'customer_cancellation_acknowledged'");
     expect(adminForras).toContain(".neq('event_type', 'customer_cancellation_acknowledged')");
     expect(adminForras).toContain("allapot.foglalasStatuszSzuro = 'cancelled_by_customer'");
+    expect(adminForras).toContain(".select('booking_id,event_type,message,metadata,created_at')");
+    expect(adminForras).toContain('metadata.cancellation_note');
+    expect(adminForras).toContain('admin-foglalas-lemondasi-megjegyzes');
 
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
@@ -933,6 +936,14 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
         const jelzes = document.getElementById('admin-vendeg-lemondas-jelzes');
         jelzes.hidden = false;
         document.getElementById('admin-vendeg-lemondas-darab').textContent = '2';
+        document.getElementById('admin-foglalas-lista').insertAdjacentHTML('beforeend', `
+            <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-cancelled_by_customer">
+                <p class="admin-foglalas-lemondasi-megjegyzes">
+                    <strong>Lemondási megjegyzés</strong>
+                    <span>Közbejött egy családi program, ezért most nem tudok menni.</span>
+                </p>
+            </article>
+        `);
     });
 
     const jelzes = page.locator('#admin-vendeg-lemondas-jelzes');
@@ -940,10 +951,14 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
     await expect(jelzes).toContainText('2');
     await expect(page.locator('#admin-vendeg-lemondas-megnyitas')).toBeVisible();
     await expect(page.locator('#admin-vendeg-lemondas-tudomasulvetel')).toBeVisible();
+    const lemondasiMegjegyzes = page.locator('.admin-foglalas-lemondasi-megjegyzes');
+    await expect(lemondasiMegjegyzes).toContainText('Közbejött egy családi program');
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(jelzes).toBeVisible();
+    await expect(lemondasiMegjegyzes).toBeVisible();
     expect(await jelzes.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+    expect(await lemondasiMegjegyzes.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     await expect(page.locator('#admin-vendeg-lemondas-tudomasulvetel')).toBeVisible();
 });
 

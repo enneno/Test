@@ -5448,6 +5448,32 @@ body.admin-modal-nyitva {
     letter-spacing: 0.01em;
 }
 
+.admin-foglalas-lemondasi-megjegyzes {
+    display: grid;
+    gap: 3px;
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    color: var(--tinta);
+    background: color-mix(in srgb, var(--tinta) 6%, transparent);
+    border-left: 3px solid var(--tinta);
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.admin-foglalas-lemondasi-megjegyzes strong {
+    color: var(--barna);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-foglalas-lemondasi-megjegyzes span {
+    min-width: 0;
+}
+
 @media screen and (max-width: 768px) {
 
     .admin-panel-akciok-keresessel {
