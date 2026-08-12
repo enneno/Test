@@ -377,6 +377,14 @@ h2 {
     line-height: 1.7;
     text-align: center;
 }
+.sorkizart-torzsszoveg {
+    text-align: justify;
+    text-align-last: left;
+    text-justify: inter-word;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: normal;
+}
 
 #kapcsolat {
     position: relative;

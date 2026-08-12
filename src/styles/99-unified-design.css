@@ -1223,7 +1223,6 @@ textarea:focus-visible {
     color: var(--ui-muted);
     font-size: 14px;
     line-height: 1.8;
-    text-align: left;
 }
 
 .foglalas-utak {

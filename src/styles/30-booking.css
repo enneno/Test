@@ -138,9 +138,7 @@
 }
 
 .foglalas-lepes-fej h3,
-.foglalas-lepes-fej p,
-.foglalas-asszisztens-fej p,
-.foglalas-nyito-szoveg p {
+.foglalas-lepes-fej p {
     overflow-wrap: anywhere;
 }
 

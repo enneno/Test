@@ -379,6 +379,14 @@ h2 {
     line-height: 1.7;
     text-align: center;
 }
+.sorkizart-torzsszoveg {
+    text-align: justify;
+    text-align-last: left;
+    text-justify: inter-word;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: normal;
+}
 
 #kapcsolat {
     position: relative;
@@ -4723,9 +4731,7 @@ body.admin-modal-nyitva {
 }
 
 .foglalas-lepes-fej h3,
-.foglalas-lepes-fej p,
-.foglalas-asszisztens-fej p,
-.foglalas-nyito-szoveg p {
+.foglalas-lepes-fej p {
     overflow-wrap: anywhere;
 }
 
@@ -7020,7 +7026,6 @@ textarea:focus-visible {
     color: var(--ui-muted);
     font-size: 14px;
     line-height: 1.8;
-    text-align: left;
 }
 
 .foglalas-utak {
