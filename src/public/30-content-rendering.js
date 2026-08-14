@@ -199,7 +199,7 @@ function aktivMenuJelolese() {
     const aktualis = normalizaltUtvonal(window.location.pathname);
     const hash = window.location.hash;
 
-    document.querySelectorAll('header nav a, #mobil-nav a').forEach(link => {
+    document.querySelectorAll('.site-header nav a, #mobil-nav a').forEach(link => {
         const linkUtvonal = normalizaltUtvonal(new URL(link.href).pathname);
         const azonosUtvonal = linkUtvonal === aktualis;
         const aktiv = link.hash
@@ -347,7 +347,7 @@ function oldalAdatokAlkalmazasa(adatok) {
 function fejlecAdatokAlkalmazasa(adatok) {
     const marka = adatok?.marka;
     const navigacio = adatok?.navigacio;
-    document.querySelectorAll('header .logo').forEach(link => {
+    document.querySelectorAll('.site-header .logo').forEach(link => {
         link.setAttribute('aria-label', `${marka?.nev || 'Lumi Nails'} kezdőlap`);
     });
 
@@ -359,7 +359,7 @@ function fejlecAdatokAlkalmazasa(adatok) {
         ['a[href="/foglalas/"]', navigacio?.foglalas],
         ['a.foglalas-kezelo-nav', navigacio?.foglalasom]
     ];
-    ['header .menu-pontok', '#mobil-nav'].forEach(gyokerSelector => {
+    ['.site-header .menu-pontok', '#mobil-nav'].forEach(gyokerSelector => {
         const gyoker = document.querySelector(gyokerSelector);
         if (!gyoker) return;
         linkek.forEach(([selector, felirat]) => szovegBeallitasa(selector, felirat, gyoker));

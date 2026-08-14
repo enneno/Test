@@ -70,7 +70,7 @@ textarea {
 /* ===================================
             1. FEJLÉC ÉS MENÜ (Header, Hamburger)
             ===================================== */
-header {
+.site-header {
     position: fixed;
     z-index: 1000;
     top: 0;
@@ -188,7 +188,7 @@ header {
 }
 
 @media screen and (max-width: 768px) {
-    header {
+    .site-header {
         height: var(--ui-header-height, 72px);
         padding: 0 18px;
     }

@@ -1387,7 +1387,7 @@
 
         window.cancelAnimationFrame(kovetkezoReszhezGordit.renderKeret);
         kovetkezoReszhezGordit.renderKeret = window.requestAnimationFrame(() => {
-            const fejlec = document.querySelector('header');
+            const fejlec = document.querySelector('.site-header');
             const fejlecMagassag = fejlec ? Math.ceil(fejlec.offsetHeight) : 0;
             const res = window.matchMedia('(max-width: 760px)').matches ? 18 : 24;
             const aktualisPozicio = window.scrollY || document.documentElement.scrollTop || 0;

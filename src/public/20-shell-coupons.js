@@ -25,7 +25,7 @@ function fejlecBetoltese() {
     }
 
     fejlecHelye.innerHTML = `
-        <header>
+        <header class="site-header">
             <a href="/" class="logo" aria-label="Lumi Nails kezdőlap">
                 <span class="logo-lumi">Lumi</span>
                 <span class="logo-nails">Nails</span>

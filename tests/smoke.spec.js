@@ -551,7 +551,7 @@ test('minden publikus mobil szöveg ugyanazt az egyetlen mesterskálát örökli
         await page.goto(path, { waitUntil: 'domcontentloaded' });
         const tipografia = await page.evaluate(() => {
             const meretezhetoElemek = Array.from(document.querySelectorAll(
-                'header a, main h1, main h2, main h3, main p, main li, main button, main label, main input, footer a, footer p'
+                '.site-header a, main h1, main h2, main h3, main p, main li, main button, main label, main input, footer a, footer p'
             ));
             const szovegSkala = (elem) => {
                 const stilus = getComputedStyle(elem);
@@ -719,7 +719,7 @@ test('a belső menülinkek első kattintásra, menüzárás után finoman a megf
 
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('header .menu-pontok a[href="/#szolgaltatasok"]').click();
+    await page.locator('.site-header .menu-pontok a[href="/#szolgaltatasok"]').click();
     await expect.poll(() => page.evaluate(() => {
         return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'szolgaltatasok');
     })).toEqual([{ id: 'szolgaltatasok', opciok: { behavior: 'smooth', block: 'start' } }]);
@@ -871,9 +871,9 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
 
     const manageCard = page.locator('[data-booking-path="manage"]');
     const section = page.locator('#foglalas-ellenorzes');
-    const desktopManageLink = page.locator('header .foglalas-kezelo-nav');
+    const desktopManageLink = page.locator('.site-header .foglalas-kezelo-nav');
     const mobileManageLink = page.locator('#mobil-nav .foglalas-kezelo-nav');
-    const desktopBookingLink = page.locator('header .menu-pontok a[href="/foglalas/"]');
+    const desktopBookingLink = page.locator('.site-header .menu-pontok a[href="/foglalas/"]');
     const mobileBookingLink = page.locator('#mobil-nav a[href="/foglalas/"]');
     await expect(desktopManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
     await expect(mobileManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
@@ -889,14 +889,14 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
     await expect(section).toBeVisible();
     await expect.poll(() => page.evaluate(() => {
-        const header = document.querySelector('header').getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
         const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         return target.top >= header.bottom
             && (target.top <= header.bottom + 48 || Math.abs(window.scrollY - maxScroll) <= 2);
     })).toBe(true);
     const desktopTargetOffset = await page.evaluate(() => {
-        const header = document.querySelector('header').getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
         const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         return {
@@ -926,7 +926,7 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     await mobileManageLink.click();
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
     await expect.poll(() => page.evaluate(() => {
-        const header = document.querySelector('header').getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
         const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
         return target.top >= header.bottom && target.top <= header.bottom + 48;
     })).toBe(true);
@@ -943,7 +943,7 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
     expect(sectionBox.x + sectionBox.width).toBeLessThanOrEqual(391);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
     const mobileTargetOffset = await page.evaluate(() => {
-        const header = document.querySelector('header').getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
         const target = document.getElementById('foglalas-ellenorzes').getBoundingClientRect();
         return { headerBottom: header.bottom, targetTop: target.top };
     });
@@ -1592,7 +1592,7 @@ test('a header, CTA es telefonszam komponens egyseges', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(243, 236, 227)');
+    await expect(page.locator('.site-header')).toHaveCSS('background-color', 'rgb(243, 236, 227)');
     await expect(page.locator('.menu-pontok a').first()).toHaveCSS('color', 'rgb(33, 27, 25)');
     await expect(page.locator('#kapcsolat h2')).toHaveCSS('color', 'rgb(33, 27, 25)');
     await expect(page.locator('#kapcsolat .szekcio-leiras')).toHaveCSS('color', 'rgb(33, 27, 25)');
@@ -1670,7 +1670,21 @@ test('az adatkezelési oldal asztali és mobil elrendezése áttekinthető', asy
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
 
+    await expect(page.locator('.site-header')).toBeVisible();
+    await expect(page.locator('.site-header')).toHaveCSS('position', 'fixed');
+    await expect(page.locator('.jogi-fejlec')).toHaveCSS('position', 'static');
     await expect(page.locator('.jogi-fejlec h1')).toHaveText('Adatkezelési tájékoztató');
+    const fejlecPoziciok = await page.evaluate(() => {
+        const navigacio = document.querySelector('.site-header').getBoundingClientRect();
+        const jogiFejlec = document.querySelector('.jogi-fejlec').getBoundingClientRect();
+        return {
+            navigacioTeteje: Math.round(navigacio.top),
+            navigacioAlja: Math.round(navigacio.bottom),
+            jogiFejlecTeteje: Math.round(jogiFejlec.top)
+        };
+    });
+    expect(fejlecPoziciok.navigacioTeteje).toBe(0);
+    expect(fejlecPoziciok.jogiFejlecTeteje).toBeGreaterThan(fejlecPoziciok.navigacioAlja);
     await expect(page.locator('.jogi-tartalomjegyzek a')).toHaveCount(8);
     await expect(page.locator('#kezelt-adatok')).toContainText('Foglalási azonosító');
     await expect(page.locator('#adatszukseglet')).toContainText('stílus');
