@@ -27,6 +27,15 @@ test('a főoldali vendégértesítő adminból kapcsolható és mobilon is rende
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('body')).not.toHaveClass(/tartalom-toltes/);
+    await page.evaluate(() => {
+        window.fooldalAdatokAlkalmazasa({
+            ertesito: {
+                aktiv: false,
+                cimke: 'Aktuális információ',
+                szoveg: 'Kiinduló tesztállapot.'
+            }
+        }, {});
+    });
     await expect(page.locator('#vendegertesito')).toBeHidden();
 
     await page.evaluate(() => {
@@ -400,6 +409,8 @@ test('a foglalási biztonsági folyamatok idempotensek, privátak és tartósan 
     const sendFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'send-booking-email', 'index.ts'), 'utf8');
     const updateFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'send-booking-update-email', 'index.ts'), 'utf8');
     const workerFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'process-booking-notifications', 'index.ts'), 'utf8');
+    const previewFunction = fs.readFileSync(path.resolve(__dirname, '..', 'supabase', 'functions', 'send-email-previews', 'index.ts'), 'utf8');
+    const retentionMigration = fs.readFileSync(path.resolve(__dirname, '..', 'supabase-booking-retention-monthly-report.sql'), 'utf8');
 
     expect(bookingForras).toContain("functions.invoke('create-booking-with-email'");
     expect(bookingForras).toContain("functions.invoke('upload-booking-inspirations'");
@@ -429,6 +440,15 @@ test('a foglalási biztonsági folyamatok idempotensek, privátak és tartósan 
     expect(sendFunction).toContain('finish_booking_email_job');
     expect(updateFunction).toContain('finish_booking_email_job');
     expect(workerFunction).toContain('claim_due_booking_email_jobs');
+    expect(workerFunction).toContain('claim_expired_bookings_for_retention');
+    expect(workerFunction).toContain('claim_due_booking_monthly_reports');
+    expect(workerFunction).toContain('monthly-booking-report/');
+    expect(previewFunction).toContain('monthly_booking_report');
+    expect(retentionMigration).toContain("now() - interval '6 months'");
+    expect(retentionMigration).toContain("date_trunc('month', v_today - interval '1 month')");
+    expect(retentionMigration).toContain("'5 8 1 * *'");
+    expect(retentionMigration).toContain('alter table public.booking_monthly_report_jobs enable row level security');
+    expect(retentionMigration).toContain('revoke all on function public.claim_due_booking_monthly_reports');
 });
 
 
@@ -473,6 +493,95 @@ test('a mobil főoldal címei törnek, a térközei és a CTA nyilai egységesek
     ));
     expect(szekcioTavolsagok).toEqual([64, 64, 64]);
 });
+
+test('a publikus H2-k mobilon két pixellel nőnek, desktopon változatlanok maradnak', async ({ page }) => {
+    const akciosH2Meret = () => page.evaluate(() => {
+        const banner = document.createElement('div');
+        const cim = document.createElement('h2');
+        banner.className = 'akcios-banner';
+        cim.className = 'akcios-banner-cim';
+        banner.append(cim);
+        document.body.append(banner);
+        const meret = Number.parseFloat(getComputedStyle(cim).fontSize);
+        banner.remove();
+        return meret;
+    });
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const desktopFooldalH2Meretek = await page.locator('main h2').evaluateAll((cimek) => cimek.map(
+        (cim) => Number.parseFloat(getComputedStyle(cim).fontSize)
+    ));
+    expect(desktopFooldalH2Meretek).toEqual([94, 78, 78, 78, 88]);
+    expect(await akciosH2Meret()).toBe(52);
+
+    await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
+    const desktopJogiH2Meretek = await page.locator('.jogi-tartalom h2').evaluateAll(
+        (cimek) => cimek.map((cim) => getComputedStyle(cim).fontSize)
+    );
+    expect(desktopJogiH2Meretek.every((meret) => meret === '40px')).toBe(true);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const mobilFooldalH2Meretek = await page.locator('main h2').evaluateAll((cimek) => cimek.map(
+        (cim) => Number.parseFloat(getComputedStyle(cim).fontSize)
+    ));
+    expect(mobilFooldalH2Meretek).toEqual([48.8, 44.9, 42.95, 40, 38.66]);
+    expect(await akciosH2Meret()).toBe(36);
+
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    const mobilFoglalasH2Meretek = await page.locator('main h2').evaluateAll((cimek) => cimek.map(
+        (cim) => Number.parseFloat(getComputedStyle(cim).fontSize)
+    ));
+    expect(mobilFoglalasH2Meretek).toEqual([50.75, 41]);
+
+    await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
+    const jogiH2Meretek = await page.locator('.jogi-tartalom h2').evaluateAll(
+        (cimek) => cimek.map((cim) => getComputedStyle(cim).fontSize)
+    );
+    expect(jogiH2Meretek.length).toBeGreaterThan(0);
+    expect(jogiH2Meretek.every((meret) => meret === '42px')).toBe(true);
+});
+
+test('minden publikus mobil szöveg ugyanazt az egyetlen mesterskálát örökli', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    for (const path of ['/', '/arlista/', '/galeria/', '/foglalas/', '/adatkezeles/']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+        const tipografia = await page.evaluate(() => {
+            const meretezhetoElemek = Array.from(document.querySelectorAll(
+                'header a, main h1, main h2, main h3, main p, main li, main button, main label, main input, footer a, footer p'
+            ));
+            const szovegSkala = (elem) => {
+                const stilus = getComputedStyle(elem);
+                return stilus.webkitTextSizeAdjust || stilus.textSizeAdjust;
+            };
+            return {
+                token: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--ui-mobile-type-scale').trim(),
+                bodySkala: szovegSkala(document.body),
+                mindenSzovegAzonos: meretezhetoElemek.every(
+                    (elem) => szovegSkala(elem) === '80%'
+                ),
+                dokumentumSzelesseg: document.documentElement.scrollWidth
+            };
+        });
+
+        expect(tipografia.token).toBe('80%');
+        expect(tipografia.bodySkala).toBe('80%');
+        expect(tipografia.mindenSzovegAzonos).toBe(true);
+        expect(tipografia.dokumentumSzelesseg).toBeLessThanOrEqual(390);
+    }
+
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    const adminSkala = await page.evaluate(() => {
+        const stilus = getComputedStyle(document.body);
+        return stilus.webkitTextSizeAdjust || stilus.textSizeAdjust;
+    });
+    expect(adminSkala).toBe('100%');
+});
+
 test('a főoldali szolgáltatásrész a Barna-Beige-Rosy rendszerben asztalon és mobilon is rendezett', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -1556,4 +1665,58 @@ test('a header, CTA es telefonszam komponens egyseges', async ({ page }) => {
     await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.tel-prefix')).toHaveCSS('color', 'rgb(33, 27, 25)');
     await expect(page.locator('.tel-prefix')).toHaveCSS('background-color', 'rgb(243, 236, 227)');
+});
+test('az adatkezelési oldal asztali és mobil elrendezése áttekinthető', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
+
+    await expect(page.locator('.jogi-fejlec h1')).toHaveText('Adatkezelési tájékoztató');
+    await expect(page.locator('.jogi-tartalomjegyzek a')).toHaveCount(8);
+    await expect(page.locator('#kezelt-adatok')).toContainText('Foglalási azonosító');
+    await expect(page.locator('#adatszukseglet')).toContainText('stílus');
+
+    const asztaliElrendezes = await page.evaluate(() => {
+        const oldal = document.querySelector('.jogi-oldal').getBoundingClientRect();
+        const tartalom = document.querySelector('.jogi-tartalom').getBoundingClientRect();
+        const racs = getComputedStyle(document.querySelector('.jogi-elrendezes'));
+        const oldalsav = getComputedStyle(document.querySelector('.jogi-oldalsav'));
+        const hibasHivatkozasok = [...document.querySelectorAll('.jogi-tartalomjegyzek a')]
+            .filter((link) => !document.querySelector(link.getAttribute('href')))
+            .length;
+        return {
+            oldalSzelesseg: oldal.width,
+            tartalomSzelesseg: tartalom.width,
+            oszlopok: racs.gridTemplateColumns.split(' ').filter(Boolean).length,
+            oldalsavPozicio: oldalsav.position,
+            hibasHivatkozasok,
+            dokumentumSzelesseg: document.documentElement.scrollWidth
+        };
+    });
+
+    expect(asztaliElrendezes.oldalSzelesseg).toBeGreaterThanOrEqual(1100);
+    expect(asztaliElrendezes.tartalomSzelesseg).toBeGreaterThan(700);
+    expect(asztaliElrendezes.oszlopok).toBe(2);
+    expect(asztaliElrendezes.oldalsavPozicio).toBe('sticky');
+    expect(asztaliElrendezes.hibasHivatkozasok).toBe(0);
+    expect(asztaliElrendezes.dokumentumSzelesseg).toBeLessThanOrEqual(1440);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const mobilElrendezes = await page.evaluate(() => {
+        const racs = getComputedStyle(document.querySelector('.jogi-elrendezes'));
+        const adatlista = getComputedStyle(document.querySelector('.jogi-adatlista'));
+        const oldalsav = getComputedStyle(document.querySelector('.jogi-oldalsav'));
+        return {
+            oszlopok: racs.gridTemplateColumns.split(' ').filter(Boolean).length,
+            adatlistaOszlopok: adatlista.gridTemplateColumns.split(' ').filter(Boolean).length,
+            oldalsavPozicio: oldalsav.position,
+            dokumentumSzelesseg: document.documentElement.scrollWidth
+        };
+    });
+
+    expect(mobilElrendezes.oszlopok).toBe(1);
+    expect(mobilElrendezes.adatlistaOszlopok).toBe(1);
+    expect(mobilElrendezes.oldalsavPozicio).toBe('static');
+    expect(mobilElrendezes.dokumentumSzelesseg).toBeLessThanOrEqual(390);
+    await expect(page.locator('.jogi-tartalom h2').first()).toHaveCSS('font-size', '42px');
 });

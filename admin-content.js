@@ -264,6 +264,15 @@
             ]
         },
         {
+            title: 'Tulajdonosi havi riport',
+            description: 'Minden hónap első napján az előző teljes naptári hónapról küldött, névtelen foglalási összesítő.',
+            fields: [
+                field('email.haviStatisztika.targy', 'Havi statisztika - email tárgya ({honap})'),
+                field('email.haviStatisztika.cim', 'Havi statisztika - email címe ({honap})'),
+                field('email.haviStatisztika.szoveg', 'Havi statisztika - email bevezető szövege ({honap})', 'textarea')
+            ]
+        },
+        {
             title: 'Elérhetőségek és lábléc',
             description: 'A publikus elérhetőségek, közösségi linkek, térkép és a lábléc tartalma.',
             fields: [

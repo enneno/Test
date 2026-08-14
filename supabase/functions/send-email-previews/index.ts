@@ -43,7 +43,7 @@ serve(async (req) => {
     }
 
     const previews = buildPreviews(await loadSiteContent(supabase));
-    if (previews.length !== 9) {
+    if (previews.length !== 10) {
       return json({ ok: false, error: "preview_count_mismatch" }, 500);
     }
 
@@ -51,7 +51,7 @@ serve(async (req) => {
 
     for (let index = 0; index < previews.length; index += 1) {
       const preview = previews[index];
-      const subject = `[TESZT ${index + 1}/9] ${preview.subject}`;
+      const subject = `[TESZT ${index + 1}/${previews.length}] ${preview.subject}`;
 
       try {
         const resendId = await sendEmailWithRetry(
@@ -102,6 +102,7 @@ function buildPreviews(siteContent: any): EmailPreview[] {
     helyszin: location,
     instagram: instagramUrl,
     ertekelesLink: reviewUrl,
+    honap: "2026. július",
   };
   const customerRows: Array<[string, unknown]> = [
     ["Szolgáltatás", service],
@@ -266,6 +267,27 @@ function buildPreviews(siteContent: any): EmailPreview[] {
     actionLabel: "Google értékelés írása",
     secondaryActionUrl: instagramUrl,
     secondaryActionLabel: "Instagram üzenet",
+  }));
+
+  const monthlyReport = emailTemplate(siteContent?.email?.haviStatisztika, {
+    targy: "Lumi Nails havi összesítő - {honap}",
+    cim: "{honap} havi összesítő",
+    szoveg: "Az előző teljes naptári hónap foglalási összesítője. A riport csak névtelen, összesített adatokat tartalmaz.",
+  }, variables);
+  previews.push(previewFromTemplate({
+    type: "monthly_booking_report",
+    label: "Havi statisztika - tulajdonos",
+    template: monthlyReport,
+    rows: [
+      ["Összes időpont", 24],
+      ["Online foglalás", 19],
+      ["Kézzel rögzített", 5],
+      ["Elkészült", 20],
+      ["Lemondás", 4],
+      ["Egyedi vendégek", 17],
+      ["Foglalt idő", "43 óra 30 perc"],
+      ["Becsült bevétel", "142 500 Ft"],
+    ],
   }));
 
   return previews;
@@ -440,7 +462,7 @@ function normalizeTemplateText(value: unknown) {
 
 function applyVariables(value: unknown, variables: Record<string, string>) {
   return String(value || "")
-    .replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink)\}/g, (_match, key) => variables[key] || "")
+    .replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink|honap)\}/g, (_match, key) => variables[key] || "")
     .replace(/\{\s*(https?:\/\/[^}\s]+)\s*\}/g, "$1");
 }
 

@@ -15,7 +15,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=7a02ec384aa7">
+    <link rel="stylesheet" href="/style.css?v=bd42ec4efbc0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -26,76 +26,158 @@
     <div id="fejlec-helye"></div>
 
     <main class="jogi-oldal">
-        <div class="jogi-fejlec">
-            <h1>Adatkezelési tájékoztató</h1>
-            <p>Ez a tájékoztató összefoglalja, hogy a Lumi Nails milyen személyes adatokat kezel az időpontfoglalás, kapcsolattartás és a weboldal működtetése során.</p>
-        </div>
-
-        <section class="jogi-tartalom">
-            <h2>Fontos tudnivaló foglalás előtt</h2>
-            <p class="sorkizart-torzsszoveg">Az online időpontfoglalás használatával tudomásul veszed, hogy a foglaláshoz megadott adataidat a Lumi Nails a foglalás rögzítéséhez, kezeléséhez, visszaigazolásához és kapcsolattartáshoz kezeli a jelen tájékoztató szerint. Ha ezzel nem értesz egyet, kérlek ne használd az online foglalási űrlapot, és ne adj meg személyes adatot a weboldalon keresztül.</p>
-
-            <h2>Adatkezelő</h2>
-            <p><strong>Adatkezelő:</strong> Lumi Nails</p>
-            <p><strong>Kapcsolattartás adatvédelmi ügyekben:</strong> <a href="mailto:llevisimon@gmail.com">llevisimon@gmail.com</a></p>
-            <p><strong>Szolgáltatás helye:</strong> 2800 Tatabánya, Kós Károly út</p>
-
-            <h2>Milyen adatokat kezelünk?</h2>
-            <ul>
-                <li>Online foglalásnál: név, telefonszám, email cím, választott szolgáltatás, foglalási dátum és időpont, megjegyzés.</li>
-                <li>Foglalás kezelésénél: foglalás státusza, módosított időpont, lemondás vagy készre állítás ténye.</li>
-                <li>Kapcsolattartásnál: az általad küldött üzenet és az abban megadott adatok.</li>
-                <li>A weboldal működéséhez kapcsolódóan technikai adatok keletkezhetnek a tárhelyszolgáltatónál és a használt külső szolgáltatásoknál.</li>
-            </ul>
-
-            <h2>Adatkezelések célja és jogalapja</h2>
-            <div class="jogi-tablazat">
-                <div class="jogi-sor">
-                    <strong>Időpontfoglalás kezelése</strong>
-                    <span>Cél: időpont rögzítése, módosítása, lemondása és visszakeresése. Jogalap: szerződés teljesítése vagy szerződéskötést megelőző lépések megtétele a GDPR 6. cikk (1) bekezdés b) pontja alapján.</span>
-                </div>
-                <div class="jogi-sor">
-                    <strong>Foglalási értesítések küldése</strong>
-                    <span>Cél: automatikus visszaigazoló, módosítási vagy lemondási email küldése. Jogalap: a foglalás teljesítéséhez szükséges kapcsolattartás.</span>
-                </div>
-                <div class="jogi-sor">
-                    <strong>Kapcsolattartás</strong>
-                    <span>Cél: kérdések, módosítási kérések és egyeztetések megválaszolása. Jogalap: jogos érdek vagy a szolgáltatáshoz kapcsolódó előzetes egyeztetés.</span>
-                </div>
-                <div class="jogi-sor">
-                    <strong>Weboldal működtetése</strong>
-                    <span>Cél: a weboldal biztonságos betöltése és működése. Jogalap: jogos érdek a weboldal működtetéséhez és védelméhez.</span>
-                </div>
+        <header class="jogi-fejlec">
+            <div>
+                <p class="jogi-cimke">Adatvédelem</p>
+                <h1>Adatkezelési tájékoztató</h1>
             </div>
+            <p>Átlátható összefoglaló arról, milyen adatokat kezel a Lumi Nails az időpontfoglalás, a kapcsolattartás és a weboldal működtetése során.</p>
+        </header>
 
-            <h2>Adatfeldolgozók és külső szolgáltatások</h2>
-            <p>A weboldal és a foglalási rendszer működéséhez külső szolgáltatások is kapcsolódnak:</p>
-            <ul>
-                <li><strong>Supabase:</strong> a foglalási adatok tárolása, admin felület és adatbázis működtetése.</li>
-                <li><strong>Resend:</strong> automatikus email értesítések küldése.</li>
-                <li><strong>GitHub Pages:</strong> a weboldal statikus fájljainak kiszolgálása.</li>
-                <li><strong>Google Fonts és jsDelivr:</strong> betűtípusok és technikai fájlok betöltése.</li>
-                <li><strong>Instagram/Facebook:</strong> csak akkor kapnak adatot, ha a közösségi linkekre kattintasz vagy ott veszed fel a kapcsolatot.</li>
-            </ul>
+        <div class="jogi-elrendezes">
+            <aside class="jogi-oldalsav" aria-label="Tartalomjegyzék">
+                <nav class="jogi-tartalomjegyzek">
+                    <p>Tartalom</p>
+                    <ol>
+                        <li><a href="#roviden">Röviden</a></li>
+                        <li><a href="#adatkezelo">Adatkezelő</a></li>
+                        <li><a href="#kezelt-adatok">Kezelt adatok</a></li>
+                        <li><a href="#celok-jogalapok">Célok és jogalapok</a></li>
+                        <li><a href="#adatfeldolgozok">Adatfeldolgozók</a></li>
+                        <li><a href="#megorzes">Megőrzés és biztonság</a></li>
+                        <li><a href="#jogok">Érintetti jogok</a></li>
+                        <li><a href="#jogorvoslat">Jogorvoslat</a></li>
+                    </ol>
+                </nav>
+            </aside>
 
-            <h2>Mennyi ideig őrizzük meg az adatokat?</h2>
-            <p class="sorkizart-torzsszoveg">A foglalási adatokat az időpont teljesítéséhez, a kapcsolattartáshoz és az esetleges későbbi egyeztetésekhez szükséges ideig kezeljük. Általános esetben a foglalási adatokat az időpontot követően legfeljebb 1 évig őrizzük meg. Ha jogi igény, vita vagy kötelező megőrzési ok merül fel, az adatok a szükséges ideig tovább kezelhetők.</p>
+            <article class="jogi-tartalom">
+                <section class="jogi-szekcio" id="roviden">
+                    <h2>Röviden, foglalás előtt</h2>
+                    <p class="sorkizart-torzsszoveg">Az online foglalási űrlapon megadott adatokat a foglalás rögzítéséhez, kezeléséhez, visszaigazolásához és az ehhez szükséges kapcsolattartáshoz használjuk. A foglalás elküldése önkéntes, de a kötelezőként jelölt adatok nélkül az online időpont nem rögzíthető.</p>
+                    <div class="jogi-kiemeles">
+                        <strong>Nincs hírlevél-feliratkozás.</strong>
+                        <span>A foglalási adatokat nem használjuk reklámcélú tömeges megkeresésre.</span>
+                    </div>
+                </section>
 
-            <h2>Ki fér hozzá az adatokhoz?</h2>
-            <p class="sorkizart-torzsszoveg">Az adatokhoz a Lumi Nails admin felületén keresztül az időpontok kezeléséhez szükséges személy fér hozzá. A külső szolgáltatók csak a működéshez szükséges technikai szerepükben kezelik az adatokat.</p>
+                <section class="jogi-szekcio" id="adatkezelo">
+                    <h2>Adatkezelő</h2>
+                    <!-- TODO: a hivatalos név és cím véglegesítése után ezt a blokkot ki kell egészíteni. -->
+                    <div class="jogi-adatkezelo">
+                        <p><strong>Adatkezelő:</strong> Lumi Nails</p>
+                        <p><strong>Adatvédelmi kapcsolattartás:</strong> <a href="mailto:llevisimon@gmail.com">llevisimon@gmail.com</a></p>
+                        <p><strong>Szolgáltatás helye:</strong> 2800 Tatabánya, Kós Károly út</p>
+                    </div>
+                </section>
 
-            <h2>Hírlevél és marketing</h2>
-            <p>A weboldalon nincs hírlevél-feliratkozás, és a foglalási adatokat nem használjuk reklámcélú tömeges megkeresésre.</p>
+                <section class="jogi-szekcio" id="kezelt-adatok">
+                    <h2>Milyen adatokat kezelünk?</h2>
+                    <ul class="jogi-adatlista">
+                        <li><strong>Elérhetőségek</strong><span>név, telefonszám és email cím</span></li>
+                        <li><strong>Foglalási adatok</strong><span>szolgáltatás, stílus, dátum, időpont és a foglalás állapota</span></li>
+                        <li><strong>Foglalási azonosító</strong><span>a foglaláshoz létrehozott rövid, nyilvános LUMI azonosító</span></li>
+                        <li><strong>Megjegyzések</strong><span>a foglaláskor vagy lemondáskor megadott szöveg, valamint a stílushoz kapcsolódó kiegészítés</span></li>
+                        <li><strong>Inspirációs képek</strong><span>az önkéntesen feltöltött képek, fájlnevek és a tároláshoz szükséges technikai adatok</span></li>
+                        <li><strong>Kupon</strong><span>a megadott kuponkód és annak felhasználási adatai</span></li>
+                        <li><strong>Foglalási események</strong><span>létrehozás, módosítás, visszaigazolás, lemondás, emlékeztető és teljesítés ténye</span></li>
+                        <li><strong>Kézzel felvett időpontok</strong><span>telefonon, közösségi felületen vagy személyesen egyeztetett foglalások adatai</span></li>
+                        <li><strong>Email-kézbesítési adatok</strong><span>az értesítés típusa, állapota, próbálkozások és technikai hibaüzenetek</span></li>
+                        <li><strong>Technikai adatok</strong><span>a tárhely- és háttérszolgáltatóknál keletkező, biztonsághoz és működéshez szükséges naplóadatok</span></li>
+                    </ul>
+                </section>
 
-            <h2>Érintetti jogaid</h2>
-            <p class="sorkizart-torzsszoveg">Kérheted a rád vonatkozó személyes adatokhoz való hozzáférést, azok helyesbítését, törlését, kezelésének korlátozását, valamint tiltakozhatsz az adatkezelés ellen, ha annak feltételei fennállnak. Kérést a <a href="mailto:llevisimon@gmail.com">llevisimon@gmail.com</a> email címen tudsz küldeni.</p>
+                <section class="jogi-szekcio" id="celok-jogalapok">
+                    <h2>Adatkezelések célja és jogalapja</h2>
+                    <div class="jogi-tablazat">
+                        <div class="jogi-sor">
+                            <strong>Időpontfoglalás és ügyfélkiszolgálás</strong>
+                            <span>A foglalás rögzítése, visszakeresése, módosítása, lemondása és teljesítése. Jogalap: a szerződés teljesítése vagy a szerződéskötést megelőző lépések megtétele a GDPR 6. cikk (1) b) pontja alapján.</span>
+                        </div>
+                        <div class="jogi-sor">
+                            <strong>Foglalási értesítések</strong>
+                            <span>Visszaigazoló, módosítási, lemondási és emlékeztető email küldése, szükség esetén biztonságos újrapróbálással. Jogalap: a foglaláshoz kapcsolódó szerződés teljesítése.</span>
+                        </div>
+                        <div class="jogi-sor">
+                            <strong>Inspirációs képek kezelése</strong>
+                            <span>A kívánt köröm előzetes megismerése és a szolgáltatás előkészítése. Jogalap: az érintett kérésére tett, szerződéskötést megelőző lépés, illetve a szerződés teljesítése.</span>
+                        </div>
+                        <div class="jogi-sor">
+                            <strong>Kapcsolattartás</strong>
+                            <span>Kérdések, módosítási kérések és egyeztetések megválaszolása. Jogalap: szerződés teljesítése, szerződéskötést megelőző lépés vagy az adatkezelő kapcsolattartáshoz fűződő jogos érdeke.</span>
+                        </div>
+                        <div class="jogi-sor">
+                            <strong>Egyszeri értékelési kérés</strong>
+                            <span>A teljesített szolgáltatás után egy alkalommal visszajelzés kérése. Jogalap: a szolgáltatás minőségének fejlesztéséhez fűződő jogos érdek. Az ilyen megkeresés ellen bármikor tiltakozhatsz.</span>
+                        </div>
+                        <div class="jogi-sor">
+                            <strong>Rendszerbiztonság és hibakezelés</strong>
+                            <span>A weboldal védelme, az értesítések megbízható kézbesítése, valamint a hibák kivizsgálása. Jogalap: az adatkezelő biztonságos működéshez fűződő jogos érdeke.</span>
+                        </div>
+                    </div>
+                </section>
 
-            <h2>Jogorvoslat</h2>
-            <p class="sorkizart-torzsszoveg">Adatkezelési panasszal elsőként érdemes közvetlenül a Lumi Nailshez fordulni. Emellett panaszt tehetsz a Nemzeti Adatvédelmi és Információszabadság Hatóságnál is.</p>
-            <p><strong>NAIH:</strong> 1055 Budapest, Falk Miksa utca 9-11.; postacím: 1363 Budapest, Pf.: 9.; email: <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a>; web: <a href="https://www.naih.hu/" target="_blank" rel="noopener">naih.hu</a></p>
+                <section class="jogi-szekcio" id="adatszukseglet">
+                    <h2>Kötelező és választható adatok</h2>
+                    <div class="jogi-ket-kartya">
+                        <div>
+                            <h3>Kötelező</h3>
+                            <p>A név, telefonszám, email cím, szolgáltatás, stílus és időpont az online foglalás rögzítéséhez szükséges.</p>
+                        </div>
+                        <div>
+                            <h3>Választható</h3>
+                            <p>Az inspirációs képek, kupon és szabad szöveges megjegyzés megadása önkéntes, és ezek nélkül is foglalhatsz.</p>
+                        </div>
+                    </div>
+                </section>
 
-            <p class="jogi-frissitve">Utolsó frissítés: 2026. június 7.</p>
-        </section>
+                <section class="jogi-szekcio" id="adatfeldolgozok">
+                    <h2>Adatfeldolgozók és külső szolgáltatások</h2>
+                    <div class="jogi-tablazat">
+                        <div class="jogi-sor"><strong>Supabase</strong><span>Adatbázis, hitelesített adminfelület, háttérfunkciók és az inspirációs képek privát tárolása. A képekhez időben korlátozott hozzáférési link készül.</span></div>
+                        <div class="jogi-sor"><strong>Resend</strong><span>Foglalási, emlékeztető és értékelési emailek kézbesítése, valamint a kézbesítés technikai állapotának kezelése.</span></div>
+                        <div class="jogi-sor"><strong>GitHub Pages</strong><span>A weboldal statikus fájljainak kiszolgálása; ennek során technikai naplóadatok, például IP-cím keletkezhetnek.</span></div>
+                        <div class="jogi-sor"><strong>Google Fonts és jsDelivr</strong><span>A megjelenéshez szükséges betűtípusok és technikai fájlok betöltése.</span></div>
+                        <div class="jogi-sor"><strong>Instagram és Facebook</strong><span>Csak akkor kezelnek adatot saját szabályaik szerint, ha a közösségi linkre kattintasz vagy ott veszed fel a kapcsolatot.</span></div>
+                    </div>
+                    <p class="jogi-megjegyzes">Egyes szolgáltatók az Európai Gazdasági Térségen kívül is kezelhetnek adatot. Ilyenkor a szolgáltató által alkalmazott, GDPR szerinti adattovábbítási garanciák érvényesülnek.</p>
+                </section>
+
+                <section class="jogi-szekcio" id="megorzes">
+                    <h2>Megőrzés és biztonság</h2>
+                    <p class="sorkizart-torzsszoveg">Az adatokat addig kezeljük, amíg az a foglalás teljesítéséhez, az ügyféllel történő egyeztetéshez, a kézbesítési hibák kivizsgálásához vagy egy esetleges jogi igény rendezéséhez szükséges. A cél megszűnésekor az adatokat töröljük vagy anonimizáljuk, kivéve, ha jogszabály vagy folyamatban lévő igény hosszabb megőrzést tesz szükségessé.</p>
+                    <p class="sorkizart-torzsszoveg">Az inspirációs képek nem nyilvános tárhelyen találhatók, és az adminfelületen időben korlátozott linkeken érhetők el. Törlésük az adatkezelőnél kérhető. A foglalási adatokhoz kizárólag az időpontok kezeléséhez szükséges jogosultsággal rendelkező személy férhet hozzá.</p>
+                    <p class="sorkizart-torzsszoveg">A foglaláshoz kapcsolódó személyes adatokat – ideértve az online foglalást, a kézzel rögzített időpontot, a kapcsolódó eseményeket és a kézbesítési adatokat – az időpont végétől számított hat hónapig őrizzük meg, majd automatikusan töröljük. Kivételt csak jogszabályi kötelezettség vagy folyamatban lévő jogi igény indokolhat.</p>
+                    <p class="sorkizart-torzsszoveg">Az inspirációs képek a foglalás lemondásakor vagy készre állításakor törlődnek; a státusz rögzítése után legkésőbb a következő napi feldolgozás eltávolítja őket. Minden hónap első napján az előző teljes naptári hónapról név, email-cím, telefonszám és megjegyzés nélküli, összesített statisztika készül. Ez az összesítés nem alkalmas egy vendég azonosítására, ezért a személyes foglalási adatok későbbi törlése nem érinti.
+                    </p>
+                </section>
+
+                <section class="jogi-szekcio" id="automatizalt-dontes">
+                    <h2>Automatizált döntéshozatal</h2>
+                    <p>A rendszer nem végez joghatással vagy hasonlóan jelentős hatással járó automatizált döntéshozatalt, és nem készít ilyen célú profilt a vendégekről.</p>
+                </section>
+
+                <section class="jogi-szekcio" id="jogok">
+                    <h2>Érintetti jogaid</h2>
+                    <p>Kérheted:</p>
+                    <ul>
+                        <li>a rád vonatkozó személyes adatokhoz való hozzáférést és azok másolatát;</li>
+                        <li>a pontatlan adatok helyesbítését;</li>
+                        <li>az adatok törlését vagy kezelésük korlátozását, ha ennek feltételei fennállnak;</li>
+                        <li>az általad megadott adatok hordozható formátumban történő kiadását, amikor erre a GDPR alapján jogosult vagy;</li>
+                        <li>a jogos érdeken alapuló adatkezelés elleni tiltakozást.</li>
+                    </ul>
+                    <p class="sorkizart-torzsszoveg">A kérelmet a <a href="mailto:llevisimon@gmail.com">llevisimon@gmail.com</a> címen küldheted el. A megkeresést indokolatlan késedelem nélkül, főszabály szerint egy hónapon belül megválaszoljuk. Szükség esetén, a kérelem összetettségétől és számától függően ez a határidő a GDPR szabályai szerint meghosszabbítható.</p>
+                </section>
+
+                <section class="jogi-szekcio" id="jogorvoslat">
+                    <h2>Jogorvoslat</h2>
+                    <p class="sorkizart-torzsszoveg">Adatkezelési panasszal elsőként érdemes közvetlenül a Lumi Nailshez fordulni. Emellett panaszt tehetsz a Nemzeti Adatvédelmi és Információszabadság Hatóságnál, illetve bírósághoz is fordulhatsz.</p>
+                    <p><strong>NAIH:</strong> 1055 Budapest, Falk Miksa utca 9-11.; postacím: 1363 Budapest, Pf. 9.; email: <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a>; web: <a href="https://www.naih.hu/" target="_blank" rel="noopener">naih.hu</a></p>
+                    <p class="jogi-frissitve">Utolsó frissítés: 2026. augusztus 14.</p>
+                </section>
+            </article>
+        </div>
     </main>
 
     <div id="lablec-helye"></div>

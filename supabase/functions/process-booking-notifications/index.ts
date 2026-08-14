@@ -29,6 +29,23 @@ type EmailJob = {
   kind: "new_booking" | "admin_update";
 };
 
+type MonthlyReportJob = {
+  report_month: string;
+};
+
+type ExpiredBooking = {
+  id: string;
+  inspiration_image_path?: string;
+  inspiration_images?: Array<{ bucket?: string; path?: string }>;
+};
+
+type MonthlyReportData = {
+  report_month?: string;
+  online?: Record<string, number>;
+  manual?: Record<string, number>;
+  services?: Array<Record<string, unknown>>;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -44,6 +61,7 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const fromEmail = Deno.env.get("FROM_EMAIL") || "Lumi Nails <luminails.xx@gmail.com>";
     const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") || "luminails.xx@gmail.com";
+    const reportEmail = Deno.env.get("MONTHLY_REPORT_EMAIL") || Deno.env.get("OWNER_EMAIL") || replyToEmail;
     const cronSecret = Deno.env.get("BOOKING_NOTIFICATIONS_SECRET") || Deno.env.get("CRON_SECRET") || "";
 
     if (!supabaseUrl || !serviceRoleKey) {
@@ -97,11 +115,28 @@ serve(async (req) => {
 
     const emailJobs = await claimEmailJobs(supabase, limit);
     const emailJobResults = await processEmailJobs(emailJobs, supabaseUrl, serviceRoleKey);
+
+    const expiredBookings = await claimExpiredBookings(supabase, limit);
+    const retentionResults = await processExpiredBookings(expiredBookings, supabase);
+
+    const monthlyReports = await claimMonthlyReports(supabase, 3);
+    const monthlyReportResults = await processMonthlyReports({
+      jobs: monthlyReports,
+      supabase,
+      resendApiKey,
+      fromEmail,
+      replyToEmail,
+      reportEmail,
+      siteContent,
+    });
+
     return json({
       ok: true,
       reminders: reminderResults,
       email_jobs: emailJobResults,
       review_requests: reviewResults,
+      retention: retentionResults,
+      monthly_reports: monthlyReportResults,
     });
   } catch (error) {
     console.error("process-booking-notifications unexpected error", errorMessage(error));
@@ -164,6 +199,325 @@ async function processEmailJobs(jobs: EmailJob[], supabaseUrl: string, serviceRo
     failed: results.filter((item) => !item.ok).length,
     results,
   };
+}
+
+async function claimExpiredBookings(supabase: any, limit: number): Promise<ExpiredBooking[]> {
+  const { data, error } = await supabase.rpc("claim_expired_bookings_for_retention", { p_limit: limit });
+
+  if (error) {
+    throw new Error(`claim_expired_bookings_for_retention: ${error.message}`);
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+async function processExpiredBookings(bookings: ExpiredBooking[], supabase: any) {
+  const results: Array<{ booking_id: string; ok: boolean; deleted_files: number; error?: string }> = [];
+
+  for (const booking of bookings) {
+    let deletedFiles = 0;
+
+    try {
+      const objects = bookingStorageObjects(booking);
+      const pathsByBucket = new Map<string, string[]>();
+
+      objects.forEach(({ bucket, path }) => {
+        if (!pathsByBucket.has(bucket)) pathsByBucket.set(bucket, []);
+        pathsByBucket.get(bucket)!.push(path);
+      });
+
+      for (const [bucket, paths] of pathsByBucket) {
+        const { error } = await supabase.storage.from(bucket).remove(Array.from(new Set(paths)));
+        if (error) {
+          throw new Error(`Storage törlési hiba (${bucket}): ${error.message}`);
+        }
+        deletedFiles += paths.length;
+      }
+
+      const { error } = await supabase.rpc("finish_expired_booking_retention", {
+        p_booking_id: booking.id,
+        p_success: true,
+        p_error: null,
+      });
+      if (error) {
+        throw new Error(`finish_expired_booking_retention: ${error.message}`);
+      }
+
+      results.push({ booking_id: booking.id, ok: true, deleted_files: deletedFiles });
+    } catch (error) {
+      const message = errorMessage(error);
+      console.error("expired booking retention failed", { bookingId: booking.id, error: message });
+      const { error: finishError } = await supabase.rpc("finish_expired_booking_retention", {
+        p_booking_id: booking.id,
+        p_success: false,
+        p_error: message,
+      });
+      if (finishError) {
+        console.error("expired booking retention retry update failed", { bookingId: booking.id, error: finishError.message });
+      }
+      results.push({ booking_id: booking.id, ok: false, deleted_files: deletedFiles, error: message });
+    }
+  }
+
+  return {
+    found: bookings.length,
+    deleted: results.filter((item) => item.ok).length,
+    failed: results.filter((item) => !item.ok).length,
+    deleted_files: results.reduce((sum, item) => sum + item.deleted_files, 0),
+    results,
+  };
+}
+
+function bookingStorageObjects(booking: ExpiredBooking) {
+  const allowedBuckets = new Set(["booking-inspirations", "site-media"]);
+  const objects: Array<{ bucket: string; path: string }> = [];
+  const images = Array.isArray(booking.inspiration_images) ? booking.inspiration_images : [];
+
+  images.forEach((image) => {
+    const bucket = String(image?.bucket || "booking-inspirations").trim();
+    const path = safeStoragePath(image?.path);
+    if (allowedBuckets.has(bucket) && path) objects.push({ bucket, path });
+  });
+
+  if (!objects.length) {
+    const legacyPath = safeStoragePath(booking.inspiration_image_path);
+    if (legacyPath) objects.push({ bucket: "site-media", path: legacyPath });
+  }
+
+  return objects.filter((item, index, all) =>
+    all.findIndex((candidate) => candidate.bucket === item.bucket && candidate.path === item.path) === index
+  );
+}
+
+function safeStoragePath(value: unknown) {
+  const path = String(value || "").trim().replace(/^\/+/, "");
+  if (!path || path.includes("..") || path.includes("\\")) return "";
+  return path;
+}
+
+async function claimMonthlyReports(supabase: any, limit: number): Promise<MonthlyReportJob[]> {
+  const { data, error } = await supabase.rpc("claim_due_booking_monthly_reports", { p_limit: limit });
+
+  if (error) {
+    throw new Error(`claim_due_booking_monthly_reports: ${error.message}`);
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+async function processMonthlyReports(options: {
+  jobs: MonthlyReportJob[];
+  supabase: any;
+  resendApiKey: string;
+  fromEmail: string;
+  replyToEmail: string;
+  reportEmail: string;
+  siteContent: any;
+}) {
+  const { jobs, supabase, resendApiKey, fromEmail, replyToEmail, reportEmail, siteContent } = options;
+  const results: Array<{ report_month: string; ok: boolean; error?: string }> = [];
+
+  for (const job of jobs) {
+    try {
+      if (!reportEmail || !reportEmail.includes("@")) {
+        throw new Error("Nincs beállítva a havi riport címzettje.");
+      }
+
+      const reportData = await loadMonthlyReportData(supabase, job.report_month);
+      await sendMonthlyReportEmail({
+        reportMonth: job.report_month,
+        reportData,
+        resendApiKey,
+        fromEmail,
+        replyToEmail,
+        reportEmail,
+        siteContent,
+      });
+      await finishMonthlyReport(supabase, job.report_month, true, "", reportData);
+      results.push({ report_month: job.report_month, ok: true });
+    } catch (error) {
+      const message = errorMessage(error);
+      console.error("monthly booking report failed", { reportMonth: job.report_month, error: message });
+      await finishMonthlyReport(supabase, job.report_month, false, message, null);
+      results.push({ report_month: job.report_month, ok: false, error: message });
+    }
+  }
+
+  return {
+    found: jobs.length,
+    sent: results.filter((item) => item.ok).length,
+    failed: results.filter((item) => !item.ok).length,
+    results,
+  };
+}
+
+async function loadMonthlyReportData(supabase: any, reportMonth: string): Promise<MonthlyReportData> {
+  const { data, error } = await supabase.rpc("get_booking_monthly_report_data", {
+    p_report_month: reportMonth,
+  });
+
+  if (error) {
+    throw new Error(`get_booking_monthly_report_data: ${error.message}`);
+  }
+
+  return data && typeof data === "object" ? data : {};
+}
+
+async function finishMonthlyReport(
+  supabase: any,
+  reportMonth: string,
+  success: boolean,
+  error: string,
+  reportData: MonthlyReportData | null,
+) {
+  const { error: rpcError } = await supabase.rpc("finish_booking_monthly_report", {
+    p_report_month: reportMonth,
+    p_success: success,
+    p_error: error || null,
+    p_report_data: reportData,
+  });
+
+  if (rpcError) {
+    console.warn("finish_booking_monthly_report failed", { reportMonth, success, error: rpcError.message });
+  }
+}
+
+async function sendMonthlyReportEmail(options: {
+  reportMonth: string;
+  reportData: MonthlyReportData;
+  resendApiKey: string;
+  fromEmail: string;
+  replyToEmail: string;
+  reportEmail: string;
+  siteContent: any;
+}) {
+  const { reportMonth, reportData, resendApiKey, fromEmail, replyToEmail, reportEmail, siteContent } = options;
+  const month = monthLabel(reportMonth);
+  const online = reportData.online || {};
+  const manual = reportData.manual || {};
+  const services = Array.isArray(reportData.services) ? reportData.services : [];
+  const totalAppointments = numberValue(online.total) + numberValue(manual.total);
+  const completedAppointments = numberValue(online.done) + numberValue(manual.done);
+  const bookedMinutes = numberValue(online.booked_minutes) + numberValue(manual.booked_minutes);
+  const completedMinutes = numberValue(online.completed_minutes) + numberValue(manual.completed_minutes);
+  const cancellations = numberValue(online.cancelled_owner)
+    + numberValue(online.cancelled_customer)
+    + numberValue(manual.cancelled_customer);
+  const variables = { honap: month };
+  const template = emailTemplate(siteContent?.email?.haviStatisztika, {
+    targy: "Lumi Nails havi összesítő - {honap}",
+    cim: "{honap} havi összesítő",
+    szoveg: "Az előző teljes naptári hónap foglalási összesítője. A riport csak névtelen, összesített adatokat tartalmaz.",
+  }, variables);
+
+  const html = pageHtml(`
+    <h1>${escapeHtml(template.title)}</h1>
+    ${paragraphsHtml(template.message)}
+    ${detailTable([
+      ["Összes időpont", totalAppointments],
+      ["Online foglalás", numberValue(online.total)],
+      ["Kézzel rögzített", numberValue(manual.total)],
+      ["Elkészült", completedAppointments],
+      ["Lemondás", cancellations],
+      ["Egyedi vendégek", numberValue(online.unique_customers)],
+      ["Foglalt idő", formatDuration(bookedMinutes)],
+      ["Teljesített idő", formatDuration(completedMinutes)],
+      ["Becsült bevétel", formatCurrency(online.completed_revenue_amount)],
+      ["Kuponnal foglalt", numberValue(online.coupon_bookings)],
+      ["Összes kedvezmény", formatCurrency(online.discount_total_amount)],
+    ])}
+    ${monthlyServiceTable(services)}
+    <p class="muted">A bevétel a készre állított online foglalások rögzített végösszegéből készül, ezért tájékoztató jellegű. A riport nem tartalmaz nevet, email-címet, telefonszámot vagy vendégmegjegyzést.</p>
+    <p>Lumi Nails</p>
+  `);
+
+  const serviceLines = services.length
+    ? services.map((service) => `- ${String(service.name || "Ismeretlen szolgáltatás")}: ${numberValue(service.bookings)} foglalás, ${numberValue(service.done)} kész`)
+    : ["- Nem volt online foglalás."];
+
+  const text = [
+    template.title,
+    template.message,
+    "",
+    `Összes időpont: ${totalAppointments}`,
+    `Online foglalás: ${numberValue(online.total)}`,
+    `Kézzel rögzített: ${numberValue(manual.total)}`,
+    `Elkészült: ${completedAppointments}`,
+    `Lemondás: ${cancellations}`,
+    `Egyedi vendégek: ${numberValue(online.unique_customers)}`,
+    `Foglalt idő: ${formatDuration(bookedMinutes)}`,
+    `Teljesített idő: ${formatDuration(completedMinutes)}`,
+    `Becsült bevétel: ${formatCurrency(online.completed_revenue_amount)}`,
+    `Kuponnal foglalt: ${numberValue(online.coupon_bookings)}`,
+    `Összes kedvezmény: ${formatCurrency(online.discount_total_amount)}`,
+    "",
+    "Szolgáltatások:",
+    ...serviceLines,
+    "",
+    "A riport név, email-cím, telefonszám és vendégmegjegyzés nélkül készült.",
+    "",
+    "Lumi Nails",
+  ].join("\n");
+
+  await sendEmail(
+    resendApiKey,
+    fromEmail,
+    reportEmail,
+    replyToEmail,
+    template.subject,
+    html,
+    text,
+    `monthly-booking-report/${reportMonth}`,
+  );
+}
+
+function monthlyServiceTable(services: Array<Record<string, unknown>>) {
+  if (!services.length) {
+    return '<p class="muted">Ebben a hónapban nem volt online foglalás.</p>';
+  }
+
+  return `
+    <h2 style="margin:28px 0 10px;color:#302824;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:400;">Szolgáltatások</h2>
+    <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 24px;">
+      ${services.map((service) => `
+        <tr>
+          <td style="padding:11px 12px 11px 0;border-bottom:1px solid #eadfd9;color:#302824;font-size:14px;line-height:1.4;">${escapeHtml(service.name || "Ismeretlen szolgáltatás")}</td>
+          <td align="right" style="padding:11px 0;border-bottom:1px solid #eadfd9;color:#625852;font-size:13px;line-height:1.4;white-space:nowrap;">${numberValue(service.bookings)} foglalás • ${numberValue(service.done)} kész</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+function monthLabel(reportMonth: string) {
+  const date = new Date(`${reportMonth}T12:00:00Z`);
+  return new Intl.DateTimeFormat("hu-HU", {
+    year: "numeric",
+    month: "long",
+    timeZone: "Europe/Budapest",
+  }).format(date);
+}
+
+function numberValue(value: unknown) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.max(Math.round(numeric), 0) : 0;
+}
+
+function formatCurrency(value: unknown) {
+  return new Intl.NumberFormat("hu-HU", {
+    style: "currency",
+    currency: "HUF",
+    maximumFractionDigits: 0,
+  }).format(numberValue(value));
+}
+
+function formatDuration(minutes: unknown) {
+  const total = numberValue(minutes);
+  const hours = Math.floor(total / 60);
+  const remainder = total % 60;
+  if (!hours) return `${remainder} perc`;
+  if (!remainder) return `${hours} óra`;
+  return `${hours} óra ${remainder} perc`;
 }
 
 async function enrichBookingCoupon(supabase: any, booking: BookingNotification): Promise<BookingNotification> {
@@ -382,7 +736,7 @@ function emailTemplate(source: any, fallback: any, variables: Record<string, str
 
 function applyVariables(value: unknown, variables: Record<string, string>) {
   return String(value || "")
-    .replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink)\}/g, (_match, key) => variables[key] || "")
+    .replace(/\{(nev|szolgaltatas|idopont|helyszin|instagram|ertekelesLink|honap)\}/g, (_match, key) => variables[key] || "")
     .replace(/\{\s*(https?:\/\/[^}\s]+)\s*\}/g, "$1");
 }
 
