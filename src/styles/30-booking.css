@@ -60,7 +60,7 @@
     background: rgba(255, 250, 244, 0.86);
     border: 1px solid rgba(185, 133, 143, 0.32);
     border-radius: 9px;
-    font-size: 11px;
+    font-size: var(--lumi-font-caption);
     font-weight: 900;
 }
 
@@ -69,7 +69,7 @@
     min-width: 0;
     overflow: hidden;
     color: var(--barna);
-    font-size: 12px;
+    font-size: var(--lumi-font-caption);
     font-weight: 850;
     line-height: 1.1;
     text-align: left;
@@ -154,7 +154,7 @@
     min-width: 0;
     margin: 0;
     color: var(--szoveg);
-    font-size: 13px;
+    font-size: var(--lumi-font-label);
     line-height: 1.35;
 }
 
@@ -162,7 +162,7 @@
     display: block;
     margin-bottom: 1px;
     color: var(--barna);
-    font-size: 11px;
+    font-size: var(--lumi-font-caption);
     font-weight: 900;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -198,13 +198,13 @@
         font-size: 19px;
     }
 
-    .foglalas-ut-leiras {
-        font-size: 11.5px;
+.foglalas-ut-leiras {
+    font-size: var(--lumi-font-body-small);
         line-height: 1.35;
     }
 
-    .foglalas-ut-gomb {
-        font-size: 9.5px;
+.foglalas-ut-gomb {
+    font-size: var(--lumi-font-button-compact);
     }
 
     .foglalas-valaszto-kartya {
@@ -212,12 +212,23 @@
         padding: 12px;
     }
 
-    .foglalas-kartya-cim {
-        font-size: 13.2px;
+.foglalas-kartya-cim {
+    font-size: var(--lumi-font-body-small);
     }
 
-    .foglalas-kartya-meta {
-        font-size: 12px;
+.foglalas-kartya-meta {
+        display: grid;
+        gap: 1px;
+        font-size: var(--lumi-font-caption);
+        line-height: 1.2;
+    }
+
+    .foglalas-kartya-meta-elvalaszto {
+        display: none;
+    }
+
+    .foglalas-kartya-meta-ido {
+        white-space: nowrap;
     }
 
     .foglalas-datum-csik {
@@ -240,11 +251,11 @@
     }
 
     .admin-foglalas-meta-grid p {
-        font-size: 12px;
+        font-size: var(--lumi-font-label);
     }
 
     .admin-foglalas-meta-grid strong {
-        font-size: 10px;
+        font-size: var(--lumi-font-caption);
     }
 }
 
@@ -318,7 +329,7 @@
     min-height: 1.4em;
     margin: 8px 0 0;
     color: #7f8b6c;
-    font-size: 0.92rem;
+    font-size: var(--lumi-font-body-small);
     font-weight: 700;
 }
 

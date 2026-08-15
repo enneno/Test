@@ -54,7 +54,7 @@ test('a főoldali vendégértesítő adminból kapcsolható és mobilon is rende
     await expect(ertesito.locator('.vendegertesito-szoveg')).toContainText('Augusztus 20–24.');
     expect(await ertesito.locator('.vendegertesito-szoveg').evaluate(
         (elem) => Number.parseFloat(getComputedStyle(elem).fontSize)
-    )).toBe(16);
+    )).toBe(17);
     const mobilElhelyezes = await page.evaluate(() => {
         const sav = document.getElementById('vendegertesito').getBoundingClientRect();
         const hero = document.getElementById('hero').getBoundingClientRect();
@@ -104,12 +104,40 @@ test('mobilon minden szerkeszthető publikus és admin mező 22 pixeles technika
             utvonal + ' oldalon 22 px alatti mobilmező maradt'
         ).toEqual([]);
         expect(
-            mezok.filter(({ optikaiArany }) => optikaiArany !== '0.4'),
+            mezok.filter(({ optikaiArany }) => optikaiArany !== '0.36'),
             utvonal + ' oldalon optikai korrekció nélküli mobilmező maradt'
         ).toEqual([]);
         expect(await page.evaluate(() => getComputedStyle(document.documentElement).webkitTextSizeAdjust)).toBe('100%');
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
     }
+});
+
+test('shared typography roles work on public and admin mobile views', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const desktop = await page.evaluate(() => ({
+        button: getComputedStyle(document.querySelector('.gomb')).fontSize,
+        token: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-button').trim()
+    }));
+    expect(desktop).toEqual({ button: '13px', token: '13px' });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const publicMobile = await page.evaluate(() => ({
+        button: getComputedStyle(document.querySelector('.gomb')).fontSize,
+        galleryButton: getComputedStyle(document.querySelector('.galeria-atvezeto-szoveg .gomb')).fontSize,
+        caption: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-caption').trim()
+    }));
+    expect(publicMobile).toEqual({ button: '13px', galleryButton: '13px', caption: '12px' });
+
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    const adminMobile = await page.evaluate(() => ({
+        button: getComputedStyle(document.querySelector('.admin-gomb')).fontSize,
+        compactButton: getComputedStyle(document.querySelector('.admin-kis-gomb')).fontSize,
+        label: getComputedStyle(document.querySelector('.admin-mezo')).fontSize,
+        calendar: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-calendar').trim()
+    }));
+    expect(adminMobile).toEqual({ button: '13px', compactButton: '12px', label: '13px', calendar: '10px' });
 });
 
 test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-írást', async ({ page }) => {
@@ -280,6 +308,15 @@ test('a teljes oldalas foglalási felület asztalon és mobilon is tömör vála
     await expect(page.locator('.foglalas-lepes:visible')).toHaveCount(5);
     const desktopKartya = await page.locator('#foglalas-szolgaltatas-kartyak .foglalas-valaszto-kartya').first().boundingBox();
     expect(desktopKartya.height).toBeLessThanOrEqual(96);
+    const desktopKartyaMeta = await page.locator('#foglalas-szolgaltatas-kartyak .foglalas-kartya-meta').first().evaluate((meta) => {
+        const ar = meta.querySelector('.foglalas-kartya-meta-ar').getBoundingClientRect();
+        const ido = meta.querySelector('.foglalas-kartya-meta-ido').getBoundingClientRect();
+        return {
+            egySorban: Math.abs(ar.top - ido.top) <= 1,
+            elvalasztoLathato: getComputedStyle(meta.querySelector('.foglalas-kartya-meta-elvalaszto')).display !== 'none'
+        };
+    });
+    expect(desktopKartyaMeta).toEqual({ egySorban: true, elvalasztoLathato: true });
     const desktopOsszefoglalo = await page.locator('#foglalas-osszefoglalo').boundingBox();
     const desktopKuldes = await page.locator('#foglalas-kuldes').boundingBox();
     expect(desktopKuldes.y - (desktopOsszefoglalo.y + desktopOsszefoglalo.height)).toBeGreaterThanOrEqual(20);
@@ -325,6 +362,22 @@ test('a teljes oldalas foglalási felület asztalon és mobilon is tömör vála
         (elemek) => elemek.map((elem) => Math.round(elem.getBoundingClientRect().top))
     );
     expect(new Set(epitesFelsoElek).size).toBe(1);
+    const mobilKartyaMeta = await epitesKartyak.first().locator('.foglalas-kartya-meta').evaluate((meta) => {
+        const ar = meta.querySelector('.foglalas-kartya-meta-ar').getBoundingClientRect();
+        const idoElem = meta.querySelector('.foglalas-kartya-meta-ido');
+        const ido = idoElem.getBoundingClientRect();
+        const idoStilus = getComputedStyle(idoElem);
+        return {
+            idoUjSorban: ido.top >= ar.bottom - 1,
+            idoEgySoros: ido.height <= Number.parseFloat(idoStilus.lineHeight) + 1,
+            elvalasztoRejtett: getComputedStyle(meta.querySelector('.foglalas-kartya-meta-elvalaszto')).display === 'none'
+        };
+    });
+    expect(mobilKartyaMeta).toEqual({
+        idoUjSorban: true,
+        idoEgySoros: true,
+        elvalasztoRejtett: true
+    });
 
     const szolgaltatasKartya = await page.locator('#foglalas-szolgaltatas-kartyak .foglalas-valaszto-kartya').first().boundingBox();
     const stilusKartya = await page.locator('.foglalas-stilus-kartya').first().boundingBox();
@@ -491,7 +544,7 @@ test('a mobil főoldal címei törnek, a térközei és a CTA nyilai egységesek
     ).evaluateAll((szekciok) => szekciok.map(
         (szekcio) => Number.parseFloat(getComputedStyle(szekcio).marginBottom)
     ));
-    expect(szekcioTavolsagok).toEqual([64, 64, 64]);
+    expect(szekcioTavolsagok).toEqual([64, 64, 0]);
 });
 
 test('a publikus H2-k mobilon két pixellel nőnek, desktopon változatlanok maradnak', async ({ page }) => {
@@ -1118,11 +1171,75 @@ test('a footer mobilon kompakt és asztali nézetben vízszintes', async ({ page
     await expect(page.locator('.site-footer')).toBeVisible();
     const mobileHeight = await page.locator('.footer-belso').evaluate(element => element.getBoundingClientRect().height);
     expect(mobileHeight).toBeLessThan(260);
+    const mobileTopInset = await page.evaluate(() => {
+        const footer = document.querySelector('.site-footer').getBoundingClientRect();
+        const content = document.querySelector('.footer-belso').getBoundingClientRect();
+        return content.top - footer.top;
+    });
+    expect(mobileTopInset).toBeLessThanOrEqual(20.1);
 
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.reload({ waitUntil: 'domcontentloaded' });
     const columns = await page.locator('.footer-belso').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(3);
+});
+
+test('mobile section rhythm keeps gallery, booking and footer transitions compact', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.galeria-kartya-lapozo')).toBeVisible();
+
+    const homeRhythm = await page.evaluate(() => {
+        const gallery = document.querySelector('#galeria-atvezeto').getBoundingClientRect();
+        const carousel = document.querySelector('.galeria-kartya-lapozo').getBoundingClientRect();
+        const activeCard = document.querySelector('.galeria-kartya-lapozo img[data-aktiv=true]').getBoundingClientRect();
+        const controlsElement = document.querySelector('.galeria-kartya-vezerlok');
+        const controls = controlsElement.getBoundingClientRect();
+        const bookingCta = document.querySelector('#kapcsolat').getBoundingClientRect();
+        return {
+            sectionGap: bookingCta.top - gallery.bottom,
+            carouselHeight: carousel.height,
+            activeCardWidth: activeCard.width,
+            controlsWidth: controls.width,
+            controlsInside: controls.top >= carousel.top && controls.bottom <= carousel.bottom,
+            mobileDotsHidden: getComputedStyle(controlsElement.querySelector('.galeria-kartya-pontok')).display === 'none',
+            mobileStatusVisible: getComputedStyle(controlsElement.querySelector('.galeria-kartya-allapot')).display !== 'none',
+            gallerySurface: getComputedStyle(document.querySelector('#galeria-atvezeto')).backgroundColor,
+            bookingSurface: getComputedStyle(document.querySelector('#kapcsolat')).backgroundColor
+        };
+    });
+    expect(Math.abs(homeRhythm.sectionGap)).toBeLessThanOrEqual(1);
+    expect(homeRhythm.carouselHeight).toBeLessThanOrEqual(360.5);
+    expect(homeRhythm.activeCardWidth).toBeGreaterThanOrEqual(270);
+    expect(homeRhythm.controlsWidth).toBeLessThanOrEqual(170);
+    expect(homeRhythm.controlsInside).toBe(true);
+    expect(homeRhythm.mobileDotsHidden).toBe(true);
+    expect(homeRhythm.mobileStatusVisible).toBe(true);
+    expect(homeRhythm.gallerySurface).not.toBe(homeRhythm.bookingSurface);
+
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    const bookingRhythm = await page.evaluate(() => {
+        const main = document.querySelector('.foglalas-oldal').getBoundingClientRect();
+        const intro = document.querySelector('.foglalas-nyito-szoveg').getBoundingClientRect();
+        const choices = document.querySelector('.foglalas-utak').getBoundingClientRect();
+        const online = document.querySelector('#online-foglalas').getBoundingClientRect();
+        const selfService = document.querySelector('#foglalas-ellenorzes').getBoundingClientRect();
+        return {
+            pageTopInset: intro.top - main.top,
+            choicesGap: choices.top - intro.bottom,
+            introGap: online.top - choices.bottom,
+            sectionGap: selfService.top - online.bottom
+        };
+    });
+    expect(bookingRhythm.pageTopInset).toBeLessThanOrEqual(24.5);
+    expect(bookingRhythm.choicesGap).toBeLessThanOrEqual(32.5);
+    expect(bookingRhythm.introGap).toBeLessThanOrEqual(32.5);
+    expect(Math.abs(bookingRhythm.sectionGap)).toBeLessThanOrEqual(1);
+
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    expect(await page.locator('.admin-oldal').evaluate(
+        element => getComputedStyle(element).paddingBottom
+    )).toBe('32px');
 });
 
 test('a foglalásexport a kapott látható sorokat írja egy formázott munkalapra', async ({ page }) => {
@@ -1251,7 +1368,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
                         <button type="button" class="admin-kis-gomb">Szerkesztés</button>
                     </div>
                 </div>
-                <div class="admin-foglalas-reszletek"><p>teszt@example.com · +36 20 123 4567</p></div>
+                <div class="admin-foglalas-reszletek"><p class="admin-foglalas-reszlet-sor">teszt@example.com · +36 20 123 4567</p></div>
             </article>
             <article class="admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas admin-foglalas-statusz-blocked" data-tiltas-elrendezes-teszt>
                 <div class="admin-db-kartya-fej">
@@ -1288,7 +1405,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         nevBlokkban: true,
         nevElott: true,
         teljesSzelesseg: false,
-        kodBetumeret: '9px',
+        kodBetumeret: '11px',
         keret: '0px',
         hatter: 'rgba(0, 0, 0, 0)'
     });
@@ -1517,6 +1634,24 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         vezerlokAzAdatokAlatt: true,
         vezerloAtfedes: false
     });
+
+    const mobilVezerloTipografia = await kompaktKartya.evaluate((kartya) => {
+        const szolgaltatas = Number.parseFloat(getComputedStyle(kartya.querySelector('.admin-foglalas-rovid-szolgaltatas')).fontSize);
+        const reszletGomb = Number.parseFloat(getComputedStyle(kartya.querySelector('[data-foglalas-reszletek]')).fontSize);
+        const reszletSzoveg = Number.parseFloat(getComputedStyle(kartya.querySelector('.admin-foglalas-reszlet-sor')).fontSize);
+        const statuszStilus = getComputedStyle(kartya.querySelector('.admin-db-statusz'));
+        return {
+            szolgaltatas,
+            reszletGomb,
+            reszletSzoveg,
+            statuszTechnikaiMeret: Number.parseFloat(statuszStilus.fontSize),
+            statuszOptikaiArany: statuszStilus.fontSizeAdjust
+        };
+    });
+    expect(mobilVezerloTipografia.reszletGomb).toBeLessThanOrEqual(mobilVezerloTipografia.szolgaltatas);
+    expect(mobilVezerloTipografia.reszletSzoveg).toBeLessThanOrEqual(mobilVezerloTipografia.szolgaltatas);
+    expect(mobilVezerloTipografia.statuszTechnikaiMeret).toBeGreaterThanOrEqual(22);
+    expect(mobilVezerloTipografia.statuszOptikaiArany).toBe('0.3');
 
     await page.locator('#admin-foglalas-lapozo').evaluate((lapozo) => {
         lapozo.innerHTML = '<button type="button">Előző</button><span>1 / 4</span><button type="button">Következő</button>';

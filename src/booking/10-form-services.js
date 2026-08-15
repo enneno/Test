@@ -244,9 +244,16 @@
             racs.classList.toggle('foglalas-szolgaltatas-csoport-racs-rovid', rovidCimek);
 
             csoport.tetelek.forEach(({ szolgaltatas, cim: tetelCim }) => {
-                const meta = [szolgaltatas.price_text, idoFelirat(szolgaltatas.duration_minutes)]
+                const ar = szolgaltatas.price_text;
+                const idotartam = idoFelirat(szolgaltatas.duration_minutes);
+                const meta = [ar, idotartam]
                     .filter(Boolean)
                     .join(' • ');
+                const metaHtml = [
+                    ar ? '<span class="foglalas-kartya-meta-ar">' + html(ar) + '</span>' : '',
+                    ar && idotartam ? '<span class="foglalas-kartya-meta-elvalaszto" aria-hidden="true"> &bull; </span>' : '',
+                    idotartam ? '<span class="foglalas-kartya-meta-ido">' + html(idotartam) + '</span>' : ''
+                ].join('');
                 const kartya = document.createElement('button');
                 kartya.type = 'button';
                 kartya.className = 'foglalas-valaszto-kartya';
@@ -254,7 +261,7 @@
                 kartya.setAttribute('aria-label', [csoport.cim, tetelCim, meta].filter(Boolean).join(', '));
                 kartya.innerHTML = `
                     <span class="foglalas-kartya-cim">${html(tetelCim)}</span>
-                    <span class="foglalas-kartya-meta">${html(meta)}</span>
+                    <span class="foglalas-kartya-meta">${metaHtml}</span>
                 `;
                 kartya.addEventListener('click', () => {
                     elemek.szolgaltatas.value = szolgaltatas.id;
