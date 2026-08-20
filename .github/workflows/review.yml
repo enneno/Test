@@ -1,9 +1,6 @@
 name: Verify review branch
 
 on:
-  push:
-    branches:
-      - chatgpt-local-review
   workflow_dispatch:
 
 permissions:
