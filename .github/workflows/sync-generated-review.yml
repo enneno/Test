@@ -6,6 +6,7 @@ on:
       - chatgpt-local-review
     paths:
       - 'src/**'
+      - 'scripts/refactor-css-*.js'
 
 permissions:
   contents: write
@@ -36,10 +37,19 @@ jobs:
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
+      - name: Run pending CSS refactor scripts
+        shell: bash
+        run: |
+          shopt -s nullglob
+          for script in scripts/refactor-css-*.js; do
+            echo "Running $script"
+            node "$script"
+          done
+
       - name: Verify and rebuild
         run: npm run verify
 
-      - name: Commit generated assets
+      - name: Commit verified refactor output
         shell: bash
         run: |
           if git diff --quiet; then
@@ -48,6 +58,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- style.css admin-v2.css script.js booking.js admin-supabase.js index.html admin/index.html arlista/index.html galeria/index.html foglalas/index.html adatkezeles/index.html
-          git commit -m "Rebuild generated assets after review refactor"
+          git add -- src/styles style.css admin-v2.css script.js booking.js admin-supabase.js index.html admin/index.html arlista/index.html galeria/index.html foglalas/index.html adatkezeles/index.html
+          git commit -m "Apply verified CSS refactor output"
           git push origin HEAD:chatgpt-local-review
