@@ -30,3 +30,19 @@ test('a V2 mentés nem rejtett lebegő gomb kattintását használja', async () 
     expect(source).toContain('lebegoMentes();');
     expect(source).not.toContain('adminElemek().lebegoMentes?.click()');
 });
+
+test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async () => {
+    const files = [
+        'admin/index.html',
+        'src/admin/00-bootstrap-auth-calendar.js',
+        'admin-content.js',
+        'src/admin-styles/admin-workspace-v2.css',
+        'src/styles/40-admin.css',
+        'src/styles/99-unified-design.css'
+    ];
+
+    for (const file of files) {
+        const source = fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8');
+        expect(source, file).not.toContain('admin-lebego-mentes');
+    }
+});

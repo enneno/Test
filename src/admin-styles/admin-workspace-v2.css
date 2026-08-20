@@ -50,8 +50,7 @@
 .admin-body.admin-v2 .admin-live-panel > .admin-panel-fej,
 .admin-body.admin-v2 .admin-sidebar-fej,
 .admin-body.admin-v2 .admin-sidebar-tipp,
-.admin-body.admin-v2 .admin-v2-legacy-tabs,
-.admin-body.admin-v2 .admin-lebego-mentes {
+.admin-body.admin-v2 .admin-v2-legacy-tabs {
   display: none;
 }
 

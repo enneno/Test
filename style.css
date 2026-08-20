@@ -4903,31 +4903,12 @@ body.admin-modal-nyitva {
 
 
 
-/* Admin floating save button top layer 20260719 */
-.admin-body .admin-lebego-mentes {
-    position: fixed;
-    z-index: 99999;
-}
 
 
 @media (max-width: 768px) {
-    .admin-body .admin-lebego-mentes {
-        left: 50%;
-        right: auto;
-        bottom: calc(18px + env(safe-area-inset-bottom));
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: min(260px, calc(100% - 72px));
-        min-height: 46px;
-        margin: 0;
-        transform: translateX(-50%);
-        pointer-events: auto;
-    }
+    
 
-    .admin-body .admin-lebego-mentes[hidden] {
-        display: none;
-    }
+    
 
     .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
         margin-bottom: 0;
@@ -7703,8 +7684,7 @@ textarea:focus-visible {
 
 .admin-hozzaadas,
 .admin-kis-gomb,
-.admin-gomb,
-.admin-lebego-mentes {
+.admin-gomb {
     border-radius: 3px;
     box-shadow: none;
 }
@@ -9621,25 +9601,7 @@ body.admin-body {
     background: var(--ui-off-white);
 }
 
-.admin-body .admin-lebego-mentes {
-    right: 28px;
-    bottom: calc(24px + env(safe-area-inset-bottom));
-    min-width: 176px;
-    min-height: 48px;
-    padding: 0 22px;
-    color: var(--ui-off-white);
-    border: 1px solid rgba(255, 249, 245, 0.22);
-    border-radius: 13px;
-    background: var(--admin-rose-dark);
-    box-shadow: 0 18px 36px rgba(83, 48, 59, 0.24);
-    font-size: var(--lumi-font-button);
-    letter-spacing: 0.04em;
-    text-transform: none;
-}
 
-.admin-body .admin-lebego-mentes:hover {
-    background: var(--admin-ink);
-}
 
 @media (max-width: 900px) {
     .admin-body .cms-view-tabs {
@@ -9945,17 +9907,9 @@ body.admin-body {
         grid-template-columns: 1fr;
     }
 
-    .admin-body .admin-lebego-mentes {
-        right: auto;
-        bottom: calc(14px + env(safe-area-inset-bottom));
-        left: 50%;
-        width: min(300px, calc(100% - 34px));
-        transform: translateX(-50%);
-    }
+    
 
-    .admin-body .admin-lebego-mentes:hover {
-        transform: translateX(-50%);
-    }
+    
 }
 
 /* =========================================

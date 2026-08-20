@@ -5,31 +5,12 @@
 
 
 
-/* Admin floating save button top layer 20260719 */
-.admin-body .admin-lebego-mentes {
-    position: fixed;
-    z-index: 99999;
-}
 
 
 @media (max-width: 768px) {
-    .admin-body .admin-lebego-mentes {
-        left: 50%;
-        right: auto;
-        bottom: calc(18px + env(safe-area-inset-bottom));
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: min(260px, calc(100% - 72px));
-        min-height: 46px;
-        margin: 0;
-        transform: translateX(-50%);
-        pointer-events: auto;
-    }
+    
 
-    .admin-body .admin-lebego-mentes[hidden] {
-        display: none;
-    }
+    
 
     .admin-body .admin-lapozo:not(.admin-lapozo-felso) {
         margin-bottom: 0;

@@ -417,9 +417,6 @@
         root.addEventListener('click', cmsClick);
         document.getElementById('admin-cms-save')?.addEventListener('click', saveContent);
         document.getElementById('admin-cms-reload')?.addEventListener('click', loadContent);
-        document.getElementById('admin-lebego-mentes')?.addEventListener('click', () => {
-            if (document.getElementById('admin-panel-szovegek')?.classList.contains('aktiv')) saveContent();
-        });
 
         state.client.auth.onAuthStateChange((_event, session) => {
             state.session = session;

@@ -67,7 +67,6 @@
         elemek.emailTesztKuldes?.addEventListener('click', emailTesztekKuldese);
         elemek.szolgaltatasHozzaadas?.addEventListener('click', szolgaltatasHozzaadas);
         elemek.kuponHozzaadas?.addEventListener('click', kuponHozzaadas);
-        elemek.lebegoMentes?.addEventListener('click', lebegoMentes);
         idosavAlapertelmezes(elemek);
         idosavNaptarInicializalasa(elemek);
         elemek.tiltasForm?.addEventListener('submit', event => {
@@ -134,7 +133,6 @@
             ujJelszo: document.getElementById('admin-uj-jelszo'),
             ujJelszoIsmet: document.getElementById('admin-uj-jelszo-ismet'),
             jelszoStatusz: document.getElementById('admin-jelszo-status'),
-            lebegoMentes: document.getElementById('admin-lebego-mentes'),
             onlineStatusz: document.getElementById('admin-online-status'),
             emailTesztKuldes: document.getElementById('admin-email-teszt-kuldes'),
             emailTesztStatusz: document.getElementById('admin-email-teszt-statusz'),
