@@ -34,14 +34,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build assets
-        run: npm run build
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
 
-      - name: Refresh asset versions
-        run: npm run assets:version
-
-      - name: Run static checks
-        run: npm run check
+      - name: Verify site
+        run: npm run verify
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
