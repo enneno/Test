@@ -1,4 +1,5 @@
-/* Admin booking list responsive layout and metadata. */
+/* Admin-only booking list layout and metadata.
+   Kept separate from 30-booking.css so public booking styles do not carry admin rules. */
 .admin-foglalas-meta-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
