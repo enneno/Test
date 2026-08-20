@@ -1071,6 +1071,11 @@
             }
 
             if (event.target.closest('[data-admin-v2-save]')) {
+                const aktivPanel = event.target.closest('.admin-db-panel');
+                if (aktivPanel?.id === 'admin-panel-szovegek') {
+                    document.getElementById('admin-cms-save')?.click();
+                    return;
+                }
                 adminElemek().lebegoMentes?.click();
                 return;
             }
