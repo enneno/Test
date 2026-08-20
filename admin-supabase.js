@@ -678,7 +678,8 @@
         szovegek: {
             kicker: 'Tartalomkezelés',
             title: 'Weboldal',
-            description: 'Oldalak, galéria és általános weboldalszövegek.'
+            description: 'Oldalak, galéria és általános weboldalszövegek.',
+            save: 'Tartalom mentése'
         },
         szolgaltatasok: {
             kicker: 'Weboldal és foglalás',
