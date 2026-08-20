@@ -431,7 +431,7 @@
                     document.getElementById('admin-cms-save')?.click();
                     return;
                 }
-                adminElemek().lebegoMentes?.click();
+                lebegoMentes();
                 return;
             }
 
