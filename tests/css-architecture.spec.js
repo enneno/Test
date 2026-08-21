@@ -262,3 +262,65 @@ test('a főoldali galéria CSS-e a publikus komponensrétegben él', async () =>
     expect(unifiedCss).not.toContain('.galeria-kartya');
     expect(unifiedCss).not.toContain('.galeria-showcase');
 });
+
+test('a booking főfelület CSS-e a booking rétegben él', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const bookingCss = fs.readFileSync(path.join(root, 'src', 'styles', '30-booking.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(bookingCss).toContain('Booking — végleges megjelenés (99-ből migrálva)');
+    expect(bookingCss).toContain('.foglalas-asszisztens {');
+    expect(bookingCss).toContain('#foglalas-szolgaltatas-kartyak {');
+    expect(bookingCss).toContain('.foglalas-datum-csik {');
+    expect(unifiedCss).not.toContain('/* Booking */');
+    expect(unifiedCss).not.toContain('.foglalas-asszisztens {');
+    expect(unifiedCss).not.toContain('#foglalas-szolgaltatas-kartyak');
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    const desktop = await page.evaluate(() => {
+        const pageElement = document.querySelector('.foglalas-oldal');
+        const intro = document.querySelector('.foglalas-nyito');
+        const paths = document.querySelector('.foglalas-utak');
+        const step = document.querySelector('.foglalas-lepes');
+        return {
+            pageWidth: Math.round(pageElement.getBoundingClientRect().width),
+            introColumns: getComputedStyle(intro).gridTemplateColumns.split(' ').filter(Boolean).length,
+            pathColumns: getComputedStyle(paths).gridTemplateColumns.split(' ').filter(Boolean).length,
+            stepBorderBottom: getComputedStyle(step).borderBottomStyle,
+            stepRadius: getComputedStyle(step).borderRadius
+        };
+    });
+    expect(desktop).toEqual({
+        pageWidth: 1120,
+        introColumns: 2,
+        pathColumns: 2,
+        stepBorderBottom: 'solid',
+        stepRadius: '0px'
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await page.evaluate(() => {
+        const pageElement = document.querySelector('.foglalas-oldal');
+        const intro = document.querySelector('.foglalas-nyito');
+        const paths = document.querySelector('.foglalas-utak');
+        const card = document.querySelector('.foglalas-ut-kartya');
+        const step = document.querySelector('.foglalas-lepes');
+        return {
+            pageWidth: Math.round(pageElement.getBoundingClientRect().width),
+            introColumns: getComputedStyle(intro).gridTemplateColumns.split(' ').filter(Boolean).length,
+            pathColumns: getComputedStyle(paths).gridTemplateColumns.split(' ').filter(Boolean).length,
+            cardMinHeight: getComputedStyle(card).minHeight,
+            stepPaddingTop: getComputedStyle(step).paddingTop,
+            documentWidth: document.documentElement.scrollWidth
+        };
+    });
+    expect(mobile).toEqual({
+        pageWidth: 358,
+        introColumns: 1,
+        pathColumns: 1,
+        cardMinHeight: '0px',
+        stepPaddingTop: '26px',
+        documentWidth: 390
+    });
+});

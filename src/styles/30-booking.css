@@ -280,3 +280,618 @@
     font-size: 1.05rem;
     font-weight: 800;
 }
+
+/* Booking — végleges megjelenés (99-ből migrálva) */
+.foglalas-oldal {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: clamp(72px, 8vw, 116px) 0 0;
+}
+
+.foglalas-oldal {
+    width: min(1120px, calc(100% - 48px));
+}
+
+.foglalas-nyito {
+    display: grid;
+    grid-template-columns: minmax(330px, 0.82fr) minmax(480px, 1.18fr);
+    gap: clamp(44px, 7vw, 90px);
+    align-items: start;
+    min-height: 0;
+    margin: 0;
+    padding: 0 0 48px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.foglalas-nyito-szoveg {
+    margin: 0;
+    padding: 22px 0 0;
+    text-align: left;
+}
+
+.foglalas-nyito h1,
+.foglalas-asszisztens-fej h2 {
+    margin: 16px 0 24px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(54px, 6vw, 78px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    text-align: left;
+}
+
+.foglalas-nyito .szekcio-leiras {
+    max-width: 470px;
+    margin: 0;
+    color: var(--ui-muted);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.8;
+}
+
+.foglalas-utak {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--ui-line);
+    border-radius: 4px;
+    background: var(--ui-line);
+}
+
+.foglalas-ut-kartya {
+    min-height: 236px;
+    padding: 28px;
+    border: 0;
+    border-radius: 0;
+    background: var(--ui-surface);
+    box-shadow: none;
+    color: var(--ui-ink);
+}
+
+.foglalas-ut-kartya:hover {
+    z-index: 1;
+    transform: none;
+    background: var(--ui-off-white);
+    box-shadow: 0 12px 32px rgba(55, 40, 35, 0.08);
+}
+
+.foglalas-ut-kartya-kiemelt {
+    background: var(--ui-ink);
+    color: var(--ui-off-white);
+}
+
+.foglalas-ut-kartya-kiemelt .foglalas-ut-cim,
+.foglalas-ut-kartya-kiemelt .foglalas-ut-leiras,
+.foglalas-ut-kartya-kiemelt .foglalas-ut-gomb,
+.foglalas-ut-kartya-kiemelt .foglalas-ut-ikon {
+    color: var(--ui-off-white);
+}
+
+.foglalas-ut-kartya-kiemelt .foglalas-ut-leiras {
+    color: rgba(255, 249, 245, 0.74);
+}
+
+.foglalas-ut-kartya-kiemelt:hover,
+.foglalas-ut-kartya-kiemelt:focus-visible {
+    background: var(--ui-rose-dark);
+    color: var(--ui-off-white);
+}
+
+.foglalas-ut-kartya-kiemelt:hover .foglalas-ut-cim,
+.foglalas-ut-kartya-kiemelt:hover .foglalas-ut-leiras,
+.foglalas-ut-kartya-kiemelt:hover .foglalas-ut-gomb,
+.foglalas-ut-kartya-kiemelt:hover .foglalas-ut-ikon,
+.foglalas-ut-kartya-kiemelt:focus-visible .foglalas-ut-cim,
+.foglalas-ut-kartya-kiemelt:focus-visible .foglalas-ut-leiras,
+.foglalas-ut-kartya-kiemelt:focus-visible .foglalas-ut-gomb,
+.foglalas-ut-kartya-kiemelt:focus-visible .foglalas-ut-ikon {
+    color: var(--ui-off-white);
+}
+
+.foglalas-asszisztens-szekcio {
+    position: relative;
+    overflow: visible;
+    margin: 0;
+    padding: 56px 0 0;
+    border: 0;
+    border-top: 1px solid var(--ui-line-strong);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    scroll-margin-top: calc(var(--ui-header-height) + 24px);
+}
+
+.foglalas-nyito::before,
+.foglalas-asszisztens-szekcio::before {
+    display: none;
+}
+
+.foglalas-asszisztens-fej {
+    max-width: 720px;
+    margin: 0 0 54px;
+    text-align: left;
+}
+
+.foglalas-asszisztens-fej p {
+    color: var(--ui-muted);
+    line-height: 1.75;
+}
+
+.foglalas-asszisztens {
+    gap: 0;
+    max-width: 100%;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.foglalas-lepes {
+    margin: 0;
+    padding: clamp(38px, 5vw, 62px) 0;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    scroll-margin-top: calc(var(--ui-header-height) + 24px);
+}
+
+.foglalas-lepes:last-child {
+    border-bottom: 0;
+}
+
+.foglalas-lepes-fej {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 34px);
+    align-items: start;
+    max-width: 840px;
+    margin-bottom: 28px;
+}
+
+.foglalas-lepes-fej h3,
+.foglalas-lepes-fej p {
+    text-align: left;
+}
+
+.foglalas-lepes-szam {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 28px;
+    justify-content: flex-start;
+    border: 0;
+    border-top: 1px solid var(--ui-rose);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-rose-dark);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    letter-spacing: 0.12em;
+}
+
+.foglalas-kartya-racs,
+.foglalas-stilus-racs,
+.foglalas-mini-racs,
+.foglalas-ido-racs {
+    gap: 8px;
+}
+
+#foglalas-szolgaltatas-kartyak {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+}
+
+.foglalas-szolgaltatas-csoport {
+    min-width: 0;
+    margin: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--ui-line);
+}
+
+.foglalas-szolgaltatas-csoport:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.foglalas-szolgaltatas-csoport-cim {
+    margin: 0 0 8px;
+    color: var(--ui-rose-dark);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.foglalas-szolgaltatas-csoport-racs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-width: 0;
+}
+
+.foglalas-szolgaltatas-csoport-racs-1 {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.foglalas-szolgaltatas-csoport-racs-rovid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.foglalas-szolgaltatas-csoport-racs-rovid .foglalas-valaszto-kartya {
+    min-height: 70px;
+    padding: 9px 8px;
+    gap: 3px;
+}
+
+.foglalas-szolgaltatas-csoport-racs-rovid .foglalas-kartya-cim {
+    font-size: var(--lumi-font-body-small);
+}
+
+.foglalas-szolgaltatas-csoport-racs-rovid .foglalas-kartya-meta {
+    font-size: var(--lumi-font-caption);
+    line-height: 1.25;
+}
+
+.foglalas-szolgaltatas-csoport-racs .foglalas-valaszto-kartya {
+    width: 100%;
+    min-width: 0;
+}
+
+@media screen and (min-width: 769px) {
+    .foglalas-szolgaltatas-csoport-racs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .foglalas-szolgaltatas-csoport-racs-1 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .foglalas-szolgaltatas-csoport-racs-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.foglalas-valaszto-kartya,
+.foglalas-stilus-kartya,
+.foglalas-mini-kartya,
+.foglalas-idopont-gomb,
+.foglalas-datum-chip {
+    border-color: var(--ui-line);
+    border-radius: 3px;
+    background: rgba(255, 253, 249, 0.76);
+    box-shadow: none;
+}
+
+.foglalas-valaszto-kartya:hover,
+.foglalas-stilus-kartya:hover,
+.foglalas-mini-kartya:hover,
+.foglalas-idopont-gomb:hover,
+.foglalas-datum-chip:hover {
+    transform: none;
+    border-color: var(--ui-rose);
+    background: var(--ui-off-white);
+    box-shadow: 0 9px 24px rgba(55, 40, 35, 0.06);
+}
+
+.foglalas-valaszto-kartya.aktiv,
+.foglalas-stilus-kartya.aktiv,
+.foglalas-mini-kartya.aktiv,
+.foglalas-idopont-gomb.aktiv,
+.foglalas-datum-chip.aktiv {
+    border-color: var(--ui-ink);
+    background: var(--ui-ink);
+    box-shadow: none;
+    color: var(--ui-off-white);
+}
+
+.foglalas-valaszto-kartya.aktiv .foglalas-kartya-cim,
+.foglalas-valaszto-kartya.aktiv .foglalas-kartya-meta,
+.foglalas-stilus-kartya.aktiv span,
+.foglalas-stilus-kartya.aktiv small,
+.foglalas-stilus-kartya.aktiv .foglalas-stilus-ido,
+.foglalas-datum-chip.aktiv .foglalas-datum-chip-nap,
+.foglalas-datum-chip.aktiv .foglalas-datum-chip-resz {
+    border-color: transparent;
+    background: transparent;
+    color: var(--ui-off-white);
+}
+
+.foglalas-valaszto-kartya {
+    min-height: 76px;
+    padding: 13px 16px;
+}
+
+.foglalas-stilus-kartya {
+    min-height: 88px;
+    padding: 14px 16px;
+}
+
+.foglalas-stilus-ido {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: var(--lumi-font-caption);
+    letter-spacing: 0.05em;
+}
+
+.foglalas-datum-csik {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+}
+
+.foglalas-datum-chip {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    min-height: 76px;
+    padding: 13px 14px;
+}
+
+.foglalas-datum-chip-nap {
+    width: auto;
+    height: auto;
+    justify-content: flex-start;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 20px;
+}
+
+.foglalas-datum-chip-resz {
+    font-size: var(--lumi-font-caption);
+    font-weight: 700;
+}
+
+.foglalas-mini-kartya,
+.foglalas-idopont-gomb {
+    min-height: 48px;
+    border-radius: 3px;
+}
+
+.foglalas-kepfeltoltes,
+.foglalas-kep-elonezet,
+.foglalas-osszefoglalo,
+.foglalas-kupon-blokk {
+    border-color: var(--ui-line);
+    border-radius: 3px;
+    background: rgba(255, 253, 249, 0.72);
+    box-shadow: none;
+}
+
+.foglalas-kepfeltoltes-ikon {
+    border-radius: 3px;
+    background: var(--ui-ink);
+}
+
+.foglalas-osszefoglalo {
+    margin-top: 24px;
+    padding: 24px;
+}
+
+.foglalas-kuldes-akciok {
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.foglalas-kuldes-akciok .urlap-kuldes-gomb {
+    width: min(100%, 280px);
+    margin: 0;
+}
+
+.foglalas-kuldes-akciok .urlap-status {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+}
+
+.foglalas-kuldes-akciok .urlap-status:empty {
+    display: none;
+}
+
+@media screen and (max-width: 640px) {
+    .foglalas-kuldes-akciok .urlap-kuldes-gomb {
+        width: 100%;
+    }
+}
+
+.foglalas-oldal .urlap-mezo,
+.foglalas-oldal .tel-csoport {
+    min-height: 48px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: 3px;
+    background: var(--ui-off-white);
+    box-shadow: none;
+}
+
+.foglalas-oldal .tel-csoport > .urlap-mezo {
+    min-height: 46px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+
+.foglalas-oldal input,
+.foglalas-oldal select,
+.foglalas-oldal textarea {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.foglalas-oldal .urlap-mezo:focus,
+.foglalas-oldal .tel-csoport:focus-within {
+    border-color: var(--ui-rose-dark);
+    outline: 3px solid rgba(145, 118, 110, 0.2);
+    box-shadow: none;
+}
+
+.foglalas-oldal .tel-csoport > .urlap-mezo:focus {
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+}
+
+@media screen and (max-width: 900px) {
+    .foglalas-nyito {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media screen and (max-width: 768px) {
+    .foglalas-asszisztens-fej h2 {
+        font-size: calc(clamp(54px, 6vw, 78px) + 2px);
+    }
+
+    .foglalas-oldal {
+        width: calc(100% - 32px);
+        padding-top: 24px;
+    }
+
+    .foglalas-utak {
+        grid-template-columns: 1fr;
+    }
+
+    .foglalas-nyito {
+        gap: 32px;
+        padding-bottom: 24px;
+    }
+
+    .foglalas-nyito-szoveg {
+        padding-top: 0;
+    }
+
+    .foglalas-ut-kartya {
+        min-height: 190px;
+    }
+
+    .foglalas-asszisztens-szekcio {
+        margin-bottom: 0;
+        padding-top: 32px;
+    }
+
+    .foglalas-asszisztens-fej {
+        margin-bottom: 36px;
+    }
+
+    .foglalas-oldal .urlap-mezo {
+        font-size: var(--lumi-font-control);
+    }
+
+    .foglalas-datum-csik {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .foglalas-nyito h1 {
+        font-size: clamp(42px, 12.5vw, 54px);
+        line-height: 0.96;
+    }
+
+    .foglalas-asszisztens-fej h2 {
+        font-size: calc(clamp(42px, 12.5vw, 54px) + 2px);
+        line-height: 0.96;
+    }
+
+    .foglalas-lepes {
+        padding: 26px 0;
+    }
+
+    .foglalas-lepes-fej {
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .foglalas-lepes-szam {
+        width: 42px;
+    }
+
+    .foglalas-kartya-racs,
+    .foglalas-stilus-racs {
+        grid-template-columns: 1fr;
+    }
+
+    .foglalas-valaszto-kartya {
+        min-height: 68px;
+        padding: 12px 14px;
+    }
+
+    .foglalas-stilus-kartya {
+        min-height: 72px;
+        padding: 12px 14px;
+    }
+
+}
+
+/* =========================================
+   FOGLALÁSI KAPCSOLATVÁLASZTÓ – MOBILE COMPACT
+   ========================================= */
+
+.foglalas-telefon-egysor {
+    display: inline-block;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+}
+
+@media screen and (max-width: 640px) {
+    .foglalas-ut-kartya {
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        align-items: center;
+        column-gap: 12px;
+        row-gap: 8px;
+        min-height: 0;
+        padding: 15px 18px;
+    }
+
+    .foglalas-ut-ikon {
+        grid-column: 1;
+        grid-row: 1;
+        width: 34px;
+        height: 34px;
+        align-self: center;
+    }
+
+    .foglalas-ut-cim {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        font-size: 21px;
+        line-height: 1;
+    }
+
+    .foglalas-ut-leiras,
+    .foglalas-ut-gomb {
+        grid-column: 1 / -1;
+    }
+
+    .foglalas-ut-leiras {
+        grid-row: 2;
+        font-size: var(--lumi-font-body-small);
+        line-height: 1.45;
+    }
+
+    .foglalas-ut-gomb {
+        grid-row: 3;
+        margin-top: 2px;
+        font-size: var(--lumi-font-button-compact);
+    }
+}
