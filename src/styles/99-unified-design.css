@@ -967,7 +967,6 @@ textarea:focus-visible {
 }
 
 /* Shared inner pages */
-.galeria-oldal,
 .foglalas-oldal,
 .jogi-oldal {
     width: min(1180px, calc(100% - 48px));
@@ -975,7 +974,6 @@ textarea:focus-visible {
     padding: clamp(72px, 8vw, 116px) 0 0;
 }
 
-.galeria-oldal > h1,
 .jogi-fejlec h1 {
     margin: 0;
     color: var(--ui-ink);
@@ -987,7 +985,6 @@ textarea:focus-visible {
     text-align: left;
 }
 
-.galeria-oldal > .szekcio-leiras,
 .jogi-fejlec > p {
     max-width: 620px;
     margin: 24px 0 0;
@@ -995,52 +992,6 @@ textarea:focus-visible {
     font-size: var(--lumi-font-body);
     line-height: 1.75;
     text-align: left;
-}
-
-/* Standalone gallery: CSS columns avoid empty grid holes. */
-.galeria-oldal {
-    width: min(1360px, calc(100% - 32px));
-}
-
-.galeria-racs {
-    display: block;
-    max-width: none;
-    margin: 66px 0 0;
-    column-count: 4;
-    column-gap: 10px;
-}
-
-.galeria-kep-gomb,
-.galeria-kep-gomb.magas {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin: 0 0 10px;
-    overflow: hidden;
-    break-inside: avoid;
-    border: 0;
-    border-radius: 3px;
-    background: var(--ui-soft);
-    box-shadow: none;
-}
-
-.galeria-kep-gomb img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: auto;
-    object-fit: contain;
-    transform: none;
-    transition: none;
-}
-
-.galeria-kep-gomb:hover {
-    transform: none;
-    box-shadow: none;
-}
-
-.galeria-kep-gomb:hover img {
-    transform: none;
 }
 
 /* Booking */
@@ -1929,10 +1880,6 @@ textarea:focus-visible {
         grid-template-columns: 1fr;
     }
 
-    .galeria-racs {
-        column-count: 3;
-    }
-
     .admin-panel-fej {
         grid-template-columns: 1fr;
     }
@@ -2090,16 +2037,11 @@ textarea:focus-visible {
         grid-template-columns: 1fr;
     }
 
-    .galeria-oldal,
     .foglalas-oldal,
     .jogi-oldal,
     .admin-oldal {
         width: calc(100% - 32px);
         padding-top: 24px;
-    }
-
-    .galeria-racs {
-        column-count: 2;
     }
 
     .foglalas-utak {
@@ -2180,15 +2122,6 @@ textarea:focus-visible {
 
     .galeria-atvezeto-szoveg {
         flex-direction: column;
-    }
-
-    .galeria-racs {
-        column-gap: 7px;
-    }
-
-    .galeria-kep-gomb,
-    .galeria-kep-gomb.magas {
-        margin-bottom: 7px;
     }
 
     .foglalas-nyito h1 {
