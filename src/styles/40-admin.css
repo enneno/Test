@@ -3317,3 +3317,830 @@ body.admin-body {
         white-space: normal;
     }
 }
+
+/* Legacy admin compact panels — végleges megjelenés (99-ből migrálva) */
+.admin-body .admin-db-panel > .admin-info {
+    margin: 0 0 12px;
+    padding: 9px 12px;
+    color: var(--admin-muted);
+    border-left-width: 2px;
+    border-radius: 0 8px 8px 0;
+    background: #f7f2ee;
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.5;
+}
+
+#admin-panel-szolgaltatasok > .admin-panel-akciok,
+#admin-panel-kuponok > .admin-panel-akciok,
+#admin-panel-idosavok > .admin-panel-akciok,
+#admin-panel-esemenynaplo > .admin-panel-akciok {
+    margin: 0 0 11px;
+}
+
+#admin-panel-szolgaltatasok > .admin-panel-akciok .admin-hozzaadas,
+#admin-panel-kuponok > .admin-panel-akciok .admin-hozzaadas,
+#admin-panel-esemenynaplo > .admin-panel-akciok .admin-hozzaadas,
+#admin-panel-esemenynaplo > .admin-panel-akciok .admin-kis-gomb,
+#admin-panel-idosavok > .admin-panel-akciok .admin-kis-gomb {
+    min-height: 38px;
+    margin: 0;
+}
+
+#admin-szolgaltatas-lista,
+#admin-kupon-lista,
+#admin-idosav-lista,
+#admin-tiltas-lista,
+#admin-esemenynaplo-lista {
+    gap: 0;
+    border-top: 1px solid var(--admin-line);
+}
+
+#admin-szolgaltatas-lista > .admin-db-kartya,
+#admin-kupon-lista > .admin-db-kartya,
+#admin-idosav-lista > .admin-db-kartya,
+#admin-tiltas-lista > .admin-db-kartya,
+#admin-esemenynaplo-lista > .admin-db-kartya {
+    padding: 12px 7px;
+    border: 0;
+    border-bottom: 1px solid var(--admin-line);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+#admin-szolgaltatas-lista > .admin-db-kartya:hover,
+#admin-kupon-lista > .admin-db-kartya:hover,
+#admin-idosav-lista > .admin-db-kartya:hover,
+#admin-tiltas-lista > .admin-db-kartya:hover,
+#admin-esemenynaplo-lista > .admin-db-kartya:hover {
+    background: #faf7f3;
+}
+
+.admin-body .admin-kompakt-kartya-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo {
+    min-width: 0;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo .admin-kartya-tipus {
+    margin-bottom: 3px;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo h3 {
+    display: block;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    font-size: clamp(21px, 2vw, 26px);
+    line-height: 1.04;
+    -webkit-line-clamp: unset;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo p {
+    margin: 4px 0 0;
+    color: var(--admin-muted);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.admin-body .admin-kompakt-kartya-vezerlok {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.admin-body .admin-allapot-jelzo {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 8px;
+    color: #56715e;
+    border-radius: 7px;
+    background: #e8f0e9;
+    font-size: var(--lumi-font-caption);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.admin-body .admin-allapot-jelzo.inaktiv {
+    color: var(--admin-muted);
+    background: #efedeb;
+}
+
+.admin-body .admin-kompakt-kartya-vezerlok .admin-kis-gomb {
+    min-width: 90px;
+    min-height: 34px;
+    padding-inline: 11px;
+    font-size: var(--lumi-font-button-compact);
+}
+
+.admin-body .admin-kompakt-szerkeszto {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(240, 215, 213, 0.68);
+}
+
+.admin-body .admin-szerkesztheto-kartya.szerkeszt {
+    background: #fbf6f2;
+}
+
+.admin-body .admin-szerkesztheto-kartya.szerkeszt .admin-kompakt-szerkeszto {
+    display: block;
+}
+
+.admin-body .admin-szerkesztheto-kartya .admin-db-akciok {
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(73, 58, 52, 0.09);
+}
+
+/* Árlista */
+#admin-panel-szolgaltatasok .admin-db-grid-szolgaltatas {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 9px;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-nev {
+    grid-column: 1 / 6;
+    grid-row: 1;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-foglalasi-nev {
+    grid-column: 6 / 11;
+    grid-row: 1;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok {
+    grid-column: 11 / 13;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    align-self: stretch;
+    gap: 4px;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-szamok {
+    grid-column: 1 / 11;
+    grid-row: 2;
+    grid-template-columns: minmax(140px, 1.4fr) minmax(110px, 0.9fr) minmax(68px, 0.48fr) minmax(68px, 0.48fr);
+}
+
+#admin-panel-szolgaltatasok .admin-sorrend-mezo {
+    grid-column: 11 / 13;
+    grid-row: 2;
+}
+
+#admin-panel-szolgaltatasok .admin-mezo input,
+#admin-panel-szolgaltatasok .admin-mezo select {
+    min-height: 38px;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok .admin-checkbox {
+    min-height: 32px;
+    padding: 3px 7px;
+    border-radius: 7px;
+    background: var(--ui-off-white);
+}
+
+/* Kuponok */
+#admin-panel-kuponok .admin-db-grid-kupon {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+    gap: 9px;
+}
+
+#admin-panel-kuponok .admin-kupon-kod {
+    grid-column: 1 / 4;
+    grid-row: 1;
+}
+
+#admin-panel-kuponok .admin-kupon-cim {
+    grid-column: 4 / 10;
+    grid-row: 1;
+}
+
+#admin-panel-kuponok .admin-kupon-sorrend {
+    grid-column: 10 / 13;
+    grid-row: 1;
+}
+
+#admin-panel-kuponok .admin-kupon-leiras {
+    grid-column: 1 / 13;
+    grid-row: 2;
+}
+
+#admin-panel-kuponok .admin-kupon-tipus {
+    grid-column: 1 / 4;
+    grid-row: 3;
+}
+
+#admin-panel-kuponok .admin-kupon-ertek {
+    grid-column: 4 / 6;
+    grid-row: 3;
+}
+
+#admin-panel-kuponok .admin-kupon-szoveg {
+    grid-column: 6 / 10;
+    grid-row: 3;
+}
+
+#admin-panel-kuponok .admin-kupon-szolgaltatas {
+    grid-column: 10 / 13;
+    grid-row: 3;
+}
+
+#admin-panel-kuponok .admin-kupon-celkozonseg {
+    grid-column: 1 / 4;
+    grid-row: 4;
+}
+
+#admin-panel-kuponok label:has([data-mezo="valid_from"]) {
+    grid-column: 4 / 7;
+    grid-row: 4;
+}
+
+#admin-panel-kuponok label:has([data-mezo="valid_until"]) {
+    grid-column: 7 / 10;
+    grid-row: 4;
+}
+
+#admin-panel-kuponok label:has([data-mezo="active"]) {
+    grid-column: 10 / 11;
+    grid-row: 4;
+}
+
+#admin-panel-kuponok label:has([data-mezo="show_on_home"]) {
+    grid-column: 11 / 13;
+    grid-row: 4;
+}
+
+#admin-panel-kuponok .admin-db-grid-kupon input,
+#admin-panel-kuponok .admin-db-grid-kupon select {
+    min-height: 38px;
+}
+
+#admin-panel-kuponok .admin-db-grid-kupon textarea {
+    min-height: 58px;
+    padding-block: 9px;
+}
+
+#admin-panel-kuponok .admin-kupon-checkbox {
+    align-self: end;
+    min-height: 38px;
+    padding: 4px 6px;
+    border-radius: 7px;
+    background: var(--ui-off-white);
+    font-size: var(--lumi-font-label);
+}
+
+/* Foglalható dátumok */
+#admin-idosav-naptar {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    grid-template-areas:
+        "month bulk"
+        "weekdays selected-title"
+        "calendar selected-list"
+        "status status";
+    align-items: start;
+    gap: 8px 18px;
+    margin: 0 0 12px;
+    padding: 14px;
+    background: #f8f4f0;
+}
+
+#admin-idosav-naptar .admin-naptar-fej {
+    grid-area: month;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 8px;
+    margin: 0;
+}
+
+#admin-idosav-naptar .admin-naptar-fej .admin-mezo {
+    width: 100%;
+    max-width: none;
+}
+
+#admin-idosav-naptar .admin-naptar-fej input[type="month"] {
+    width: 100%;
+    max-width: none;
+    min-height: 38px;
+}
+
+#admin-idosav-naptar .admin-naptar-akciok {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+#admin-idosav-naptar .admin-naptar-akciok .admin-kis-gomb {
+    min-width: 72px;
+    min-height: 38px;
+    padding-inline: 9px;
+}
+
+#admin-idosav-naptar .admin-naptar-napnevek {
+    grid-area: weekdays;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+#admin-idosav-naptar .admin-naptar-racs {
+    grid-area: calendar;
+    gap: 4px;
+}
+
+#admin-idosav-naptar .admin-naptar-nap,
+#admin-idosav-naptar .admin-naptar-ures {
+    min-height: 36px;
+}
+
+#admin-idosav-naptar .admin-naptar-nap {
+    border-radius: 7px;
+    font-size: var(--lumi-font-label);
+}
+
+#admin-idosav-naptar .admin-kozos-idosav-sor {
+    grid-area: bulk;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(86px, 1fr)) auto;
+    align-items: end;
+    gap: 7px;
+    margin: 0;
+    padding: 0 0 11px;
+    border-bottom: 1px solid var(--admin-line);
+}
+
+#admin-idosav-naptar .admin-kozos-idosav-sor > .admin-mezo,
+#admin-idosav-naptar .admin-kozos-idosav-sor > .admin-hozzaadas {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+}
+
+#admin-idosav-naptar .admin-kozos-idosav-sor input,
+#admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
+    min-height: 38px;
+}
+
+#admin-idosav-naptar .admin-naptar-lista-fej {
+    grid-area: selected-title;
+    align-items: center;
+    margin: 0;
+    padding-top: 3px;
+}
+
+#admin-idosav-naptar .admin-naptar-lista-fej h3 {
+    margin: 0;
+    font-size: 22px;
+}
+
+#admin-idosav-naptar .admin-naptar-lista-fej .admin-kis-gomb {
+    min-height: 34px;
+}
+
+#admin-idosav-naptar .admin-naptar-kijelolt-lista {
+    grid-area: selected-list;
+    max-height: 252px;
+    margin: 0;
+    padding-right: 3px;
+    overflow-y: auto;
+}
+
+#admin-idosav-naptar .admin-naptar-sor {
+    grid-template-columns: minmax(80px, 0.85fr) minmax(72px, 1fr) minmax(72px, 1fr) 34px;
+    gap: 6px;
+    padding: 7px;
+    border-radius: 8px;
+}
+
+#admin-idosav-naptar .admin-naptar-sor input {
+    min-height: 34px;
+}
+
+#admin-idosav-naptar #admin-naptar-status {
+    grid-area: status;
+    margin: 2px 0 0;
+}
+
+#admin-panel-idosavok .admin-idosav-lista-akciok {
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+#admin-idosav-lista .admin-idosav-kartya {
+    padding-block: 9px;
+}
+
+#admin-idosav-lista .admin-idosav-grid {
+    grid-template-columns: minmax(160px, 1.2fr) minmax(100px, 0.65fr) minmax(100px, 0.65fr) 36px;
+    align-items: center;
+    gap: 8px;
+}
+
+#admin-idosav-lista .admin-idosav-grid .admin-mezo {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 7px;
+    font-size: var(--lumi-font-label);
+}
+
+#admin-idosav-lista .admin-idosav-grid input {
+    min-height: 34px;
+    padding: 5px 7px;
+    font-size: var(--lumi-font-control);
+}
+
+#admin-idosav-lista .admin-idosav-torles-x {
+    min-width: 34px;
+    min-height: 34px;
+}
+
+/* Foglalt idők */
+#admin-tiltas-form {
+    margin: 0 0 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f8f4f0;
+}
+
+#admin-tiltas-form .admin-tiltas-sor {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.58fr) minmax(0, 0.58fr) minmax(0, 1.4fr);
+    align-items: end;
+    gap: 8px;
+    margin: 0;
+}
+
+#admin-tiltas-form .admin-tiltas-sor > .admin-mezo,
+#admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles {
+    grid-column: auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+}
+
+#admin-tiltas-form input {
+    min-height: 38px;
+}
+
+#admin-tiltas-lista .admin-db-kartya-fej {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+}
+
+#admin-tiltas-lista .admin-kartya-tipus {
+    margin-bottom: 3px;
+}
+
+#admin-tiltas-lista h3 {
+    font-size: 21px;
+}
+
+#admin-tiltas-lista p {
+    margin-top: 3px;
+    color: var(--admin-muted);
+    font-size: var(--lumi-font-body-small);
+}
+
+#admin-tiltas-lista .admin-kis-gomb {
+    min-height: 34px;
+}
+
+/* Eseménynapló */
+#admin-panel-esemenynaplo .admin-lapozo-felso {
+    margin: 7px 0 9px;
+}
+
+#admin-esemenynaplo-lista .admin-esemeny-kartya {
+    border-left: 3px solid var(--admin-accent);
+}
+
+#admin-esemenynaplo-lista .admin-db-kartya-fej {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+
+#admin-esemenynaplo-lista .admin-db-kartya-fej > div {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+}
+
+#admin-esemenynaplo-lista .admin-esemeny-idopont {
+    margin: 0;
+    color: var(--admin-muted);
+    font-size: var(--lumi-font-caption);
+    white-space: nowrap;
+}
+
+#admin-esemenynaplo-lista h3 {
+    padding: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-body-small);
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+#admin-esemenynaplo-lista .admin-esemeny-statusz {
+    min-height: 26px;
+    padding: 0 8px;
+    border-radius: 7px;
+    font-size: var(--lumi-font-caption);
+}
+
+#admin-esemenynaplo-lista .admin-esemeny-reszletek {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px 16px;
+    margin-top: 5px;
+    padding-left: 130px;
+}
+
+#admin-esemenynaplo-lista .admin-esemeny-reszletek p {
+    margin: 0;
+    color: var(--admin-muted);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.4;
+}
+
+@container admin-workspace (max-width: 700px) {
+    .admin-body .admin-kompakt-kartya-fej {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .admin-body .admin-kompakt-kartya-vezerlok {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    #admin-panel-szolgaltatasok .admin-db-grid-szolgaltatas,
+    #admin-panel-kuponok .admin-db-grid-kupon {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-nev,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-foglalasi-nev,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok,
+    #admin-panel-szolgaltatasok .admin-sorrend-mezo,
+    #admin-panel-kuponok .admin-kupon-kod,
+    #admin-panel-kuponok .admin-kupon-cim,
+    #admin-panel-kuponok .admin-kupon-leiras,
+    #admin-panel-kuponok .admin-kupon-tipus,
+    #admin-panel-kuponok .admin-kupon-ertek,
+    #admin-panel-kuponok .admin-kupon-szoveg,
+    #admin-panel-kuponok .admin-kupon-szolgaltatas,
+    #admin-panel-kuponok .admin-kupon-celkozonseg,
+    #admin-panel-kuponok label:has([data-mezo="valid_from"]),
+    #admin-panel-kuponok label:has([data-mezo="valid_until"]),
+    #admin-panel-kuponok label:has([data-mezo="active"]),
+    #admin-panel-kuponok label:has([data-mezo="show_on_home"]),
+    #admin-panel-kuponok .admin-kupon-sorrend {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-nev,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-foglalasi-nev,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok,
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok,
+    #admin-panel-kuponok .admin-kupon-cim,
+    #admin-panel-kuponok .admin-kupon-leiras,
+    #admin-panel-kuponok .admin-kupon-szoveg,
+    #admin-panel-kuponok .admin-kupon-szolgaltatas,
+    #admin-panel-kuponok .admin-kupon-celkozonseg {
+        grid-column: 1 / -1;
+    }
+
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #admin-idosav-naptar {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "month"
+            "weekdays"
+            "calendar"
+            "bulk"
+            "selected-title"
+            "selected-list"
+            "status";
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor {
+        margin-top: 8px;
+        padding-top: 11px;
+        border-top: 1px solid var(--admin-line);
+    }
+
+    #admin-tiltas-form .admin-tiltas-sor {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #admin-tiltas-form .admin-tiltas-sor > .admin-mezo:first-child,
+    #admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles {
+        grid-column: 1 / -1;
+    }
+}
+
+@container admin-workspace (max-width: 480px) {
+    #admin-idosav-lista .admin-idosav-grid input {
+        font-size: var(--lumi-font-control);
+    }
+
+    .admin-body .admin-db-panel > .admin-info {
+        padding: 8px 10px;
+        font-size: var(--lumi-font-body-small);
+    }
+
+    #admin-szolgaltatas-lista > .admin-db-kartya,
+    #admin-kupon-lista > .admin-db-kartya,
+    #admin-idosav-lista > .admin-db-kartya,
+    #admin-tiltas-lista > .admin-db-kartya,
+    #admin-esemenynaplo-lista > .admin-db-kartya {
+        padding: 11px 3px;
+    }
+
+    .admin-body .admin-kompakt-kartya-osszefoglalo h3 {
+        font-size: 22px;
+    }
+
+    .admin-body .admin-kompakt-kartya-vezerlok {
+        display: grid;
+        grid-template-columns: auto auto minmax(92px, 1fr);
+        width: 100%;
+    }
+
+    .admin-body .admin-kompakt-kartya-vezerlok .admin-kis-gomb {
+        width: 100%;
+    }
+
+    .admin-body .admin-kompakt-szerkeszto {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    #admin-panel-szolgaltatasok .admin-db-grid-szolgaltatas,
+    #admin-panel-kuponok .admin-db-grid-kupon {
+        gap: 8px;
+    }
+
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok {
+        grid-template-columns: minmax(82px, 1fr) minmax(72px, 0.85fr) minmax(48px, 0.5fr) minmax(48px, 0.5fr);
+        gap: 5px;
+    }
+
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #admin-panel-kuponok .admin-kupon-kod,
+    #admin-panel-kuponok .admin-kupon-sorrend {
+        grid-column: auto;
+    }
+
+    #admin-panel-kuponok .admin-kupon-cim,
+    #admin-panel-kuponok .admin-kupon-leiras,
+    #admin-panel-kuponok .admin-kupon-szoveg,
+    #admin-panel-kuponok .admin-kupon-szolgaltatas,
+    #admin-panel-kuponok .admin-kupon-celkozonseg {
+        grid-column: 1 / -1;
+    }
+
+    #admin-panel-kuponok .admin-kupon-akciok {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    #admin-idosav-naptar {
+        padding: 11px;
+    }
+
+    #admin-idosav-naptar .admin-naptar-fej {
+        grid-template-columns: 1fr;
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    #admin-idosav-naptar .admin-naptar-lista-fej {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    #admin-idosav-naptar .admin-naptar-kijelolt-lista {
+        max-height: 300px;
+    }
+
+    #admin-panel-idosavok .admin-idosav-lista-akciok {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #admin-panel-idosavok .admin-idosav-lista-akciok > * {
+        width: 100%;
+    }
+
+    #admin-idosav-lista .admin-idosav-grid {
+        grid-template-columns: minmax(96px, 1.2fr) repeat(2, minmax(58px, 0.7fr)) 34px;
+        gap: 5px;
+    }
+
+    #admin-idosav-lista .admin-idosav-grid .admin-mezo {
+        display: block;
+        font-size: 0;
+    }
+
+    #admin-tiltas-form {
+        padding: 10px;
+    }
+
+    #admin-tiltas-lista .admin-db-kartya-fej {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    #admin-esemenynaplo-lista .admin-db-kartya-fej > div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+
+    #admin-esemenynaplo-lista .admin-esemeny-reszletek {
+        padding-left: 0;
+    }
+
+    #admin-esemenynaplo-lista .admin-esemeny-reszletek p {
+        font-size: var(--lumi-font-body-small);
+    }
+}
+
+.admin-mezo-cimke {
+    color: var(--ui-ink);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-label);
+    font-weight: 750;
+    letter-spacing: 0.04em;
+}
+
+.admin-mezo-cimke {
+    display: grid;
+    min-width: 0;
+    gap: 7px;
+}
+
+.admin-mezo-cimke > .urlap-mezo {
+    width: 100%;
+}
+
+.admin-body input:focus,
+.admin-body select:focus,
+.admin-body textarea:focus {
+    outline: 3px solid rgba(145, 118, 110, 0.34);
+    outline-offset: 2px;
+}
+
+/* Admin iOS input fallback */
+@media screen and (max-width: 768px) {
+    #admin-bejelentkezes-panel.admin-auth-panel input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+    #admin-bejelentkezes-panel.admin-auth-panel select,
+    #admin-bejelentkezes-panel.admin-auth-panel textarea,
+    #admin-tartalom.admin-vedett input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+    #admin-tartalom.admin-vedett select,
+    #admin-tartalom.admin-vedett textarea {
+        font-size: max(22px, 1em);
+        font-size-adjust: var(--lumi-input-optical-ratio, 0.36);
+    }
+
+    #admin-panel-foglalasok .admin-db-statusz,
+    #admin-panel-foglalasok .admin-idopont-szerkeszto input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+    #admin-panel-foglalasok .admin-idopont-szerkeszto select,
+    #admin-panel-foglalasok .admin-idopont-szerkeszto textarea {
+        --lumi-input-optical-ratio: 0.3;
+    }
+}

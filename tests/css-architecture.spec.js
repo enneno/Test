@@ -464,3 +464,19 @@ test('a legacy admin foglalások CSS a 40-admin rétegben él', async () => {
     expect(unifiedCss).not.toContain('#admin-panel-foglalasok .admin-foglalas-attekintes {');
     expect(unifiedCss).not.toContain('#admin-panel-foglalasok .admin-foglalas-naptar {');
 });
+
+test('a unified override réteg nyugdíjazott és selector-mentes', async () => {
+    const root = path.resolve(__dirname, '..');
+    const adminCss = fs.readFileSync(path.join(root, 'src', 'styles', '40-admin.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(adminCss).toContain('Legacy admin compact panels — végleges megjelenés (99-ből migrálva)');
+    expect(adminCss).toContain('/* Árlista */');
+    expect(adminCss).toContain('/* Kuponok */');
+    expect(adminCss).toContain('/* Foglalható dátumok */');
+    expect(adminCss).toContain('/* Foglalt idők */');
+    expect(adminCss).toContain('/* Eseménynapló */');
+    expect(adminCss).toContain('/* Admin iOS input fallback */');
+    expect(unifiedCss).toContain('Retired unified override layer');
+    expect(unifiedCss).not.toContain('{');
+});

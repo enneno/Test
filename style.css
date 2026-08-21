@@ -11611,12 +11611,7 @@ body.admin-body {
     }
 }
 
-/* Lumi Nails unified visual system.
-   This is the only design layer above the functional component styles. */
-
-/* =========================================
-   ADMIN MUNKATERÜLET – COMPACT PANELS
-   ========================================= */
+/* Legacy admin compact panels — végleges megjelenés (99-ből migrálva) */
 .admin-body .admin-db-panel > .admin-info {
     margin: 0 0 12px;
     padding: 9px 12px;
@@ -12442,3 +12437,6 @@ body.admin-body {
         --lumi-input-optical-ratio: 0.3;
     }
 }
+
+/* Retired unified override layer.
+   All active rules now live in their owning source layer. Keep this file selector-free. */
