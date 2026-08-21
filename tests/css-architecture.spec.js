@@ -104,3 +104,71 @@ test('a jogi oldal végleges CSS-e a publikus komponensrétegben él', async ({ 
     expect(await page.locator('.jogi-oldalsav').evaluate(elem => getComputedStyle(elem).position)).toBe('static');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test('a főoldali kupon banner végleges CSS-e a publikus komponensrétegben él', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Coupon — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('.fooldal .akcios-banner {');
+    expect(publicCss).toContain('.fooldal .akcios-banner-belso {');
+    expect(unifiedCss).not.toContain('/* Coupon */');
+    expect(unifiedCss).not.toContain('.fooldal .akcios-banner-kupon {');
+
+    const renderCouponFixture = () => page.evaluate(() => {
+        const banner = document.getElementById('akcios-banner');
+        banner.hidden = false;
+        banner.innerHTML = '<div class=akcios-banner-slider><article class=akcios-banner-belso><div class=akcios-banner-szoveg><span class=akcios-banner-kicker>Aktuális ajánlat</span><h2 class=akcios-banner-cim>Teszt kupon</h2><p>Teszt leírás</p></div><div class=akcios-banner-kupon><span>Kedvezmény</span><strong>TESZT10</strong></div><a>Foglalás kuponnal</a></article></div>';
+        banner.querySelector('a').className = 'gomb akcios-banner-gomb';
+    });
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await renderCouponFixture();
+    const desktop = await page.evaluate(() => {
+        const banner = document.querySelector('.fooldal .akcios-banner');
+        const slider = document.querySelector('.fooldal .akcios-banner-slider');
+        const title = document.querySelector('.fooldal .akcios-banner .akcios-banner-cim');
+        const button = document.querySelector('.fooldal .akcios-banner-gomb');
+        if (!banner || !slider || !title || !button) return null;
+        return {
+            bannerWidth: getComputedStyle(banner).width,
+            bannerMarginTop: getComputedStyle(banner).marginTop,
+            sliderRadius: getComputedStyle(slider).borderRadius,
+            sliderBackground: getComputedStyle(slider).backgroundColor,
+            titleFont: getComputedStyle(title).fontFamily,
+            buttonMinWidth: getComputedStyle(button).minWidth
+        };
+    });
+    expect(desktop).toEqual({
+        bannerWidth: '1040px',
+        bannerMarginTop: '78px',
+        sliderRadius: '4px',
+        sliderBackground: 'rgb(145, 118, 110)',
+        titleFont: '"Cormorant Garamond", serif',
+        buttonMinWidth: '180px'
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await renderCouponFixture();
+    const mobile = await page.evaluate(() => {
+        const inner = document.querySelector('.fooldal .akcios-banner-belso');
+        const coupon = document.querySelector('.fooldal .akcios-banner-kupon');
+        const button = document.querySelector('.fooldal .akcios-banner-gomb');
+        if (!inner || !coupon || !button) return null;
+        return {
+            columns: getComputedStyle(inner).gridTemplateColumns,
+            paddingLeft: getComputedStyle(inner).paddingLeft,
+            buttonMinWidth: getComputedStyle(button).minWidth,
+            buttonWidth: getComputedStyle(button).width,
+            couponWidth: getComputedStyle(coupon).width
+        };
+    });
+    expect(mobile).not.toBeNull();
+    expect(mobile.paddingLeft).toBe('20px');
+    expect(mobile.buttonMinWidth).toBe('0px');
+    expect(mobile.buttonWidth).toBe(mobile.couponWidth);
+    expect(mobile.columns.split(' ').length).toBe(1);
+});

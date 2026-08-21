@@ -4066,6 +4066,139 @@ select.urlap-mezo:invalid {
     }
 }
 
+/* Coupon — végleges megjelenés (99-ből migrálva) */
+.fooldal .akcios-banner {
+    width: min(1040px, calc(100% - 48px));
+    margin: 78px auto 138px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.akcios-banner-feny {
+    display: none;
+}
+
+.fooldal .akcios-banner-slider {
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--ui-ink);
+}
+
+.fooldal .akcios-banner-belso {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.62fr) auto;
+    grid-template-rows: auto auto;
+    gap: 8px clamp(28px, 4vw, 52px);
+    min-height: 0;
+    padding: 28px 34px;
+    border: 0;
+    border-radius: 0;
+    background: var(--ui-ink);
+    box-shadow: none;
+}
+
+.fooldal .akcios-banner-szoveg {
+    display: contents;
+}
+
+.fooldal .akcios-banner-kicker,
+.fooldal .akcios-banner .akcios-banner-cim,
+.fooldal .akcios-banner p {
+    color: #fffdf9;
+    text-align: left;
+}
+
+.fooldal .akcios-banner .akcios-banner-cim {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(34px, 4vw, 52px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+}
+
+.fooldal .akcios-banner p {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    margin: 0 0 3px;
+    color: rgba(255, 253, 249, 0.68);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.5;
+}
+
+.fooldal .akcios-banner-kicker {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+}
+
+.fooldal .akcios-banner-kupon {
+    align-self: center;
+    grid-column: 2;
+    grid-row: 2;
+    place-content: center;
+    min-height: 68px;
+    padding: 10px 52px 10px 18px;
+    border: 1px dashed rgba(255, 249, 245, 0.3);
+    border-radius: 3px;
+    background: rgba(255, 249, 245, 0.06);
+    text-align: center;
+}
+
+.fooldal .akcios-banner-kupon span,
+.fooldal .akcios-banner-kupon strong {
+    color: #fffdf9;
+}
+
+.fooldal .akcios-banner-gomb {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+    width: auto;
+    min-width: 180px;
+    background: var(--ui-rose-dark);
+}
+
+@media screen and (max-width: 768px) {
+    .fooldal .akcios-banner-belso {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 14px;
+        padding: 24px 20px;
+    }
+
+    .fooldal .akcios-banner-kicker,
+    .fooldal .akcios-banner .akcios-banner-cim,
+    .fooldal .akcios-banner p,
+    .fooldal .akcios-banner-kupon,
+    .fooldal .akcios-banner-gomb {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .fooldal .akcios-banner p {
+        margin-top: 4px;
+    }
+
+    .fooldal .akcios-banner-kupon {
+        width: 100%;
+    }
+
+    .fooldal .akcios-banner-gomb {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .fooldal .akcios-banner .akcios-banner-cim {
+        font-size: calc(clamp(34px, 4vw, 52px) + 2px);
+    }
+}
+
 /* Tartalom- és médiakezelő */
 .admin-cms-panel {
     width: min(100%, 1180px);
@@ -6453,104 +6586,6 @@ textarea:focus-visible {
     color: inherit;
 }
 
-/* Coupon */
-.fooldal .akcios-banner {
-    width: min(1040px, calc(100% - 48px));
-    margin: 78px auto 138px;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-}
-
-.akcios-banner-feny {
-    display: none;
-}
-
-.fooldal .akcios-banner-slider {
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--ui-ink);
-}
-
-.fooldal .akcios-banner-belso {
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.62fr) auto;
-    grid-template-rows: auto auto;
-    gap: 8px clamp(28px, 4vw, 52px);
-    min-height: 0;
-    padding: 28px 34px;
-    border: 0;
-    border-radius: 0;
-    background: var(--ui-ink);
-    box-shadow: none;
-}
-
-.fooldal .akcios-banner-szoveg {
-    display: contents;
-}
-
-.fooldal .akcios-banner-kicker,
-.fooldal .akcios-banner .akcios-banner-cim,
-.fooldal .akcios-banner p {
-    color: #fffdf9;
-    text-align: left;
-}
-
-.fooldal .akcios-banner .akcios-banner-cim {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: start;
-    font-family: "Cormorant Garamond", serif;
-    font-size: clamp(34px, 4vw, 52px);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 0.98;
-}
-
-.fooldal .akcios-banner p {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-    margin: 0 0 3px;
-    color: rgba(255, 253, 249, 0.68);
-    font-size: var(--lumi-font-body-small);
-    line-height: 1.5;
-}
-
-.fooldal .akcios-banner-kicker {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: end;
-}
-
-.fooldal .akcios-banner-kupon {
-    align-self: center;
-    grid-column: 2;
-    grid-row: 2;
-    place-content: center;
-    min-height: 68px;
-    padding: 10px 52px 10px 18px;
-    border: 1px dashed rgba(255, 249, 245, 0.3);
-    border-radius: 3px;
-    background: rgba(255, 249, 245, 0.06);
-    text-align: center;
-}
-
-.fooldal .akcios-banner-kupon span,
-.fooldal .akcios-banner-kupon strong {
-    color: #fffdf9;
-}
-
-.fooldal .akcios-banner-gomb {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    align-self: center;
-    width: auto;
-    min-width: 180px;
-    background: var(--ui-rose-dark);
-}
-
 /* Home introduction */
 #bemutatkozas {
     width: min(1120px, calc(100% - 48px));
@@ -7691,38 +7726,7 @@ textarea:focus-visible {
         line-height: 1.65;
     }
 
-    .fooldal .akcios-banner-belso {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        gap: 14px;
-        padding: 24px 20px;
-    }
 
-    .fooldal .akcios-banner-kicker,
-    .fooldal .akcios-banner .akcios-banner-cim,
-    .fooldal .akcios-banner p,
-    .fooldal .akcios-banner-kupon,
-    .fooldal .akcios-banner-gomb {
-        grid-column: 1;
-        grid-row: auto;
-    }
-
-    .fooldal .akcios-banner p {
-        margin-top: 4px;
-    }
-
-    .fooldal .akcios-banner-kupon {
-        width: 100%;
-    }
-
-    .fooldal .akcios-banner-gomb {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .fooldal .akcios-banner .akcios-banner-cim {
-        font-size: calc(clamp(34px, 4vw, 52px) + 2px);
-    }
 
     :root {
         --ui-header-height: 72px;
@@ -9852,9 +9856,9 @@ body.admin-body {
         grid-template-columns: 1fr;
     }
 
-    
 
-    
+
+
 }
 
 /* =========================================
