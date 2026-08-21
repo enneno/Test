@@ -52,9 +52,14 @@ test('a főoldali vendégértesítő adminból kapcsolható és mobilon is rende
     await expect(ertesito).toBeVisible();
     await expect(ertesito.locator('.vendegertesito-cimke')).toHaveText('Aktuális információ');
     await expect(ertesito.locator('.vendegertesito-szoveg')).toContainText('Augusztus 20–24.');
-    expect(await ertesito.locator('.vendegertesito-szoveg').evaluate(
-        (elem) => Number.parseFloat(getComputedStyle(elem).fontSize)
-    )).toBe(17);
+    const ertesitoTipografia = await ertesito.locator('.vendegertesito-szoveg').evaluate((elem) => ({
+        fontSize: Number.parseFloat(getComputedStyle(elem).fontSize),
+        bodyToken: Number.parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-body')
+        )
+    }));
+    expect(ertesitoTipografia.bodyToken).toBeGreaterThan(0);
+    expect(ertesitoTipografia.fontSize).toBe(ertesitoTipografia.bodyToken);
     const mobilElhelyezes = await page.evaluate(() => {
         const sav = document.getElementById('vendegertesito').getBoundingClientRect();
         const hero = document.getElementById('hero').getBoundingClientRect();
