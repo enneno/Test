@@ -377,3 +377,47 @@ test('a lebegő foglalás CTA CSS-e a publikus komponensrétegben él', async ({
     await expect(button).toHaveCSS('display', 'none');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test('a publikus foundation és hero CSS a publikus rétegben él', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Public foundation and hero — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('/* Home hero */');
+    expect(publicCss).toContain('#hero.hero-preview-refresh {');
+    expect(publicCss).toContain('.jogi-oldal {');
+    expect(publicCss).toContain('#fo-tartalom input:not([type="checkbox"])');
+    expect(unifiedCss).not.toContain('/* Home hero */');
+    expect(unifiedCss).not.toContain('#hero.hero-preview-refresh');
+    expect(unifiedCss).not.toContain('.jogi-oldal');
+    expect(unifiedCss).not.toContain('#fo-tartalom');
+    expect(unifiedCss).toContain('body.admin-body {');
+    expect(unifiedCss).toContain('/* Admin iOS input fallback */');
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const desktop = await page.locator('#hero.hero-preview-refresh').evaluate((hero) => ({
+        display: getComputedStyle(hero).display,
+        columns: getComputedStyle(hero).gridTemplateColumns.split(' ').filter(Boolean).length,
+        width: Math.round(hero.getBoundingClientRect().width),
+        height: Math.round(hero.getBoundingClientRect().height)
+    }));
+    expect(desktop).toEqual({ display: 'grid', columns: 2, width: 1440, height: 540 });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await page.locator('#hero.hero-preview-refresh').evaluate((hero) => ({
+        display: getComputedStyle(hero).display,
+        direction: getComputedStyle(hero).flexDirection,
+        background: getComputedStyle(hero).backgroundColor,
+        imageFit: getComputedStyle(hero.querySelector('.hero-kep')).objectFit,
+        documentWidth: document.documentElement.scrollWidth
+    }));
+    expect(mobile).toEqual({
+        display: 'flex',
+        direction: 'column',
+        background: 'rgb(145, 118, 110)',
+        imageFit: 'contain',
+        documentWidth: 390
+    });
+});
