@@ -3728,6 +3728,68 @@ select.urlap-mezo:invalid {
     76%, 100% { transform: translateX(320%) skewX(-18deg); opacity: 0; }
 }
 
+/* Footer — végleges megjelenés (99-ből migrálva) */
+.site-footer,
+.fooldal .site-footer {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 40px var(--ui-gutter) 26px;
+    border: 0;
+    border-radius: 0;
+    background: var(--ui-primary);
+    color: rgba(255, 253, 249, 0.72);
+}
+
+.footer-belso {
+    width: min(1320px, 100%);
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.footer-logo,
+.footer-kapcsolat h3,
+.footer-brand p,
+.footer-kapcsolat a,
+.footer-kapcsolat span,
+.footer-jogok,
+.footer-jogok p {
+    color: rgba(255, 253, 249, 0.76);
+}
+
+.footer-logo,
+.footer-kapcsolat h3 {
+    color: #fffdf9;
+}
+
+.footer-jogok {
+    border-top-color: rgba(255, 249, 245, 0.12);
+}
+
+.site-footer .social-gomb {
+    border-color: rgba(255, 253, 249, 0.28);
+    background: rgba(255, 253, 249, 0.08);
+    color: #fffdf9;
+}
+
+.site-footer .social-gomb:hover,
+.site-footer .social-gomb:focus-visible {
+    border-color: #fffdf9;
+    background: #fffdf9;
+    color: var(--ui-ink);
+}
+
+@media screen and (max-width: 768px) {
+    .site-footer,
+    .fooldal .site-footer {
+        padding: 20px 20px calc(22px + env(safe-area-inset-bottom));
+    }
+}
+
 /* Tartalom- és médiakezelő */
 .admin-cms-panel {
     width: min(100%, 1180px);
@@ -6729,61 +6791,6 @@ textarea:focus-visible {
 .fooldal #kapcsolat h2,
 .fooldal #kapcsolat .szekcio-leiras {
     color: var(--ui-off-black);
-}
-
-/* Footer */
-.site-footer,
-.fooldal .site-footer {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 40px var(--ui-gutter) 26px;
-    border: 0;
-    border-radius: 0;
-    background: var(--ui-primary);
-    color: rgba(255, 253, 249, 0.72);
-}
-
-.footer-belso {
-    width: min(1320px, 100%);
-    margin: 0 auto;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-}
-
-.footer-logo,
-.footer-kapcsolat h3,
-.footer-brand p,
-.footer-kapcsolat a,
-.footer-kapcsolat span,
-.footer-jogok,
-.footer-jogok p {
-    color: rgba(255, 253, 249, 0.76);
-}
-
-.footer-logo,
-.footer-kapcsolat h3 {
-    color: #fffdf9;
-}
-
-.footer-jogok {
-    border-top-color: rgba(255, 249, 245, 0.12);
-}
-
-.site-footer .social-gomb {
-    border-color: rgba(255, 253, 249, 0.28);
-    background: rgba(255, 253, 249, 0.08);
-    color: #fffdf9;
-}
-
-.site-footer .social-gomb:hover,
-.site-footer .social-gomb:focus-visible {
-    border-color: #fffdf9;
-    background: #fffdf9;
-    color: var(--ui-ink);
 }
 
 /* Shared inner pages */
@@ -12286,10 +12293,7 @@ body.admin-body {
         width: 100%;
     }
 
-    .site-footer,
-    .fooldal .site-footer {
-        padding: 20px 20px calc(22px + env(safe-area-inset-bottom));
-    }
+
 }
 
 @media (max-width: 480px) {
