@@ -190,3 +190,16 @@ test('a főoldali Bemutatkozás CSS-e a publikus komponensrétegben él', async 
     expect(unifiedCss).not.toContain('#bemutatkozas');
     expect(unifiedCss).not.toContain('.bemutatkozas-kep');
 });
+
+test('a főoldali Contact CSS-e a publikus komponensrétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Home contact — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('.fooldal #kapcsolat {');
+    expect(publicCss).toContain('.fooldal .kapcsolat-akcio {');
+    expect(unifiedCss).not.toContain('.fooldal #kapcsolat');
+    expect(unifiedCss).not.toContain('.kapcsolat-akcio');
+    expect(unifiedCss).not.toContain('.kapcsolat-tartalom');
+});
