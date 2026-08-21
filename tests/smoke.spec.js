@@ -1095,11 +1095,40 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
     expect(adminForras).toContain('metadata.cancellation_note');
     expect(adminForras).toContain('admin-foglalas-lemondasi-megjegyzes');
 
+    await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({
+        status: 200,
+        contentType: 'text/javascript; charset=utf-8',
+        body: ''
+    }));
+    await page.addInitScript(() => {
+        window.__lumiAdminSessionSettled = false;
+        const client = {
+            auth: {
+                getSession: () => new Promise((resolve) => {
+                    queueMicrotask(() => {
+                        resolve({ data: { session: null }, error: null });
+                        queueMicrotask(() => { window.__lumiAdminSessionSettled = true; });
+                    });
+                }),
+                onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+                signInWithPassword: async () => ({ data: { session: null }, error: null }),
+                signOut: async () => ({ error: null }),
+                updateUser: async () => ({ data: { user: null }, error: null })
+            }
+        };
+        window.supabase = { createClient: () => client };
+    });
+
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
     await page.evaluate(() => {
         document.getElementById('admin-bejelentkezes-panel').hidden = true;
         document.getElementById('admin-tartalom').hidden = false;
+    });
+    await page.locator('.admin-v2-sidebar [data-admin-v2-nav="foglalasok"]').click();
+    await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
+    await page.evaluate(() => {
         const jelzes = document.getElementById('admin-vendeg-lemondas-jelzes');
         jelzes.hidden = false;
         document.getElementById('admin-vendeg-lemondas-darab').textContent = '2';
