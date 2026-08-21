@@ -4908,6 +4908,38 @@ select.urlap-mezo:invalid {
     }
 }
 
+/* Public helpers — végleges megjelenés (99-ből migrálva) */
+.szoveges-link {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 18px;
+    color: var(--ui-rose-dark);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.szoveges-link > span {
+    flex: 0 0 auto;
+    font-family: Arial, sans-serif;
+    font-size: 1.15em;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none;
+}
+
+/* Uploaded public images keep their original framing. */
+.kiemelt-stilus-kartya img,
+.kiemelt-stilus-kartya:hover img {
+    height: auto;
+    min-height: 0;
+    object-fit: contain;
+    transform: none;
+}
+
 /* Tartalom- és médiakezelő */
 .admin-cms-panel {
     width: min(100%, 1180px);
@@ -7237,20 +7269,6 @@ textarea:focus-visible {
     color: inherit;
 }
 
-.szoveges-link {
-    display: inline-flex;
-    max-width: 100%;
-    align-items: baseline;
-    gap: 8px;
-    margin-top: 18px;
-    color: var(--ui-rose-dark);
-    font-family: "Manrope", sans-serif;
-    font-size: var(--lumi-font-caption);
-    font-weight: 700;
-    line-height: 1.5;
-}
-
-.szoveges-link > span,
 .hero-visual-cimke a > span {
     flex: 0 0 auto;
     font-family: Arial, sans-serif;
@@ -8163,16 +8181,6 @@ textarea:focus-visible {
     .admin-panel {
         padding: 20px 16px;
     }
-}
-
-
-/* Uploaded public images keep their original framing. */
-.kiemelt-stilus-kartya img,
-.kiemelt-stilus-kartya:hover img {
-    height: auto;
-    min-height: 0;
-    object-fit: contain;
-    transform: none;
 }
 
 

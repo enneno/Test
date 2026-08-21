@@ -214,3 +214,35 @@ test('a főoldali vendégértesítő CSS-e a publikus komponensrétegben él', a
     expect(publicCss).toContain('.vendegertesito-szoveg {');
     expect(unifiedCss).not.toContain('.vendegertesito');
 });
+
+test('a közös publikus CSS helperek a komponensrétegben élnek', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Public helpers — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('.szoveges-link {');
+    expect(publicCss).toContain('.kiemelt-stilus-kartya img,');
+    expect(unifiedCss).not.toContain('.szoveges-link');
+    expect(unifiedCss).not.toContain('.kiemelt-stilus-kartya');
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const link = await page.locator('.szoveges-link').first().evaluate((element) => ({
+        display: getComputedStyle(element).display,
+        arrowFont: getComputedStyle(element.querySelector('span')).fontFamily
+    }));
+    expect(link).toEqual({ display: 'inline-flex', arrowFont: 'Arial, sans-serif' });
+
+    const image = await page.evaluate(() => {
+        const card = document.createElement('div');
+        const img = document.createElement('img');
+        card.className = 'kiemelt-stilus-kartya';
+        card.append(img);
+        document.body.append(card);
+        const style = getComputedStyle(img);
+        const result = { objectFit: style.objectFit, minHeight: style.minHeight, transform: style.transform };
+        card.remove();
+        return result;
+    });
+    expect(image).toEqual({ objectFit: 'contain', minHeight: '0px', transform: 'none' });
+});
