@@ -9190,12 +9190,7 @@ body.admin-body {
     display: none;
 }
 
-/* Lumi Nails unified visual system.
-   This is the only design layer above the functional component styles. */
-
-/* =========================================
-   LUMI ADMIN WORKSPACE REDESIGN
-   ========================================= */
+/* Legacy admin workspace and CMS — végleges megjelenés (99-ből migrálva) */
 body.admin-body {
     --admin-primary: var(--ui-primary);
     --admin-accent: var(--ui-accent);
@@ -10474,6 +10469,9 @@ body.admin-body {
 
 
 }
+
+/* Lumi Nails unified visual system.
+   This is the only design layer above the functional component styles. */
 
 /* =========================================
    ADMIN FOGLALÁSOK – COMPACT DATA LIST

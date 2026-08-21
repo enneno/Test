@@ -436,3 +436,17 @@ test('a legacy admin alap CSS a 40-admin rétegben él', async () => {
     expect(unifiedCss).not.toContain('\n.admin-eyebrow {\n');
     expect(unifiedCss).not.toContain('.admin-body #lebego-foglalas-gomb');
 });
+
+test('a legacy admin workspace és CMS CSS a 40-admin rétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const adminCss = fs.readFileSync(path.join(root, 'src', 'styles', '40-admin.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(adminCss).toContain('Legacy admin workspace and CMS — végleges megjelenés (99-ből migrálva)');
+    expect(adminCss).toContain('.admin-body .admin-workspace-layout {');
+    expect(adminCss).toContain('.admin-body .admin-sidebar {');
+    expect(adminCss).toContain('.admin-body .cms-editor-layout {');
+    expect(unifiedCss).not.toContain('LUMI ADMIN WORKSPACE REDESIGN');
+    expect(unifiedCss).not.toContain('.admin-body .admin-workspace-layout {');
+    expect(unifiedCss).not.toContain('.admin-body .cms-editor-layout {');
+});
