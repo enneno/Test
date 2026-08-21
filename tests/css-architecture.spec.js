@@ -177,3 +177,16 @@ test('a főoldali kupon banner végleges CSS-e a publikus komponensrétegben él
     expect(mobile.buttonWidth).toBe(mobile.couponWidth);
     expect(mobile.columns.split(' ').length).toBe(1);
 });
+
+test('a főoldali Bemutatkozás CSS-e a publikus komponensrétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Home introduction — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('#bemutatkozas {');
+    expect(publicCss).toContain('.bemutatkozas-kep {');
+    expect(unifiedCss).not.toContain('/* Home introduction */');
+    expect(unifiedCss).not.toContain('#bemutatkozas');
+    expect(unifiedCss).not.toContain('.bemutatkozas-kep');
+});

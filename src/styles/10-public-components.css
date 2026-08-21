@@ -3712,3 +3712,154 @@
         width: 100%;
     }
 }
+
+/* Home introduction — végleges megjelenés (99-ből migrálva) */
+#bemutatkozas {
+    width: min(1120px, calc(100% - 48px));
+    margin: clamp(40px, 6vw, 72px) auto 150px;
+    padding: 0;
+    background: transparent;
+}
+
+#bemutatkozas .bemutatkozas-belso {
+    display: grid;
+    grid-template-columns: minmax(340px, 0.88fr) minmax(0, 1.12fr);
+    gap: clamp(52px, 8vw, 110px);
+    align-items: stretch;
+    width: 100%;
+    margin: 0;
+}
+
+.bemutatkozas-kep {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--ui-soft);
+    transform: none;
+}
+
+.bemutatkozas-kep::after {
+    display: none;
+}
+
+.bemutatkozas-kep img {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+    object-fit: contain;
+    object-position: center;
+    filter: none;
+    transform: none;
+}
+
+.bemutatkozas-kep-jelveny {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 98px;
+    height: 98px;
+    border: 1px solid rgba(255, 249, 245, 0.4);
+    border-radius: 50%;
+    background: rgba(45, 38, 35, 0.68);
+    color: var(--ui-off-white);
+    transform: none;
+    backdrop-filter: blur(12px);
+}
+
+#bemutatkozas .bemutatkozas-szoveg {
+    position: static;
+    align-self: center;
+    min-width: 0;
+    color: var(--ui-ink);
+}
+
+.bemutatkozas-szoveg::before,
+.bemutatkozas-szoveg::after {
+    display: none;
+}
+
+.bemutatkozas-szoveg h2 {
+    margin: 16px 0 30px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(64px, 7vw, 94px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+}
+
+.bemutatkozas-szoveg p {
+    max-width: 580px;
+    color: var(--ui-muted);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-body);
+    line-height: 1.85;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: normal;
+}
+
+@media screen and (max-width: 768px) {
+    .bemutatkozas {
+        width: calc(100% - 36px);
+        margin-bottom: 110px;
+    }
+
+    #bemutatkozas .bemutatkozas-belso {
+        grid-template-columns: 1fr;
+        gap: 44px;
+    }
+
+    #bemutatkozas .bemutatkozas-kep {
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #bemutatkozas {
+        width: 100%;
+        margin-bottom: 64px;
+        padding: 0 20px;
+    }
+
+    #bemutatkozas .bemutatkozas-belso {
+        gap: 32px;
+    }
+
+    #bemutatkozas .bemutatkozas-kep {
+        border-radius: 3px;
+    }
+
+    .bemutatkozas-kep-jelveny {
+        right: 14px;
+        bottom: 14px;
+        width: 82px;
+        height: 82px;
+    }
+
+    .bemutatkozas-szoveg h2 {
+        max-width: 100%;
+        margin: 13px 0 24px;
+        font-size: calc(clamp(42px, 12vw, 52px) + 2px);
+        letter-spacing: -0.04em;
+        line-height: 0.98;
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+
+    .bemutatkozas-szoveg p {
+        font-size: var(--lumi-font-body-small);
+        line-height: 1.75;
+    }
+}
