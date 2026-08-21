@@ -1217,30 +1217,6 @@
     margin-top: 28px;
 }
 
-.admin-lebego-mentes {
-    position: fixed;
-    right: 24px;
-    bottom: calc(24px + env(safe-area-inset-bottom));
-    z-index: 1100;
-    min-height: 48px;
-    padding: 0 28px;
-    color: #fffaf4;
-    background: var(--akcentus);
-    border: 1px solid rgba(255, 250, 244, 0.36);
-    border-radius: var(--lumi-radius-pill);
-    box-shadow: 0 10px 24px rgba(78, 54, 48, 0.18);
-    font-family: 'Manrope', sans-serif;
-    font-size: var(--lumi-font-button);
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-}
-
-.admin-lebego-mentes[hidden] {
-    display: none;
-}
-
 .admin-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -1904,7 +1880,6 @@
     resize: vertical;
 }
 
-
 .admin-mezo input[type="date"],
 .admin-mezo input[type="month"],
 .admin-mezo input[type="time"],
@@ -2017,12 +1992,10 @@
     background: var(--akcentus);
 }
 
-
 .admin-kis-gomb:disabled {
     cursor: default;
     opacity: 0.45;
 }
-
 
 /* Mobil navigáció */
 .hamburger {
@@ -2365,14 +2338,6 @@
         max-width: 100%;
     }
 
-    .admin-lebego-mentes {
-        right: 50%;
-        bottom: calc(16px + env(safe-area-inset-bottom));
-        min-height: 46px;
-        width: min(260px, calc(100% - 32px));
-        transform: translateX(50%);
-    }
-
     .admin-tabs {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -2424,7 +2389,6 @@
         grid-template-columns: 1fr;
         font-size: var(--lumi-font-label);
     }
-
 
     .admin-idopont-szerkeszto {
         grid-template-columns: minmax(128px, 1.5fr) repeat(2, minmax(60px, 0.7fr));
@@ -2684,7 +2648,6 @@
         letter-spacing: 2px;
     }
 
-
     #kiemelt-stilusok {
         padding-top: 28px;
         padding-bottom: 28px;
@@ -2741,7 +2704,6 @@
     .galeria-oldal {
         padding-top: 12px;
     }
-
 
     .galeria-oldal .szekcio-leiras {
         margin-bottom: 24px;
@@ -2886,9 +2848,6 @@
     .admin-body .admin-panel,
     .admin-body .admin-db-kartya,
     .admin-body .admin-naptar-blokk,
-    .admin-body .admin-lebego-mentes {
-        box-shadow: none;
-    }
 
     .admin-body #admin-idosav-naptar,
     .admin-body .admin-naptar-racs,

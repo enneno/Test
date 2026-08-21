@@ -37,6 +37,7 @@ test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async 
         'src/admin/00-bootstrap-auth-calendar.js',
         'admin-content.js',
         'src/admin-styles/admin-workspace-v2.css',
+        'src/styles/10-public-components.css',
         'src/styles/40-admin.css',
         'src/styles/99-unified-design.css'
     ];
