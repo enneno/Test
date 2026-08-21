@@ -3861,73 +3861,13 @@ body.admin-body {
         font-size: var(--lumi-font-body-small);
     }
 }
-.foglalas-ut-gomb {
-    color: var(--ui-rose-dark);
-}
 
-.foglalas-ut-kartya:not(.foglalas-ut-kartya-kiemelt) .foglalas-ut-ikon {
-    background: var(--ui-rose-dark);
-}
-
-.foglalas-ut-kartya-kiemelt .foglalas-ut-ikon {
-    background: rgba(255, 249, 245, 0.14);
-}
-
-.foglalas-ut-kartya:focus-visible,
-.foglalas-valaszto-kartya:focus-visible,
-.foglalas-datum-chip:focus-visible,
-.foglalas-idopont-gomb:focus-visible,
-.foglalas-stilus-kartya:focus-within {
-    outline: 3px solid var(--ui-rose-dark);
-    outline-offset: 4px;
-}
-
-.foglalas-fokozatos .foglalas-lepes[hidden] {
-    display: none;
-}
-
-.foglalas-mezo-csoport {
-    display: grid;
-    min-width: 0;
-    gap: 8px;
-    align-content: start;
-}
-
-.foglalas-mezo-cimke,
 .admin-mezo-cimke {
     color: var(--ui-ink);
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-label);
     font-weight: 750;
     letter-spacing: 0.04em;
-}
-
-.foglalas-mezo-cimke span {
-    color: var(--ui-rose-dark);
-}
-
-.foglalas-mezo-cimke small {
-    color: var(--ui-muted);
-    font-size: var(--lumi-font-caption);
-    font-weight: 600;
-}
-
-.foglalas-mezo-segitseg {
-    color: var(--ui-muted);
-    font-family: "Manrope", sans-serif;
-    font-size: var(--lumi-font-caption);
-    line-height: 1.45;
-}
-
-.foglalas-megjegyzes-cimke {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 18px;
-}
-
-.foglalas-megjegyzes {
-    margin-top: 0;
 }
 
 .admin-mezo-cimke {
@@ -3940,8 +3880,6 @@ body.admin-body {
     width: 100%;
 }
 
-.foglalas-oldal .urlap-mezo:focus,
-.foglalas-oldal .tel-csoport:focus-within,
 .admin-body input:focus,
 .admin-body select:focus,
 .admin-body textarea:focus {
@@ -3967,11 +3905,6 @@ body.admin-body {
         font-size-adjust: var(--lumi-input-optical-ratio, 0.36);
     }
 
-    .foglalas-oldal input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-    .foglalas-oldal .urlap-mezo,
-    .foglalas-oldal select,
-    .foglalas-oldal textarea,
-    .foglalas-oldal [contenteditable="true"],
     #fo-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
     #fo-tartalom select,
     #fo-tartalom textarea,
