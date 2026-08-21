@@ -324,3 +324,17 @@ test('a booking főfelület CSS-e a booking rétegben él', async ({ page }) => 
         documentWidth: 390
     });
 });
+
+test('a booking self-service CSS-e a booking rétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const bookingCss = fs.readFileSync(path.join(root, 'src', 'styles', '30-booking.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(bookingCss).toContain('Booking self-service — végleges megjelenés (99-ből migrálva)');
+    expect(bookingCss).toContain('.foglalas-kezelo-szekcio {');
+    expect(bookingCss).toContain('.foglalas-popup-azonosito {');
+    expect(bookingCss).toContain('.foglalas-statusz-confirmed {');
+    expect(unifiedCss).not.toContain('/* Booking self-service */');
+    expect(unifiedCss).not.toContain('.foglalas-kezelo-szekcio');
+    expect(unifiedCss).not.toContain('.foglalas-popup-azonosito');
+});
