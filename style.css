@@ -10470,12 +10470,7 @@ body.admin-body {
 
 }
 
-/* Lumi Nails unified visual system.
-   This is the only design layer above the functional component styles. */
-
-/* =========================================
-   ADMIN FOGLALÁSOK – COMPACT DATA LIST
-   ========================================= */
+/* Legacy admin bookings — végleges megjelenés (99-ből migrálva) */
 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
     grid-template-columns: auto minmax(240px, 1fr) minmax(154px, 180px);
     grid-template-areas: "actions search status";
@@ -11615,6 +11610,9 @@ body.admin-body {
         white-space: normal;
     }
 }
+
+/* Lumi Nails unified visual system.
+   This is the only design layer above the functional component styles. */
 
 /* =========================================
    ADMIN MUNKATERÜLET – COMPACT PANELS

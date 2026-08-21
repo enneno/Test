@@ -450,3 +450,17 @@ test('a legacy admin workspace és CMS CSS a 40-admin rétegben él', async () =
     expect(unifiedCss).not.toContain('.admin-body .admin-workspace-layout {');
     expect(unifiedCss).not.toContain('.admin-body .cms-editor-layout {');
 });
+
+test('a legacy admin foglalások CSS a 40-admin rétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const adminCss = fs.readFileSync(path.join(root, 'src', 'styles', '40-admin.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(adminCss).toContain('Legacy admin bookings — végleges megjelenés (99-ből migrálva)');
+    expect(adminCss).toContain('#admin-panel-foglalasok .admin-foglalas-attekintes {');
+    expect(adminCss).toContain('#admin-panel-foglalasok .admin-foglalas-naptar {');
+    expect(adminCss).toContain('#admin-panel-foglalasok .admin-vendeg-lemondas-jelzes {');
+    expect(unifiedCss).not.toContain('ADMIN FOGLALÁSOK – COMPACT DATA LIST');
+    expect(unifiedCss).not.toContain('#admin-panel-foglalasok .admin-foglalas-attekintes {');
+    expect(unifiedCss).not.toContain('#admin-panel-foglalasok .admin-foglalas-naptar {');
+});
