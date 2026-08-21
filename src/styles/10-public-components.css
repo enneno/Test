@@ -3327,3 +3327,388 @@
         font-size: calc(clamp(34px, 4vw, 52px) + 2px);
     }
 }
+
+/* Home services — végleges megjelenés (99-ből migrálva) */
+.szolgaltatas-kartya > a > span {
+    flex: 0 0 auto;
+    font-family: Arial, sans-serif;
+    font-size: 1.15em;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none;
+}
+
+#szolgaltatasok {
+    width: 100%;
+    margin: 0 0 150px;
+    padding: clamp(72px, 8vw, 112px) var(--ui-gutter);
+    background: var(--ui-primary);
+}
+
+.szolgaltatasok-belso {
+    width: min(1160px, 100%);
+    margin-inline: auto;
+}
+
+#szolgaltatasok .szekcio-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.48fr);
+    gap: clamp(40px, 7vw, 90px);
+    align-items: end;
+    margin-bottom: 48px;
+}
+
+#szolgaltatasok .szekcio-fej > * {
+    min-width: 0;
+}
+
+#szolgaltatasok .szekcio-kicker {
+    color: var(--ui-highlight);
+}
+
+#szolgaltatasok h2 {
+    max-width: 100%;
+    margin: 14px 0 0;
+    color: var(--ui-on-primary);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(52px, 6vw, 78px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    white-space: normal;
+}
+
+.szolgaltatas-bevezeto {
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+}
+
+#szolgaltatasok .szekcio-fej p {
+    margin: 0;
+    color: rgba(255, 249, 245, 0.78);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.75;
+}
+
+#szolgaltatasok .szolgaltatas-bevezeto .szoveges-link {
+    min-height: 44px;
+    margin: 0;
+    align-items: center;
+    color: var(--ui-highlight);
+}
+
+.szolgaltatas-lista {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+}
+
+.szolgaltatas-kartya {
+    position: relative;
+    display: flex;
+    min-height: 286px;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+    padding: 30px;
+    overflow: hidden;
+    border: 2px solid var(--ui-accent);
+    border-radius: 4px;
+    isolation: isolate;
+    background-color: var(--ui-primary);
+    box-shadow: 0 22px 48px rgba(145, 118, 110, 0.22);
+    transform: none;
+    transition:
+        box-shadow 220ms ease-out,
+        transform 220ms ease-out;
+}
+.szolgaltatas-lista > .szolgaltatas-kartya {
+    border: 2px solid var(--ui-accent);
+}
+
+
+.szolgaltatas-kartya::before {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    z-index: 0;
+    display: block;
+    background-image: var(--service-image);
+    background-position: var(--service-position, center);
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: brightness(0.64) saturate(0.82);
+    content: "";
+    pointer-events: none;
+    transform: scale(1);
+    transition: transform 280ms ease-out;
+}
+
+.szolgaltatas-kartya::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    z-index: 0;
+    display: block;
+    background: linear-gradient(135deg, rgba(33, 27, 25, 0.8), rgba(145, 118, 110, 0.64));
+    content: "";
+    pointer-events: none;
+}
+
+.szolgaltatas-kartya > * {
+    position: relative;
+    z-index: 1;
+}
+
+.szolgaltatas-kartya--epites {
+    --service-image: url("/kepek/szolgaltatas-epites.jpg");
+    --service-position: center;
+}
+
+.szolgaltatas-kartya--diszites {
+    --service-image: url("/kepek/szolgaltatas-diszites.jpg");
+    --service-position: center;
+}
+
+.szolgaltatas-kartya--gel-lakk {
+    --service-image: url("/kepek/szolgaltatas-gel-lakk.jpg");
+    --service-position: center;
+}
+
+.szolgaltatas-kartya--manikur {
+    --service-image: url("/kepek/szolgaltatas-manikur.jpg");
+    --service-position: center;
+}
+
+.szolgaltatas-kartya-fej {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+
+.szolgaltatas-tipus {
+    color: var(--ui-on-primary);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.szolgaltatas-kartya h3 {
+    margin: 0 0 16px;
+    color: var(--ui-on-primary);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(30px, 3vw, 40px);
+    line-height: 1;
+}
+
+.szolgaltatas-kartya p {
+    max-width: 48ch;
+    margin: 0 0 22px;
+    color: var(--ui-on-primary);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.7;
+}
+
+.szolgaltatas-kartya > a {
+    display: inline-flex;
+    min-height: 44px;
+    max-width: 100%;
+    align-items: center;
+    gap: 8px;
+    margin: auto 0 -10px;
+    color: var(--ui-on-primary);
+    font-size: var(--lumi-font-caption);
+    font-weight: 800;
+    line-height: 1.45;
+    text-decoration-color: rgba(240, 215, 213, 0.86);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    white-space: normal;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .szolgaltatas-kartya:hover {
+        z-index: 1;
+        box-shadow: 0 26px 58px rgba(145, 118, 110, 0.32);
+        transform: scale(1.015);
+    }
+
+    .szolgaltatas-kartya:hover::before {
+        transform: scale(1.05);
+    }
+}
+
+.szolgaltatas-zaras {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(240, 215, 213, 0.62);
+}
+
+.szolgaltatas-zaras p {
+    display: grid;
+    gap: 5px;
+    margin: 0;
+}
+
+.szolgaltatas-zaras strong {
+    color: var(--ui-on-primary);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.szolgaltatas-zaras span {
+    color: rgba(255, 249, 245, 0.7);
+    font-size: var(--lumi-font-caption);
+    line-height: 1.6;
+}
+
+.szolgaltatas-zaras .gomb {
+    flex: 0 0 auto;
+    border-color: var(--ui-warm);
+    background: var(--ui-highlight);
+    color: var(--ui-primary);
+}
+
+.szolgaltatas-zaras .gomb:hover {
+    border-color: var(--ui-on-primary);
+    background: var(--ui-on-primary);
+    color: var(--ui-primary);
+}
+
+#szolgaltatasok a:focus-visible {
+    outline-color: var(--ui-highlight);
+}
+
+@media screen and (max-width: 480px) {
+    #szolgaltatasok h2 {
+        font-size: clamp(36px, 10vw, 44px);
+        overflow-wrap: normal;
+        white-space: normal;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .szolgaltatas-kartya,
+    .szolgaltatas-kartya:hover {
+        transform: none;
+        transition: none;
+    }
+
+    .szolgaltatas-kartya::before,
+    .szolgaltatas-kartya:hover::before {
+        transform: scale(1);
+        transition: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #szolgaltatasok {
+        width: 100%;
+        margin-bottom: 64px;
+        padding: 58px 20px 60px;
+    }
+
+    .szolgaltatasok-belso {
+        width: 100%;
+    }
+
+    #szolgaltatasok .szekcio-fej {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    #szolgaltatasok h2 {
+        max-width: 100%;
+        font-size: calc(clamp(38px, 11vw, 48px) + 2px);
+        letter-spacing: -0.05em;
+        line-height: 0.96;
+        overflow-wrap: normal;
+        white-space: normal;
+        word-break: normal;
+    }
+
+    .szolgaltatas-bevezeto {
+        gap: 10px;
+    }
+
+    #szolgaltatasok .szekcio-fej p {
+        font-size: var(--lumi-font-body-small);
+        line-height: 1.65;
+    }
+
+    .szolgaltatas-lista {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .szolgaltatas-kartya {
+        min-height: 0;
+        padding: 24px;
+    }
+
+    .szolgaltatas-kartya-fej {
+        margin-bottom: 22px;
+    }
+
+
+    .szolgaltatas-tipus {
+        max-width: 18ch;
+        font-size: var(--lumi-font-caption);
+    }
+
+    .szolgaltatas-kartya h3 {
+        margin-bottom: 13px;
+        font-size: clamp(30px, 9vw, 36px);
+        line-height: 1.05;
+    }
+
+    .szolgaltatas-kartya p {
+        margin-bottom: 18px;
+        font-size: var(--lumi-font-body-small);
+        line-height: 1.65;
+        text-align: left;
+    }
+
+    .szolgaltatas-kartya > a {
+        margin-bottom: -8px;
+        font-size: var(--lumi-font-caption);
+    }
+
+    .szolgaltatas-zaras {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+        gap: 20px;
+        margin-top: 24px;
+        padding-top: 24px;
+    }
+
+    .szolgaltatas-zaras strong {
+        font-size: 22px;
+    }
+
+    .szolgaltatas-zaras .gomb {
+        width: 100%;
+    }
+}
