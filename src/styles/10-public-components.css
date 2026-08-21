@@ -4541,3 +4541,48 @@
         font-size: var(--lumi-font-caption);
     }
 }
+
+/* Floating booking CTA — végleges megjelenés (99-ből migrálva) */
+@media screen and (max-width: 768px) {
+
+
+    .lebego-foglalas-gomb {
+        right: 16px;
+        bottom: calc(14px + env(safe-area-inset-bottom));
+        width: 104px;
+        min-height: 44px;
+        padding: 0 16px;
+        border-radius: 3px;
+        box-shadow: 0 12px 30px rgba(55, 40, 35, 0.16);
+        font-size: 0;
+        transform: none;
+    }
+
+    .lebego-foglalas-gomb::after {
+        content: "Foglalás";
+        font-size: var(--lumi-font-button-compact);
+        letter-spacing: 0.06em;
+    }
+
+    .lebego-foglalas-gomb:hover {
+        transform: translateY(-1px);
+    }
+
+    .lebego-foglalas-gomb.rejtve {
+        transform: translateY(12px);
+    }
+}
+
+
+.lebego-foglalas-gomb,
+.lebego-foglalas-gomb:hover {
+    box-shadow: none;
+}
+
+@media screen and (max-width: 768px) {
+    .lebego-foglalas-gomb {
+        display: none;
+    }
+
+
+}

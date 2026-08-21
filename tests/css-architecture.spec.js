@@ -354,3 +354,26 @@ test('a booking űrlap kiegészítő CSS-e a booking rétegben él', async () =>
     expect(unifiedCss).toContain('.admin-mezo-cimke {');
     expect(unifiedCss).toContain('.admin-body input:focus,');
 });
+
+test('a lebegő foglalás CTA CSS-e a publikus komponensrétegben él', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Floating booking CTA — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('.lebego-foglalas-gomb::after {');
+    expect(publicCss).toContain('.lebego-foglalas-gomb.rejtve {');
+    expect(unifiedCss).not.toContain('.lebego-foglalas-gomb');
+    expect(unifiedCss).toContain('.admin-body #lebego-foglalas-gomb {');
+
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const button = page.locator('#lebego-foglalas-gomb');
+    await expect(button).toBeAttached();
+    await button.evaluate((element) => element.classList.remove('rejtve'));
+    await expect(button).toHaveCSS('box-shadow', 'none');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(button).toHaveCSS('display', 'none');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
