@@ -1237,9 +1237,14 @@ test('mobile section rhythm keeps gallery, booking and footer transitions compac
     expect(Math.abs(bookingRhythm.sectionGap)).toBeLessThanOrEqual(1);
 
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
-    expect(await page.locator('.admin-oldal').evaluate(
-        element => getComputedStyle(element).paddingBottom
-    )).toBe('32px');
+    const adminRhythm = await page.evaluate(() => ({
+        shellPaddingBottom: getComputedStyle(document.querySelector('.admin-oldal')).paddingBottom,
+        workspacePaddingBottom: getComputedStyle(document.querySelector('.admin-workspace-main')).paddingBottom
+    }));
+    expect(adminRhythm).toEqual({
+        shellPaddingBottom: '0px',
+        workspacePaddingBottom: '34px'
+    });
 });
 
 test('a foglalásexport a kapott látható sorokat írja egy formázott munkalapra', async ({ page }) => {
