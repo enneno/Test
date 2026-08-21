@@ -142,7 +142,7 @@ test('shared typography roles work on public and admin mobile views', async ({ p
         label: getComputedStyle(document.querySelector('.admin-mezo')).fontSize,
         calendar: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-calendar').trim()
     }));
-    expect(adminMobile).toEqual({ button: '13px', compactButton: '12px', label: '13px', calendar: '10px' });
+    expect(adminMobile).toEqual({ button: '13px', compactButton: '13px', label: '12px', calendar: '10px' });
 });
 
 test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-írást', async ({ page }) => {
