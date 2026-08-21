@@ -434,7 +434,10 @@ test('a legacy admin alap CSS a 40-admin rétegben él', async () => {
     const root = path.resolve(__dirname, '..');
     const adminCss = fs.readFileSync(path.join(root, 'src', 'styles', '40-admin.css'), 'utf8');
     const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
 
+    expect(adminCss).toContain('Legacy admin foundation — moved from public component layer');
+    expect(adminCss).toContain('Legacy admin mobile foundation — moved from public component layer');
     expect(adminCss).toContain('Legacy admin base — végleges megjelenés (99-ből migrálva)');
     expect(adminCss).toContain('.admin-auth-panel {');
     expect(adminCss).toContain('.admin-eyebrow {');
@@ -443,6 +446,10 @@ test('a legacy admin alap CSS a 40-admin rétegben él', async () => {
     expect(unifiedCss).not.toContain('\n.admin-auth-panel {\n');
     expect(unifiedCss).not.toContain('\n.admin-eyebrow {\n');
     expect(unifiedCss).not.toContain('.admin-body #lebego-foglalas-gomb');
+    expect(publicCss).not.toContain('\n.admin-body {\n');
+    expect(publicCss).not.toContain('\n.admin-oldal {\n');
+    expect(publicCss).not.toContain('#admin-idosav-naptar');
+    expect(publicCss).toContain('body:not(.admin-body) {');
 });
 
 test('a legacy admin workspace és CMS CSS a 40-admin rétegben él', async () => {
