@@ -91,7 +91,7 @@
             try {
                 return await createImageBitmap(file, { imageOrientation: 'from-image' });
             } catch (error) {
-                // Egyes iOS/HEIC esetekben az img fallback megb?zhat?bb.
+                // Egyes iOS/HEIC esetekben az img fallback megbízhatóbb.
             }
         }
 
@@ -104,7 +104,7 @@
             };
             img.onerror = () => {
                 URL.revokeObjectURL(url);
-                reject(new Error('A k?p nem olvashat?.'));
+                reject(new Error('A kép nem olvasható.'));
             };
             img.src = url;
         });

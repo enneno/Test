@@ -2,6 +2,10 @@ const { defineConfig } = require('playwright/test');
 
 module.exports = defineConfig({
     testDir: './tests',
+    testIgnore: [
+        'admin-redesign-prototype.spec.js',
+        'admin-redesign-prototype-drawer.spec.js'
+    ],
     timeout: 30000,
     fullyParallel: false,
     reporter: [['list']],

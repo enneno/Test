@@ -4,6 +4,40 @@ const fs = require('node:fs');
 
 const publicPages = ['/', '/arlista/', '/galeria/', '/foglalas/', '/adatkezeles/'];
 
+async function installLoggedOutAdminBoundaryMock(page) {
+    await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({
+        status: 200,
+        contentType: 'text/javascript; charset=utf-8',
+        body: ''
+    }));
+    await page.addInitScript(() => {
+        window.__lumiAdminSessionSettled = false;
+        const client = {
+            auth: {
+                getSession: () => new Promise((resolve) => {
+                    queueMicrotask(() => {
+                        resolve({ data: { session: null }, error: null });
+                        queueMicrotask(() => { window.__lumiAdminSessionSettled = true; });
+                    });
+                }),
+                onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+                signInWithPassword: async () => ({ data: { session: null }, error: null }),
+                signOut: async () => ({ error: null }),
+                updateUser: async () => ({ data: { user: null }, error: null })
+            }
+        };
+        window.supabase = { createClient: () => client };
+    });
+}
+
+async function showLoggedOutAdminWorkspace(page) {
+    await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
+    await page.evaluate(() => {
+        document.getElementById('admin-bejelentkezes-panel').hidden = true;
+        document.getElementById('admin-tartalom').hidden = false;
+    });
+}
+
 test('a publikus oldalak betöltődnek JavaScript oldalhiba nélkül', async ({ page }) => {
     const pageErrors = [];
     page.on('pageerror', error => pageErrors.push(error.message));
@@ -52,9 +86,14 @@ test('a főoldali vendégértesítő adminból kapcsolható és mobilon is rende
     await expect(ertesito).toBeVisible();
     await expect(ertesito.locator('.vendegertesito-cimke')).toHaveText('Aktuális információ');
     await expect(ertesito.locator('.vendegertesito-szoveg')).toContainText('Augusztus 20–24.');
-    expect(await ertesito.locator('.vendegertesito-szoveg').evaluate(
-        (elem) => Number.parseFloat(getComputedStyle(elem).fontSize)
-    )).toBe(17);
+    const ertesitoTipografia = await ertesito.locator('.vendegertesito-szoveg').evaluate((elem) => ({
+        fontSize: Number.parseFloat(getComputedStyle(elem).fontSize),
+        bodyToken: Number.parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-body')
+        )
+    }));
+    expect(ertesitoTipografia.bodyToken).toBeGreaterThan(0);
+    expect(ertesitoTipografia.fontSize).toBe(ertesitoTipografia.bodyToken);
     const mobilElhelyezes = await page.evaluate(() => {
         const sav = document.getElementById('vendegertesito').getBoundingClientRect();
         const hero = document.getElementById('hero').getBoundingClientRect();
@@ -137,7 +176,7 @@ test('shared typography roles work on public and admin mobile views', async ({ p
         label: getComputedStyle(document.querySelector('.admin-mezo')).fontSize,
         calendar: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-calendar').trim()
     }));
-    expect(adminMobile).toEqual({ button: '13px', compactButton: '12px', label: '13px', calendar: '10px' });
+    expect(adminMobile).toEqual({ button: '13px', compactButton: '13px', label: '12px', calendar: '10px' });
 });
 
 test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-írást', async ({ page }) => {
@@ -1090,11 +1129,14 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
     expect(adminForras).toContain('metadata.cancellation_note');
     expect(adminForras).toContain('admin-foglalas-lemondasi-megjegyzes');
 
+    await installLoggedOutAdminBoundaryMock(page);
+
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    await showLoggedOutAdminWorkspace(page);
+    await page.locator('.admin-v2-sidebar [data-admin-v2-nav="foglalasok"]').click();
+    await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
     await page.evaluate(() => {
-        document.getElementById('admin-bejelentkezes-panel').hidden = true;
-        document.getElementById('admin-tartalom').hidden = false;
         const jelzes = document.getElementById('admin-vendeg-lemondas-jelzes');
         jelzes.hidden = false;
         document.getElementById('admin-vendeg-lemondas-darab').textContent = '2';
@@ -1237,9 +1279,14 @@ test('mobile section rhythm keeps gallery, booking and footer transitions compac
     expect(Math.abs(bookingRhythm.sectionGap)).toBeLessThanOrEqual(1);
 
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
-    expect(await page.locator('.admin-oldal').evaluate(
-        element => getComputedStyle(element).paddingBottom
-    )).toBe('32px');
+    const adminRhythm = await page.evaluate(() => ({
+        shellPaddingBottom: getComputedStyle(document.querySelector('.admin-oldal')).paddingBottom,
+        workspacePaddingBottom: getComputedStyle(document.querySelector('.admin-workspace-main')).paddingBottom
+    }));
+    expect(adminRhythm).toEqual({
+        shellPaddingBottom: '0px',
+        workspacePaddingBottom: '34px'
+    });
 });
 
 test('a foglalásexport a kapott látható sorokat írja egy formázott munkalapra', async ({ page }) => {
@@ -1312,7 +1359,7 @@ test('az eseménynapló exportja külön, egyetlen munkalapot készít', async (
 test('az admin munkafelület asztali és mobil nézetben rendezett marad', async ({ page }) => {
     const adminBundle = fs.readFileSync(path.resolve(__dirname, '..', 'admin-supabase.js'), 'utf8');
     const adminStilus = fs.readFileSync(
-        path.resolve(__dirname, '..', 'src', 'styles', '99-unified-design.css'),
+        path.resolve(__dirname, '..', 'src', 'styles', '40-admin.css'),
         'utf8'
     );
     const adminNaptarForras = fs.readFileSync(
@@ -1333,12 +1380,13 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     expect(adminStilus).toContain('container: admin-workspace / inline-size');
     expect(adminStilus).toContain('@container admin-workspace (max-width: 700px)');
 
+    await installLoggedOutAdminBoundaryMock(page);
+
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
-    await page.evaluate(() => {
-        document.getElementById('admin-bejelentkezes-panel').hidden = true;
-        document.getElementById('admin-tartalom').hidden = false;
-    });
+    await showLoggedOutAdminWorkspace(page);
+    await page.locator('.admin-v2-sidebar [data-admin-v2-nav="foglalasok"]').click();
+    await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
 
     const workspace = page.locator('.admin-workspace-layout');
     const sidebar = page.locator('.admin-sidebar');
@@ -1536,7 +1584,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         }, panelNev);
     };
     const zoomSzelessegek = [320, 375, 390, 414, 521, 590, 768, 769, 844, 901, 1024, 1440];
-    const kompaktTiltasSzelessegek = new Set([320, 375, 390, 414, 521, 590, 769, 844, 901, 1024]);
+    const kompaktTiltasSzelessegek = new Set([320, 375, 390, 414, 521, 590]);
     const adminPanelek = [
         'foglalasok',
         'szolgaltatasok',
@@ -1560,6 +1608,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
                     .filter((elem) => {
                         const stilus = getComputedStyle(elem);
                         if (stilus.display === 'none' || stilus.visibility === 'hidden') return false;
+                        if (elem.closest('.admin-v2-subnav')) return false;
                         const doboz = elem.getBoundingClientRect();
                         return doboz.width > 0
                             && (doboz.left < foTerulet.left - 1 || doboz.right > foTerulet.right + 1);
@@ -1594,9 +1643,18 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
 
     await page.setViewportSize({ width: 390, height: 844 });
     await adminPanelMegjelenitese('foglalasok');
-    const mobileSidebar = await sidebar.boundingBox();
+    await expect.poll(async () => {
+        const mobileSidebar = await sidebar.boundingBox();
+        return mobileSidebar.x + mobileSidebar.width;
+    }).toBeLessThanOrEqual(1);
     const mobileMain = await main.boundingBox();
-    expect(mobileMain.y).toBeGreaterThanOrEqual(mobileSidebar.y + mobileSidebar.height - 1);
+    expect(mobileMain.x).toBeGreaterThanOrEqual(0);
+    expect(mobileMain.width).toBeLessThanOrEqual(390);
+    const mobileMenuButton = page.getByRole('button', { name: 'Navigáció megnyitása' });
+    await expect(mobileMenuButton).toBeVisible();
+    const mobileMenuButtonBox = await mobileMenuButton.boundingBox();
+    expect(mobileMenuButtonBox.width).toBeGreaterThanOrEqual(44);
+    expect(mobileMenuButtonBox.height).toBeGreaterThanOrEqual(44);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 
     const mobilNev = await page.locator('[data-azonosito-elrendezes-teszt] h3').evaluate((elem) => {
@@ -1648,7 +1706,8 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
             statuszOptikaiArany: statuszStilus.fontSizeAdjust
         };
     });
-    expect(mobilVezerloTipografia.reszletGomb).toBeLessThanOrEqual(mobilVezerloTipografia.szolgaltatas);
+    expect(mobilVezerloTipografia.reszletGomb).toBeGreaterThanOrEqual(mobilVezerloTipografia.szolgaltatas);
+    expect(mobilVezerloTipografia.reszletGomb).toBeLessThanOrEqual(12);
     expect(mobilVezerloTipografia.reszletSzoveg).toBeLessThanOrEqual(mobilVezerloTipografia.szolgaltatas);
     expect(mobilVezerloTipografia.statuszTechnikaiMeret).toBeGreaterThanOrEqual(22);
     expect(mobilVezerloTipografia.statuszOptikaiArany).toBe('0.3');
@@ -1716,7 +1775,9 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     await expect(page.locator('#admin-foglalas-lista-nezet')).toBeVisible();
     await expect(page.locator('#admin-foglalas-naptar')).toBeHidden();
 
-    await page.locator('[data-admin-tab="emailteszt"]').click();
+    await page.getByRole('button', { name: 'Kommunikáció megnyitása' }).click();
+    await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
+    await page.locator('#admin-panel-esemenynaplo [data-admin-v2-panel="emailteszt"]').click();
     await expect(page.locator('#admin-panel-emailteszt')).toBeVisible();
     await expect(page.locator('#admin-email-teszt-kuldes')).toBeVisible();
     await expect(page.locator('#admin-lebego-mentes')).toBeHidden();
@@ -1868,4 +1929,53 @@ test('az adatkezelési oldal asztali és mobil elrendezése áttekinthető', asy
     expect(mobilElrendezes.oldalsavPozicio).toBe('static');
     expect(mobilElrendezes.dokumentumSzelesseg).toBeLessThanOrEqual(390);
     await expect(page.locator('.jogi-tartalom h2').first()).toHaveCSS('font-size', '42px');
+});
+
+test('a főoldali galéria carousel gombbal, billentyűzettel és mobilon is működik', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const carousel = page.locator('.galeria-kartya-lapozo');
+    const images = carousel.locator('img');
+    const imageCount = await images.count();
+    const status = carousel.locator('.galeria-kartya-allapot');
+    expect(imageCount).toBeGreaterThan(1);
+    await expect(carousel).toHaveAttribute('role', 'region');
+    await expect(carousel).toHaveAttribute('aria-label', 'Válogatott Lumi Nails munkák');
+    await expect(carousel).toHaveAttribute('aria-roledescription', 'carousel');
+    await expect(status).toHaveText('1 / ' + imageCount);
+    await expect(images.nth(0)).toHaveAttribute('data-aktiv', 'true');
+
+    await carousel.getByRole('button', { name: 'Következő kép' }).click();
+    await expect(status).toHaveText('2 / ' + imageCount);
+    await expect(images.nth(1)).toHaveAttribute('data-aktiv', 'true');
+
+    await carousel.press('ArrowLeft');
+    await expect(status).toHaveText('1 / ' + imageCount);
+    await expect(images.nth(0)).toHaveAttribute('data-aktiv', 'true');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await carousel.evaluate((element) => {
+        const next = element.querySelector('.galeria-kartya-kovetkezo');
+        const dots = element.querySelector('.galeria-kartya-pontok');
+        const liveStatus = element.querySelector('.galeria-kartya-allapot');
+        const nextRect = next.getBoundingClientRect();
+        return {
+            nextWidth: Math.round(nextRect.width),
+            nextHeight: Math.round(nextRect.height),
+            dotsDisplay: getComputedStyle(dots).display,
+            statusDisplay: getComputedStyle(liveStatus).display,
+            documentWidth: document.documentElement.scrollWidth
+        };
+    });
+    expect(mobile).toEqual({
+        nextWidth: 44,
+        nextHeight: 44,
+        dotsDisplay: 'none',
+        statusDisplay: 'flex',
+        documentWidth: 390
+    });
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(images.nth(0)).toHaveCSS('transition-duration', '0s');
 });

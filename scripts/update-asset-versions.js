@@ -15,6 +15,7 @@ const HTML_FILES = [
 ];
 const ASSETS = [
     'style.css',
+    'admin-v2.css',
     'supabase-config.js',
     'script.js',
     'booking.js',

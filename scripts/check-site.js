@@ -22,6 +22,7 @@ const JS_FILES = [
     'admin-export.js',
     'admin-content.js'
 ];
+const CSS_FILES = ['style.css', 'admin-v2.css'];
 const EDGE_FUNCTION_FILES = [
     'supabase/functions/create-booking-with-email/index.ts',
     'supabase/functions/upload-booking-inspirations/index.ts',
@@ -29,7 +30,7 @@ const EDGE_FUNCTION_FILES = [
     'supabase/functions/send-booking-update-email/index.ts',
     'supabase/functions/process-booking-notifications/index.ts'
 ];
-const VERSIONED_ASSETS = ['style.css'].concat(JS_FILES);
+const VERSIONED_ASSETS = CSS_FILES.concat(JS_FILES);
 const errors = [];
 
 function fail(message) {
@@ -47,7 +48,7 @@ function escapeRegExp(value) {
     return value.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
 }
 
-for (const relativePath of HTML_FILES.concat(JS_FILES, ['style.css'])) {
+for (const relativePath of HTML_FILES.concat(JS_FILES, CSS_FILES)) {
     if (!fs.existsSync(path.join(ROOT, relativePath))) {
         fail('Hiányzó aktív fájl: ' + relativePath);
     }
@@ -94,7 +95,7 @@ for (const htmlFile of HTML_FILES) {
     }
 }
 
-for (const relativePath of HTML_FILES.concat(JS_FILES, ['style.css'])) {
+for (const relativePath of HTML_FILES.concat(JS_FILES, CSS_FILES)) {
     const content = fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
     if (/[�ÃÂÄĹĂ]/.test(content)) {
         fail(relativePath + ': hibás karakterkódolásra utaló szöveg található.');
@@ -127,7 +128,7 @@ if (directClientCalls !== 1) {
     fail('A Supabase kliensnek pontosan egyszer kell létrejönnie, jelenleg: ' + directClientCalls + '.');
 }
 
-const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8');
+const css = CSS_FILES.map(file => fs.readFileSync(path.join(ROOT, file), 'utf8')).join('\n');
 const openBraces = (css.match(/\{/g) || []).length;
 const closeBraces = (css.match(/\}/g) || []).length;
 if (openBraces !== closeBraces) {

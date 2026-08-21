@@ -11,6 +11,12 @@ const bundles = [
         banner: '/* Generated from src/styles by npm run build. Edit the source parts, not this file. */\n\n'
     },
     {
+        output: 'admin-v2.css',
+        sourceDir: 'src/admin-styles',
+        extension: '.css',
+        banner: '/* Generated from src/admin-styles by npm run build. Edit the source parts, not this file. */\n\n'
+    },
+    {
         output: 'script.js',
         sourceDir: 'src/public',
         extension: '.js',

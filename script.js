@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
     idopontokGeneralasa();
     datumMinimumBeallitasa();
     foglalasiUrlapBekotese();
-    galeriaBekotese();
     fooldalGaleriaLapozasBekotese();
     lebegoFoglalasLetrehozasa();
     lebegoFoglalasFigyeles();

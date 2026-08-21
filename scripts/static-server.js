@@ -37,6 +37,7 @@ const PUBLIC_ROOT_FILES = new Set([
     'booking.js',
     'script.js',
     'style.css',
+    'admin-v2.css',
     'supabase-config.js',
     'favicon.ico',
     'robots.txt',
