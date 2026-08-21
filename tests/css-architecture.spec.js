@@ -72,3 +72,35 @@ test('a lábléc végleges CSS-e a publikus komponensrétegben él', async ({ pa
         paddingLeft: '20px'
     });
 });
+
+test('a jogi oldal végleges CSS-e a publikus komponensrétegben él', async ({ page }) => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('/* Legal */');
+    expect(publicCss).toContain('.jogi-fejlec {');
+    expect(publicCss).toContain('.jogi-elrendezes {');
+    expect(publicCss).toContain('.jogi-oldalsav {');
+    expect(unifiedCss).not.toContain('/* Legal */');
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
+    const desktop = await page.evaluate(() => ({
+        headerDisplay: getComputedStyle(document.querySelector('.jogi-fejlec')).display,
+        layoutDisplay: getComputedStyle(document.querySelector('.jogi-elrendezes')).display,
+        sidebarPosition: getComputedStyle(document.querySelector('.jogi-oldalsav')).position,
+        borderBottomStyle: getComputedStyle(document.querySelector('.jogi-fejlec')).borderBottomStyle
+    }));
+    expect(desktop).toEqual({
+        headerDisplay: 'grid',
+        layoutDisplay: 'grid',
+        sidebarPosition: 'sticky',
+        borderBottomStyle: 'solid'
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
+    expect(await page.locator('.jogi-oldalsav').evaluate(elem => getComputedStyle(elem).position)).toBe('static');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
