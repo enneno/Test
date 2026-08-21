@@ -9031,9 +9031,7 @@ body.admin-modal-nyitva {
     }
 }
 
-/* Lumi Nails unified visual system.
-   This is the only design layer above the functional component styles. */
-
+/* Legacy admin base — végleges megjelenés (99-ből migrálva) */
 body.admin-body {
     background: #f4f2ee;
 }
@@ -9191,6 +9189,10 @@ body.admin-body {
 .admin-body #lebego-foglalas-gomb {
     display: none;
 }
+
+/* Lumi Nails unified visual system.
+   This is the only design layer above the functional component styles. */
+
 /* =========================================
    LUMI ADMIN WORKSPACE REDESIGN
    ========================================= */

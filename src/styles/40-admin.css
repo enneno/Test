@@ -737,3 +737,162 @@
         top: 11px;
     }
 }
+
+/* Legacy admin base — végleges megjelenés (99-ből migrálva) */
+body.admin-body {
+    background: #f4f2ee;
+}
+
+
+.admin-eyebrow {
+    color: var(--ui-rose-dark);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 750;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+}
+
+.admin-body input,
+.admin-body select,
+.admin-body textarea {
+    min-height: 48px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: 3px;
+    background: var(--ui-off-white);
+    box-shadow: none;
+}
+
+.admin-body input:focus,
+.admin-body select:focus,
+.admin-body textarea:focus {
+    border-color: var(--ui-rose-dark);
+    outline: 3px solid rgba(145, 118, 110, 0.2);
+    box-shadow: none;
+}
+
+/* Admin */
+.admin-oldal {
+    width: min(1400px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 48px 0 100px;
+}
+
+.admin-fejlec,
+.admin-panel {
+    margin: 0 0 24px;
+    padding: clamp(28px, 4vw, 48px);
+    border: 1px solid var(--ui-line);
+    border-radius: 5px;
+    background: var(--ui-off-white);
+    box-shadow: 0 14px 40px rgba(55, 40, 35, 0.05);
+}
+
+.admin-auth-panel {
+    width: min(520px, 100%);
+    margin: 60px auto;
+}
+
+.admin-cim {
+    margin: 8px 0 14px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+}
+
+.admin-panel-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+    gap: 40px;
+    align-items: end;
+}
+
+.admin-tabs {
+    position: sticky;
+    z-index: 8;
+    top: var(--ui-header-height);
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    margin: 28px -10px;
+    padding: 10px;
+    border-top: 1px solid var(--ui-line);
+    border-bottom: 1px solid var(--ui-line);
+    background: rgba(255, 249, 245, 0.95);
+    backdrop-filter: blur(14px);
+}
+
+.admin-tab {
+    flex: 0 0 auto;
+    min-height: 38px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--ui-muted);
+}
+
+.admin-tab.aktiv {
+    background: var(--ui-ink);
+    color: var(--ui-off-white);
+}
+
+.admin-info {
+    border: 0;
+    border-left: 2px solid var(--ui-rose);
+    border-radius: 0;
+    background: #f7f3ef;
+}
+
+.admin-db-kartya,
+.admin-naptar-blokk,
+.admin-cms-section {
+    border-color: var(--ui-line);
+    border-radius: 4px;
+    background: var(--ui-off-white);
+    box-shadow: none;
+}
+
+.admin-hozzaadas,
+.admin-kis-gomb,
+.admin-gomb {
+    border-radius: 3px;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .admin-panel-fej {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+
+    .admin-oldal {
+        width: calc(100% - 32px);
+        padding-top: 24px;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+
+    .admin-oldal {
+        width: calc(100% - 20px);
+        padding-top: 24px;
+    }
+
+    .admin-fejlec,
+    .admin-panel {
+        padding: 20px 16px;
+    }
+}
+
+
+.admin-body #lebego-foglalas-gomb {
+    display: none;
+}

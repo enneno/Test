@@ -421,3 +421,18 @@ test('a publikus foundation és hero CSS a publikus rétegben él', async ({ pag
         documentWidth: 390
     });
 });
+
+test('a legacy admin alap CSS a 40-admin rétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const adminCss = fs.readFileSync(path.join(root, 'src', 'styles', '40-admin.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(adminCss).toContain('Legacy admin base — végleges megjelenés (99-ből migrálva)');
+    expect(adminCss).toContain('.admin-auth-panel {');
+    expect(adminCss).toContain('.admin-eyebrow {');
+    expect(adminCss).toContain('.admin-body #lebego-foglalas-gomb {');
+    expect(unifiedCss).not.toContain('/* Admin */');
+    expect(unifiedCss).not.toContain('\n.admin-auth-panel {\n');
+    expect(unifiedCss).not.toContain('\n.admin-eyebrow {\n');
+    expect(unifiedCss).not.toContain('.admin-body #lebego-foglalas-gomb');
+});
