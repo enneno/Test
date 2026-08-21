@@ -203,3 +203,14 @@ test('a főoldali Contact CSS-e a publikus komponensrétegben él', async () => 
     expect(unifiedCss).not.toContain('.kapcsolat-akcio');
     expect(unifiedCss).not.toContain('.kapcsolat-tartalom');
 });
+
+test('a főoldali vendégértesítő CSS-e a publikus komponensrétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Guest notice — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('.vendegertesito[hidden] {');
+    expect(publicCss).toContain('.vendegertesito-szoveg {');
+    expect(unifiedCss).not.toContain('.vendegertesito');
+});
