@@ -246,3 +246,19 @@ test('a közös publikus CSS helperek a komponensrétegben élnek', async ({ pag
     });
     expect(image).toEqual({ objectFit: 'contain', minHeight: '0px', transform: 'none' });
 });
+
+test('a főoldali galéria CSS-e a publikus komponensrétegben él', async () => {
+    const root = path.resolve(__dirname, '..');
+    const publicCss = fs.readFileSync(path.join(root, 'src', 'styles', '10-public-components.css'), 'utf8');
+    const unifiedCss = fs.readFileSync(path.join(root, 'src', 'styles', '99-unified-design.css'), 'utf8');
+
+    expect(publicCss).toContain('Home gallery — végleges megjelenés (99-ből migrálva)');
+    expect(publicCss).toContain('#galeria-atvezeto {');
+    expect(publicCss).toContain('.galeria-kartya-lapozo {');
+    expect(publicCss).toContain('.galeria-kartya-vezerlok {');
+    expect(unifiedCss).not.toContain('/* Home gallery');
+    expect(unifiedCss).not.toContain('/* Homepage gallery');
+    expect(unifiedCss).not.toContain('#galeria-atvezeto');
+    expect(unifiedCss).not.toContain('.galeria-kartya');
+    expect(unifiedCss).not.toContain('.galeria-showcase');
+});

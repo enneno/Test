@@ -1879,3 +1879,52 @@ test('az adatkezelési oldal asztali és mobil elrendezése áttekinthető', asy
     expect(mobilElrendezes.dokumentumSzelesseg).toBeLessThanOrEqual(390);
     await expect(page.locator('.jogi-tartalom h2').first()).toHaveCSS('font-size', '42px');
 });
+
+test('a főoldali galéria carousel gombbal, billentyűzettel és mobilon is működik', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const carousel = page.locator('.galeria-kartya-lapozo');
+    const images = carousel.locator('img');
+    const imageCount = await images.count();
+    const status = carousel.locator('.galeria-kartya-allapot');
+    expect(imageCount).toBeGreaterThan(1);
+    await expect(carousel).toHaveAttribute('role', 'region');
+    await expect(carousel).toHaveAttribute('aria-label', 'Válogatott Lumi Nails munkák');
+    await expect(carousel).toHaveAttribute('aria-roledescription', 'carousel');
+    await expect(status).toHaveText('1 / ' + imageCount);
+    await expect(images.nth(0)).toHaveAttribute('data-aktiv', 'true');
+
+    await carousel.getByRole('button', { name: 'Következő kép' }).click();
+    await expect(status).toHaveText('2 / ' + imageCount);
+    await expect(images.nth(1)).toHaveAttribute('data-aktiv', 'true');
+
+    await carousel.press('ArrowLeft');
+    await expect(status).toHaveText('1 / ' + imageCount);
+    await expect(images.nth(0)).toHaveAttribute('data-aktiv', 'true');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobile = await carousel.evaluate((element) => {
+        const next = element.querySelector('.galeria-kartya-kovetkezo');
+        const dots = element.querySelector('.galeria-kartya-pontok');
+        const liveStatus = element.querySelector('.galeria-kartya-allapot');
+        const nextRect = next.getBoundingClientRect();
+        return {
+            nextWidth: Math.round(nextRect.width),
+            nextHeight: Math.round(nextRect.height),
+            dotsDisplay: getComputedStyle(dots).display,
+            statusDisplay: getComputedStyle(liveStatus).display,
+            documentWidth: document.documentElement.scrollWidth
+        };
+    });
+    expect(mobile).toEqual({
+        nextWidth: 44,
+        nextHeight: 44,
+        dotsDisplay: 'none',
+        statusDisplay: 'flex',
+        documentWidth: 390
+    });
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(images.nth(0)).toHaveCSS('transition-duration', '0s');
+});
