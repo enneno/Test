@@ -38,6 +38,134 @@ async function showLoggedOutAdminWorkspace(page) {
     });
 }
 
+async function installEmailAlertAdminBoundaryMock(page) {
+    await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({
+        status: 200,
+        contentType: 'text/javascript; charset=utf-8',
+        body: ''
+    }));
+    await page.route('**/adatok.json*', route => route.fulfill({
+        status: 200,
+        contentType: 'application/json; charset=utf-8',
+        body: '{}'
+    }));
+    await page.addInitScript(() => {
+        const initialEvents = [{
+            id: 'email-error-1',
+            booking_id: 'booking-1',
+            event_type: 'booking_confirmation_email',
+            channel: 'email',
+            status: 'error',
+            title: 'Foglalási email hiba',
+            message: 'A teszt email nem küldhető.',
+            metadata: {},
+            created_at: '2026-08-21T08:30:00.000Z',
+            bookings: {
+                customer_name: 'Teszt Anna',
+                customer_email: 'anna@example.com',
+                customer_phone: '+36201234567',
+                starts_at: '2026-08-22T08:00:00.000Z'
+            }
+        }];
+        const persistedAcknowledgement = localStorage.getItem('__lumiTestEmailAcknowledgement');
+        const events = persistedAcknowledgement
+            ? [JSON.parse(persistedAcknowledgement), ...initialEvents]
+            : [...initialEvents];
+        const session = {
+            access_token: 'admin-test-token',
+            user: { email: 'llevisimon@gmail.com' }
+        };
+
+        window.__lumiAdminSessionSettled = false;
+        window.__lumiBookingEventWrites = [];
+
+        function queryFor(table) {
+            let operation = 'select';
+            let payload = null;
+            let cachedResult = null;
+
+            const result = (single = false) => {
+                if (cachedResult) {
+                    return single && Array.isArray(cachedResult.data)
+                        ? { ...cachedResult, data: cachedResult.data[0] || null }
+                        : cachedResult;
+                }
+
+                if (table === 'booking_events' && operation === 'insert') {
+                    const rows = Array.isArray(payload) ? payload : [payload];
+                    const created = rows.map((row, index) => ({
+                        ...row,
+                        id: row.id || `created-event-${events.length + index + 1}`,
+                        created_at: row.created_at || new Date().toISOString(),
+                        bookings: null
+                    }));
+                    events.unshift(...created);
+                    window.__lumiBookingEventWrites.push(...created);
+                    const acknowledgement = created.find(event => event.event_type === 'admin_email_errors_acknowledged');
+                    if (acknowledgement) {
+                        localStorage.setItem('__lumiTestEmailAcknowledgement', JSON.stringify(acknowledgement));
+                    }
+                    cachedResult = { data: created, error: null };
+                } else if (table === 'booking_events') {
+                    cachedResult = { data: [...events], error: null };
+                } else {
+                    cachedResult = { data: [], error: null };
+                }
+
+                return single && Array.isArray(cachedResult.data)
+                    ? { ...cachedResult, data: cachedResult.data[0] || null }
+                    : cachedResult;
+            };
+
+            const query = {
+                select: () => query,
+                insert: value => { operation = 'insert'; payload = value; return query; },
+                update: value => { operation = 'update'; payload = value; return query; },
+                upsert: value => { operation = 'upsert'; payload = value; return query; },
+                delete: () => { operation = 'delete'; return query; },
+                eq: () => query,
+                neq: () => query,
+                in: () => query,
+                is: () => query,
+                gte: () => query,
+                lte: () => query,
+                gt: () => query,
+                lt: () => query,
+                order: () => query,
+                limit: () => query,
+                range: () => query,
+                single: async () => result(true),
+                maybeSingle: async () => ({ data: null, error: null }),
+                then: (resolve, reject) => Promise.resolve(result()).then(resolve, reject)
+            };
+            return query;
+        }
+
+        const client = {
+            auth: {
+                getSession: async () => {
+                    queueMicrotask(() => { window.__lumiAdminSessionSettled = true; });
+                    return { data: { session }, error: null };
+                },
+                onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+                signInWithPassword: async () => ({ data: { session }, error: null }),
+                signOut: async () => ({ error: null }),
+                updateUser: async () => ({ data: { user: session.user }, error: null })
+            },
+            from: table => queryFor(table),
+            rpc: async () => ({ data: null, error: null }),
+            functions: { invoke: async () => ({ data: { ok: true }, error: null }) },
+            storage: {
+                from: () => ({
+                    remove: async () => ({ data: [], error: null }),
+                    upload: async () => ({ data: null, error: null })
+                })
+            }
+        };
+        window.supabase = { createClient: () => client };
+    });
+}
+
 test('a publikus oldalak betöltődnek JavaScript oldalhiba nélkül', async ({ page }) => {
     const pageErrors = [];
     page.on('pageerror', error => pageErrors.push(error.message));
@@ -1164,6 +1292,87 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
     expect(await jelzes.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     expect(await lemondasiMegjegyzes.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     await expect(page.locator('#admin-vendeg-lemondas-tudomasulvetel')).toBeVisible();
+});
+
+test('az admin emailhiba értesítése tartósan nyugtázható', async ({ page }) => {
+    const pageErrors = [];
+    const consoleErrors = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+    page.on('console', message => {
+        if (message.type() === 'error') {
+            consoleErrors.push({
+                text: message.text(),
+                url: message.location().url
+            });
+        }
+    });
+
+    await installEmailAlertAdminBoundaryMock(page);
+
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
+
+    const notificationButton = page.getByRole('button', { name: 'Kommunikáció megnyitása' });
+    const notificationDot = notificationButton.locator('[data-admin-v2-email-alert]');
+    await expect(notificationDot).toBeVisible();
+
+    await notificationButton.click();
+    await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
+    await expect(page.locator('#admin-v2-email-failed')).toHaveText('1');
+
+    const acknowledgeButton = page.getByRole('button', { name: 'Emailhibák nyugtázása' });
+    await expect(acknowledgeButton).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(acknowledgeButton).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    const mobileAcknowledgeButton = await acknowledgeButton.evaluate(element => {
+        const style = getComputedStyle(element);
+        const box = element.getBoundingClientRect();
+        return {
+            width: box.width,
+            height: box.height,
+            minHeight: style.minHeight,
+            display: style.display,
+            viewportWidth: window.innerWidth,
+            mobileMediaMatches: matchMedia('(max-width: 900px)').matches
+        };
+    });
+    expect(mobileAcknowledgeButton).toEqual(expect.objectContaining({
+        minHeight: '44px',
+        viewportWidth: 390,
+        mobileMediaMatches: true
+    }));
+    expect(mobileAcknowledgeButton.width).toBeGreaterThanOrEqual(44);
+    expect(mobileAcknowledgeButton.height).toBeGreaterThanOrEqual(44);
+
+    await acknowledgeButton.click();
+
+    await expect(notificationDot).toBeHidden();
+    await expect(page.locator('#admin-v2-email-failed')).toHaveText('0');
+    await expect(acknowledgeButton).toBeHidden();
+
+    const writes = await page.evaluate(() => window.__lumiBookingEventWrites);
+    expect(writes).toHaveLength(1);
+    expect(writes[0]).toEqual(expect.objectContaining({
+        event_type: 'admin_email_errors_acknowledged',
+        channel: 'admin',
+        status: 'success',
+        metadata: expect.objectContaining({
+            acknowledged_count: 1,
+            acknowledged_through: '2026-08-21T08:30:00.000Z'
+        })
+    }));
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
+    await expect(
+        page.getByRole('button', { name: 'Kommunikáció megnyitása' })
+            .locator('[data-admin-v2-email-alert]')
+    ).toBeHidden();
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
 });
 
 test('az új árlista tétel nem ütközik a már meglévő ideiglenes névvel', async () => {

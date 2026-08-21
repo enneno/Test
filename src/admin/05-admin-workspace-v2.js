@@ -386,8 +386,12 @@
             summary.innerHTML = `
                 ${adminV2MiniStat('Mai email esemény', 'admin-v2-email-today')}
                 ${adminV2MiniStat('Sikeres', 'admin-v2-email-success')}
-                ${adminV2MiniStat('Hibás', 'admin-v2-email-failed')}
+                ${adminV2MiniStat('Nyitott hibák', 'admin-v2-email-failed')}
                 ${adminV2MiniStat('Legutóbbi hiba', 'admin-v2-email-last-error')}
+                <div class="admin-v2-communication-action">
+                    <p data-admin-v2-email-ack-summary>Nincs nyitott emailhiba.</p>
+                    <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-ack-email-errors hidden>Emailhibák nyugtázása</button>
+                </div>
             `;
             subnav.after(summary);
         }
@@ -422,6 +426,12 @@
             const booking = event.target.closest('[data-admin-v2-booking-search]');
             if (booking) {
                 adminV2FoglalasKeresese(booking.dataset.adminV2BookingSearch);
+                return;
+            }
+
+            const emailAcknowledgement = event.target.closest('[data-admin-v2-ack-email-errors]');
+            if (emailAcknowledgement) {
+                adminV2EmailHibakNyugtazasa(emailAcknowledgement);
                 return;
             }
 
@@ -726,19 +736,104 @@
         const todayKey = adminV2DatumKulcs(new Date());
         const emailEvents = events.filter(event => String(event.channel || '').toLowerCase() === 'email');
         const todayEvents = emailEvents.filter(event => adminV2DatumKulcs(new Date(event.created_at)) === todayKey);
-        const failed = emailEvents.filter(adminV2EsemenyHibas);
+        const failed = adminV2EmailHibasEsemenyek();
         const success = emailEvents.filter(event => ['success', 'sent', 'ok'].includes(String(event.status || '').toLowerCase()));
 
         adminV2Text('admin-v2-email-today', String(todayEvents.length));
         adminV2Text('admin-v2-email-success', String(success.length));
         adminV2Text('admin-v2-email-failed', String(failed.length));
         adminV2Text('admin-v2-email-last-error', failed.length ? adminV2RovidDatumIdo(failed[0].created_at) : 'Nincs');
+
+        const acknowledgeButton = document.querySelector('[data-admin-v2-ack-email-errors]');
+        const acknowledgeSummary = document.querySelector('[data-admin-v2-email-ack-summary]');
+        if (acknowledgeButton) acknowledgeButton.hidden = failed.length === 0;
+        if (acknowledgeSummary) {
+            acknowledgeSummary.textContent = failed.length
+                ? `${failed.length} emailhiba átnézésre vár.`
+                : 'Nincs nyitott emailhiba.';
+        }
     }
 
     function adminV2EmailHibasEsemenyek() {
-        return (Array.isArray(allapot.esemenynaploElemek) ? allapot.esemenynaploElemek : [])
+        const events = Array.isArray(allapot.esemenynaploElemek) ? allapot.esemenynaploElemek : [];
+        const acknowledgedIds = new Set();
+        let acknowledgedThrough = 0;
+
+        events
+            .filter(event => event.event_type === 'admin_email_errors_acknowledged')
+            .forEach(event => {
+                const metadata = event.metadata && typeof event.metadata === 'object' ? event.metadata : {};
+                const through = Date.parse(metadata.acknowledged_through || event.created_at || '');
+                if (Number.isFinite(through)) acknowledgedThrough = Math.max(acknowledgedThrough, through);
+                if (Array.isArray(metadata.acknowledged_event_ids)) {
+                    metadata.acknowledged_event_ids.forEach(id => acknowledgedIds.add(String(id)));
+                }
+            });
+
+        return events
             .filter(event => String(event.channel || '').toLowerCase() === 'email')
-            .filter(adminV2EsemenyHibas);
+            .filter(adminV2EsemenyHibas)
+            .filter(event => {
+                if (event.id && acknowledgedIds.has(String(event.id))) return false;
+                const createdAt = Date.parse(event.created_at || '');
+                return !acknowledgedThrough || !Number.isFinite(createdAt) || createdAt > acknowledgedThrough;
+            });
+    }
+
+    async function adminV2EmailHibakNyugtazasa(button) {
+        const errors = adminV2EmailHibasEsemenyek();
+        if (!errors.length) {
+            adminV2KommunikacioFrissitese();
+            return;
+        }
+
+        const validErrors = errors
+            .filter(event => Number.isFinite(Date.parse(event.created_at || '')))
+            .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+        const acknowledgedThrough = validErrors[0]?.created_at || new Date().toISOString();
+        const payload = {
+            booking_id: null,
+            event_type: 'admin_email_errors_acknowledged',
+            channel: 'admin',
+            status: 'success',
+            title: 'Emailhibák nyugtázva',
+            message: `Az admin ${errors.length} emailhibát átnézett és nyugtázott.`,
+            metadata: {
+                acknowledged_count: errors.length,
+                acknowledged_through: acknowledgedThrough,
+                acknowledged_event_ids: errors.map(event => event.id).filter(Boolean)
+            }
+        };
+
+        button.disabled = true;
+        onlineStatusz('Emailhibák nyugtázásának mentése...');
+
+        try {
+            const { data, error } = await allapot.kliens
+                .from('booking_events')
+                .insert(payload)
+                .select('id,booking_id,event_type,channel,status,title,message,metadata,created_at')
+                .single();
+
+            if (error || !data) {
+                onlineStatusz('Az emailhibák nyugtázását nem sikerült elmenteni. Próbáld újra.', true);
+                return;
+            }
+
+            allapot.esemenynaploElemek = [
+                data,
+                ...allapot.esemenynaploElemek.filter(event => event.id !== data.id)
+            ];
+            esemenynaploRenderelese();
+            await adminV2AttekintesFrissitese();
+            adminV2KommunikacioFrissitese();
+            onlineStatusz(`${errors.length} emailhiba nyugtázva.`);
+        } catch (error) {
+            console.warn('Emailhibák nyugtázása nem sikerült:', error);
+            onlineStatusz('Az emailhibák nyugtázását nem sikerült elmenteni. Próbáld újra.', true);
+        } finally {
+            if (button.isConnected) button.disabled = false;
+        }
     }
 
     function adminV2EsemenyHibas(event) {
