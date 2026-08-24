@@ -185,8 +185,11 @@ test('a hitelesített vendég csak a szűkített saját profilját és előzmén
     await page.goto('/fiokom/', { waitUntil: 'domcontentloaded' });
 
     await expect(page.locator('#fiok-iranyitopult')).toBeVisible();
+    await expect(page.locator('#fiok-udvozles')).toHaveText('Üdv újra, Kiss Dóra!');
     await expect(page.locator('#fiok-profil-nev')).toHaveValue('Kiss Dóra');
     await expect(page.locator('#fiok-profil-telefon')).toHaveValue('201234567');
+    const dashboardHeadings = await page.locator('.fiok-dashboard-racs > section h2').allTextContents();
+    expect(dashboardHeadings).toEqual(['Foglalásaim', 'Személyes adatok']);
     await expect(page.locator('.fiok-foglalas-kartya')).toHaveCount(1);
     await expect(page.locator('.fiok-foglalas-kartya')).toContainText('Erősített gél lakk');
     await expect(page.locator('.fiok-foglalas-kartya')).toContainText('Visszaigazolva');
@@ -214,7 +217,7 @@ test('a hitelesített profil előre kitölti a foglalást és az e-mail nem írh
     await expect(page.locator('#foglalas-tel')).toHaveValue('201234567');
     await expect(page.locator('#foglalas-email')).toHaveValue('dora@example.com');
     await expect(page.locator('#foglalas-email')).toHaveAttribute('readonly', '');
-    await expect(page.locator('.foglalas-fiok-jelzes')).toContainText('hitelesített vendégfiókod');
+    await expect(page.locator('.foglalas-fiok-jelzes')).toContainText('fiókodban elmentett adataidat');
 });
 
 test('a vendégfiók mobilon sem lóg ki a képernyőről', async ({ page }) => {
@@ -223,9 +226,27 @@ test('a vendégfiók mobilon sem lóg ki a képernyőről', async ({ page }) => 
     await page.goto('/fiokom/', { waitUntil: 'domcontentloaded' });
 
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    const headerGap = await page.evaluate(() => {
+        const header = document.querySelector('.site-header');
+        const hero = document.querySelector('.fiok-hero');
+        return Math.round(hero.getBoundingClientRect().top - header.getBoundingClientRect().bottom);
+    });
+    expect(headerGap).toBeGreaterThanOrEqual(20);
+    expect(headerGap).toBeLessThanOrEqual(28);
     await expect(page.locator('.fiok-auth-kartya')).toBeVisible();
     await expect(page.locator('.hamburger')).toBeVisible();
     await expect(page.locator('#lebego-foglalas-gomb')).toHaveCount(0);
+
+    await page.getByRole('tab', { name: 'Regisztráció' }).click();
+    const phoneFieldBorders = await page.locator('#fiok-regisztracio-form .fiok-telefon-mezo').evaluate(field => {
+        const input = field.querySelector('input');
+        return {
+            field: getComputedStyle(field).borderTopWidth,
+            input: getComputedStyle(input).borderTopWidth
+        };
+    });
+    expect(phoneFieldBorders.field).not.toBe('0px');
+    expect(phoneFieldBorders.input).toBe('0px');
 });
 
 test('a migráció és az Edge Function megtartja a vendégfiók szerveroldali biztonsági határait', () => {

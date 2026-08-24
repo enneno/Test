@@ -118,10 +118,13 @@
         setHidden('fiok-elozmenyek-panel', needsCompletion);
 
         const email = document.getElementById('fiok-aktualis-email');
+        const greeting = document.getElementById('fiok-udvozles');
         const name = document.getElementById('fiok-profil-nev');
         const phone = document.getElementById('fiok-profil-telefon');
+        const displayName = profile?.full_name || String(user.user_metadata?.full_name || '').trim();
         if (email) email.textContent = user.email || '';
-        if (name) name.value = profile?.full_name || String(user.user_metadata?.full_name || '');
+        if (greeting) greeting.textContent = displayName ? 'Üdv újra, ' + displayName + '!' : 'Üdv újra!';
+        if (name) name.value = displayName;
         if (phone) phone.value = nationalPhone(profile?.phone || user.user_metadata?.phone || '');
         setGlobalStatus(needsCompletion ? 'Töltsd ki a profilodat a foglalási előzmények megnyitásához.' : '');
     }

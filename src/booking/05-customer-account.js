@@ -42,7 +42,7 @@
 
         const message = document.createElement('p');
         message.className = 'foglalas-fiok-jelzes';
-        message.append('A hitelesített vendégfiókod adatait előre kitöltöttük. ');
+        message.append('A fiókodban elmentett adataidat előre kitöltöttük. ');
 
         const accountLink = document.createElement('a');
         accountLink.href = '/fiokom/';

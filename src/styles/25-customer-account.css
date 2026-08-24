@@ -2,7 +2,7 @@
     width: min(1180px, calc(100% - 40px));
     min-height: 70vh;
     margin: 0 auto;
-    padding: calc(var(--ui-header-height, 82px) + 58px) 0 96px;
+    padding: 58px 0 96px;
 }
 
 .fiok-main [hidden] {
@@ -216,7 +216,7 @@
 
 .fiok-telefon-mezo {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 58px minmax(0, 1fr);
     align-items: center;
     min-height: 46px;
     overflow: hidden;
@@ -231,19 +231,25 @@
 }
 
 .fiok-telefon-mezo > span {
-    padding: 0 0 0 13px;
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+    justify-content: center;
+    border-right: 1px solid var(--lumi-control-border);
     color: var(--ui-muted, #756a65);
     font-weight: 600;
 }
 
-.fiok-telefon-mezo input {
+.fiok-form .fiok-telefon-mezo .fiok-telefon-input {
     min-height: 44px;
     border: 0;
     border-radius: 0;
+    background: transparent;
     box-shadow: none;
 }
 
-.fiok-telefon-mezo input:focus-visible {
+.fiok-form .fiok-telefon-mezo .fiok-telefon-input:focus-visible {
+    border: 0;
     box-shadow: none;
 }
 
@@ -383,10 +389,14 @@
 
 .fiok-dashboard-racs {
     display: grid;
-    grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: 22px;
     margin-top: 34px;
+}
+
+.fiok-profil-panel .fiok-form {
+    max-width: 620px;
 }
 
 .fiok-panel {
@@ -529,7 +539,7 @@
 @media screen and (max-width: 768px) {
     .fiok-main {
         width: min(100% - 28px, 680px);
-        padding: calc(var(--ui-header-height, 72px) + 34px) 0 64px;
+        padding: 24px 0 64px;
     }
 
     .fiok-hero,
