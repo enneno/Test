@@ -19,6 +19,10 @@
         lemondasEsemenyek: new Map(),
         szolgaltatasok: [],
         kuponok: [],
+        vendegProfilok: [],
+        aktivVendegProfil: '',
+        vendegProfilKereses: '',
+        vendegProfilKeresId: 0,
         esemenynaploOldal: 1,
         esemenynaploOldalMeret: 10,
         esemenynaploElemek: [],
@@ -558,23 +562,37 @@
         jelszoStatusz('Jelszó módosítva.');
     }
 
-    function sessionAllapot(session, elemek) {
+    async function sessionAllapot(session, elemek) {
         allapot.session = session;
+        const ellenorzesId = (allapot.adminJogosultsagKeresId || 0) + 1;
+        allapot.adminJogosultsagKeresId = ellenorzesId;
         elemek.authPanel.hidden = Boolean(session);
-        elemek.tartalom.hidden = !session;
+        elemek.tartalom.hidden = true;
         if (elemek.lebegoMentes) {
-            elemek.lebegoMentes.hidden = !session;
+            elemek.lebegoMentes.hidden = true;
         }
 
-        if (session) {
-            authStatusz(elemek, '');
-            adminTabValtas(allapot.aktivTab);
-            adatokFrissitese();
+        if (!session) return;
+
+        const { data: admin, error } = await allapot.kliens.rpc('is_lumi_admin');
+        if (ellenorzesId !== allapot.adminJogosultsagKeresId) return;
+
+        if (error || admin !== true) {
+            await allapot.kliens.auth.signOut();
+            authStatusz(elemek, 'Ehhez a felülethez nincs admin jogosultságod.', true);
+            return;
         }
+
+        elemek.tartalom.hidden = false;
+        if (elemek.lebegoMentes) elemek.lebegoMentes.hidden = false;
+        authStatusz(elemek, '');
+        adminTabValtas(allapot.aktivTab);
+        adatokFrissitese();
     }
 
     function adatokFrissitese() {
         foglalasokBetoltese();
+        vendegProfilokBetoltese();
         esemenynaploBetoltese();
         szolgaltatasokBetoltese();
         kuponokBetoltese();

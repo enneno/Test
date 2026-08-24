@@ -29,6 +29,12 @@ const bundles = [
         banner: '// Generated from src/booking by npm run build. Edit the source parts, not this file.\n\n'
     },
     {
+        output: 'account.js',
+        sourceDir: 'src/account',
+        extension: '.js',
+        banner: '// Generated from src/account by npm run build. Edit the source parts, not this file.\n\n'
+    },
+    {
         output: 'admin-supabase.js',
         sourceDir: 'src/admin',
         extension: '.js',

@@ -35,6 +35,7 @@ const PUBLIC_ROOT_FILES = new Set([
     'admin-export.js',
     'admin-supabase.js',
     'booking.js',
+    'account.js',
     'script.js',
     'style.css',
     'admin-v2.css',
@@ -43,7 +44,7 @@ const PUBLIC_ROOT_FILES = new Set([
     'robots.txt',
     'sitemap.xml'
 ]);
-const PUBLIC_DIRECTORIES = new Set(['adatkezeles', 'admin', 'arlista', 'foglalas', 'galeria', 'kepek']);
+const PUBLIC_DIRECTORIES = new Set(['adatkezeles', 'admin', 'arlista', 'fiokom', 'foglalas', 'galeria', 'kepek']);
 const PUBLIC_NESTED_EXTENSIONS = new Set(['.html', '.jpg', '.jpeg', '.png', '.webp', '.svg', '.ico']);
 
 function isPublicFile(filePath) {

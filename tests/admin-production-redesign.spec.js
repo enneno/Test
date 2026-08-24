@@ -92,7 +92,24 @@ function fixtures() {
                 services: { name: 'Epites - S', price_text: '9 000 Ft' }
             }
         ],
+        admin_customer_profiles: [
+            { customer_key: 'email:anna.nagy@example.test', customer_name: 'Nagy Anna', customer_email: 'anna.nagy@example.test', customer_phone: '+36 30 111 2233', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 10), last_booking_at: isoAt(0, 10) },
+            { customer_key: 'email:dorka.kiss@example.test', customer_name: 'Kiss Dorka', customer_email: 'dorka.kiss@example.test', customer_phone: '+36 20 222 3344', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 14), last_booking_at: isoAt(0, 14) },
+            { customer_key: 'email:luca.toth@example.test', customer_name: 'Toth Luca', customer_email: 'luca.toth@example.test', customer_phone: '+36 70 333 4455', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(1, 9), last_booking_at: isoAt(1, 9) },
+            { customer_key: 'email:petra.farkas@example.test', customer_name: 'Farkas Petra', customer_email: 'petra.farkas@example.test', customer_phone: '+36 30 444 5566', booking_count: 1, completed_count: 0, cancelled_count: 1, next_booking_at: null, last_booking_at: isoAt(2, 13) }
+        ],
+        admin_customer_bookings: [
+            { customer_key: 'email:anna.nagy@example.test', id: '00000000-0000-4000-8000-000000000001', public_reference: 'LUMI-DEMO1', starts_at: isoAt(0, 10), ends_at: isoAt(0, 12), status: 'confirmed', created_at: isoAt(-4, 12), service_name: 'Erositett gel lakk', price_text: '6 500 Ft' }
+        ],
         blocked_times: [
+            {
+                id: '00000000-0000-4000-8000-000000000100',
+                starts_at: isoAt(0, 8),
+                ends_at: isoAt(0, 9),
+                reason: 'Adminisztracio',
+                status: 'active',
+                created_at: isoAt(-1, 9)
+            },
             {
                 id: '00000000-0000-4000-8000-000000000101',
                 starts_at: isoAt(3, 12),
@@ -313,7 +330,24 @@ async function installSupabaseBoundaryMock(page) {
                 updateUser: async () => ({ data: { user: session.user }, error: null })
             },
             from: table => new Query(table),
-            rpc: async () => ({ data: [], error: null }),
+            rpc: async (name, args) => {
+                if (name === 'is_lumi_admin') {
+                    return { data: true, error: null };
+                }
+                if (name === 'apply_admin_booking_changes') {
+                    for (const change of args?.p_changes || []) {
+                        const rows = change.type === 'blocked' ? seed.blocked_times : seed.bookings;
+                        const row = rows.find(item => item.id === change.id);
+                        if (!row) continue;
+                        row.status = change.status;
+                        row.starts_at = change.starts_at;
+                        row.ends_at = change.ends_at;
+                        if (change.type === 'blocked') row.reason = change.reason;
+                    }
+                    return { data: { email_jobs: [] }, error: null };
+                }
+                return { data: [], error: null };
+            },
             functions: {
                 invoke: async () => ({ data: { success: true }, error: null })
             },
@@ -344,7 +378,7 @@ async function openAdmin(page, viewport) {
     expect(response.status()).toBeLessThan(400);
     await expect(page.locator('#admin-tartalom')).toBeVisible();
     await expect(page.locator('body')).toHaveClass(/admin-v2/);
-    await expect(page.locator('#admin-v2-stat-today')).toHaveText('2');
+    await expect(page.locator('#admin-v2-stat-today')).toHaveText('3');
 
     return browserErrors;
 }
@@ -355,9 +389,16 @@ test.describe('production admin redesign', () => {
 
         await expect(page.locator('.admin-v2-topbar')).toBeVisible();
         await expect(page.locator('.admin-v2-sidebar')).toBeVisible();
-        await expect(page.getByRole('heading', { name: 'J\u00f3 reggelt, Levi' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'J\u00f3 reggelt, Szofi' })).toBeVisible();
         await expect(page.locator('#admin-v2-stat-pending')).toHaveText('1');
         await expect(page.locator('#admin-v2-stat-email')).toHaveText('1');
+        await expect(page.locator('[data-admin-v2-today-list]')).toContainText('Adminisztracio');
+        await expect(page.locator('[data-admin-v2-upcoming-list]')).toContainText('Szemelyes program');
+
+        const brandLink = page.getByRole('link', { name: 'Admin áttekintés' }).first();
+        await expect(brandLink).toHaveAttribute('href', '/admin/');
+        await expect(brandLink.locator('img')).toHaveCount(0);
+        await expect(page.getByRole('link', { name: 'Vissza a főoldalra' })).toHaveAttribute('href', '/');
         if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
             await page.screenshot({ path: 'test-results/admin-redesign-overview.png', fullPage: true });
         }
@@ -382,7 +423,7 @@ test.describe('production admin redesign', () => {
         await page.locator('[data-admin-v2-nav="foglalasok"]').click();
         await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
         await expect(page.locator('#admin-panel-foglalasok .admin-v2-page-heading h1')).toHaveText('Id\u0151pontok');
-        await expect(page.locator('#admin-foglalas-lista .admin-foglalas-kartya')).toHaveCount(5);
+        await expect(page.locator('#admin-foglalas-lista .admin-foglalas-kartya')).toHaveCount(6);
 
         const bookingHeadingSize = await page.locator('#admin-panel-foglalasok .admin-v2-page-heading h1').evaluate(
             element => Number.parseFloat(getComputedStyle(element).fontSize)
@@ -390,6 +431,18 @@ test.describe('production admin redesign', () => {
         expect(bookingHeadingSize).toBeLessThanOrEqual(32);
         if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
             await page.screenshot({ path: 'test-results/admin-redesign-bookings-desktop.png', fullPage: true });
+        }
+
+        await page.locator('[data-admin-v2-nav="vendegek"]').click();
+        await expect(page.locator('#admin-panel-vendegek')).toHaveClass(/aktiv/);
+        await expect(page.locator('#admin-panel-vendegek .admin-v2-page-heading h1')).toHaveText('Vendégek');
+        await expect(page.locator('[data-vendeg-lista] .admin-vendeg-sor')).toHaveCount(4);
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Nagy Anna');
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Erositett gel lakk');
+        await expect(page.locator('.admin-v2-profile strong')).toHaveText('Szofi');
+        await expect(page.locator('.admin-v2-avatar')).toHaveText('SZ');
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-customers-desktop.png', fullPage: true });
         }
 
         await page.locator('[data-admin-v2-nav="munkaido"]').click();
@@ -428,7 +481,52 @@ test.describe('production admin redesign', () => {
         expect(targetSize.width).toBeGreaterThanOrEqual(44);
         expect(targetSize.height).toBeGreaterThanOrEqual(44);
 
-        await menuButton.click();
+        const todayRowMetrics = await page.locator('[data-admin-v2-today-list] .admin-v2-status-chip').first().evaluate(chip => {
+            const row = chip.closest('.admin-v2-schedule-item');
+            const copy = row.querySelector('.admin-v2-schedule-copy');
+            const chipRect = chip.getBoundingClientRect();
+            const copyRect = copy.getBoundingClientRect();
+            const rowRect = row.getBoundingClientRect();
+            return {
+                statusColumn: getComputedStyle(chip).gridColumnStart,
+                statusRightOfCopy: chipRect.left >= copyRect.right,
+                statusInsideRow: chipRect.top >= rowRect.top && chipRect.bottom <= rowRect.bottom,
+                statusHeight: chipRect.height
+            };
+        });
+        expect(todayRowMetrics.statusColumn).toBe('4');
+        expect(todayRowMetrics.statusRightOfCopy).toBe(true);
+        expect(todayRowMetrics.statusInsideRow).toBe(true);
+        expect(todayRowMetrics.statusHeight).toBeLessThanOrEqual(36);
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-overview-mobile.png', fullPage: true });
+        }
+
+        await page.evaluate(() => {
+            const body = document.body;
+            const start = new Touch({
+                identifier: 1,
+                target: body,
+                clientX: 64,
+                clientY: 360
+            });
+            const end = new Touch({
+                identifier: 1,
+                target: body,
+                clientX: 152,
+                clientY: 364
+            });
+            body.dispatchEvent(new TouchEvent('touchstart', {
+                bubbles: true,
+                touches: [start],
+                changedTouches: [start]
+            }));
+            body.dispatchEvent(new TouchEvent('touchend', {
+                bubbles: true,
+                touches: [],
+                changedTouches: [end]
+            }));
+        });
         await expect(page.locator('body')).toHaveClass(/admin-v2-menu-open/);
         await expect.poll(async () => {
             return (await page.locator('.admin-v2-sidebar').boundingBox()).x;
@@ -439,12 +537,52 @@ test.describe('production admin redesign', () => {
         await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
         await expect(page.locator('#admin-panel-foglalasok .admin-v2-page-heading h1')).toHaveText('Id\u0151pontok');
 
+        const fixedHeader = await page.locator('.admin-v2-topbar').evaluate(element => {
+            const style = getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+            return { position: style.position, top: Math.round(rect.top) };
+        });
+        expect(fixedHeader).toEqual({ position: 'fixed', top: 0 });
+
+        const firstCard = page.locator('#admin-foglalas-lista .admin-foglalas-kartya').first();
+        await firstCard.getByRole('button', { name: 'Szerkesztés' }).click();
+        const editorMetrics = await firstCard.evaluate(card => {
+            const status = card.querySelector('[data-foglalas-statusz]').getBoundingClientRect();
+            const date = card.querySelector('[data-idopont-mezo="date"]').getBoundingClientRect();
+            const start = card.querySelector('[data-idopont-mezo="start_time"]').getBoundingClientRect();
+            const end = card.querySelector('[data-idopont-mezo="end_time"]').getBoundingClientRect();
+            return {
+                statusHeight: status.height,
+                dateWidth: date.width,
+                startWidth: start.width,
+                endWidth: end.width
+            };
+        });
+        expect(editorMetrics.statusHeight).toBeLessThanOrEqual(36);
+        expect(editorMetrics.dateWidth).toBeGreaterThan(editorMetrics.startWidth * 1.25);
+        expect(editorMetrics.dateWidth).toBeGreaterThan(editorMetrics.endWidth * 1.25);
+
         const mobileMetrics = await page.evaluate(() => {
             const heading = document.querySelector('#admin-panel-foglalasok .admin-v2-page-heading h1');
             const firstCard = document.querySelector('#admin-foglalas-lista .admin-foglalas-kartya');
             const cardRect = firstCard?.getBoundingClientRect();
+            const cardTitle = firstCard?.querySelector('.admin-foglalas-fosor h3');
+            const controls = Array.from(firstCard?.querySelectorAll('.admin-foglalas-vezerlok > *') || []);
+            const viewSwitch = document.querySelector('#admin-panel-foglalasok .admin-foglalas-nezetvalto');
+            const viewButton = viewSwitch?.querySelector('.admin-foglalas-nezet-gomb');
+            const saveButton = document.querySelector('#admin-panel-foglalasok [data-admin-v2-save]');
+            const cancellationButtons = Array.from(document.querySelectorAll('#admin-panel-foglalasok .admin-vendeg-lemondas-akciok .admin-kis-gomb'));
+            const cancellationButtonRects = cancellationButtons.map(element => element.getBoundingClientRect());
             return {
                 headingFont: Number.parseFloat(getComputedStyle(heading).fontSize),
+                cardTitleFont: Number.parseFloat(getComputedStyle(cardTitle).fontSize),
+                controlHeights: controls.map(element => element.getBoundingClientRect().height),
+                viewSwitchWidth: viewSwitch?.getBoundingClientRect().width || 0,
+                viewButtonHeight: viewButton?.getBoundingClientRect().height || 0,
+                saveButtonHeight: saveButton?.getBoundingClientRect().height || 0,
+                cancellationButtonHeights: cancellationButtonRects.map(rect => rect.height),
+                cancellationButtonsSameRow: cancellationButtonRects.length < 2
+                    || Math.abs(cancellationButtonRects[0].top - cancellationButtonRects[1].top) <= 1,
                 overflow: document.documentElement.scrollWidth - window.innerWidth,
                 cardLeft: cardRect?.left || 0,
                 cardRight: cardRect?.right || 0,
@@ -453,6 +591,13 @@ test.describe('production admin redesign', () => {
         });
 
         expect(mobileMetrics.headingFont).toBeLessThanOrEqual(24);
+        expect(mobileMetrics.cardTitleFont).toBe(17);
+        expect(Math.max(...mobileMetrics.controlHeights)).toBeLessThanOrEqual(36);
+        expect(mobileMetrics.viewSwitchWidth).toBeLessThanOrEqual(180);
+        expect(mobileMetrics.viewButtonHeight).toBeLessThanOrEqual(36);
+        expect(mobileMetrics.saveButtonHeight).toBeLessThanOrEqual(38);
+        expect(Math.max(...mobileMetrics.cancellationButtonHeights)).toBeLessThanOrEqual(36);
+        expect(mobileMetrics.cancellationButtonsSameRow).toBe(true);
         expect(mobileMetrics.overflow).toBeLessThanOrEqual(1);
         expect(mobileMetrics.cardLeft).toBeGreaterThanOrEqual(0);
         expect(mobileMetrics.cardRight).toBeLessThanOrEqual(mobileMetrics.viewport + 1);
@@ -460,6 +605,83 @@ test.describe('production admin redesign', () => {
         if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
             await page.screenshot({ path: 'test-results/admin-redesign-mobile.png', fullPage: true });
         }
+
+        for (const viewport of [{ width: 320, height: 700 }, { width: 844, height: 390 }]) {
+            await page.setViewportSize(viewport);
+            const responsiveOverflow = await page.evaluate(
+                () => document.documentElement.scrollWidth - window.innerWidth
+            );
+            expect(responsiveOverflow).toBeLessThanOrEqual(1);
+        }
+
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('mobile: the customer list and detail stay within the viewport', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+
+        await page.getByRole('button', { name: 'Navigáció megnyitása' }).click();
+        await page.locator('.admin-v2-sidebar [data-admin-v2-nav="vendegek"]').click();
+        await expect(page.locator('#admin-panel-vendegek')).toHaveClass(/aktiv/);
+        await expect(page.locator('[data-vendeg-lista] .admin-vendeg-sor')).toHaveCount(4);
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Nagy Anna');
+
+        const metrics = await page.evaluate(() => ({
+            overflow: document.documentElement.scrollWidth - window.innerWidth,
+            searchFont: Number.parseFloat(getComputedStyle(document.querySelector('[data-vendeg-kereses]')).fontSize),
+            panelRight: document.querySelector('#admin-panel-vendegek').getBoundingClientRect().right,
+            viewport: window.innerWidth
+        }));
+        expect(metrics.overflow).toBeLessThanOrEqual(1);
+        expect(metrics.searchFont).toBeGreaterThanOrEqual(16);
+        expect(metrics.panelRight).toBeLessThanOrEqual(metrics.viewport + 1);
+
+        await page.getByRole('button', { name: /Kiss Dorka/ }).click();
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Kiss Dorka');
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Nincs foglalási előzmény');
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-customers-mobile.png', fullPage: true });
+        }
+
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('the bell opens a notification list and routes each live item to its workflow', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+        const bell = page.getByRole('button', { name: 'Értesítések megnyitása' });
+
+        await bell.click();
+        const panel = page.getByRole('region', { name: 'Értesítések' });
+        await expect(panel).toBeVisible();
+        await expect(panel).toContainText('1 megerősítésre vár');
+        await expect(panel).toContainText('1 új vendéglemondás');
+        await expect(panel).toContainText('1 emailhiba');
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-notifications-mobile.png', fullPage: true });
+        }
+
+        await panel.getByRole('button', { name: /megerősítésre vár/i }).click();
+        await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
+        await expect(page.locator('#admin-foglalas-statusz-szuro')).toHaveValue('pending');
+        await expect(panel).toBeHidden();
+
+        const pendingCard = page.locator('#admin-foglalas-lista .admin-foglalas-kartya').filter({ hasText: 'Kiss Dorka' });
+        await pendingCard.getByRole('button', { name: 'Szerkesztés' }).click();
+        await pendingCard.locator('[data-foglalas-statusz]').selectOption('confirmed');
+        await page.locator('#admin-panel-foglalasok [data-admin-v2-save]').click();
+        await expect(page.locator('#admin-foglalas-lista .admin-foglalas-kartya')).toHaveCount(0);
+
+        await bell.click();
+        await expect(panel).not.toContainText('megerősítésre vár');
+        await panel.getByRole('button', { name: /új vendéglemondás/i }).click();
+        await expect(page.locator('#admin-foglalas-statusz-szuro')).toHaveValue('cancelled_by_customer');
+        await page.getByRole('button', { name: 'Új lemondások nyugtázása' }).click();
+        await bell.click();
+        await expect(panel).not.toContainText('új vendéglemondás');
+
+        await panel.getByRole('button', { name: /emailhiba/i }).click();
+        await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
+        await expect(panel).toBeHidden();
         expect(browserErrors).toEqual([]);
     });
 });

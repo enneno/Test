@@ -300,6 +300,7 @@ function tisztaUrlBeallitasa() {
         '/galeria/index.html': '/galeria/',
         '/foglalas.html': '/foglalas/',
         '/foglalas/index.html': '/foglalas/',
+        '/fiokom/index.html': '/fiokom/',
         '/admin.html': '/admin/',
         '/admin/index.html': '/admin/'
     };
@@ -329,7 +330,7 @@ function fejlecBetoltese() {
                 <a href="/#szolgaltatasok">Szolgáltatások</a>
                 <a href="/arlista/">Árlista</a>
                 <a href="/galeria/">Galéria</a>
-                <a class="foglalas-kezelo-nav" href="/foglalas/#foglalas-ellenorzes">Foglal&aacute;som</a>
+                <a href="/fiokom/">Fiókom</a>
                 <a href="/foglalas/">Foglalás</a>
             </nav>
 
@@ -345,7 +346,7 @@ function fejlecBetoltese() {
             <a href="/#szolgaltatasok">Szolgáltatások</a>
             <a href="/arlista/">Árlista</a>
             <a href="/galeria/">Galéria</a>
-            <a class="foglalas-kezelo-nav" href="/foglalas/#foglalas-ellenorzes">Foglal&aacute;som</a>
+            <a href="/fiokom/">Fiókom</a>
             <a href="/foglalas/">Foglalás</a>
         </nav>
     `;
@@ -995,6 +996,7 @@ function normalizaltUtvonal(utvonal) {
         '/galeria/index.html': '/galeria/',
         '/foglalas.html': '/foglalas/',
         '/foglalas/index.html': '/foglalas/',
+        '/fiokom/index.html': '/fiokom/',
         '/admin.html': '/admin/',
         '/admin/index.html': '/admin/'
     };
@@ -2152,7 +2154,7 @@ function foglalasiUrlapBekotese() {
 }
 
 function lebegoFoglalasLetrehozasa() {
-    if (foglalasOldal() || adminOldal() || document.getElementById('lebego-foglalas-gomb')) {
+    if (foglalasOldal() || adminOldal() || document.body.classList.contains('fiok-oldal') || document.getElementById('lebego-foglalas-gomb')) {
         return;
     }
 

@@ -12,12 +12,21 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return json({ ok: false, error: "Nem támogatott kérés." }, 405);
+  }
+
+  const contentLength = Number(req.headers.get("content-length") || 0);
+  if (Number.isFinite(contentLength) && contentLength > 64 * 1024) {
+    return json({ ok: false, error: "A kérés túl nagy." }, 413);
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
     const requestKey = stringValue(body.request_key);
     const serviceId = stringValue(body.service_id);
-    const customerName = stringValue(body.customer_name);
-    const customerPhone = stringValue(body.customer_phone);
+    const customerName = normalizedName(body.customer_name);
+    const customerPhone = normalizedHungarianPhone(body.customer_phone);
     const customerEmail = stringValue(body.customer_email).toLowerCase();
     const note = stringValue(body.note);
     const startsAt = stringValue(body.starts_at);
@@ -28,20 +37,66 @@ serve(async (req) => {
       return json({ ok: false, error: "Érvénytelen foglalási műveletazonosító." }, 400);
     }
 
-    if (!serviceId || !customerName || !customerPhone || !customerEmail || !startsAt) {
-      return json({ ok: false, error: "Hiányzó foglalási adat." }, 400);
+    if (!isUuid(serviceId) || !customerName || !customerPhone || !validEmail(customerEmail) || !validDate(startsAt)) {
+      return json({ ok: false, error: "Érvénytelen vagy hiányzó foglalási adat." }, 400);
+    }
+    if (note.length > 2000 || (couponId && !isUuid(couponId)) || couponCode.length > 80) {
+      return json({ ok: false, error: "A foglalási adatok nem megfelelőek." }, 400);
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !serviceRoleKey) {
       console.error("create-booking-with-email missing Supabase env");
       return json({ ok: false, error: "Hiányzó Supabase beállítás." }, 500);
     }
 
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-    const bookingRpcBody = {
+    let customerUserId = "";
+    const accessToken = jwtFromAuthorization(req.headers.get("authorization"));
+
+    if (accessToken) {
+      if (!anonKey) {
+        console.error("create-booking-with-email missing anon key for authenticated booking");
+        return json({ ok: false, error: "A vendégfiók most nem használható." }, 500);
+      }
+
+      const authClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: `Bearer ${accessToken}` } },
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      });
+      const { data: authData, error: authError } = await authClient.auth.getUser(accessToken);
+      const user = authError ? null : authData?.user;
+
+      if (!user?.id || !user.email || !user.email_confirmed_at || user.is_anonymous) {
+        return json({ ok: false, error: "A vendégfiók munkamenete érvénytelen vagy lejárt." }, 401);
+      }
+
+      const verifiedEmail = String(user.email).trim().toLowerCase();
+      if (verifiedEmail !== customerEmail) {
+        return json({ ok: false, error: "A foglalási e-mail nem egyezik a hitelesített vendégfiókkal." }, 400);
+      }
+
+      const { error: profileError } = await authClient.rpc("ensure_customer_account", {
+        p_full_name: customerName,
+        p_phone: customerPhone,
+      });
+      if (profileError) {
+        console.warn("create-booking-with-email customer account rejected", {
+          userId: user.id,
+          error: profileError.message,
+        });
+        return json({ ok: false, error: "A hitelesített vendégprofil nem készíthető elő." }, 403);
+      }
+
+      customerUserId = user.id;
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    const bookingRpcBody: Record<string, unknown> = {
       p_request_key: requestKey,
       p_service_id: serviceId,
       p_customer_name: customerName,
@@ -52,7 +107,12 @@ serve(async (req) => {
       p_coupon_id: couponId || null,
       p_coupon_code: couponCode || null,
     };
-    const { data: bookingId, error } = await supabase.rpc("create_booking_idempotent", bookingRpcBody);
+    const bookingRpcName = customerUserId
+      ? "create_booking_idempotent_for_user"
+      : "create_booking_idempotent";
+    if (customerUserId) bookingRpcBody.p_customer_user_id = customerUserId;
+
+    const { data: bookingId, error } = await supabase.rpc(bookingRpcName, bookingRpcBody);
 
     if (error || !bookingId) {
       console.error("create-booking-with-email booking failed", {
@@ -117,11 +177,12 @@ serve(async (req) => {
       booking_id: bookingId,
       booking_reference: bookingReference,
       request_key: requestKey,
+      account_linked: Boolean(customerUserId),
       email,
     });
   } catch (error) {
     console.error("create-booking-with-email unexpected error", errorMessage(error));
-    return json({ ok: false, error: errorMessage(error) }, 500);
+    return json({ ok: false, error: "A foglalás most nem dolgozható fel. Kérlek, próbáld újra." }, 500);
   }
 });
 
@@ -172,12 +233,52 @@ function stringValue(value: unknown) {
   return String(value || "").trim();
 }
 
+function normalizedName(value: unknown) {
+  const name = stringValue(value).replace(/\s+/g, " ");
+  return name.length >= 2 && name.length <= 120 && !/[\u0000-\u001f\u007f]/.test(name) ? name : "";
+}
+
+function normalizedHungarianPhone(value: unknown) {
+  let digits = stringValue(value).replace(/\D/g, "");
+  if (digits.length === 11 && digits.startsWith("36")) digits = digits.slice(2);
+  return digits.length === 9 ? `+36 ${digits}` : "";
+}
+
+function validEmail(value: string) {
+  return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function validDate(value: string) {
+  return value.length <= 64 && Number.isFinite(Date.parse(value));
+}
+
+function jwtFromAuthorization(header: string | null) {
+  const match = String(header || "").match(/^Bearer\s+(.+)$/i);
+  const token = match?.[1]?.trim() || "";
+  return token.split(".").length === 3 ? token : "";
+}
+
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 function cleanError(message: string) {
-  return message.replace(/^ERROR:\s*/i, "").trim();
+  const normalized = message.replace(/^ERROR:\s*/i, "").trim().toLowerCase();
+
+  if (normalized.includes("szolgaltatas jelenleg nem foglalhato")) {
+    return "Ez a szolgáltatás jelenleg nem foglalható.";
+  }
+  if (normalized.includes("idopont mar nem szabad") || normalized.includes("idopont kozben betelt")) {
+    return "Ez az időpont már nem szabad. Kérlek, válassz másikat.";
+  }
+  if (normalized.includes("kupon nem ervenyes")) {
+    return "Ez a kupon nem érvényes ehhez a foglaláshoz.";
+  }
+  if (normalized.includes("muveleti azonositot mas adatokkal")) {
+    return "A foglalási kérés adatai megváltoztak. Frissítsd az oldalt, majd próbáld újra.";
+  }
+
+  return "Nem sikerült létrehozni a foglalást.";
 }
 
 function errorMessage(error: unknown) {

@@ -2,7 +2,7 @@ const { test, expect } = require('playwright/test');
 const path = require('node:path');
 const fs = require('node:fs');
 
-const publicPages = ['/', '/arlista/', '/galeria/', '/foglalas/', '/adatkezeles/'];
+const publicPages = ['/', '/arlista/', '/galeria/', '/foglalas/', '/fiokom/', '/adatkezeles/'];
 
 async function installLoggedOutAdminBoundaryMock(page) {
     await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({
@@ -153,7 +153,9 @@ async function installEmailAlertAdminBoundaryMock(page) {
                 updateUser: async () => ({ data: { user: session.user }, error: null })
             },
             from: table => queryFor(table),
-            rpc: async () => ({ data: null, error: null }),
+            rpc: async name => name === 'is_lumi_admin'
+                ? ({ data: true, error: null })
+                : ({ data: null, error: null }),
             functions: { invoke: async () => ({ data: { ok: true }, error: null }) },
             storage: {
                 from: () => ({
@@ -906,7 +908,7 @@ test('a főoldali szolgáltatásrész a Barna-Beige-Rosy rendszerben asztalon é
     expect(Math.abs(mobil.gombSzelesseg - mobil.zarasSzelesseg)).toBeLessThanOrEqual(1);
 });
 
-test('a belső menülinkek első kattintásra, menüzárás után finoman a megfelelő szakaszhoz görgetnek', async ({ page }) => {
+test('a mobil menü első kattintásra bezár, a fiókhoz navigál, a belső link pedig finoman görget', async ({ page }) => {
     await page.addInitScript(() => {
         const eredetiScrollIntoView = Element.prototype.scrollIntoView;
         Element.prototype.scrollIntoView = function (opciok) {
@@ -919,13 +921,9 @@ test('a belső menülinkek első kattintásra, menüzárás után finoman a megf
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
     await page.locator('.hamburger').click();
-    await page.locator('#mobil-nav .foglalas-kezelo-nav').click();
+    await page.locator('#mobil-nav a[href="/fiokom/"]').click();
 
-    await expect(page.locator('#mobil-nav')).not.toHaveClass(/open/);
-    await expect(page).toHaveURL(/\/foglalas\/#foglalas-ellenorzes$/);
-    await expect.poll(() => page.evaluate(() => {
-        return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'foglalas-ellenorzes');
-    })).toEqual([{ id: 'foglalas-ellenorzes', opciok: { behavior: 'smooth', block: 'start' } }]);
+    await expect(page).toHaveURL(/\/fiokom\/$/);
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.locator('.hamburger').click();
@@ -948,8 +946,7 @@ test('a belső menülinkek első kattintásra, menüzárás után finoman a megf
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#mobil-nav')).toHaveCSS('transition-duration', '0s');
-    await page.locator('.hamburger').click();
-    await page.locator('#mobil-nav .foglalas-kezelo-nav').click();
+    await page.locator('[data-booking-path="manage"]').click();
     await expect.poll(() => page.evaluate(() => {
         return (window.__lumiScrollHivasok || []).filter(hivas => hivas.id === 'foglalas-ellenorzes');
     })).toEqual([{ id: 'foglalas-ellenorzes', opciok: { behavior: 'auto', block: 'start' } }]);
@@ -1091,12 +1088,12 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
 
     const manageCard = page.locator('[data-booking-path="manage"]');
     const section = page.locator('#foglalas-ellenorzes');
-    const desktopManageLink = page.locator('.site-header .foglalas-kezelo-nav');
-    const mobileManageLink = page.locator('#mobil-nav .foglalas-kezelo-nav');
+    const desktopAccountLink = page.locator('.site-header .menu-pontok a[href="/fiokom/"]');
+    const mobileAccountLink = page.locator('#mobil-nav a[href="/fiokom/"]');
     const desktopBookingLink = page.locator('.site-header .menu-pontok a[href="/foglalas/"]');
     const mobileBookingLink = page.locator('#mobil-nav a[href="/foglalas/"]');
-    await expect(desktopManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
-    await expect(mobileManageLink).toHaveAttribute('href', '/foglalas/#foglalas-ellenorzes');
+    await expect(desktopAccountLink).toHaveText('Fiókom');
+    await expect(mobileAccountLink).toHaveText('Fiókom');
     await expect(desktopBookingLink).toHaveText('Foglalás');
     await expect(mobileBookingLink).toHaveText('Foglalás');
     expect(await desktopBookingLink.evaluate(elem => elem === elem.parentElement.lastElementChild)).toBe(true);
@@ -1105,7 +1102,7 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
         Boolean(document.getElementById('online-foglalas').compareDocumentPosition(document.getElementById('foglalas-ellenorzes')) & Node.DOCUMENT_POSITION_FOLLOWING)
     )).toBe(true);
     await expect(manageCard).toBeVisible();
-    await desktopManageLink.click();
+    await manageCard.click();
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
     await expect(section).toBeVisible();
     await expect.poll(() => page.evaluate(() => {
@@ -1142,8 +1139,7 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
         window.history.replaceState(null, '', '/foglalas/');
         window.scrollTo(0, 0);
     });
-    await page.locator('.hamburger').click();
-    await mobileManageLink.click();
+    await manageCard.click();
     await expect(page).toHaveURL(/#foglalas-ellenorzes$/);
     await expect.poll(() => page.evaluate(() => {
         const header = document.querySelector('.site-header').getBoundingClientRect();
@@ -1313,11 +1309,14 @@ test('az admin emailhiba értesítése tartósan nyugtázható', async ({ page }
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
 
-    const notificationButton = page.getByRole('button', { name: 'Kommunikáció megnyitása' });
+    const notificationButton = page.getByRole('button', { name: 'Értesítések megnyitása' });
     const notificationDot = notificationButton.locator('[data-admin-v2-email-alert]');
     await expect(notificationDot).toBeVisible();
 
     await notificationButton.click();
+    await page.getByRole('region', { name: 'Értesítések' })
+        .getByRole('button', { name: /emailhiba/i })
+        .click();
     await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
     await expect(page.locator('#admin-v2-email-failed')).toHaveText('1');
 
@@ -1368,7 +1367,7 @@ test('az admin emailhiba értesítése tartósan nyugtázható', async ({ page }
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__lumiAdminSessionSettled === true);
     await expect(
-        page.getByRole('button', { name: 'Kommunikáció megnyitása' })
+        page.getByRole('button', { name: 'Értesítések megnyitása' })
             .locator('[data-admin-v2-email-alert]')
     ).toBeHidden();
     expect(pageErrors).toEqual([]);
@@ -1984,7 +1983,8 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     await expect(page.locator('#admin-foglalas-lista-nezet')).toBeVisible();
     await expect(page.locator('#admin-foglalas-naptar')).toBeHidden();
 
-    await page.getByRole('button', { name: 'Kommunikáció megnyitása' }).click();
+    await page.getByRole('button', { name: 'Navigáció megnyitása' }).click();
+    await page.locator('.admin-v2-sidebar [data-admin-v2-nav="kommunikacio"]').click();
     await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
     await page.locator('#admin-panel-esemenynaplo [data-admin-v2-panel="emailteszt"]').click();
     await expect(page.locator('#admin-panel-emailteszt')).toBeVisible();

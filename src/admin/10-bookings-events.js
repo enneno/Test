@@ -361,6 +361,7 @@
 
         elemek.vendegLemondasTudomasulvetel.disabled = false;
         vendegLemondasJelzesFrissitese();
+        await adminV2AttekintesFrissitese();
         onlineStatusz(olvasatlanFoglalasok.length + ' vendéglemondás tudomásul véve.');
     }
 

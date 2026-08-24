@@ -205,7 +205,7 @@ function foglalasiUrlapBekotese() {
 }
 
 function lebegoFoglalasLetrehozasa() {
-    if (foglalasOldal() || adminOldal() || document.getElementById('lebego-foglalas-gomb')) {
+    if (foglalasOldal() || adminOldal() || document.body.classList.contains('fiok-oldal') || document.getElementById('lebego-foglalas-gomb')) {
         return;
     }
 

@@ -1,6 +1,7 @@
     const ADMIN_V2_TAB_GROUPS = Object.freeze({
         attekintes: 'attekintes',
         foglalasok: 'foglalasok',
+        vendegek: 'vendegek',
         idosavok: 'munkaido',
         tiltasok: 'munkaido',
         szovegek: 'weboldal',
@@ -17,6 +18,11 @@
             title: 'Időpontok',
             description: 'Keresés, státuszkezelés, naptár és a vendéghez tartozó adatok egy munkafelületen.',
             save: 'Módosítások mentése'
+        },
+        vendegek: {
+            kicker: 'Kapcsolatok és előzmények',
+            title: 'Vendégek',
+            description: 'Egy helyen látható elérhetőségek, foglalási előzmények és közelgő időpontok.'
         },
         idosavok: {
             kicker: 'Elérhetőség',
@@ -87,6 +93,7 @@
 
         adminV2SkipLinkLetrehozasa(body, workspaceMain);
         adminV2AttekintesPanelLetrehozasa(workspaceMain);
+        adminV2VendegPanelLetrehozasa(workspaceMain);
         adminV2BeallitasokPanelLetrehozasa(workspaceMain);
         adminV2SidebarLetrehozasa(sidebar);
         adminV2TopbarLetrehozasa(tartalom);
@@ -94,6 +101,7 @@
         adminV2AlmenuLetrehozasa();
         adminV2EsemenyekKapcsolasa(tartalom);
         adminV2AdatFigyelokKapcsolasa();
+        adminV2MenuGesztusokKapcsolasa(body);
 
         allapot.aktivTab = 'attekintes';
         adminV2Valtas('attekintes');
@@ -120,7 +128,9 @@
         const brand = document.createElement('div');
         brand.className = 'admin-v2-brand';
         brand.innerHTML = `
-            <img src="/kepek/luminails-logo.svg" alt="Luminails">
+            <a href="/admin/" class="admin-v2-brand-home" data-admin-v2-home aria-label="Admin áttekintés">
+                <span class="logo-lumi">Lumi</span><span class="logo-nails">Nails</span>
+            </a>
             <span>Admin</span>
         `;
 
@@ -131,6 +141,7 @@
             <p class="admin-v2-nav-label">Munkaterület</p>
             ${adminV2NavGomb('attekintes', 'Áttekintés', adminV2Ikon('overview'))}
             ${adminV2NavGomb('foglalasok', 'Időpontok', adminV2Ikon('calendar'), '<span class="admin-v2-nav-count" data-admin-v2-pending-count>0</span>')}
+            ${adminV2NavGomb('vendegek', 'Vendégek', adminV2Ikon('users'))}
             ${adminV2NavGomb('munkaido', 'Munkaidő', adminV2Ikon('clock'))}
             ${adminV2NavGomb('weboldal', 'Weboldal', adminV2Ikon('website'))}
             ${adminV2NavGomb('kommunikacio', 'Kommunikáció', adminV2Ikon('mail'), '<span class="admin-v2-nav-alert" data-admin-v2-email-alert hidden><span class="sr-only">Emailhiba</span></span>')}
@@ -139,10 +150,13 @@
         const secondary = document.createElement('div');
         secondary.className = 'admin-v2-sidebar-bottom';
         secondary.innerHTML = `
+            <a href="/" class="admin-v2-public-link">
+                ${adminV2Ikon('website')}<span>Vissza a főoldalra</span>
+            </a>
             ${adminV2NavGomb('beallitasok', 'Beállítások', adminV2Ikon('settings'))}
             <button type="button" class="admin-v2-profile" data-admin-v2-nav="beallitasok" aria-label="Fiók és beállítások megnyitása">
-                <span class="admin-v2-avatar">LL</span>
-                <span><strong>Levi</strong><small>Tulajdonos</small></span>
+                <span class="admin-v2-avatar">SZ</span>
+                <span><strong>Szofi</strong><small>Tulajdonos</small></span>
                 ${adminV2Ikon('arrow')}
             </button>
             <button type="button" class="admin-v2-logout" data-admin-v2-logout>Kijelentkezés</button>
@@ -173,7 +187,9 @@
                 <button type="button" class="admin-v2-icon-button" data-admin-v2-menu aria-label="Navigáció megnyitása" aria-expanded="false">
                     ${adminV2Ikon('menu')}
                 </button>
-                <img src="/kepek/luminails-logo.svg" alt="Luminails">
+                <a href="/admin/" class="admin-v2-mobile-home" data-admin-v2-home aria-label="Admin áttekintés">
+                    <span class="logo-lumi">Lumi</span><span class="logo-nails">Nails</span>
+                </a>
             </div>
             <div class="admin-v2-topbar-copy">
                 <p class="admin-v2-topbar-section" data-admin-v2-current-label>Áttekintés</p>
@@ -183,9 +199,20 @@
                 <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-panel="tiltasok">
                     ${adminV2Ikon('plus')} Kieső idő
                 </button>
-                <button type="button" class="admin-v2-icon-button" data-admin-v2-nav="kommunikacio" aria-label="Kommunikáció megnyitása">
-                    ${adminV2Ikon('bell')}<span class="admin-v2-notification-dot" data-admin-v2-email-alert hidden></span>
-                </button>
+                <div class="admin-v2-notification-wrap">
+                    <button type="button" class="admin-v2-icon-button" data-admin-v2-notifications-toggle aria-label="Értesítések megnyitása" aria-expanded="false" aria-controls="admin-v2-notification-panel">
+                        ${adminV2Ikon('bell')}<span class="admin-v2-notification-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>
+                    </button>
+                    <section id="admin-v2-notification-panel" class="admin-v2-notification-panel" data-admin-v2-notification-panel role="region" aria-label="Értesítések" hidden>
+                        <header>
+                            <strong>Értesítések</strong>
+                            <small data-admin-v2-notification-summary>Minden rendezve</small>
+                        </header>
+                        <ul data-admin-v2-notification-list>
+                            <li class="admin-v2-empty">Nincs új értesítés.</li>
+                        </ul>
+                    </section>
+                </div>
             </div>
         `;
 
@@ -211,7 +238,7 @@
             <div class="admin-v2-page-heading admin-v2-overview-heading">
                 <div>
                     <p class="admin-v2-kicker">Napi irányítópult</p>
-                    <h1>Jó reggelt, Levi</h1>
+                    <h1>Jó reggelt, Szofi</h1>
                     <p>A mai teendők és a következő napok foglalhatósága egy helyen.</p>
                 </div>
                 <div class="admin-v2-page-actions">
@@ -403,6 +430,25 @@
 
     function adminV2EsemenyekKapcsolasa(tartalom) {
         tartalom.addEventListener('click', event => {
+            const adminHome = event.target.closest('[data-admin-v2-home]');
+            if (adminHome) {
+                event.preventDefault();
+                adminV2Valtas('attekintes');
+                return;
+            }
+
+            const notificationToggle = event.target.closest('[data-admin-v2-notifications-toggle]');
+            if (notificationToggle) {
+                adminV2ErtesitesekValtasa();
+                return;
+            }
+
+            const notificationTarget = event.target.closest('[data-admin-v2-notification-target]');
+            if (notificationTarget) {
+                adminV2ErtesitesMegnyitasa(notificationTarget.dataset.adminV2NotificationTarget);
+                return;
+            }
+
             const nav = event.target.closest('[data-admin-v2-nav]');
             if (nav) {
                 adminV2CsoportMegnyitasa(nav.dataset.adminV2Nav);
@@ -462,7 +508,16 @@
 
             if (event.target.closest('[data-admin-v2-close-menu]')) {
                 adminV2MenuBezarasa();
+                return;
             }
+
+            if (!event.target.closest('[data-admin-v2-notification-panel]')) {
+                adminV2ErtesitesekBezarasa();
+            }
+        });
+
+        tartalom.addEventListener('keydown', event => {
+            if (event.key === 'Escape') adminV2ErtesitesekBezarasa();
         });
     }
 
@@ -482,10 +537,187 @@
         });
     }
 
+    function adminV2MenuGesztusokKapcsolasa(body) {
+        let pointerKezdet = null;
+        let touchKezdet = null;
+
+        const gesztusKezdese = (x, y, azonosito) => {
+            if (!window.matchMedia('(max-width: 900px)').matches) return null;
+
+            const menuNyitva = body.classList.contains('admin-v2-menu-open');
+            if (!menuNyitva && x > 112) return null;
+
+            return { x, y, azonosito, menuNyitva };
+        };
+
+        const gesztusBefejezese = (kezdet, x, y) => {
+            if (!kezdet) return;
+            const xEltolas = x - kezdet.x;
+            const yEltolas = y - kezdet.y;
+            const vizszintesGesztus = Math.abs(xEltolas) >= 56
+                && Math.abs(xEltolas) > Math.abs(yEltolas) * 1.2;
+
+            if (vizszintesGesztus && !kezdet.menuNyitva && xEltolas > 0) adminV2MenuNyitasa();
+            if (vizszintesGesztus && kezdet.menuNyitva && xEltolas < 0) adminV2MenuBezarasa();
+        };
+
+        body.addEventListener('touchstart', event => {
+            if (event.touches.length !== 1) return;
+            const touch = event.touches[0];
+            touchKezdet = gesztusKezdese(touch.clientX, touch.clientY, touch.identifier);
+        }, { passive: true });
+
+        body.addEventListener('touchend', event => {
+            if (!touchKezdet) return;
+            const touch = Array.from(event.changedTouches)
+                .find(item => item.identifier === touchKezdet.azonosito);
+            if (touch) gesztusBefejezese(touchKezdet, touch.clientX, touch.clientY);
+            touchKezdet = null;
+        }, { passive: true });
+
+        body.addEventListener('touchcancel', () => {
+            touchKezdet = null;
+        }, { passive: true });
+
+        body.addEventListener('pointerdown', event => {
+            if (event.pointerType !== 'touch') return;
+            pointerKezdet = gesztusKezdese(event.clientX, event.clientY, event.pointerId);
+        }, { passive: true });
+
+        body.addEventListener('pointerup', event => {
+            if (!pointerKezdet || event.pointerId !== pointerKezdet.azonosito) return;
+            gesztusBefejezese(pointerKezdet, event.clientX, event.clientY);
+            pointerKezdet = null;
+        }, { passive: true });
+
+        body.addEventListener('pointercancel', () => {
+            pointerKezdet = null;
+        }, { passive: true });
+    }
+
+    function adminV2ErtesitesAdatok(aktivFoglalasok = null) {
+        const foglalasok = aktivFoglalasok || allapot.foglalasElemek
+            .filter(item => item.tipus === 'booking')
+            .map(item => item.adat)
+            .filter(item => !['cancelled', 'cancelled_by_customer'].includes(item.status));
+        const pending = foglalasok.filter(item => item.status === 'pending');
+        const emailErrors = adminV2EmailHibasEsemenyek();
+        const cancellations = adminV2OlvasatlanLemondasok();
+        const items = [];
+
+        if (pending.length) {
+            items.push({
+                tipus: 'pending',
+                icon: 'clock',
+                tone: 'warning',
+                title: pending.length + ' megerősítésre vár',
+                description: pending.slice(0, 2).map(item => item.customer_name).join(', ')
+            });
+        }
+        if (cancellations.length) {
+            items.push({
+                tipus: 'cancellations',
+                icon: 'alert',
+                tone: 'info',
+                title: cancellations.length + ' új vendéglemondás',
+                description: 'A lemondott időpontok átnézésre várnak.'
+            });
+        }
+        if (emailErrors.length) {
+            items.push({
+                tipus: 'email',
+                icon: 'mail',
+                tone: 'danger',
+                title: emailErrors.length + ' emailhiba',
+                description: 'Ellenőrizd a sikertelen emailküldéseket.'
+            });
+        }
+
+        return {
+            pending,
+            emailErrors,
+            cancellations,
+            items,
+            total: pending.length + emailErrors.length + cancellations.length
+        };
+    }
+
+    function adminV2ErtesitesekFrissitese(adatok = adminV2ErtesitesAdatok()) {
+        document.querySelectorAll('[data-admin-v2-email-alert]:not([data-admin-v2-notification-alert])').forEach(element => {
+            element.hidden = adatok.emailErrors.length === 0;
+        });
+        document.querySelectorAll('[data-admin-v2-notification-alert]').forEach(element => {
+            element.hidden = adatok.total === 0;
+        });
+
+        const summary = document.querySelector('[data-admin-v2-notification-summary]');
+        const list = document.querySelector('[data-admin-v2-notification-list]');
+        if (summary) {
+            summary.textContent = adatok.total
+                ? adatok.total + ' nyitott teendő'
+                : 'Minden rendezve';
+        }
+        if (!list) return;
+        if (!adatok.items.length) {
+            list.innerHTML = '<li class="admin-v2-empty">Nincs új értesítés.</li>';
+            return;
+        }
+
+        list.innerHTML = adatok.items.map(item =>
+            '<li><button type="button" data-admin-v2-notification-target="' + attr(item.tipus) + '" aria-label="' + attr(item.title) + '">' +
+                '<span class="admin-v2-notification-icon admin-v2-tone-' + attr(item.tone) + '">' + adminV2Ikon(item.icon) + '</span>' +
+                '<span><strong>' + html(item.title) + '</strong><small>' + html(item.description) + '</small></span>' +
+                adminV2Ikon('arrow') +
+            '</button></li>'
+        ).join('');
+    }
+
+    function adminV2ErtesitesekValtasa() {
+        const panel = document.querySelector('[data-admin-v2-notification-panel]');
+        const button = document.querySelector('[data-admin-v2-notifications-toggle]');
+        if (!panel || !button) return;
+
+        const nyitva = panel.hidden;
+        if (nyitva) adminV2ErtesitesekFrissitese();
+        panel.hidden = !nyitva;
+        button.setAttribute('aria-expanded', String(nyitva));
+    }
+
+    function adminV2ErtesitesekBezarasa() {
+        const panel = document.querySelector('[data-admin-v2-notification-panel]');
+        const button = document.querySelector('[data-admin-v2-notifications-toggle]');
+        if (panel) panel.hidden = true;
+        if (button) button.setAttribute('aria-expanded', 'false');
+    }
+
+    function adminV2ErtesitesMegnyitasa(tipus) {
+        adminV2ErtesitesekBezarasa();
+        if (tipus === 'pending') {
+            adminV2Valtas('foglalasok');
+            const elemek = adminElemek();
+            allapot.foglalasKereses = '';
+            allapot.foglalasStatuszSzuro = 'pending';
+            allapot.foglalasOldal = 1;
+            if (elemek.foglalasKereses) elemek.foglalasKereses.value = '';
+            if (elemek.foglalasStatuszSzuro) elemek.foglalasStatuszSzuro.value = 'pending';
+            foglalasKeresesTorlesGombFrissitese(elemek);
+            foglalasListaRenderelese();
+            foglalasNezetValtasa('lista');
+            return;
+        }
+        if (tipus === 'cancellations') {
+            adminV2Valtas('foglalasok');
+            vendegLemondasokMegnyitasa();
+            return;
+        }
+        if (tipus === 'email') adminV2Valtas('esemenynaplo', 'kommunikacio');
+    }
+
     function adminV2CsoportMegnyitasa(group) {
         const defaultTabs = {
             attekintes: 'attekintes',
             foglalasok: 'foglalasok',
+            vendegek: 'vendegek',
             munkaido: 'idosavok',
             weboldal: 'szovegek',
             kommunikacio: 'esemenynaplo',
@@ -520,6 +752,7 @@
         const groupLabels = {
             attekintes: 'Áttekintés',
             foglalasok: 'Időpontok',
+            vendegek: 'Vendégek',
             munkaido: 'Munkaidő',
             weboldal: 'Weboldal',
             kommunikacio: 'Kommunikáció',
@@ -528,7 +761,9 @@
         if (label) label.textContent = groupLabels[group] || 'Admin';
 
         adminV2MenuBezarasa();
+        adminV2ErtesitesekBezarasa();
         if (tab === 'attekintes') adminV2AttekintesFrissitese();
+        if (tab === 'vendegek') vendegProfilokBetoltese();
         if (tab === 'esemenynaplo') adminV2KommunikacioFrissitese();
 
         document.querySelector('.admin-workspace-main')?.scrollTo?.({ top: 0, behavior: 'auto' });
@@ -577,16 +812,18 @@
             .filter(item => item.tipus === 'booking')
             .map(item => item.adat);
         const activeBookings = bookings.filter(item => !['cancelled', 'cancelled_by_customer'].includes(item.status));
-        const today = activeBookings
+        const activeSchedule = allapot.foglalasElemek
+            .map(adminV2AttekintesIdopont)
+            .filter(Boolean);
+        const today = activeSchedule
             .filter(item => adminV2DatumKulcs(new Date(item.starts_at)) === todayKey)
             .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
-        const upcoming = activeBookings
+        const upcoming = activeSchedule
             .filter(item => new Date(item.starts_at) > now)
             .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))
             .slice(0, 5);
-        const pending = activeBookings.filter(item => item.status === 'pending');
-        const emailErrors = adminV2EmailHibasEsemenyek();
-        const cancellations = adminV2OlvasatlanLemondasok();
+        const notificationData = adminV2ErtesitesAdatok(activeBookings);
+        const { pending, emailErrors, cancellations } = notificationData;
 
         adminV2Text('admin-v2-stat-today', String(today.length));
         adminV2Text('admin-v2-stat-today-meta', `${adminV2OsszesIdotartam(today)} óra lefoglalva`);
@@ -599,9 +836,7 @@
             element.textContent = String(pending.length);
             element.hidden = pending.length === 0;
         });
-        document.querySelectorAll('[data-admin-v2-email-alert]').forEach(element => {
-            element.hidden = emailErrors.length === 0;
-        });
+        adminV2ErtesitesekFrissitese(notificationData);
 
         const summary = panel.querySelector('[data-admin-v2-today-summary]');
         if (summary) summary.textContent = today.length ? `${today.length} időpont · ${adminV2NapiIdosav(today)}` : 'Ma nincs aktív foglalás';
@@ -609,6 +844,43 @@
         adminV2KovetkezoListaRenderelese(upcoming);
         adminV2TeendoListaRenderelese(pending, emailErrors, cancellations);
         await adminV2HorizonFrissitese(todayKey);
+    }
+
+    function adminV2AttekintesIdopont(item) {
+        const data = item?.adat || {};
+
+        if (item?.tipus === 'booking') {
+            const status = String(data.status || 'pending').toLowerCase();
+            if (['cancelled', 'cancelled_by_customer'].includes(status)) return null;
+
+            return {
+                tipus: 'booking',
+                cim: data.customer_name || 'Névtelen vendég',
+                leiras: data.services?.name || 'Törölt szolgáltatás',
+                kereses: data.customer_name || data.public_reference || '',
+                starts_at: data.starts_at,
+                ends_at: data.ends_at,
+                status
+            };
+        }
+
+        if (item?.tipus === 'blocked') {
+            const status = tiltasStatuszErtek(data.status);
+            if (['done', 'cancelled_by_customer'].includes(status)) return null;
+
+            const cim = data.reason?.trim() || 'Kézzel felvett idő';
+            return {
+                tipus: 'blocked',
+                cim,
+                leiras: 'Kézzel felvett idő',
+                kereses: cim,
+                starts_at: data.starts_at,
+                ends_at: data.ends_at,
+                status
+            };
+        }
+
+        return null;
     }
 
     function adminV2NapiListaRenderelese(items) {
@@ -624,8 +896,8 @@
             <li class="admin-v2-schedule-item">
                 <span class="admin-v2-schedule-time"><strong>${html(idoInputErtek(item.starts_at))}</strong><small>${html(idoInputErtek(item.ends_at))}</small></span>
                 <span class="admin-v2-schedule-line admin-v2-tone-${adminV2StatuszTone(item.status)}"></span>
-                <span class="admin-v2-schedule-copy"><strong>${html(item.customer_name)}</strong><small>${html(item.services?.name || 'Törölt szolgáltatás')}</small></span>
-                <button type="button" class="admin-v2-status-chip admin-v2-tone-${adminV2StatuszTone(item.status)}" data-admin-v2-booking-search="${attr(item.customer_name)}">${html(adminV2StatuszFelirat(item.status))}</button>
+                <span class="admin-v2-schedule-copy"><strong>${html(item.cim)}</strong><small>${html(item.leiras)}</small></span>
+                <button type="button" class="admin-v2-status-chip admin-v2-tone-${adminV2StatuszTone(item.status)}" data-admin-v2-booking-search="${attr(item.kereses)}">${html(adminV2StatuszFelirat(item.status))}</button>
             </li>
         `).join('');
     }
@@ -641,8 +913,8 @@
 
         list.innerHTML = items.map(item => `
             <li>
-                <button type="button" data-admin-v2-booking-search="${attr(item.customer_name)}">
-                    <span><strong>${html(item.customer_name)}</strong><small>${html(item.services?.name || 'Törölt szolgáltatás')}</small></span>
+                <button type="button" data-admin-v2-booking-search="${attr(item.kereses)}">
+                    <span><strong>${html(item.cim)}</strong><small>${html(item.leiras)}</small></span>
                     <span><strong>${html(adminV2RovidDatum(item.starts_at))}</strong><small>${html(idoInputErtek(item.starts_at))}</small></span>
                 </button>
             </li>
@@ -752,6 +1024,7 @@
                 ? `${failed.length} emailhiba átnézésre vár.`
                 : 'Nincs nyitott emailhiba.';
         }
+        adminV2ErtesitesekFrissitese();
     }
 
     function adminV2EmailHibasEsemenyek() {
@@ -868,6 +1141,7 @@
         return {
             pending: 'Megerősítésre vár',
             confirmed: 'Megerősítve',
+            blocked: 'Foglalt',
             done: 'Teljesítve',
             cancelled: 'Lemondva',
             cancelled_by_customer: 'Vendég lemondta'
@@ -926,6 +1200,7 @@
         const paths = {
             overview: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path>',
             calendar: '<path d="M6 3v3M18 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1z"></path>',
+            users: '<circle cx="9" cy="9" r="3"></circle><circle cx="17" cy="10" r="2.5"></circle><path d="M3.5 20v-2a4.5 4.5 0 0 1 9 0v2M14 15.5a4 4 0 0 1 6.5 3.1V20"></path>',
             clock: '<circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path>',
             website: '<path d="M4 5h16v14H4zM4 9h16M8 5v4"></path>',
             mail: '<path d="M4 6h16v12H4zM4 7l8 6 8-6"></path>',
@@ -933,6 +1208,7 @@
             arrow: '<path d="m9 6 6 6-6 6"></path>',
             menu: '<path d="M4 7h16M4 12h16M4 17h16"></path>',
             bell: '<path d="M6 17h12l-1.5-2v-4a4.5 4.5 0 0 0-9 0v4zM10 20h4"></path>',
+            refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"></path>',
             plus: '<path d="M12 5v14M5 12h14"></path>',
             check: '<path d="m5 12 4 4L19 6"></path>',
             alert: '<path d="M12 4 3 20h18zM12 9v5M12 17h.01"></path>',

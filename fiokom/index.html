@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('lumi-js');window.setTimeout(function(){document.body&&document.body.classList.remove('tartalom-toltes');},4500);</script>
+    <title>Vendégfiók - Lumi Nails</title>
+    <meta name="description" content="Lumi Nails vendégfiók: személyes adatok és korábbi időpontfoglalások biztonságos kezelése.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/kepek/favicon.svg">
+    <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
+    <link rel="stylesheet" href="/style.css?v=785ac7a84e19">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="tartalom-toltes fiok-oldal">
+    <div id="fejlec-helye"></div>
+
+    <main class="fiok-main">
+        <header class="fiok-hero">
+            <div>
+                <p class="fiok-kicker">Személyes Lumi Nails tér</p>
+                <h1>Vendégfiók</h1>
+            </div>
+            <p>Adataid egy helyen, gyorsabb foglalás és átlátható időpont-előzmények — kizárólag hitelesített e-maillel.</p>
+        </header>
+
+        <p id="fiok-globalis-statusz" class="fiok-statuszuzenet" role="status" aria-live="polite" hidden></p>
+
+        <section id="fiok-auth-panel" class="fiok-auth-elrendezes" aria-labelledby="fiok-belepes-cim">
+            <div class="fiok-auth-bevezeto">
+                <p class="fiok-kicker">Egyszer kell megadnod</p>
+                <h2>Legközelebb már ismerünk.</h2>
+                <ul>
+                    <li>A neved, telefonszámod és hitelesített e-mailed előre kitöltődik.</li>
+                    <li>Korábbi és közelgő foglalásaidat csak te láthatod.</li>
+                    <li>A fiók a megerősítő e-mail megnyitása után válik használhatóvá.</li>
+                </ul>
+            </div>
+
+            <div class="fiok-auth-kartya">
+                <div class="fiok-auth-valto" role="tablist" aria-label="Vendégfiók műveletek">
+                    <button type="button" class="aktiv" data-account-view="belepes" role="tab" aria-selected="true">Belépés</button>
+                    <button type="button" data-account-view="regisztracio" role="tab" aria-selected="false">Regisztráció</button>
+                </div>
+
+                <div data-account-auth-panel="belepes">
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Üdv újra</p>
+                        <h2 id="fiok-belepes-cim">Belépés</h2>
+                    </div>
+                    <form id="fiok-belepes-form" class="fiok-form">
+                        <label>E-mail-cím
+                            <input type="email" name="email" autocomplete="username" maxlength="254" required>
+                        </label>
+                        <label>Jelszó
+                            <input type="password" name="password" autocomplete="current-password" maxlength="128" required>
+                        </label>
+                        <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Belépés</button>
+                    </form>
+                    <button type="button" class="fiok-link-gomb" data-account-view="elfelejtett">Elfelejtetted a jelszavad?</button>
+                </div>
+
+                <div data-account-auth-panel="regisztracio" hidden>
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Első látogatás</p>
+                        <h2>Fiók létrehozása</h2>
+                    </div>
+                    <form id="fiok-regisztracio-form" class="fiok-form">
+                        <label>Teljes név
+                            <input type="text" name="full_name" autocomplete="name" minlength="2" maxlength="120" required>
+                        </label>
+                        <label>Telefonszám
+                            <span class="fiok-telefon-mezo"><span>+36</span><input type="tel" name="phone" autocomplete="tel-national" inputmode="numeric" pattern="[0-9 ]{9,13}" maxlength="13" placeholder="201234567" required></span>
+                        </label>
+                        <label>E-mail-cím
+                            <input type="email" name="email" autocomplete="username" maxlength="254" required>
+                        </label>
+                        <label>Jelszó
+                            <input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="fiok-jelszo-tipp" required>
+                        </label>
+                        <label>Jelszó még egyszer
+                            <input type="password" name="password_again" autocomplete="new-password" minlength="12" maxlength="128" required>
+                        </label>
+                        <p id="fiok-jelszo-tipp" class="fiok-mezo-tipp">Legalább 12 karaktert vagy hosszú, egyedi jelmondatot használj.</p>
+                        <label class="fiok-jelolonegyzet"><input type="checkbox" required><span>Elolvastam az <a href="/adatkezeles/" target="_blank" rel="noopener">adatkezelési tájékoztatót</a>.</span></label>
+                        <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Fiók létrehozása</button>
+                    </form>
+                </div>
+
+                <div data-account-auth-panel="elfelejtett" hidden>
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Biztonságos helyreállítás</p>
+                        <h2>Elfelejtett jelszó</h2>
+                        <p>Egyszer használható visszaállító linket küldünk a fiókhoz tartozó e-mailre.</p>
+                    </div>
+                    <form id="fiok-elfelejtett-form" class="fiok-form">
+                        <label>E-mail-cím
+                            <input type="email" name="email" autocomplete="email" maxlength="254" required>
+                        </label>
+                        <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Jelszó-visszaállító e-mail küldése</button>
+                    </form>
+                    <button type="button" class="fiok-link-gomb" data-account-view="belepes">Vissza a belépéshez</button>
+                </div>
+
+                <p class="fiok-regi-foglalas">Fiók nélkül foglaltál? <a href="/foglalas/#foglalas-ellenorzes">Foglalás kezelése azonosítóval</a></p>
+            </div>
+        </section>
+
+        <section id="fiok-megerosites-panel" class="fiok-egyszeru-panel" hidden>
+            <p class="fiok-kicker">Még egy lépés</p>
+            <h2>Ellenőrizd a postaládádat</h2>
+            <p>A megerősítő linket erre a címre kértük: <strong id="fiok-megerosites-email"></strong>. A vendégprofil csak a link megnyitása után jön létre.</p>
+            <div class="fiok-akciosor">
+                <button type="button" id="fiok-megerosites-ujrakuldes" class="fiok-gomb">Megerősítő e-mail újraküldése</button>
+                <a href="/" class="fiok-szoveges-link">Vissza a kezdőlapra</a>
+            </div>
+        </section>
+
+        <section id="fiok-uj-jelszo-panel" class="fiok-egyszeru-panel" hidden>
+            <p class="fiok-kicker">Fiók-helyreállítás</p>
+            <h2>Új jelszó beállítása</h2>
+            <p>A visszaállítás ehhez a fiókhoz tartozik: <strong id="fiok-helyreallitas-email"></strong>.</p>
+            <form id="fiok-uj-jelszo-form" class="fiok-form fiok-form-keskeny">
+                <label>Új jelszó
+                    <input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" required>
+                </label>
+                <label>Új jelszó még egyszer
+                    <input type="password" name="password_again" autocomplete="new-password" minlength="12" maxlength="128" required>
+                </label>
+                <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Új jelszó mentése</button>
+            </form>
+        </section>
+
+        <div id="fiok-iranyitopult" class="fiok-dashboard" hidden>
+            <section class="fiok-dashboard-fej">
+                <div>
+                    <p class="fiok-kicker">Hitelesített vendégfiók</p>
+                    <h2>Szia, jó hogy itt vagy.</h2>
+                    <p id="fiok-aktualis-email"></p>
+                </div>
+                <div class="fiok-akciosor">
+                    <a href="/foglalas/" class="fiok-gomb fiok-gomb-kiemelt">Új időpont foglalása</a>
+                    <button type="button" id="fiok-kijelentkezes" class="fiok-gomb">Kijelentkezés</button>
+                </div>
+            </section>
+
+            <div class="fiok-dashboard-racs">
+                <section class="fiok-panel" aria-labelledby="fiok-profil-cim">
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Előre kitöltjük</p>
+                        <h2 id="fiok-profil-cim">Saját adataim</h2>
+                        <p>Itt módosíthatod a következő foglalásnál használt nevet és telefonszámot.</p>
+                    </div>
+                    <form id="fiok-profil-form" class="fiok-form">
+                        <label>Teljes név
+                            <input type="text" id="fiok-profil-nev" name="full_name" autocomplete="name" minlength="2" maxlength="120" required>
+                        </label>
+                        <label>Telefonszám
+                            <span class="fiok-telefon-mezo"><span>+36</span><input type="tel" id="fiok-profil-telefon" name="phone" autocomplete="tel-national" inputmode="numeric" pattern="[0-9 ]{9,13}" maxlength="13" required></span>
+                        </label>
+                        <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Adatok mentése</button>
+                    </form>
+                    <p id="fiok-profil-statusz" class="fiok-statuszuzenet" role="status" aria-live="polite" hidden></p>
+                </section>
+
+                <section id="fiok-elozmenyek-panel" class="fiok-panel fiok-elozmenyek" aria-labelledby="fiok-elozmenyek-cim">
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Legfeljebb 6 hónap</p>
+                        <h2 id="fiok-elozmenyek-cim">Foglalási előzmények</h2>
+                        <p>A hitelesített e-mail-címedhez tartozó korábbi és közelgő időpontok.</p>
+                    </div>
+                    <div id="fiok-foglalas-lista" class="fiok-foglalas-lista"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="lablec-helye"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
+    <script src="/supabase-config.js?v=a704c66fbd43"></script>
+    <script src="/script.js?v=c92b80d6d7fe"></script>
+    <script src="/account.js?v=4a24fbd9e103"></script>
+</body>
+
+</html>

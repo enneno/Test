@@ -11,6 +11,7 @@ const HTML_FILES = [
     'arlista/index.html',
     'galeria/index.html',
     'foglalas/index.html',
+    'fiokom/index.html',
     'adatkezeles/index.html'
 ];
 const ASSETS = [
@@ -19,6 +20,7 @@ const ASSETS = [
     'supabase-config.js',
     'script.js',
     'booking.js',
+    'account.js',
     'admin-supabase.js',
     'admin-export.js',
     'admin-content.js'

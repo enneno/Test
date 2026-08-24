@@ -219,6 +219,7 @@ function normalizaltUtvonal(utvonal) {
         '/galeria/index.html': '/galeria/',
         '/foglalas.html': '/foglalas/',
         '/foglalas/index.html': '/foglalas/',
+        '/fiokom/index.html': '/fiokom/',
         '/admin.html': '/admin/',
         '/admin/index.html': '/admin/'
     };

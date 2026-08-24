@@ -52,6 +52,9 @@
 
         allapot.kliens = window.lumiSupabaseClient();
         foglalasKezeloBekotese();
+        vendegFiokFoglalasElokitese(elemek).catch(error => {
+            console.warn('A vendégfiók foglalási előkitöltése nem sikerült:', error);
+        });
 
         elemek.urlap.addEventListener('submit', event => {
             event.preventDefault();
