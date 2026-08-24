@@ -538,8 +538,10 @@
             return;
         }
 
-        if (ujJelszo.length < 8) {
-            jelszoStatusz('A jelszó legyen legalább 8 karakter hosszú.', true);
+        if (!window.LUMI_PASSWORD_POLICY?.isValid(ujJelszo)) {
+            const kovetelmenyek = window.LUMI_PASSWORD_POLICY?.hint
+                || '8–128 karakter, legalább egy kisbetű, egy nagybetű és egy szám.';
+            jelszoStatusz(`A jelszó követelményei: ${kovetelmenyek}`, true);
             return;
         }
 

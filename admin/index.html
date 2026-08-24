@@ -55,12 +55,13 @@
                 <form id="admin-jelszo-form" class="admin-jelszo-form" hidden>
                     <label class="admin-mezo-cimke" for="admin-uj-jelszo">
                         <span>Új jelszó</span>
-                        <input type="password" id="admin-uj-jelszo" class="urlap-mezo" autocomplete="new-password">
+                        <input type="password" id="admin-uj-jelszo" class="urlap-mezo" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="admin-jelszo-tipp" required>
                     </label>
                     <label class="admin-mezo-cimke" for="admin-uj-jelszo-ismet">
                         <span>Új jelszó még egyszer</span>
-                        <input type="password" id="admin-uj-jelszo-ismet" class="urlap-mezo" autocomplete="new-password">
+                        <input type="password" id="admin-uj-jelszo-ismet" class="urlap-mezo" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="admin-jelszo-tipp" required>
                     </label>
+                    <p id="admin-jelszo-tipp" class="admin-leiras">8–128 karaktert használj, legalább egy kisbetűvel, egy nagybetűvel és egy számmal.</p>
                     <button type="submit" class="gomb admin-gomb">Jelszó mentése</button>
                 </form>
 
@@ -343,8 +344,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=c92b80d6d7fe"></script>
-    <script src="/admin-supabase.js?v=a8a4edb98d8c"></script>
+    <script src="/script.js?v=e52e7be8bef6"></script>
+    <script src="/admin-supabase.js?v=0133e8c79fb6"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
     <script src="/admin-content.js?v=9acedf35852b"></script>
 </body>

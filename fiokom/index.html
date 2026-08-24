@@ -81,12 +81,12 @@
                             <input type="email" name="email" autocomplete="username" maxlength="254" required>
                         </label>
                         <label>Jelszó
-                            <input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="fiok-jelszo-tipp" required>
+                            <input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="fiok-jelszo-tipp" required>
                         </label>
                         <label>Jelszó még egyszer
-                            <input type="password" name="password_again" autocomplete="new-password" minlength="12" maxlength="128" required>
+                            <input type="password" name="password_again" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="fiok-jelszo-tipp" required>
                         </label>
-                        <p id="fiok-jelszo-tipp" class="fiok-mezo-tipp">Legalább 12 karaktert vagy hosszú, egyedi jelmondatot használj.</p>
+                        <p id="fiok-jelszo-tipp" class="fiok-mezo-tipp">8–128 karaktert használj, legalább egy kisbetűvel, egy nagybetűvel és egy számmal.</p>
                         <label class="fiok-jelolonegyzet"><input type="checkbox" required><span>Elolvastam az <a href="/adatkezeles/" target="_blank" rel="noopener">adatkezelési tájékoztatót</a>.</span></label>
                         <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Fiók létrehozása</button>
                     </form>
@@ -127,11 +127,12 @@
             <p>A visszaállítás ehhez a fiókhoz tartozik: <strong id="fiok-helyreallitas-email"></strong>.</p>
             <form id="fiok-uj-jelszo-form" class="fiok-form fiok-form-keskeny">
                 <label>Új jelszó
-                    <input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" required>
+                    <input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="fiok-uj-jelszo-tipp" required>
                 </label>
                 <label>Új jelszó még egyszer
-                    <input type="password" name="password_again" autocomplete="new-password" minlength="12" maxlength="128" required>
+                    <input type="password" name="password_again" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="fiok-uj-jelszo-tipp" required>
                 </label>
+                <p id="fiok-uj-jelszo-tipp" class="fiok-mezo-tipp">8–128 karaktert használj, legalább egy kisbetűvel, egy nagybetűvel és egy számmal.</p>
                 <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Új jelszó mentése</button>
             </form>
         </section>
@@ -184,8 +185,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=c92b80d6d7fe"></script>
-    <script src="/account.js?v=4a24fbd9e103"></script>
+    <script src="/script.js?v=e52e7be8bef6"></script>
+    <script src="/account.js?v=d1e2482ad4af"></script>
 </body>
 
 </html>

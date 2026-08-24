@@ -3,7 +3,6 @@
 (function () {
     'use strict';
 
-    const MIN_PASSWORD_LENGTH = 12;
     const ACCOUNT_REDIRECT_PATH = '/fiokom/';
     const RECOVERY_QUERY = '?recovery=1';
     let supabaseClient = null;
@@ -16,7 +15,10 @@
 
         bindAccountUi();
 
-        if (!window.LUMI_SUPABASE?.url || !window.LUMI_SUPABASE?.publishableKey || !window.supabase?.createClient) {
+        if (!window.LUMI_SUPABASE?.url
+            || !window.LUMI_SUPABASE?.publishableKey
+            || !window.supabase?.createClient
+            || !window.LUMI_PASSWORD_POLICY?.isValid) {
             setGlobalStatus('A vendégfiók jelenleg nem érhető el. Kérlek, próbáld újra később.', true);
             disableForms(true);
             return;
@@ -133,7 +135,7 @@
         setHidden('fiok-uj-jelszo-panel', false);
         const email = document.getElementById('fiok-helyreallitas-email');
         if (email) email.textContent = user.email || '';
-        setGlobalStatus('Adj meg egy új, legalább 12 karakteres jelszót.');
+        setGlobalStatus(`Adj meg egy új jelszót: ${window.LUMI_PASSWORD_POLICY.hint}`);
     }
 
     function showAuthView(view) {
@@ -192,8 +194,8 @@
             setGlobalStatus('Ellenőrizd a nevet, a telefonszámot és az e-mail-címet.', true);
             return;
         }
-        if (password.length < MIN_PASSWORD_LENGTH || password.length > 128) {
-            setGlobalStatus('A jelszó 12–128 karakter hosszú lehet.', true);
+        if (!window.LUMI_PASSWORD_POLICY.isValid(password)) {
+            setGlobalStatus(`A jelszó követelményei: ${window.LUMI_PASSWORD_POLICY.hint}`, true);
             return;
         }
         if (password !== passwordAgain) {
@@ -283,8 +285,8 @@
         const password = String(form.elements.password.value || '');
         const passwordAgain = String(form.elements.password_again.value || '');
 
-        if (password.length < MIN_PASSWORD_LENGTH || password.length > 128) {
-            setGlobalStatus('Az új jelszó 12–128 karakter hosszú lehet.', true);
+        if (!window.LUMI_PASSWORD_POLICY.isValid(password)) {
+            setGlobalStatus(`Az új jelszó követelményei: ${window.LUMI_PASSWORD_POLICY.hint}`, true);
             return;
         }
         if (password !== passwordAgain) {

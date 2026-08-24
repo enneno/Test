@@ -109,8 +109,8 @@ test('a vendég regisztráció csak e-mail-megerősítés után hoz létre haszn
     await form.locator('[name="full_name"]').fill('Kiss Dóra');
     await form.locator('[name="phone"]').fill('201234567');
     await form.locator('[name="email"]').fill('Dora@example.com');
-    await form.locator('[name="password"]').fill('egy-hosszu-egyedi-jelszo');
-    await form.locator('[name="password_again"]').fill('egy-hosszu-egyedi-jelszo');
+    await form.locator('[name="password"]').fill('Egy-hosszu-egyedi-jelszo1');
+    await form.locator('[name="password_again"]').fill('Egy-hosszu-egyedi-jelszo1');
     await form.locator('[type="checkbox"]').check();
     await form.getByRole('button', { name: 'Fiók létrehozása' }).click();
 
@@ -122,6 +122,25 @@ test('a vendég regisztráció csak e-mail-megerősítés után hoz létre haszn
     expect(signUp.payload.email).toBe('dora@example.com');
     expect(signUp.payload.options.emailRedirectTo).toBe(new URL('/fiokom/', page.url()).href);
     expect(signUp.payload.options.data).toEqual({ full_name: 'Kiss Dóra', phone: '+36 201234567' });
+});
+
+test('a hibás összetételű jelszó nem indít regisztrációt', async ({ page }) => {
+    await installCustomerAccountMock(page);
+    await page.goto('/fiokom/', { waitUntil: 'domcontentloaded' });
+
+    await page.getByRole('tab', { name: 'Regisztráció' }).click();
+    const form = page.locator('#fiok-regisztracio-form');
+    await form.locator('[name="full_name"]').fill('Kiss Dóra');
+    await form.locator('[name="phone"]').fill('201234567');
+    await form.locator('[name="email"]').fill('dora@example.com');
+    await form.locator('[name="password"]').fill('CSAKNAGYBETU123');
+    await form.locator('[name="password_again"]').fill('CSAKNAGYBETU123');
+    await form.locator('[type="checkbox"]').check();
+    await form.getByRole('button', { name: 'Fiók létrehozása' }).click();
+
+    await expect(page.locator('#fiok-globalis-statusz')).toContainText('legalább egy kisbetű');
+    const signUpCalls = await page.evaluate(() => window.__customerAccountMock.calls.filter(call => call.method === 'signUp'));
+    expect(signUpCalls).toHaveLength(0);
 });
 
 test('az elfelejtett jelszó nem árulja el, hogy létezik-e a fiók', async ({ page }) => {
