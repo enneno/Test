@@ -59,6 +59,27 @@ test.describe('Lumi Nails PWA', () => {
     });
   });
 
+  test('does not request notification permission during normal page load', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__lumiNotificationRequests = 0;
+      const originalNotification = window.Notification;
+      if (!originalNotification) return;
+      try {
+        originalNotification.requestPermission = () => {
+          window.__lumiNotificationRequests += 1;
+          return Promise.resolve('default');
+        };
+      } catch {
+        // Some browsers expose a non-writable Notification method; the code path is still covered by API-shape tests.
+      }
+    });
+
+    await page.goto('/');
+    await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
+    const count = await page.evaluate(() => window.__lumiNotificationRequests || 0);
+    expect(count).toBe(0);
+  });
+
   test('keeps VAPID private material server-side only', async ({ page }) => {
     const clientResponse = await page.request.get('/pwa.js');
     const senderResponse = await page.request.get('/supabase/functions/send-web-push/index.ts');
