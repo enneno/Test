@@ -102,14 +102,14 @@
 
   window.LumiPWA = PWA;
 
+  // Only installation/push metadata. Do not alter viewport, phone-number rendering,
+  // navigation, requests, styles or any normal website behavior.
   addLink('manifest', '/manifest.webmanifest');
   addMeta('theme-color', '#b9858f');
   addMeta('mobile-web-app-capable', 'yes');
   addMeta('apple-mobile-web-app-capable', 'yes');
   addMeta('apple-mobile-web-app-status-bar-style', 'default');
   addMeta('apple-mobile-web-app-title', 'Lumi Nails');
-  addMeta('format-detection', 'telephone=yes');
-  ensureViewportFit();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     if (document.readyState === 'complete') {
@@ -233,14 +233,6 @@
       document.head.appendChild(meta);
     }
     meta.content = content;
-  }
-
-  function ensureViewportFit() {
-    const viewport = document.head.querySelector('meta[name="viewport"]');
-    if (!viewport) return;
-    if (!viewport.content.includes('viewport-fit=')) {
-      viewport.content = `${viewport.content}, viewport-fit=cover`;
-    }
   }
 
   function urlBase64ToUint8Array(base64String) {
