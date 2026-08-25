@@ -357,6 +357,17 @@
                 </div>
                 ${copy.save ? `<div class="admin-v2-page-actions"><button type="button" class="admin-v2-button admin-v2-button-primary" data-admin-v2-save>${copy.save}</button></div>` : ''}
             `;
+
+            const pageActions = heading.querySelector('.admin-v2-page-actions');
+            const exportGomb = tab === 'foglalasok'
+                ? document.getElementById('admin-foglalas-export')
+                : null;
+            if (pageActions && exportGomb) {
+                exportGomb.classList.remove('admin-kis-gomb');
+                exportGomb.classList.add('admin-v2-button', 'admin-v2-button-secondary');
+                pageActions.append(exportGomb);
+            }
+
             panel.prepend(heading);
         });
     }

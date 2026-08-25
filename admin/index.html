@@ -12,8 +12,8 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=cf4753af592a">
-    <link rel="stylesheet" href="/admin-v2.css?v=f8e79bddf139">
+    <link rel="stylesheet" href="/style.css?v=f47ba0bed657">
+    <link rel="stylesheet" href="/admin-v2.css?v=9cfb649afa39">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -101,14 +101,19 @@
 
                 <div id="admin-panel-foglalasok" class="admin-db-panel aktiv">
                     <div class="admin-panel-akciok admin-panel-akciok-keresessel">
-                        <div class="admin-panel-gombcsoport">
-                            <button type="button" id="admin-foglalas-frissites" class="admin-hozzaadas" title="Foglalások frissítése">Frissítés</button>
+                        <div class="admin-foglalas-muvelet-tarolo" hidden>
+                            <button type="button" id="admin-foglalas-frissites" class="admin-kis-gomb admin-frissites-ikon-gomb" aria-label="Foglalások frissítése" title="Foglalások frissítése">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M20 11a8 8 0 1 0-2.34 5.66"></path>
+                                    <path d="M20 4v7h-7"></path>
+                                </svg>
+                            </button>
                             <button type="button" id="admin-foglalas-export" class="admin-kis-gomb" data-admin-export="foglalasok" title="A jelenleg l&aacute;that&oacute; foglal&aacute;sok export&aacute;l&aacute;sa">Excel export</button>
                         </div>
                         <div class="admin-kereses-mezo">
                             <label for="admin-foglalas-kereses">Keres&eacute;s</label>
                             <div class="admin-kereses-input">
-                                <input type="search" id="admin-foglalas-kereses" placeholder="N&eacute;v, email vagy telefonsz&aacute;m">
+                                <input type="search" id="admin-foglalas-kereses" placeholder="N&eacute;v, e-mail vagy telefon">
                                 <button type="button" id="admin-foglalas-kereses-torles" class="admin-kereses-torles" aria-label="Keres&eacute;s t&ouml;rl&eacute;se" title="Keres&eacute;s t&ouml;rl&eacute;se" hidden>
                                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                         <path d="M6 6l12 12M18 6L6 18"></path>
@@ -343,9 +348,9 @@
     <div id="lablec-helye"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
-    <script src="/supabase-config.js?v=a704c66fbd43"></script>
+    <script src="/supabase-config.js?v=80ecf1757393"></script>
     <script src="/script.js?v=3ba079e2d5eb"></script>
-    <script src="/admin-supabase.js?v=c0f4710c03e9"></script>
+    <script src="/admin-supabase.js?v=efe50335539b"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
     <script src="/admin-content.js?v=9acedf35852b"></script>
 </body>

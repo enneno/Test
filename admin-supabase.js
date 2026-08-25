@@ -1018,6 +1018,17 @@
                 </div>
                 ${copy.save ? `<div class="admin-v2-page-actions"><button type="button" class="admin-v2-button admin-v2-button-primary" data-admin-v2-save>${copy.save}</button></div>` : ''}
             `;
+
+            const pageActions = heading.querySelector('.admin-v2-page-actions');
+            const exportGomb = tab === 'foglalasok'
+                ? document.getElementById('admin-foglalas-export')
+                : null;
+            if (pageActions && exportGomb) {
+                exportGomb.classList.remove('admin-kis-gomb');
+                exportGomb.classList.add('admin-v2-button', 'admin-v2-button-secondary');
+                pageActions.append(exportGomb);
+            }
+
             panel.prepend(heading);
         });
     }
@@ -2314,22 +2325,32 @@
         const osszes = foglalasOsszesOldal();
         const vanElem = lista.length > 0;
         return `
-            <div class="admin-oldalmeret" role="group" aria-label="Foglal\u00e1sok oldalank\u00e9nt">
-                <span>Oldalank\u00e9nt</span>
-                ${oldalmeretGombok(allapot.foglalasOldalMeret, 'foglalas-oldalmeret')}
+            <div class="admin-lapozo-nav" role="group" aria-label="Foglal\u00e1sok lapoz\u00e1sa">
+                <button type="button" class="admin-kis-gomb" data-foglalas-oldal="elozo" ${allapot.foglalasOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
+                <span>${vanElem ? `${allapot.foglalasOldal} / ${osszes}` : '0 / 0'}</span>
+                <button type="button" class="admin-kis-gomb" data-foglalas-oldal="kovetkezo" ${allapot.foglalasOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
             </div>
-            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="elozo" ${allapot.foglalasOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
-            <span>${vanElem ? `${allapot.foglalasOldal} / ${osszes}` : '0 / 0'}</span>
-            <button type="button" class="admin-kis-gomb" data-foglalas-oldal="kovetkezo" ${allapot.foglalasOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+            <div class="admin-lapozo-jobb">
+                <div class="admin-oldalmeret" role="group" aria-label="Foglal\u00e1sok oldalank\u00e9nt">
+                    <span>Oldalank\u00e9nt</span>
+                    ${oldalmeretGombok(allapot.foglalasOldalMeret, 'foglalas-oldalmeret')}
+                </div>
+            </div>
         `;
     }
 
     function foglalasLapozoRenderelese() {
         const elemek = adminElemek();
+        const frissitesGomb = elemek.foglalasFrissites;
         const htmlTartalom = foglalasLapozoHtml();
         [elemek.foglalasLapozoFelso, elemek.foglalasLapozo].filter(Boolean).forEach(lapozo => {
             lapozo.innerHTML = htmlTartalom;
         });
+
+        const felsoJobbOldal = elemek.foglalasLapozoFelso?.querySelector('.admin-lapozo-jobb');
+        if (felsoJobbOldal && frissitesGomb) {
+            felsoJobbOldal.append(frissitesGomb);
+        }
     }
 
     function foglalasLapozoKattintas(event) {
@@ -2793,7 +2814,7 @@
                     <div class="admin-foglalas-nev-blokk">
                         <span class="admin-kartya-tipus">Kézzel felvett idő</span>
                         <h3>${html(megjegyzes)}</h3>
-                        <p class="admin-foglalas-rovid-szolgaltatas">Kézzel rögzített időpont</p>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true"></p>
                     </div>
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>

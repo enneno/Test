@@ -620,6 +620,101 @@ test.describe('production admin redesign', () => {
         expect(browserErrors).toEqual([]);
     });
 
+    test('booking actions and filters stay usable at the requested responsive widths', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 1440, height: 1000 });
+
+        await page.locator('[data-admin-v2-nav="foglalasok"]').click();
+        const panel = page.locator('#admin-panel-foglalasok');
+        const pageActions = panel.locator('.admin-v2-page-actions');
+        const saveButton = pageActions.getByRole('button', { name: 'Módosítások mentése' });
+        const exportButton = pageActions.getByRole('button', { name: 'Excel export' });
+        const refreshButton = panel.getByRole('button', { name: 'Foglalások frissítése' });
+        const searchInput = panel.locator('#admin-foglalas-kereses');
+
+        await expect(saveButton).toBeVisible();
+        await expect(exportButton).toBeVisible();
+        await expect(refreshButton).toHaveAttribute('title', 'Foglalások frissítése');
+        await expect(searchInput).toHaveAttribute('placeholder', 'Név, e-mail vagy telefon');
+        expect((await refreshButton.textContent()).trim()).toBe('');
+        expect(await refreshButton.evaluate(button => button.parentElement?.classList.contains('admin-lapozo-jobb'))).toBe(true);
+
+        const manualCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Adminisztracio' });
+        const onlineCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Nagy Anna' });
+        const manualService = manualCard.locator('.admin-foglalas-rovid-szolgaltatas');
+        const onlineService = onlineCard.locator('.admin-foglalas-rovid-szolgaltatas');
+
+        await expect(manualCard.locator('.admin-kartya-tipus')).toHaveText('Kézzel felvett idő');
+        await expect(manualService).toBeEmpty();
+        expect(await manualCard.locator('.admin-kartya-tipus').evaluate(
+            element => getComputedStyle(element).textTransform
+        )).toBe('uppercase');
+
+        const serviceRowHeights = await Promise.all([
+            manualService.evaluate(element => element.getBoundingClientRect().height),
+            onlineService.evaluate(element => element.getBoundingClientRect().height)
+        ]);
+        expect(Math.abs(serviceRowHeights[0] - serviceRowHeights[1])).toBeLessThanOrEqual(1);
+
+        for (const viewport of [
+            { width: 390, height: 844 },
+            { width: 430, height: 932 },
+            { width: 768, height: 1024 },
+            { width: 1440, height: 1000 }
+        ]) {
+            await page.setViewportSize(viewport);
+
+            const metrics = await panel.evaluate((root, mobileMaxWidth) => {
+                const rect = element => element.getBoundingClientRect();
+                const insideViewport = element => {
+                    const bounds = rect(element);
+                    return bounds.left >= -1 && bounds.right <= window.innerWidth + 1;
+                };
+                const search = root.querySelector('#admin-foglalas-kereses');
+                const status = root.querySelector('#admin-foglalas-statusz-szuro');
+                const pager = root.querySelector('#admin-foglalas-lapozo-felso');
+                const refresh = root.querySelector('#admin-foglalas-frissites');
+                const pageSize = pager.querySelector('[data-foglalas-oldalmeret]');
+                const actions = root.querySelector('.admin-v2-page-actions');
+                const actionButtons = Array.from(actions.querySelectorAll('button'));
+                const refreshBounds = rect(refresh);
+                const pageSizeBounds = rect(pageSize);
+
+                return {
+                    overflow: document.documentElement.scrollWidth - window.innerWidth,
+                    searchInside: insideViewport(search),
+                    statusInside: insideViewport(status),
+                    pagerInside: insideViewport(pager),
+                    pagerOverflow: pager.scrollWidth - pager.clientWidth,
+                    actionsInside: actionButtons.every(insideViewport),
+                    searchFont: Number.parseFloat(getComputedStyle(search).fontSize),
+                    mobileFontLargeEnough: window.innerWidth > mobileMaxWidth
+                        || Number.parseFloat(getComputedStyle(search).fontSize) >= 16,
+                    refreshWidth: refreshBounds.width,
+                    refreshHeight: refreshBounds.height,
+                    refreshRightOfPageSize: refreshBounds.left >= pageSizeBounds.right - 1,
+                    sharedActionBlock: actionButtons.length === 2
+                        && actionButtons.every(button => button.parentElement === actions)
+                };
+            }, 430);
+
+            expect(metrics.overflow, `${viewport.width}px document overflow`).toBeLessThanOrEqual(1);
+            expect(metrics.searchInside, `${viewport.width}px search`).toBe(true);
+            expect(metrics.statusInside, `${viewport.width}px status filter`).toBe(true);
+            expect(metrics.pagerInside, `${viewport.width}px pager`).toBe(true);
+            expect(metrics.pagerOverflow, `${viewport.width}px pager overflow`).toBeLessThanOrEqual(1);
+            expect(metrics.actionsInside, `${viewport.width}px page actions`).toBe(true);
+            expect(metrics.mobileFontLargeEnough, `${viewport.width}px search font ${metrics.searchFont}px`).toBe(true);
+            expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(44);
+            expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(44);
+            expect(metrics.refreshRightOfPageSize, `${viewport.width}px refresh placement`).toBe(true);
+            expect(metrics.sharedActionBlock, `${viewport.width}px shared page actions`).toBe(true);
+        }
+
+        await refreshButton.click();
+        await expect(panel.locator('#admin-foglalas-lista .admin-foglalas-kartya')).toHaveCount(6);
+        expect(browserErrors).toEqual([]);
+    });
+
     test('mobile: the registered member list stays within the viewport', async ({ page }) => {
         const browserErrors = await openAdmin(page, { width: 390, height: 844 });
 

@@ -11223,8 +11223,8 @@ body.admin-body {
 
 /* Legacy admin bookings — végleges megjelenés (99-ből migrálva) */
 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
-    grid-template-columns: auto minmax(240px, 1fr) minmax(154px, 180px);
-    grid-template-areas: "actions search status";
+    grid-template-columns: minmax(240px, 1fr) minmax(154px, 180px);
+    grid-template-areas: "search status";
     align-items: end;
     gap: 10px;
     margin-bottom: 8px;
@@ -11233,18 +11233,6 @@ body.admin-body {
     border-bottom: 1px solid var(--admin-line);
     border-radius: 0;
     background: transparent;
-}
-
-#admin-panel-foglalasok .admin-panel-gombcsoport {
-    grid-area: actions;
-    flex-wrap: nowrap;
-}
-
-#admin-panel-foglalasok .admin-panel-gombcsoport > * {
-    width: auto;
-    min-height: 40px;
-    margin: 0;
-    padding-inline: 14px;
 }
 
 #admin-panel-foglalasok .admin-kereses-mezo:not(.admin-statusz-szuro-mezo) {
@@ -11440,6 +11428,56 @@ body.admin-body {
     margin: 8px 0 10px;
 }
 
+#admin-panel-foglalasok .admin-lapozo {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+
+#admin-panel-foglalasok .admin-lapozo-nav,
+#admin-panel-foglalasok .admin-lapozo-jobb {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+#admin-panel-foglalasok .admin-lapozo-nav > span {
+    order: 2;
+    flex: 0 0 auto;
+    min-width: 36px;
+    font-size: var(--lumi-font-label);
+    text-align: center;
+}
+
+#admin-panel-foglalasok .admin-lapozo-jobb {
+    margin-left: auto;
+}
+
+#admin-panel-foglalasok .admin-lapozo .admin-oldalmeret {
+    order: initial;
+    margin: 0;
+}
+
+#admin-panel-foglalasok .admin-frissites-ikon-gomb {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+}
+
+#admin-panel-foglalasok .admin-frissites-ikon-gomb svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 #admin-panel-foglalasok .admin-db-lista {
     gap: 0;
     border-top: 1px solid var(--admin-line);
@@ -11509,6 +11547,7 @@ body.admin-body {
 }
 
 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas {
+    min-height: 1.3em;
     margin: 0;
     color: var(--admin-muted);
     font-size: var(--lumi-font-caption);
@@ -12012,9 +12051,7 @@ body.admin-body {
 
     #admin-panel-foglalasok .admin-panel-akciok-keresessel {
         grid-template-columns: minmax(0, 1fr) minmax(150px, 180px);
-        grid-template-areas:
-            "search status"
-            "actions actions";
+        grid-template-areas: "search status";
     }
 
     #admin-panel-foglalasok .admin-db-kartya-fej {
@@ -12124,23 +12161,9 @@ body.admin-body {
 
     #admin-panel-foglalasok .admin-panel-akciok-keresessel {
         grid-template-columns: minmax(0, 1fr) 112px;
-        grid-template-areas:
-            "search status"
-            "actions actions";
+        grid-template-areas: "search status";
         gap: 9px;
         padding: 0 0 12px;
-    }
-
-    #admin-panel-foglalasok .admin-panel-gombcsoport {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-
-    #admin-panel-foglalasok .admin-panel-gombcsoport > * {
-        width: auto;
-        min-height: 34px;
-        padding-inline: 11px;
     }
 
     #admin-panel-foglalasok .admin-kereses-mezo input,
@@ -12161,6 +12184,14 @@ body.admin-body {
 
     #admin-panel-foglalasok .admin-lapozo-felso {
         margin-block: 7px 9px;
+    }
+
+    #admin-panel-foglalasok .admin-lapozo {
+        gap: 8px;
+    }
+
+    #admin-panel-foglalasok .admin-lapozo-jobb .admin-oldalmeret > span {
+        display: none;
     }
 
     #admin-panel-foglalasok .admin-foglalas-kartya {

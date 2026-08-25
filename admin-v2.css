@@ -651,7 +651,12 @@
   display: flex;
   flex: 0 0 auto;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-v2-page-actions {
+  justify-content: flex-end;
 }
 
 .admin-body.admin-v2 .admin-v2-button {
@@ -1555,7 +1560,8 @@
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-v2-page-actions {
-    width: auto;
+    width: 100%;
+    justify-content: flex-start;
     overflow: visible;
   }
 
