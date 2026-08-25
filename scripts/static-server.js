@@ -48,6 +48,7 @@ const PUBLIC_ROOT_FILES = new Set([
     'admin-v2.css',
     'supabase-config.js',
     'pwa.js',
+    'pwa-admin-shell.js',
     'sw.js',
     'manifest.webmanifest',
     'favicon.ico',
