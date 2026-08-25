@@ -139,13 +139,15 @@
 
   function setupAdminPushControls() {
     const attach = () => {
-      const actions = document.querySelector('.admin-akciok');
+      // The current admin UI creates this settings action row dynamically.
+      // Wait for that row instead of attaching to the hidden legacy admin header.
+      const actions = document.querySelector('.admin-v2-account-actions');
       if (!actions || document.getElementById('admin-push-toggle')) return false;
 
       const button = document.createElement('button');
       button.type = 'button';
       button.id = 'admin-push-toggle';
-      button.className = 'gomb admin-gomb';
+      button.className = 'admin-v2-button admin-v2-button-secondary';
       button.textContent = 'Értesítések bekapcsolása';
 
       const status = document.createElement('span');
@@ -153,10 +155,11 @@
       status.setAttribute('aria-live', 'polite');
       status.style.display = 'block';
       status.style.width = '100%';
+      status.style.marginTop = '10px';
       status.style.fontSize = '13px';
 
       actions.appendChild(button);
-      actions.appendChild(status);
+      actions.insertAdjacentElement('afterend', status);
 
       refreshPushButton(button, status);
       button.addEventListener('click', async () => {
