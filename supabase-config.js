@@ -22,6 +22,32 @@ window.lumiSupabaseClient = (() => {
 })();
 
 (() => {
+    // Load the verified self-service booking manager before booking.js registers
+    // its legacy one-reference-only handler. Parser-time loading keeps the order deterministic.
+    const isBookingPath = location.pathname === '/foglalas' || location.pathname.startsWith('/foglalas/');
+    if (!isBookingPath || document.querySelector('script[data-lumi-secure-booking-manager]')) return;
+
+    if (document.readyState === 'loading') {
+        document.write('<link rel="stylesheet" href="/booking-manage.css?v=1" data-lumi-secure-booking-manager-style>');
+        document.write('<script src="/booking-manage.js?v=1" data-lumi-secure-booking-manager><\/script>');
+        return;
+    }
+
+    if (!document.querySelector('link[data-lumi-secure-booking-manager-style]')) {
+        const style = document.createElement('link');
+        style.rel = 'stylesheet';
+        style.href = '/booking-manage.css?v=1';
+        style.dataset.lumiSecureBookingManagerStyle = 'true';
+        document.head.appendChild(style);
+    }
+
+    const script = document.createElement('script');
+    script.src = '/booking-manage.js?v=1';
+    script.dataset.lumiSecureBookingManager = 'true';
+    document.head.appendChild(script);
+})();
+
+(() => {
     // The CMS module already owns the real save logic and binds it to #admin-cms-save.
     // Keep that target present before admin-content.js initializes so the Admin v2
     // page-level save button can call the existing save path instead of duplicating it.
