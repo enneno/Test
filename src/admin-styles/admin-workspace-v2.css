@@ -1383,7 +1383,7 @@
 .admin-body.admin-v2 .admin-statusz,
 .admin-body.admin-v2 .admin-pill,
 .admin-body.admin-v2 .admin-allapot-jelzes {
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
@@ -1493,22 +1493,6 @@
     padding: calc(var(--admin-v2-topbar) + 22px) 17px 42px;
   }
 
-  .admin-body.admin-v2 .admin-v2-nav-item,
-  .admin-body.admin-v2 .admin-v2-public-link,
-  .admin-body.admin-v2 .admin-v2-profile,
-  .admin-body.admin-v2 .admin-v2-logout,
-  .admin-body.admin-v2 .admin-v2-icon-button,
-  .admin-body.admin-v2 .admin-v2-button,
-  .admin-body.admin-v2 .admin-panel .admin-v2-button,
-  .admin-body.admin-v2 .admin-v2-subnav button,
-  .admin-body.admin-v2 .admin-v2-task-item > button {
-    min-height: 44px;
-  }
-
-  .admin-body.admin-v2 .admin-v2-icon-button {
-    width: 44px;
-    height: 44px;
-  }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-v2-button {
     min-height: 36px;
