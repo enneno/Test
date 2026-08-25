@@ -119,11 +119,19 @@
     }
   }
 
-  if (location.pathname === '/admin' || location.pathname.startsWith('/admin/')) {
+  const isAdminPath = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+
+  if (isAdminPath) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupAdminPushControls, { once: true });
     } else {
       setupAdminPushControls();
+    }
+  } else if (PWA.isStandalone()) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupStandaloneAdminEntry, { once: true });
+    } else {
+      setupStandaloneAdminEntry();
     }
   }
 
@@ -133,6 +141,34 @@
     } catch (error) {
       console.warn('Lumi PWA service worker registration failed:', error);
     }
+  }
+
+  function setupStandaloneAdminEntry() {
+    if (!PWA.isStandalone() || isAdminPath) return;
+
+    const attach = () => {
+      const footerHost = document.getElementById('lablec-helye');
+      if (!footerHost || footerHost.children.length === 0) return;
+      if (document.getElementById('pwa-admin-entry')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.id = 'pwa-admin-entry';
+      wrapper.style.cssText = 'display:flex;justify-content:center;padding:10px 16px 18px;';
+
+      const link = document.createElement('a');
+      link.href = '/admin/';
+      link.textContent = 'Admin';
+      link.setAttribute('aria-label', 'Admin felület megnyitása');
+      link.style.cssText = 'font:500 12px/1.2 Manrope,system-ui,sans-serif;color:inherit;opacity:.55;text-decoration:none;padding:8px 12px;';
+
+      wrapper.appendChild(link);
+      footerHost.appendChild(wrapper);
+    };
+
+    attach();
+    const observer = new MutationObserver(attach);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 10000);
   }
 
   function setupAdminPushControls() {
