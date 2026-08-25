@@ -15,6 +15,6 @@
   "license": "UNLICENSED",
   "type": "commonjs",
   "devDependencies": {
-    "playwright": "^1.61.1"
+    "@playwright/test": "^1.61.1"
   }
 }
