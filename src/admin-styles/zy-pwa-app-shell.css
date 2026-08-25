@@ -255,7 +255,7 @@
   border: 0;
 }
 
-@media (min-width: 700px) {
+@media (min-width: 768px) {
   .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
     padding-right: 20px;
     padding-left: 20px;
