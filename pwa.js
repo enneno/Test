@@ -123,9 +123,9 @@
 
   if (isAdminPath) {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupAdminPushControls, { once: true });
+      document.addEventListener('DOMContentLoaded', setupAdminPwaControls, { once: true });
     } else {
-      setupAdminPushControls();
+      setupAdminPwaControls();
     }
   }
 
@@ -135,6 +135,11 @@
     } catch (error) {
       console.warn('Lumi PWA service worker registration failed:', error);
     }
+  }
+
+  function setupAdminPwaControls() {
+    setupAdminPushControls();
+    if (PWA.isStandalone()) setupStandaloneAdminFloatingSave();
   }
 
   function setupAdminPushControls() {
@@ -190,6 +195,58 @@
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
     window.setTimeout(() => observer.disconnect(), 10000);
+  }
+
+  function setupStandaloneAdminFloatingSave() {
+    if (!PWA.isStandalone() || document.getElementById('pwa-admin-floating-save')) return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'pwa-admin-floating-save';
+    button.className = 'admin-v2-button admin-v2-button-primary';
+    button.textContent = 'Mentés';
+    button.hidden = true;
+    button.style.cssText = [
+      'position:fixed',
+      'right:18px',
+      'bottom:calc(18px + env(safe-area-inset-bottom, 0px))',
+      'z-index:1200',
+      'min-width:112px',
+      'box-shadow:0 10px 30px rgba(0,0,0,.18)'
+    ].join(';');
+
+    button.addEventListener('click', () => {
+      const source = getActiveAdminSaveButton();
+      if (!source || source.disabled) return;
+      source.click();
+    });
+
+    document.body.appendChild(button);
+
+    const refresh = () => {
+      const source = getActiveAdminSaveButton();
+      button.hidden = !source;
+      button.disabled = !source || source.disabled;
+      button.setAttribute('aria-label', source?.textContent?.trim() || 'Mentés');
+    };
+
+    refresh();
+    const observer = new MutationObserver(refresh);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'hidden', 'disabled']
+    });
+  }
+
+  function getActiveAdminSaveButton() {
+    const panels = Array.from(document.querySelectorAll('.admin-db-panel'));
+    const activePanel = panels.find(panel => {
+      if (!panel.classList.contains('aktiv') || panel.hidden) return false;
+      return window.getComputedStyle(panel).display !== 'none';
+    });
+    return activePanel?.querySelector('[data-admin-v2-save]') || null;
   }
 
   async function refreshPushButton(button, status, updateStatus = true) {
