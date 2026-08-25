@@ -1,0 +1,42 @@
+.foglalas-kezelo-bevitel.foglalas-kezelo-bevitel-biztonsagos {
+    align-items: end;
+}
+
+.foglalas-kezelo-biztonsagi-mezok {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    min-width: 0;
+}
+
+.foglalas-kezelo-mezocsoport {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.foglalas-kezelo-mezocsoport label {
+    margin: 0;
+}
+
+#foglalas-elerhetoseg {
+    min-width: 0;
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.foglalas-popup-biztonsagi-segitseg {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    opacity: 0.82;
+}
+
+@media (max-width: 760px) {
+    .foglalas-kezelo-bevitel.foglalas-kezelo-bevitel-biztonsagos,
+    .foglalas-kezelo-biztonsagi-mezok {
+        grid-template-columns: 1fr;
+    }
+}
