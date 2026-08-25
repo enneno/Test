@@ -997,6 +997,12 @@ test('a foglaláskezelő elutasítja a hiányos és az ismeretlen azonosítót',
 
 test('a 24 órán belüli foglalás is lemondható és minden szükséges részlete látható', async ({ page }) => {
     const reference = 'LUMI-A7K3';
+    const startsAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    const endsAt = new Date(startsAt.getTime() + 2 * 60 * 60 * 1000);
+    const expectedEndTime = new Intl.DateTimeFormat('hu-HU', {
+        hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Budapest'
+    }).format(endsAt);
+    let cancellationRequestCount = 0;
     await page.route('**/rest/v1/rpc/get_booking_status', async route => {
         expect(route.request().postDataJSON()).toEqual({ p_reference: reference });
         await route.fulfill({
@@ -1010,13 +1016,22 @@ test('a 24 órán belüli foglalás is lemondható és minden szükséges részl
                 service_price_unit: 'Ft',
                 service_price_text: '6.500 Ft',
                 nail_style: 'Francia köröm',
-                starts_at: '2099-08-10T08:00:00+02:00',
-                ends_at: '2099-08-10T10:00:00+02:00',
+                starts_at: startsAt.toISOString(),
+                ends_at: endsAt.toISOString(),
                 status: 'confirmed',
                 status_label: 'Visszaigazolva',
                 coupon_label: 'LUMI10 - 500 Ft kedvezmény',
-                can_cancel: true
+                can_cancel: true,
+                cancellation_note_required: true
             }])
+        });
+    });
+    await page.route('**/rest/v1/rpc/cancel_booking_by_reference', async route => {
+        cancellationRequestCount += 1;
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify([{ success: true, result: 'cancelled', message: 'Sikeres.' }])
         });
     });
 
@@ -1025,12 +1040,16 @@ test('a 24 órán belüli foglalás is lemondható és minden szükséges részl
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('Gél lakk');
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('6000 Ft');
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('Francia köröm');
-    await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('10:00');
+    await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText(expectedEndTime);
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('LUMI10');
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('Visszaigazolva');
-    await expect(page.locator('.foglalas-lemondas-hatarido')).toContainText('bármikor');
+    await expect(page.locator('.foglalas-lemondas-hatarido')).toContainText('24 órán belül');
     await expect(page.locator('#foglalas-lemondas-megjegyzes-blokk')).toBeVisible();
+    await expect(page.locator('#foglalas-lemondas-megjegyzes')).toHaveAttribute('required', '');
     await expect(page.locator('#foglalas-lemondas')).toBeVisible();
+    await page.locator('#foglalas-lemondas').click();
+    await expect(page.locator('#foglalas-ellenorzes-status')).toContainText('írj rövid indokot');
+    expect(cancellationRequestCount).toBe(0);
 });
 
 test('a foglalás lemondható az azonosítóval és megjegyzéssel', async ({ page }) => {

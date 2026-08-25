@@ -105,7 +105,7 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
-                gombSzoveg: 'Időpontot foglalok',
+                gombSzoveg: 'Belépés / Regisztráció',
                 elonyok: [
                     { kiemeles: 'Személyes', szoveg: 'figyelem' },
                     { kiemeles: 'Precíz', szoveg: 'kivitelezés' },
@@ -1653,9 +1653,13 @@ function supabaseFoglalasSzovegekAlkalmazasa(foglalas) {
     szovegBeallitasa('label[for="foglalas-azonosito"]', kezeles.kodCimke);
     szovegBeallitasa('.foglalas-kezelo-segitseg', kezeles.kodSegitseg);
     szovegBeallitasa('#foglalas-ellenorzes-urlap button[type="submit"]', kezeles.lekeresGomb);
-    szovegBeallitasa('#foglalas-lemondas-megjegyzes-blokk > span', kezeles.lemondasMegjegyzesCimke);
     const megjegyzes = document.getElementById('foglalas-lemondas-megjegyzes');
-    if (megjegyzes && kezeles.lemondasMegjegyzesPlaceholder) {
+    const megjegyzesCimke = document.querySelector('#foglalas-lemondas-megjegyzes-blokk > span');
+    const kotelezoIndok = megjegyzes?.dataset.requiredWithin24h === 'true';
+    if (megjegyzesCimke && kezeles.lemondasMegjegyzesCimke && !kotelezoIndok) {
+        megjegyzesCimke.textContent = kezeles.lemondasMegjegyzesCimke;
+    }
+    if (megjegyzes && kezeles.lemondasMegjegyzesPlaceholder && !kotelezoIndok) {
         megjegyzes.placeholder = kezeles.lemondasMegjegyzesPlaceholder;
     }
     const lemondas = document.getElementById('foglalas-lemondas');

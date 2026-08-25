@@ -121,9 +121,35 @@
         elemek.email.readOnly = true;
         elemek.email.setAttribute('aria-readonly', 'true');
         elemek.email.dataset.accountVerified = 'true';
+        vendegMentettIgenyekElokitese(elemek, profile);
 
         vendegFiokJelzesMegjelenitese(elemek);
         osszefoglaloFrissitese(elemek);
+    }
+
+    function vendegMentettIgenyekElokitese(elemek, profile) {
+        if (!profile) return;
+
+        const urlStilus = new URLSearchParams(window.location.search).get('stilus');
+        if (!urlStilus && profile.preferred_nail_style) {
+            const styleInput = Array.from(document.querySelectorAll('input[name="korom-stilus"]'))
+                .find(input => input.value === profile.preferred_nail_style);
+            if (styleInput) {
+                styleInput.checked = true;
+                stilusAllapotFrissitese(elemek);
+            }
+        }
+
+        if (!elemek.komment || elemek.komment.value.trim()) return;
+        const details = [
+            profile.nail_shape ? `forma: ${profile.nail_shape}` : '',
+            profile.nail_length ? `hossz: ${profile.nail_length}` : '',
+            profile.nail_notes ? String(profile.nail_notes).trim() : ''
+        ].filter(Boolean);
+
+        if (details.length) {
+            elemek.komment.value = `Mentett körömigények – ${details.join('; ')}`.slice(0, 1000);
+        }
     }
 
     function vendegNemzetiTelefonszam(value) {
@@ -138,7 +164,7 @@
 
         const message = document.createElement('p');
         message.className = 'foglalas-fiok-jelzes';
-        message.append('A fiókodban elmentett adataidat előre kitöltöttük. ');
+        message.append('A fiókodban elmentett adataidat és igényeidet előkészítettük. ');
 
         const accountLink = document.createElement('a');
         accountLink.href = '/fiokom/';
@@ -363,7 +389,39 @@
         }
 
         szolgaltatasKartyakRenderelese(elemek);
+        await urlbolFoglalasElokitese(elemek);
         foglalasiTartalomKeszJelzese();
+    }
+
+    async function urlbolFoglalasElokitese(elemek) {
+        const parameters = new URLSearchParams(window.location.search);
+        const serviceId = String(parameters.get('szolgaltatas') || '').trim();
+        const style = String(parameters.get('stilus') || '').trim();
+
+        if (style) {
+            const styleInput = Array.from(document.querySelectorAll('input[name="korom-stilus"]'))
+                .find(input => input.value === style);
+            if (styleInput) {
+                styleInput.checked = true;
+                stilusAllapotFrissitese(elemek);
+            }
+        }
+
+        if (!serviceId || !allapot.szolgaltatasok.some(service => service.id === serviceId)) return;
+
+        elemek.szolgaltatas.value = serviceId;
+        kartyaAktivAllapot(elemek.szolgaltatasKartyak, serviceId);
+        kuponSzolgaltatasValtozott(elemek);
+        await szabadDatumokBetoltese(elemek);
+        osszefoglaloFrissitese(elemek);
+
+        const notice = document.createElement('p');
+        notice.className = 'foglalas-fiok-jelzes foglalas-ujrafoglalas-jelzes';
+        notice.textContent = 'A korábbi szolgáltatást előkészítettük. Ellenőrizd a részleteket, majd válassz új időpontot.';
+        const serviceStep = elemek.szolgaltatasKartyak?.closest('.foglalas-lepes');
+        if (serviceStep && !serviceStep.querySelector('.foglalas-ujrafoglalas-jelzes')) {
+            serviceStep.appendChild(notice);
+        }
     }
 
     function foglalasiTartalomKeszJelzese() {
@@ -1706,8 +1764,11 @@
             ['Időpont', `${idopont} – ${idopontVege}`],
             ['Kupon', foglalas.coupon_label]
         ].filter(([, ertek]) => Boolean(ertek));
-        const lemondasSzoveg = foglalas.can_cancel
-            ? elemek.lemondas.dataset.leiras || 'Ha mégsem megfelelő az időpont, itt bármikor lemondhatod.'
+        const kotelezoIndok = Boolean(foglalas.cancellation_note_required);
+        const lemondasSzoveg = foglalas.can_cancel && kotelezoIndok
+            ? 'Az időpont 24 órán belül kezdődik, ezért a lemondás rövid indoklása kötelező.'
+            : foglalas.can_cancel
+                ? elemek.lemondas.dataset.leiras || 'Ha mégsem megfelelő az időpont, itt lemondhatod.'
             : 'Ez a foglalás már nem mondható le online.';
 
         elemek.eredmeny.innerHTML = `
@@ -1723,6 +1784,17 @@
         elemek.eredmeny.appendChild(elemek.lemondasMegjegyzesBlokk);
         elemek.eredmeny.appendChild(elemek.lemondas);
         elemek.lemondasMegjegyzesBlokk.hidden = !foglalas.can_cancel;
+        const megjegyzesCimke = elemek.lemondasMegjegyzesBlokk.querySelector('span');
+        if (megjegyzesCimke) {
+            megjegyzesCimke.textContent = kotelezoIndok
+                ? 'Lemondás oka vagy megjegyzés (24 órán belül kötelező)'
+                : 'Lemondás oka vagy megjegyzés (opcionális)';
+        }
+        elemek.lemondasMegjegyzes.required = kotelezoIndok;
+        elemek.lemondasMegjegyzes.dataset.requiredWithin24h = String(kotelezoIndok);
+        elemek.lemondasMegjegyzes.placeholder = kotelezoIndok
+            ? 'Kérlek, röviden írd meg a lemondás okát.'
+            : 'Ha szeretnéd, írd meg röviden a lemondás okát.';
         elemek.lemondas.hidden = !foglalas.can_cancel;
         elemek.lemondas.disabled = false;
         elemek.lemondas.textContent = elemek.lemondas.dataset.felirat || 'Foglalás lemondása';
@@ -1731,12 +1803,18 @@
 
     async function foglalasLemondasa(azonosito, elemek) {
         const kod = foglalasAzonositoFormazasa(azonosito);
+        const megjegyzes = elemek.lemondasMegjegyzes.value.trim().slice(0, 500);
+        if (elemek.lemondasMegjegyzes.dataset.requiredWithin24h === 'true' && !megjegyzes) {
+            foglalasKezeloUzenet(elemek.statusz, 'A 24 órán belüli lemondáshoz írj rövid indokot.', true);
+            elemek.lemondasMegjegyzes.focus();
+            return;
+        }
         if (!window.confirm('Biztosan lemondod ezt a foglalást? Ez a művelet nem vonható vissza.')) return;
         elemek.lemondas.disabled = true;
         elemek.lemondas.textContent = 'Lemondás folyamatban...';
         const { data, error } = await allapot.kliens.rpc('cancel_booking_by_reference', {
             p_reference: kod,
-            p_note: elemek.lemondasMegjegyzes.value.trim().slice(0, 500)
+            p_note: megjegyzes
         });
         const valasz = Array.isArray(data) ? data[0] : data;
         if (error || !valasz?.success) {

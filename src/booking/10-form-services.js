@@ -214,7 +214,39 @@
         }
 
         szolgaltatasKartyakRenderelese(elemek);
+        await urlbolFoglalasElokitese(elemek);
         foglalasiTartalomKeszJelzese();
+    }
+
+    async function urlbolFoglalasElokitese(elemek) {
+        const parameters = new URLSearchParams(window.location.search);
+        const serviceId = String(parameters.get('szolgaltatas') || '').trim();
+        const style = String(parameters.get('stilus') || '').trim();
+
+        if (style) {
+            const styleInput = Array.from(document.querySelectorAll('input[name="korom-stilus"]'))
+                .find(input => input.value === style);
+            if (styleInput) {
+                styleInput.checked = true;
+                stilusAllapotFrissitese(elemek);
+            }
+        }
+
+        if (!serviceId || !allapot.szolgaltatasok.some(service => service.id === serviceId)) return;
+
+        elemek.szolgaltatas.value = serviceId;
+        kartyaAktivAllapot(elemek.szolgaltatasKartyak, serviceId);
+        kuponSzolgaltatasValtozott(elemek);
+        await szabadDatumokBetoltese(elemek);
+        osszefoglaloFrissitese(elemek);
+
+        const notice = document.createElement('p');
+        notice.className = 'foglalas-fiok-jelzes foglalas-ujrafoglalas-jelzes';
+        notice.textContent = 'A korábbi szolgáltatást előkészítettük. Ellenőrizd a részleteket, majd válassz új időpontot.';
+        const serviceStep = elemek.szolgaltatasKartyak?.closest('.foglalas-lepes');
+        if (serviceStep && !serviceStep.querySelector('.foglalas-ujrafoglalas-jelzes')) {
+            serviceStep.appendChild(notice);
+        }
     }
 
     function foglalasiTartalomKeszJelzese() {

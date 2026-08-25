@@ -25,9 +25,35 @@
         elemek.email.readOnly = true;
         elemek.email.setAttribute('aria-readonly', 'true');
         elemek.email.dataset.accountVerified = 'true';
+        vendegMentettIgenyekElokitese(elemek, profile);
 
         vendegFiokJelzesMegjelenitese(elemek);
         osszefoglaloFrissitese(elemek);
+    }
+
+    function vendegMentettIgenyekElokitese(elemek, profile) {
+        if (!profile) return;
+
+        const urlStilus = new URLSearchParams(window.location.search).get('stilus');
+        if (!urlStilus && profile.preferred_nail_style) {
+            const styleInput = Array.from(document.querySelectorAll('input[name="korom-stilus"]'))
+                .find(input => input.value === profile.preferred_nail_style);
+            if (styleInput) {
+                styleInput.checked = true;
+                stilusAllapotFrissitese(elemek);
+            }
+        }
+
+        if (!elemek.komment || elemek.komment.value.trim()) return;
+        const details = [
+            profile.nail_shape ? `forma: ${profile.nail_shape}` : '',
+            profile.nail_length ? `hossz: ${profile.nail_length}` : '',
+            profile.nail_notes ? String(profile.nail_notes).trim() : ''
+        ].filter(Boolean);
+
+        if (details.length) {
+            elemek.komment.value = `Mentett körömigények – ${details.join('; ')}`.slice(0, 1000);
+        }
     }
 
     function vendegNemzetiTelefonszam(value) {
@@ -42,7 +68,7 @@
 
         const message = document.createElement('p');
         message.className = 'foglalas-fiok-jelzes';
-        message.append('A fiókodban elmentett adataidat előre kitöltöttük. ');
+        message.append('A fiókodban elmentett adataidat és igényeidet előkészítettük. ');
 
         const accountLink = document.createElement('a');
         accountLink.href = '/fiokom/';

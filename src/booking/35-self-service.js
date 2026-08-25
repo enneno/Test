@@ -87,8 +87,11 @@
             ['Időpont', `${idopont} – ${idopontVege}`],
             ['Kupon', foglalas.coupon_label]
         ].filter(([, ertek]) => Boolean(ertek));
-        const lemondasSzoveg = foglalas.can_cancel
-            ? elemek.lemondas.dataset.leiras || 'Ha mégsem megfelelő az időpont, itt bármikor lemondhatod.'
+        const kotelezoIndok = Boolean(foglalas.cancellation_note_required);
+        const lemondasSzoveg = foglalas.can_cancel && kotelezoIndok
+            ? 'Az időpont 24 órán belül kezdődik, ezért a lemondás rövid indoklása kötelező.'
+            : foglalas.can_cancel
+                ? elemek.lemondas.dataset.leiras || 'Ha mégsem megfelelő az időpont, itt lemondhatod.'
             : 'Ez a foglalás már nem mondható le online.';
 
         elemek.eredmeny.innerHTML = `
@@ -104,6 +107,17 @@
         elemek.eredmeny.appendChild(elemek.lemondasMegjegyzesBlokk);
         elemek.eredmeny.appendChild(elemek.lemondas);
         elemek.lemondasMegjegyzesBlokk.hidden = !foglalas.can_cancel;
+        const megjegyzesCimke = elemek.lemondasMegjegyzesBlokk.querySelector('span');
+        if (megjegyzesCimke) {
+            megjegyzesCimke.textContent = kotelezoIndok
+                ? 'Lemondás oka vagy megjegyzés (24 órán belül kötelező)'
+                : 'Lemondás oka vagy megjegyzés (opcionális)';
+        }
+        elemek.lemondasMegjegyzes.required = kotelezoIndok;
+        elemek.lemondasMegjegyzes.dataset.requiredWithin24h = String(kotelezoIndok);
+        elemek.lemondasMegjegyzes.placeholder = kotelezoIndok
+            ? 'Kérlek, röviden írd meg a lemondás okát.'
+            : 'Ha szeretnéd, írd meg röviden a lemondás okát.';
         elemek.lemondas.hidden = !foglalas.can_cancel;
         elemek.lemondas.disabled = false;
         elemek.lemondas.textContent = elemek.lemondas.dataset.felirat || 'Foglalás lemondása';
@@ -112,12 +126,18 @@
 
     async function foglalasLemondasa(azonosito, elemek) {
         const kod = foglalasAzonositoFormazasa(azonosito);
+        const megjegyzes = elemek.lemondasMegjegyzes.value.trim().slice(0, 500);
+        if (elemek.lemondasMegjegyzes.dataset.requiredWithin24h === 'true' && !megjegyzes) {
+            foglalasKezeloUzenet(elemek.statusz, 'A 24 órán belüli lemondáshoz írj rövid indokot.', true);
+            elemek.lemondasMegjegyzes.focus();
+            return;
+        }
         if (!window.confirm('Biztosan lemondod ezt a foglalást? Ez a művelet nem vonható vissza.')) return;
         elemek.lemondas.disabled = true;
         elemek.lemondas.textContent = 'Lemondás folyamatban...';
         const { data, error } = await allapot.kliens.rpc('cancel_booking_by_reference', {
             p_reference: kod,
-            p_note: elemek.lemondasMegjegyzes.value.trim().slice(0, 500)
+            p_note: megjegyzes
         });
         const valasz = Array.isArray(data) ? data[0] : data;
         if (error || !valasz?.success) {

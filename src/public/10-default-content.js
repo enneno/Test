@@ -46,7 +46,7 @@ function lumiAlapOldalAdatok() {
                 kicker: 'Körmös Tatabánya',
                 cim: 'Lumi Nails',
                 leiras: 'Elegáns manikűr, gél lakk és körömépítés személyes figyelemmel.',
-                gombSzoveg: 'Időpontot foglalok',
+                gombSzoveg: 'Belépés / Regisztráció',
                 elonyok: [
                     { kiemeles: 'Személyes', szoveg: 'figyelem' },
                     { kiemeles: 'Precíz', szoveg: 'kivitelezés' },

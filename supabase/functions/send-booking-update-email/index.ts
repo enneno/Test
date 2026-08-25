@@ -69,13 +69,14 @@ serve(async (req) => {
       return json({ ok: false, email: "retry_limit_reached", queued: false }, 409);
     }
 
-    const notificationSource = emailJob.payload && typeof emailJob.payload === "object"
-      ? (emailJob.payload as Record<string, unknown>).notification
-      : null;
+    const jobPayload = emailJob.payload && typeof emailJob.payload === "object"
+      ? emailJob.payload as Record<string, unknown>
+      : {};
+    const notificationSource = jobPayload.notification;
+    const customerCancellation = jobPayload.customer_cancellation === true;
     const notification = notificationSource && typeof notificationSource === "object"
       ? notificationSource as Record<string, unknown>
       : {};
-
     if (!resendApiKey || !ownerEmail) {
       await finishEmailJob(supabase, emailJobId, false, "Missing email environment variables");
       return json({ ok: false, email: "missing_email_environment", queued: true }, 500);
@@ -90,6 +91,11 @@ serve(async (req) => {
     if (error || !booking) {
       await finishEmailJob(supabase, emailJobId, false, "Booking not found");
       return json({ ok: false, error: "Booking not found" }, 404);
+    }
+
+    if (customerCancellation && booking.status !== "cancelled_by_customer") {
+      await finishEmailJob(supabase, emailJobId, false, "Booking is not cancelled by customer");
+      return json({ ok: false, error: "Booking status mismatch" }, 409);
     }
 
     const statusChanged = Boolean(notification.status_changed);
@@ -109,7 +115,13 @@ serve(async (req) => {
       idopont: appointmentText,
       helyszin: location,
     };
-    const update = adminUpdateMessage(status, statusChanged, timeChanged, siteContent?.email || {}, variables);
+    const update = customerCancellation
+      ? emailTemplate(null, {
+        targy: "Sikeresen lemondtad a Lumi Nails időpontodat",
+        cim: "Az időpontodat lemondtuk",
+        szoveg: "Szia {nev}!\n\nA lemondás sikeres, az időpont már nem szerepel a közelgő foglalásaid között.",
+      }, variables)
+      : adminUpdateMessage(status, statusChanged, timeChanged, siteContent?.email || {}, variables);
 
     if (!update) {
       await finishEmailJob(supabase, emailJobId, true);
@@ -131,9 +143,11 @@ serve(async (req) => {
           <p style="margin:0;color:#2b2521;line-height:1.6;">${escapeHtml(adminMessage)}</p>
         </div>
       ` : ""}
-      <p>Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj üzenetet.</p>
+      <p>${customerCancellation
+        ? "Új időpontot bármikor foglalhatsz a vendégfiókodban."
+        : "Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj üzenetet."}</p>
       <p style="margin:22px 0;">
-        <a href="${instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">Instagram üzenet</a>
+        <a href="${customerCancellation ? "https://luminails.hu/fiokom/" : instagramUrl}" class="lumi-email-button" style="display:inline-block;padding:12px 18px;background:#302824;color:#fffaf6;border:1px solid #302824;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.3px;">${customerCancellation ? "Vendégfiók megnyitása" : "Instagram üzenet"}</a>
       </p>
       <p>Lumi Nails</p>
     `);
@@ -146,13 +160,15 @@ serve(async (req) => {
       `Helyszín: ${location}`,
       ...(adminMessage ? ["", `Üzenet: ${adminMessage}`] : []),
       "",
-      `Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
+      customerCancellation
+        ? "Új időpont: https://luminails.hu/fiokom/"
+        : `Ha kérdésed van vagy módosítani szeretnél, kérlek Instagramon írj: ${instagramUrl}`,
       "",
       "Lumi Nails",
     ].join("\n");
 
     try {
-      await sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText, `booking-admin-update/${emailJobId}`);
+      await sendEmail(resendApiKey, fromEmail, booking.customer_email, replyToEmail, update.subject, customerHtml, customerText, `booking-${emailJob.kind}/${emailJobId}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       await finishEmailJob(supabase, emailJobId, false, message);
@@ -160,7 +176,7 @@ serve(async (req) => {
     }
 
     await finishEmailJob(supabase, emailJobId, true);
-    return json({ ok: true, email: "admin_update_sent" });
+    return json({ ok: true, email: customerCancellation ? "customer_cancellation_sent" : "admin_update_sent" });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (activeSupabase && isUuid(activeEmailJobId)) {

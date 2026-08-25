@@ -5,6 +5,8 @@
 
     const ACCOUNT_REDIRECT_PATH = '/fiokom/';
     const RECOVERY_QUERY = '?recovery=1';
+    const CANCELLATION_WINDOW_MS = 24 * 60 * 60 * 1000;
+    const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed'];
     let supabaseClient = null;
     let recoveryMode = false;
     let accountReady = false;
@@ -60,6 +62,7 @@
         document.getElementById('fiok-elfelejtett-form')?.addEventListener('submit', handlePasswordResetRequest);
         document.getElementById('fiok-uj-jelszo-form')?.addEventListener('submit', handlePasswordUpdate);
         document.getElementById('fiok-profil-form')?.addEventListener('submit', handleProfileSave);
+        document.getElementById('fiok-igenyek-form')?.addEventListener('submit', handlePreferencesSave);
         document.getElementById('fiok-kijelentkezes')?.addEventListener('click', handleSignOut);
         document.getElementById('fiok-megerosites-ujrakuldes')?.addEventListener('click', handleConfirmationResend);
     }
@@ -118,6 +121,8 @@
         setHidden('fiok-uj-jelszo-panel', true);
         setHidden('fiok-iranyitopult', false);
         setHidden('fiok-elozmenyek-panel', needsCompletion);
+        setHidden('fiok-korabbi-panel', needsCompletion);
+        setHidden('fiok-igenyek-panel', needsCompletion);
 
         const email = document.getElementById('fiok-aktualis-email');
         const greeting = document.getElementById('fiok-udvozles');
@@ -128,6 +133,13 @@
         if (greeting) greeting.textContent = displayName ? 'Üdv újra, ' + displayName + '!' : 'Üdv újra!';
         if (name) name.value = displayName;
         if (phone) phone.value = nationalPhone(profile?.phone || user.user_metadata?.phone || '');
+        const preferencesForm = document.getElementById('fiok-igenyek-form');
+        if (preferencesForm) {
+            preferencesForm.elements.nail_shape.value = profile?.nail_shape || '';
+            preferencesForm.elements.nail_length.value = profile?.nail_length || '';
+            preferencesForm.elements.preferred_nail_style.value = profile?.preferred_nail_style || '';
+            preferencesForm.elements.nail_notes.value = profile?.nail_notes || '';
+        }
         setGlobalStatus(needsCompletion ? 'Töltsd ki a profilodat a foglalási előzmények megnyitásához.' : '');
     }
 
@@ -342,6 +354,31 @@
         await refreshAccountState();
     }
 
+    async function handlePreferencesSave(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const submit = form.querySelector('button[type="submit"]');
+        const nailNotes = String(form.elements.nail_notes.value || '').trim().slice(0, 500);
+
+        setButtonBusy(submit, true, 'Mentés…');
+        const { error } = await supabaseClient.rpc('save_customer_preferences', {
+            p_nail_shape: form.elements.nail_shape.value || null,
+            p_nail_length: form.elements.nail_length.value || null,
+            p_preferred_nail_style: form.elements.preferred_nail_style.value || null,
+            p_nail_notes: nailNotes || null
+        });
+        setButtonBusy(submit, false, 'Igények mentése');
+
+        if (error) {
+            setPreferencesStatus('Az igények most nem menthetők. Ellenőrizd őket, majd próbáld újra.', true);
+            return;
+        }
+
+        setPreferencesStatus('A körömigényeidet elmentettük.');
+        await refreshAccountState();
+        setPreferencesStatus('A körömigényeidet elmentettük.');
+    }
+
     async function handleSignOut(event) {
         const button = event.currentTarget;
         setButtonBusy(button, true, 'Kijelentkezés…');
@@ -352,10 +389,13 @@
     }
 
     async function loadBookingHistory(refreshId) {
-        const list = document.getElementById('fiok-foglalas-lista');
-        if (!list) return;
+        const upcomingList = document.getElementById('fiok-kozelgo-lista');
+        const pastList = document.getElementById('fiok-korabbi-lista');
+        const reminder = document.getElementById('fiok-kovetkezo-emlekezteto');
+        if (!upcomingList || !pastList) return;
 
-        list.replaceChildren(statusParagraph('Foglalási előzmények betöltése…'));
+        upcomingList.replaceChildren(statusParagraph('Közelgő időpontok betöltése…'));
+        pastList.replaceChildren(statusParagraph('Korábbi időpontok betöltése…'));
         const { data, error } = await supabaseClient.rpc('get_my_booking_history', {
             p_limit: 50,
             p_offset: 0
@@ -363,22 +403,38 @@
         if (refreshId !== authRefreshId) return;
 
         if (error) {
-            list.replaceChildren(statusParagraph('A foglalási előzmények most nem tölthetők be.', true));
+            upcomingList.replaceChildren(statusParagraph('A foglalások most nem tölthetők be.', true));
+            pastList.replaceChildren(statusParagraph('A foglalások most nem tölthetők be.', true));
             return;
         }
 
         const bookings = Array.isArray(data) ? data : [];
-        if (!bookings.length) {
-            list.replaceChildren(statusParagraph('Még nincs ehhez a hitelesített e-mailhez kapcsolódó foglalás.'));
-            return;
-        }
+        const upcoming = bookings
+            .filter(isUpcomingBooking)
+            .sort((left, right) => new Date(left.starts_at) - new Date(right.starts_at));
+        const past = bookings
+            .filter(booking => !isUpcomingBooking(booking))
+            .sort((left, right) => new Date(right.starts_at) - new Date(left.starts_at));
 
-        list.replaceChildren(...bookings.map(bookingCard));
+        upcomingList.replaceChildren(...(upcoming.length
+            ? upcoming.map((booking, index) => bookingCard(booking, { upcoming: true, isNext: index === 0 }))
+            : [statusParagraph('Nincs közelgő időpontod.')]));
+        pastList.replaceChildren(...(past.length
+            ? past.map(booking => bookingCard(booking))
+            : [statusParagraph('Még nincs korábbi időpontod.')]));
+
+        if (reminder) {
+            reminder.textContent = upcoming.length
+                ? nextBookingReminder(upcoming[0])
+                : 'Ha foglalsz, itt jelenik meg a következő időpontod.';
+        }
     }
 
-    function bookingCard(booking) {
+    function bookingCard(booking, options = {}) {
         const article = document.createElement('article');
         article.className = 'fiok-foglalas-kartya';
+        article.dataset.bookingId = booking.booking_id || '';
+        if (options.isNext) article.classList.add('fiok-foglalas-kartya-kiemelt');
 
         const heading = document.createElement('div');
         heading.className = 'fiok-foglalas-fej';
@@ -404,15 +460,197 @@
         if (price) appendMeta(meta, 'Összeg', price);
         article.appendChild(meta);
 
-        if (booking.public_reference && ['pending', 'confirmed'].includes(booking.status)) {
-            const manage = document.createElement('a');
-            manage.className = 'fiok-szoveges-link';
-            manage.href = `/foglalas/?foglalas=${encodeURIComponent(booking.public_reference)}#foglalas-ellenorzes`;
-            manage.textContent = 'Foglalás kezelése';
-            article.appendChild(manage);
+        const actions = document.createElement('div');
+        actions.className = 'fiok-foglalas-akciok';
+
+        if (options.upcoming) {
+            const calendar = document.createElement('a');
+            calendar.className = 'fiok-szoveges-link';
+            calendar.href = calendarDataUrl(booking);
+            calendar.download = calendarFilename(booking);
+            calendar.textContent = 'Naptárba mentés';
+            actions.appendChild(calendar);
+
+            const cancel = document.createElement('button');
+            cancel.type = 'button';
+            cancel.textContent = 'Időpont lemondása';
+            const cancellationForm = createCancellationForm(booking, cancel);
+            cancel.addEventListener('click', () => {
+                cancellationForm.hidden = false;
+                cancel.hidden = true;
+                cancellationForm.querySelector('textarea')?.focus();
+            });
+            actions.appendChild(cancel);
+            article.append(actions, cancellationForm);
+        } else if (booking.service_id) {
+            const rebook = document.createElement('a');
+            rebook.className = 'fiok-szoveges-link';
+            rebook.href = rebookingUrl(booking);
+            rebook.textContent = 'Újrafoglalom';
+            actions.appendChild(rebook);
+            article.appendChild(actions);
         }
 
         return article;
+    }
+
+    function createCancellationForm(booking, trigger) {
+        const form = document.createElement('form');
+        form.className = 'fiok-lemondas-form';
+        form.hidden = true;
+
+        const noteRequired = cancellationNoteRequired(booking);
+        const label = document.createElement('label');
+        const labelText = document.createElement('span');
+        const textarea = document.createElement('textarea');
+        labelText.textContent = noteRequired
+            ? 'Lemondás oka vagy megjegyzés (24 órán belül kötelező)'
+            : 'Lemondás oka vagy megjegyzés (opcionális)';
+        textarea.name = 'cancellation_note';
+        textarea.rows = 3;
+        textarea.maxLength = 500;
+        textarea.required = noteRequired;
+        textarea.placeholder = noteRequired
+            ? 'Kérlek, röviden írd meg a lemondás okát.'
+            : 'Ha szeretnéd, röviden megírhatod a lemondás okát.';
+        label.append(labelText, textarea);
+
+        const actionRow = document.createElement('div');
+        actionRow.className = 'fiok-akciosor';
+        const submit = document.createElement('button');
+        submit.type = 'submit';
+        submit.className = 'fiok-gomb fiok-gomb-kiemelt';
+        submit.textContent = 'Biztosan lemondom';
+        const keep = document.createElement('button');
+        keep.type = 'button';
+        keep.className = 'fiok-gomb';
+        keep.textContent = 'Mégsem';
+        keep.addEventListener('click', () => {
+            form.hidden = true;
+            trigger.hidden = false;
+            textarea.value = '';
+            setInlineStatus(status, '');
+        });
+        actionRow.append(submit, keep);
+
+        const status = document.createElement('p');
+        status.className = 'fiok-statuszuzenet';
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        status.hidden = true;
+
+        form.append(label, actionRow, status);
+        form.addEventListener('submit', event => handleAccountCancellation(event, booking, noteRequired, status));
+        return form;
+    }
+
+    async function handleAccountCancellation(event, booking, noteRequired, status) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const textarea = form.elements.cancellation_note;
+        const submit = form.querySelector('button[type="submit"]');
+        const note = String(textarea.value || '').trim().slice(0, 500);
+
+        if (noteRequired && !note) {
+            setInlineStatus(status, 'A 24 órán belüli lemondáshoz írj rövid indokot.', true);
+            textarea.focus();
+            return;
+        }
+
+        setButtonBusy(submit, true, 'Lemondás…');
+        setInlineStatus(status, 'A lemondás rögzítése…');
+        const { data, error } = await supabaseClient.rpc('cancel_my_booking', {
+            p_booking_id: booking.booking_id,
+            p_note: note
+        });
+        const response = singleRow(data);
+
+        if (error || !response?.success) {
+            setButtonBusy(submit, false, 'Biztosan lemondom');
+            setInlineStatus(status, response?.message || 'A lemondás most nem sikerült. Próbáld újra később.', true);
+            return;
+        }
+
+        await refreshAccountState();
+        setGlobalStatus('Sikeresen lemondtad az időpontodat. A visszaigazoló e-mailt hamarosan elküldjük.');
+    }
+
+    function isUpcomingBooking(booking) {
+        const start = new Date(booking.starts_at).getTime();
+        return Number.isFinite(start)
+            && start > Date.now()
+            && ACTIVE_BOOKING_STATUSES.includes(booking.status);
+    }
+
+    function cancellationNoteRequired(booking) {
+        const start = new Date(booking.starts_at).getTime();
+        const remaining = start - Date.now();
+        return remaining > 0 && remaining <= CANCELLATION_WINDOW_MS;
+    }
+
+    function nextBookingReminder(booking) {
+        const remaining = new Date(booking.starts_at).getTime() - Date.now();
+        if (!Number.isFinite(remaining) || remaining <= 0) return 'A következő időpontod hamarosan kezdődik.';
+        if (remaining <= CANCELLATION_WINDOW_MS) return 'A következő időpontod 24 órán belül lesz.';
+        const days = Math.ceil(remaining / CANCELLATION_WINDOW_MS);
+        return days === 1
+            ? 'A következő időpontod holnap lesz.'
+            : `A következő időpontod ${days} nap múlva lesz.`;
+    }
+
+    function rebookingUrl(booking) {
+        const parameters = new URLSearchParams({ szolgaltatas: booking.service_id });
+        if (booking.nail_style) parameters.set('stilus', booking.nail_style);
+        return `/foglalas/?${parameters.toString()}#online-foglalas`;
+    }
+
+    function calendarFilename(booking) {
+        const reference = String(booking.public_reference || 'idopont')
+            .toLowerCase()
+            .replace(/[^a-z0-9-]+/g, '-');
+        return `lumi-nails-${reference}.ics`;
+    }
+
+    function calendarDataUrl(booking) {
+        const location = String(window.lumiAdatok?.kapcsolat?.cim || 'Lumi Nails, Tatabánya');
+        const reference = String(booking.public_reference || booking.booking_id || 'idopont');
+        const content = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Lumi Nails//Vendégfiók//HU',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'BEGIN:VEVENT',
+            `UID:${icsEscape(reference)}@luminails.hu`,
+            `DTSTAMP:${icsDate(new Date())}`,
+            `DTSTART:${icsDate(new Date(booking.starts_at))}`,
+            `DTEND:${icsDate(new Date(booking.ends_at))}`,
+            `SUMMARY:${icsEscape('Lumi Nails – ' + (booking.service_name || 'Időpont'))}`,
+            `LOCATION:${icsEscape(location)}`,
+            `DESCRIPTION:${icsEscape('Foglalási azonosító: ' + reference)}`,
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+        return `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`;
+    }
+
+    function icsDate(value) {
+        if (Number.isNaN(value.getTime())) return '';
+        return value.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    }
+
+    function icsEscape(value) {
+        return String(value || '')
+            .replace(/\\/g, '\\\\')
+            .replace(/\r?\n/g, '\\n')
+            .replace(/,/g, '\\,')
+            .replace(/;/g, '\\;');
+    }
+
+    function setInlineStatus(element, message, error = false) {
+        element.textContent = message || '';
+        element.classList.toggle('fiok-hiba', error);
+        element.hidden = !message;
     }
 
     function appendMeta(container, label, value) {
@@ -526,6 +764,14 @@
         status.hidden = !message;
     }
 
+    function setPreferencesStatus(message, error = false) {
+        const status = document.getElementById('fiok-igenyek-statusz');
+        if (!status) return;
+        status.textContent = message || '';
+        status.classList.toggle('fiok-hiba', error);
+        status.hidden = !message;
+    }
+
     function setButtonBusy(button, busy, label) {
         if (!button) return;
         button.disabled = busy;
@@ -533,7 +779,7 @@
     }
 
     function disableForms(disabled) {
-        document.querySelectorAll('.fiok-form input, .fiok-form button[type="submit"], #fiok-megerosites-ujrakuldes, #fiok-kijelentkezes').forEach(element => {
+        document.querySelectorAll('.fiok-form input, .fiok-form select, .fiok-form textarea, .fiok-form button[type="submit"], #fiok-megerosites-ujrakuldes, #fiok-kijelentkezes').forEach(element => {
             element.disabled = disabled;
         });
     }

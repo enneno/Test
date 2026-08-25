@@ -5613,18 +5613,27 @@ body.admin-modal-nyitva {
 .fiok-auth-elrendezes {
     display: grid;
     grid-template-columns: minmax(260px, 0.72fr) minmax(420px, 1fr);
-    gap: clamp(42px, 7vw, 100px);
-    margin-top: 54px;
+    gap: clamp(26px, 5vw, 72px);
+    margin-top: 0;
 }
 
 .fiok-auth-bevezeto {
     align-self: start;
-    padding-top: 34px;
+    padding-top: 18px;
 }
 
 .fiok-auth-bevezeto h2 {
     max-width: 460px;
     font-size: clamp(40px, 5vw, 58px);
+}
+
+.fiok-auth-bevezeto > p:not(.fiok-kicker) {
+    max-width: 430px;
+    margin: 18px 0 0;
+    color: var(--ui-muted, #756a65);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.65;
 }
 
 .fiok-auth-bevezeto ul {
@@ -5727,7 +5736,9 @@ body.admin-modal-nyitva {
     font-weight: 700;
 }
 
-.fiok-form input:not([type="checkbox"]) {
+.fiok-form input:not([type="checkbox"]),
+.fiok-form select,
+.fiok-form textarea {
     width: 100%;
     min-width: 0;
     min-height: 46px;
@@ -5736,13 +5747,24 @@ body.admin-modal-nyitva {
     border: 1px solid var(--lumi-control-border);
     border-radius: 11px;
     outline: none;
+    appearance: none;
     background: var(--lumi-control-bg);
     color: var(--ui-off-black, #211b19);
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-body-small);
 }
 
-.fiok-form input:not([type="checkbox"]):focus-visible {
+.fiok-form select {
+    background-image: linear-gradient(45deg, transparent 50%, var(--ui-muted, #756a65) 50%), linear-gradient(135deg, var(--ui-muted, #756a65) 50%, transparent 50%);
+    background-position: calc(100% - 17px) 19px, calc(100% - 12px) 19px;
+    background-repeat: no-repeat;
+    background-size: 5px 5px, 5px 5px;
+    padding-right: 36px;
+}
+
+.fiok-form input:not([type="checkbox"]):focus-visible,
+.fiok-form select:focus-visible,
+.fiok-form textarea:focus-visible {
     border-color: var(--lumi-control-border-strong);
     box-shadow: var(--lumi-control-focus);
 }
@@ -5784,6 +5806,11 @@ body.admin-modal-nyitva {
 .fiok-form .fiok-telefon-mezo .fiok-telefon-input:focus-visible {
     border: 0;
     box-shadow: none;
+}
+
+.fiok-form textarea {
+    min-height: 94px;
+    resize: vertical;
 }
 
 .fiok-mezo-tipp {
@@ -5932,6 +5959,20 @@ body.admin-modal-nyitva {
     max-width: 620px;
 }
 
+.fiok-igenyek-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fiok-igenyek-form .fiok-igenyek-megjegyzes,
+.fiok-igenyek-form > .fiok-gomb {
+    grid-column: 1 / -1;
+}
+
+#fiok-kovetkezo-emlekezteto {
+    color: var(--ui-ink, #64524d);
+    font-weight: 600;
+}
+
 .fiok-panel {
     padding: clamp(24px, 4vw, 36px);
 }
@@ -6036,11 +6077,91 @@ body.admin-modal-nyitva {
     font-weight: 600;
 }
 
-.fiok-foglalas-kartya > .fiok-szoveges-link {
-    display: inline-flex;
+.fiok-foglalas-kartya-kiemelt {
+    margin: 0 -14px;
+    padding: 18px 14px;
+    border: 1px solid rgba(185, 133, 143, 0.24);
+    border-radius: 14px;
+    background: rgba(185, 133, 143, 0.06);
+}
+
+.fiok-foglalas-kartya-kiemelt:first-child {
+    padding-top: 18px;
+    border-top: 1px solid rgba(185, 133, 143, 0.24);
+}
+
+.fiok-foglalas-akciok {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
     margin-top: 15px;
+}
+
+.fiok-foglalas-akciok .fiok-szoveges-link,
+.fiok-foglalas-akciok button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ui-ink, #64524d);
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-caption);
+    font-weight: 700;
+    line-height: 1.45;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.fiok-foglalas-akciok button {
+    color: #87424b;
+}
+
+.fiok-lemondas-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid rgba(151, 71, 78, 0.2);
+    border-radius: 12px;
+    background: rgba(248, 226, 228, 0.34);
+}
+
+.fiok-lemondas-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--ui-ink, #64524d);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 700;
+}
+
+.fiok-lemondas-form textarea {
+    width: 100%;
+    min-height: 88px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--lumi-control-border);
+    border-radius: 10px;
+    outline: none;
+    background: var(--lumi-control-bg);
+    color: var(--ui-off-black, #211b19);
+    font: inherit;
+    font-weight: 400;
+    resize: vertical;
+}
+
+.fiok-lemondas-form textarea:focus-visible {
+    border-color: var(--lumi-control-border-strong);
+    box-shadow: var(--lumi-control-focus);
+}
+
+.fiok-lemondas-form .fiok-akciosor {
+    margin-top: 0;
+}
+
+.fiok-lemondas-form .fiok-statuszuzenet {
+    margin-top: 0;
 }
 
 .foglalas-fiok-jelzes {
@@ -6088,7 +6209,7 @@ body.admin-modal-nyitva {
 
     .fiok-auth-elrendezes,
     .fiok-dashboard {
-        margin-top: 34px;
+        margin-top: 0;
     }
 
     .fiok-auth-bevezeto h2,
@@ -6118,6 +6239,10 @@ body.admin-modal-nyitva {
 
     .fiok-dashboard-racs {
         margin-top: 22px;
+    }
+
+    .fiok-igenyek-form {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -6149,6 +6274,11 @@ body.admin-modal-nyitva {
 
     .fiok-akciosor .fiok-gomb {
         width: 100%;
+    }
+
+    .fiok-foglalas-akciok {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 

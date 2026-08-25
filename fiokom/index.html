@@ -11,7 +11,7 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/svg+xml" href="/kepek/favicon.svg">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/style.css?v=f3141a845199">
+    <link rel="stylesheet" href="/style.css?v=cf4753af592a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -21,25 +21,13 @@
     <div id="fejlec-helye"></div>
 
     <main class="fiok-main">
-        <header class="fiok-hero">
-            <div>
-                <p class="fiok-kicker">Minden egy helyen</p>
-                <h1>Fiókom</h1>
-            </div>
-            <p>Gyorsabb foglalás, elmentett adatok és korábbi időpontjaid egy helyen.</p>
-        </header>
-
         <p id="fiok-globalis-statusz" class="fiok-statuszuzenet" role="status" aria-live="polite" hidden></p>
 
         <section id="fiok-auth-panel" class="fiok-auth-elrendezes" aria-labelledby="fiok-belepes-cim">
             <div class="fiok-auth-bevezeto">
-                <p class="fiok-kicker">Kevesebb kitöltés</p>
-                <h2>Legközelebb gyorsabban foglalsz.</h2>
-                <ul>
-                    <li>A nevedet, telefonszámodat és e-mail-címedet előre kitöltjük.</li>
-                    <li>Egy helyen látod a közelgő és korábbi időpontjaidat.</li>
-                    <li>Korábbi foglalásaidat az e-mail-címed alapján a fiókodhoz kapcsoljuk.</li>
-                </ul>
+                <p class="fiok-kicker">Minden egy helyen</p>
+                <h2>Foglalásaid, egyszerűen.</h2>
+                <p>Lépj be, és kezeld az időpontjaidat néhány mozdulattal.</p>
             </div>
 
             <div class="fiok-auth-kartya">
@@ -153,11 +141,61 @@
             <div class="fiok-dashboard-racs">
                 <section id="fiok-elozmenyek-panel" class="fiok-panel fiok-elozmenyek" aria-labelledby="fiok-elozmenyek-cim">
                     <div class="fiok-panel-fej">
-                        <p class="fiok-kicker">Időpontjaid</p>
-                        <h2 id="fiok-elozmenyek-cim">Foglalásaim</h2>
-                        <p>Itt találod a közelgő és korábbi időpontjaidat.</p>
+                        <p class="fiok-kicker">Ami most következik</p>
+                        <h2 id="fiok-elozmenyek-cim">Közelgő időpontok</h2>
+                        <p id="fiok-kovetkezo-emlekezteto">Itt látod a következő foglalásaidat.</p>
                     </div>
-                    <div id="fiok-foglalas-lista" class="fiok-foglalas-lista"></div>
+                    <div id="fiok-kozelgo-lista" class="fiok-foglalas-lista"></div>
+                </section>
+
+                <section id="fiok-korabbi-panel" class="fiok-panel fiok-elozmenyek" aria-labelledby="fiok-korabbi-cim">
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Visszatekintő</p>
+                        <h2 id="fiok-korabbi-cim">Korábbi időpontok</h2>
+                        <p>A lezárt és lemondott foglalásaid áttekinthetően, időrendben.</p>
+                    </div>
+                    <div id="fiok-korabbi-lista" class="fiok-foglalas-lista"></div>
+                </section>
+
+                <section id="fiok-igenyek-panel" class="fiok-panel fiok-igenyek-panel" aria-labelledby="fiok-igenyek-cim">
+                    <div class="fiok-panel-fej">
+                        <p class="fiok-kicker">Kedvenc részleteid</p>
+                        <h2 id="fiok-igenyek-cim">Mentett körömigények</h2>
+                        <p>A következő foglalásnál ezeket is előkészítjük, de bármikor átírhatod őket.</p>
+                    </div>
+                    <form id="fiok-igenyek-form" class="fiok-form fiok-igenyek-form">
+                        <label>Forma
+                            <select name="nail_shape">
+                                <option value="">Nincs megadva</option>
+                                <option>Mandula</option>
+                                <option>Kocka</option>
+                                <option>Ovális</option>
+                                <option>Balerina</option>
+                                <option>Stiletto</option>
+                            </select>
+                        </label>
+                        <label>Hossz
+                            <select name="nail_length">
+                                <option value="">Nincs megadva</option>
+                                <option>Rövid</option>
+                                <option>Közepes</option>
+                                <option>Hosszú</option>
+                            </select>
+                        </label>
+                        <label>Kedvelt stílus
+                            <select name="preferred_nail_style">
+                                <option value="">Nincs megadva</option>
+                                <option>Egyszerű / egyszínű köröm</option>
+                                <option>Francia köröm</option>
+                                <option>Festés / díszítés</option>
+                            </select>
+                        </label>
+                        <label class="fiok-igenyek-megjegyzes">Egyéb kérés
+                            <textarea name="nail_notes" rows="3" maxlength="500" placeholder="Például kedvelt színek vagy díszítés"></textarea>
+                        </label>
+                        <button type="submit" class="fiok-gomb fiok-gomb-kiemelt">Igények mentése</button>
+                    </form>
+                    <p id="fiok-igenyek-statusz" class="fiok-statuszuzenet" role="status" aria-live="polite" hidden></p>
                 </section>
 
                 <section class="fiok-panel fiok-profil-panel" aria-labelledby="fiok-profil-cim">
@@ -185,8 +223,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=a704c66fbd43"></script>
-    <script src="/script.js?v=e52e7be8bef6"></script>
-    <script src="/account.js?v=6e08b6e4eccb"></script>
+    <script src="/script.js?v=3ba079e2d5eb"></script>
+    <script src="/account.js?v=e29a3888ff60"></script>
 </body>
 
 </html>

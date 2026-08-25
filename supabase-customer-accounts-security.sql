@@ -16,6 +16,10 @@ create table if not exists public.customer_profiles (
     user_id uuid primary key references auth.users(id) on delete cascade,
     full_name text not null,
     phone text not null,
+    nail_shape text,
+    nail_length text,
+    preferred_nail_style text,
+    nail_notes text,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now(),
     constraint customer_profiles_full_name_length
@@ -25,6 +29,31 @@ create table if not exists public.customer_profiles (
     constraint customer_profiles_phone_hungarian
         check (phone ~ '^\+36 [0-9]{9}$')
 );
+
+alter table public.customer_profiles
+    add column if not exists nail_shape text,
+    add column if not exists nail_length text,
+    add column if not exists preferred_nail_style text,
+    add column if not exists nail_notes text;
+
+alter table public.customer_profiles
+    drop constraint if exists customer_profiles_nail_shape_allowed,
+    drop constraint if exists customer_profiles_nail_length_allowed,
+    drop constraint if exists customer_profiles_nail_style_allowed,
+    drop constraint if exists customer_profiles_nail_notes_length;
+
+alter table public.customer_profiles
+    add constraint customer_profiles_nail_shape_allowed
+        check (nail_shape is null or nail_shape in ('Mandula', 'Kocka', 'Ovális', 'Balerina', 'Stiletto')),
+    add constraint customer_profiles_nail_length_allowed
+        check (nail_length is null or nail_length in ('Rövid', 'Közepes', 'Hosszú')),
+    add constraint customer_profiles_nail_style_allowed
+        check (
+            preferred_nail_style is null
+            or preferred_nail_style in ('Egyszerű / egyszínű köröm', 'Francia köröm', 'Festés / díszítés')
+        ),
+    add constraint customer_profiles_nail_notes_length
+        check (nail_notes is null or char_length(nail_notes) <= 500);
 
 alter table public.customer_profiles enable row level security;
 alter table public.customer_profiles force row level security;
@@ -100,6 +129,56 @@ begin
     end if;
 
     return '+36 ' || v_digits;
+end;
+$$;
+
+create or replace function private.lumi_customer_preference(
+    p_value text,
+    p_allowed text[],
+    p_label text
+)
+returns text
+language plpgsql
+immutable
+set search_path = ''
+as $$
+declare
+    v_value text := nullif(trim(coalesce(p_value, '')), '');
+begin
+    if v_value is null then
+        return null;
+    end if;
+
+    if not (v_value = any(p_allowed)) then
+        raise exception using
+            errcode = '22023',
+            message = 'Érvénytelen ' || p_label || '.';
+    end if;
+
+    return v_value;
+end;
+$$;
+
+create or replace function private.lumi_customer_notes(p_value text)
+returns text
+language plpgsql
+immutable
+set search_path = ''
+as $$
+declare
+    v_value text := nullif(trim(coalesce(p_value, '')), '');
+begin
+    if v_value is null then
+        return null;
+    end if;
+
+    if char_length(v_value) > 500 or v_value ~ E'[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]' then
+        raise exception using
+            errcode = '22023',
+            message = 'Az egyéb kérés legfeljebb 500 karakter lehet.';
+    end if;
+
+    return v_value;
 end;
 $$;
 
@@ -252,6 +331,52 @@ $$;
 revoke all on function public.save_customer_profile(text, text) from public, anon;
 grant execute on function public.save_customer_profile(text, text) to authenticated, service_role;
 
+create or replace function public.save_customer_preferences(
+    p_nail_shape text default null,
+    p_nail_length text default null,
+    p_preferred_nail_style text default null,
+    p_nail_notes text default null
+)
+returns public.customer_profiles
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+    v_profile public.customer_profiles;
+begin
+    perform public.ensure_customer_account();
+
+    update public.customer_profiles
+    set nail_shape = private.lumi_customer_preference(
+            p_nail_shape,
+            array['Mandula', 'Kocka', 'Ovális', 'Balerina', 'Stiletto'],
+            'körömforma'
+        ),
+        nail_length = private.lumi_customer_preference(
+            p_nail_length,
+            array['Rövid', 'Közepes', 'Hosszú'],
+            'körömhossz'
+        ),
+        preferred_nail_style = private.lumi_customer_preference(
+            p_preferred_nail_style,
+            array['Egyszerű / egyszínű köröm', 'Francia köröm', 'Festés / díszítés'],
+            'körömstílus'
+        ),
+        nail_notes = private.lumi_customer_notes(p_nail_notes),
+        updated_at = now()
+    where user_id = auth.uid()
+    returning * into strict v_profile;
+
+    return v_profile;
+end;
+$$;
+
+revoke all on function public.save_customer_preferences(text, text, text, text) from public, anon;
+grant execute on function public.save_customer_preferences(text, text, text, text) to authenticated, service_role;
+
+drop function if exists public.get_my_booking_history(integer, integer);
+
 create or replace function public.get_my_booking_history(
     p_limit integer default 50,
     p_offset integer default 0
@@ -259,6 +384,7 @@ create or replace function public.get_my_booking_history(
 returns table (
     booking_id uuid,
     public_reference text,
+    service_id uuid,
     service_name text,
     starts_at timestamptz,
     ends_at timestamptz,
@@ -284,6 +410,7 @@ begin
     select
         bookings.id,
         bookings.public_reference,
+        bookings.service_id,
         services.name,
         bookings.starts_at,
         bookings.ends_at,
@@ -396,6 +523,8 @@ comment on table public.customer_profiles is
 'Verified customer profile data. Authentication secrets remain in Supabase Auth.';
 comment on column public.bookings.customer_user_id is
 'Server-assigned owner of a booking. Clients must never provide this value directly.';
+comment on function public.save_customer_preferences(text, text, text, text) is
+'Stores optional booking preferences only for the currently authenticated, verified customer.';
 comment on function public.get_my_booking_history(integer, integer) is
 'Curated booking history for the currently authenticated, email-verified customer.';
 comment on function public.create_booking_idempotent_for_user(

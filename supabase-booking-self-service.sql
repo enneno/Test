@@ -1,6 +1,9 @@
 -- Lumi Nails vendegoldali foglalas-ellenorzes es lemondas.
 -- Futtasd a Supabase SQL Editorban a tobbi foglalasi frissites utan.
 
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+
 create or replace function public.lumi_new_booking_reference()
 returns text
 language plpgsql
@@ -103,7 +106,8 @@ returns table (
     status text,
     status_label text,
     coupon_label text,
-    can_cancel boolean
+    can_cancel boolean,
+    cancellation_note_required boolean
 )
 language sql
 stable
@@ -130,7 +134,8 @@ as $$
             else 'Ismeretlen'
         end::text,
         nullif(concat_ws(' - ', nullif(trim(coalesce(b.coupon_code, '')), ''), nullif(trim(coalesce(b.coupon_title, '')), '')), '')::text,
-        (b.status in ('pending', 'confirmed'))
+        (b.status in ('pending', 'confirmed') and b.starts_at > now()),
+        (b.status in ('pending', 'confirmed') and b.starts_at > now() and b.starts_at <= now() + interval '24 hours')
     from public.bookings b
     left join public.services s on s.id = b.service_id
     where (
@@ -140,6 +145,87 @@ as $$
             upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
     )
     limit 1;
+$$;
+
+create or replace function private.lumi_cancel_booking(
+    p_booking_id uuid,
+    p_note text,
+    p_channel text
+)
+returns table (success boolean, result text, message text)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+    v_booking public.bookings%rowtype;
+    v_note text := left(trim(coalesce(p_note, '')), 500);
+    v_channel text := case when p_channel = 'customer_account' then 'customer_account' else 'self_service' end;
+begin
+    select bookings.*
+    into v_booking
+    from public.bookings as bookings
+    where bookings.id = p_booking_id
+    for update;
+
+    if not found then
+        return query select false, 'not_found'::text, 'Nem található ez a foglalás.'::text;
+        return;
+    end if;
+
+    if v_booking.status = 'cancelled_by_customer' then
+        return query select true, 'already_cancelled'::text, 'Az időpontot már lemondtad.'::text;
+        return;
+    end if;
+
+    if v_booking.status not in ('pending', 'confirmed') or v_booking.starts_at <= now() then
+        return query select false, 'status_locked'::text, 'Ez a foglalás már nem mondható le online.'::text;
+        return;
+    end if;
+
+    if v_booking.starts_at <= now() + interval '24 hours' and v_note = '' then
+        return query select false, 'note_required'::text, 'A 24 órán belüli lemondáshoz rövid indok szükséges.'::text;
+        return;
+    end if;
+
+    update public.bookings
+    set status = 'cancelled_by_customer'
+    where id = v_booking.id;
+
+    insert into public.booking_events (booking_id, event_type, channel, status, title, message, metadata)
+    values (
+        v_booking.id,
+        'customer_cancelled',
+        v_channel,
+        'info',
+        'A vendég online lemondta',
+        case
+            when v_note <> '' then 'Vendég megjegyzése: ' || v_note
+            else 'A foglalást a vendég online mondta le.'
+        end,
+        jsonb_build_object(
+            'from_status', v_booking.status,
+            'to_status', 'cancelled_by_customer',
+            'cancellation_note', nullif(v_note, ''),
+            'source', v_channel
+        )
+    );
+
+    insert into public.booking_email_jobs (booking_id, kind, dedupe_key, payload)
+    values (
+        v_booking.id,
+        'admin_update',
+        'customer-cancellation/' || v_booking.id::text,
+        jsonb_build_object(
+            'cancellation_note', nullif(v_note, ''),
+            'customer_cancellation', true,
+            'source', v_channel
+        )
+    )
+    on conflict (dedupe_key) do nothing;
+
+    return query select true, 'cancelled'::text, 'Az időpontot sikeresen lemondtad.'::text;
+end;
 $$;
 
 drop function if exists public.cancel_booking_by_reference(text);
@@ -152,62 +238,68 @@ security definer
 set search_path = ''
 as $$
 declare
-    v_booking public.bookings%rowtype;
-    v_note text := left(trim(coalesce(p_note, '')), 500);
+    v_booking_id uuid;
 begin
-    select b.* into v_booking
-    from public.bookings b
+    select bookings.id
+    into v_booking_id
+    from public.bookings as bookings
     where (
-        upper(replace(b.public_reference, '-', '')) =
+        upper(replace(bookings.public_reference, '-', '')) =
             upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
-        or upper(replace(coalesce(b.legacy_public_reference, ''), '-', '')) =
+        or upper(replace(coalesce(bookings.legacy_public_reference, ''), '-', '')) =
             upper(regexp_replace(trim(coalesce(p_reference, '')), '[^a-zA-Z0-9]', '', 'g'))
-    )
-    for update;
-
-    if not found then
-        return query select false, 'not_found'::text, 'Nem talalhato foglalas ezzel az azonositoval.'::text;
-        return;
-    end if;
-
-    if v_booking.status = 'cancelled_by_customer' then
-        return query select true, 'already_cancelled'::text, 'A foglalast mar lemondtad.'::text;
-        return;
-    end if;
-
-    if v_booking.status not in ('pending', 'confirmed') then
-        return query select false, 'status_locked'::text, 'Ez a foglalas mar nem mondhato le online.'::text;
-        return;
-    end if;
-
-    update public.bookings set status = 'cancelled_by_customer' where id = v_booking.id;
-
-    insert into public.booking_events (booking_id, event_type, channel, status, title, message, metadata)
-    values (
-        v_booking.id,
-        'customer_cancelled',
-        'self_service',
-        'info',
-        'A vendeg online lemondta',
-        case
-            when v_note <> '' then 'Vendeg megjegyzese: ' || v_note
-            else 'A foglalast a vendeg az azonositojaval mondta le.'
-        end,
-        jsonb_build_object(
-            'from_status', v_booking.status,
-            'to_status', 'cancelled_by_customer',
-            'cancellation_note', nullif(v_note, '')
-        )
     );
 
-    return query select true, 'cancelled'::text, 'A foglalast sikeresen lemondtad.'::text;
+    if not found then
+        return query select false, 'not_found'::text, 'Nem található foglalás ezzel az azonosítóval.'::text;
+        return;
+    end if;
+
+    return query
+    select cancellation.success, cancellation.result, cancellation.message
+    from private.lumi_cancel_booking(v_booking_id, p_note, 'self_service') as cancellation;
 end;
 $$;
 
+drop function if exists public.cancel_my_booking(uuid, text);
+
+create or replace function public.cancel_my_booking(p_booking_id uuid, p_note text default '')
+returns table (success boolean, result text, message text)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+    v_booking_id uuid;
+begin
+    if not public.is_verified_customer() then
+        raise exception using errcode = '42501', message = 'Hitelesített vendégfiók szükséges.';
+    end if;
+
+    select bookings.id
+    into v_booking_id
+    from public.bookings as bookings
+    where bookings.id = p_booking_id
+      and bookings.customer_user_id = auth.uid();
+
+    if not found then
+        return query select false, 'not_found'::text, 'Nem található ez a foglalás.'::text;
+        return;
+    end if;
+
+    return query
+    select cancellation.success, cancellation.result, cancellation.message
+    from private.lumi_cancel_booking(v_booking_id, p_note, 'customer_account') as cancellation;
+end;
+$$;
+
+revoke all on function private.lumi_cancel_booking(uuid, text, text) from public, anon, authenticated;
 revoke all on function public.get_booking_reference_after_creation(uuid, text) from public;
 revoke all on function public.get_booking_status(text) from public;
 revoke all on function public.cancel_booking_by_reference(text, text) from public;
+revoke all on function public.cancel_my_booking(uuid, text) from public, anon;
 
 grant execute on function public.get_booking_reference_after_creation(uuid, text) to anon, authenticated, service_role;
 grant execute on function public.get_booking_status(text) to anon, authenticated, service_role;
 grant execute on function public.cancel_booking_by_reference(text, text) to anon, authenticated, service_role;
+grant execute on function public.cancel_my_booking(uuid, text) to authenticated, service_role;
