@@ -91,7 +91,9 @@ const requiredControlTokens = [
     '--admin-ui-control-radius:',
     '--admin-ui-field-padding-x:',
     '--admin-ui-choice-padding-x:',
-    '--admin-ui-button-padding-x:'
+    '--admin-ui-button-padding-x:',
+    '--admin-ui-action-font-size:',
+    '--admin-ui-placeholder-font-size:'
 ];
 
 for (const token of requiredControlTokens) {
@@ -113,6 +115,20 @@ if (!interactionCss.includes('select,') ||
 
 if (!interactionCss.includes('height: var(--admin-ui-button-height);')) {
     fail('admin text buttons are not owned by the canonical button-height token.');
+}
+
+if (!interactionCss.includes('font-size: var(--admin-ui-action-font-size);')) {
+    fail('admin action/button typography is not owned by the canonical action-font token.');
+}
+
+const statusTypographyBlock = interactionCss.match(/\.admin-body\.admin-v2 \.admin-statusz,[\s\S]*?\.admin-allapot-jelzes \{[\s\S]*?\}/)?.[0] || '';
+if (!statusTypographyBlock.includes('font-size: var(--admin-ui-action-font-size);')) {
+    fail('display-only admin statuses must use the same font-size token as buttons.');
+}
+
+if (!interactionCss.includes('::placeholder') ||
+    !interactionCss.includes('font-size: var(--admin-ui-placeholder-font-size);')) {
+    fail('admin placeholder typography is not owned by the canonical placeholder token.');
 }
 
 if (!interactionCss.includes('width: var(--admin-ui-icon-button-size);') ||
