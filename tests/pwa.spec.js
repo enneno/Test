@@ -22,14 +22,15 @@ test.describe('Lumi Nails PWA', () => {
     ]));
   });
 
-  test('keeps private pages out of the offline page cache', async ({ page }) => {
+  test('keeps live-data pages out of the offline page cache', async ({ page }) => {
     const response = await page.request.get('/sw.js');
     expect(response.ok()).toBeTruthy();
 
     const source = await response.text();
-    expect(source).toContain("const PRIVATE_PATH_PREFIXES = ['/admin', '/fiokom']");
+    expect(source).toContain("const NETWORK_ONLY_PATH_PREFIXES = ['/admin', '/fiokom', '/foglalas']");
     expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/admin\/?['\"]/);
     expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/fiokom\/?['\"]/);
+    expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/foglalas\/?['\"]/);
   });
 
   test('provides notification and badge helpers without requesting permission automatically', async ({ page }) => {
