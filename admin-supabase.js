@@ -1896,6 +1896,24 @@
         return `<svg aria-hidden="true" viewBox="0 0 24 24">${paths[name] || paths.arrow}</svg>`;
     }
 
+// Small admin copy overrides that should remain independent from workspace structure.
+
+ADMIN_V2_PAGE_COPY.szolgaltatasok.title = 'Árlista';
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', arlistaFeliratokFrissitese);
+} else {
+    arlistaFeliratokFrissitese();
+}
+
+function arlistaFeliratokFrissitese() {
+    window.requestAnimationFrame(() => {
+        document.querySelectorAll('.admin-v2-subnav [data-admin-v2-panel="szolgaltatasok"]').forEach(gomb => {
+            gomb.textContent = 'Árlista';
+        });
+    });
+}
+
     async function foglalasokBetoltese() {
         const elemek = adminElemek();
         onlineStatusz('Foglalások betöltése...');
