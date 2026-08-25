@@ -12,6 +12,7 @@ test.describe('Lumi Nails PWA', () => {
     expect(response.ok()).toBeTruthy();
 
     const manifest = await response.json();
+    expect(manifest.id).toBe('/');
     expect(manifest.name).toBe('Lumi Nails');
     expect(manifest.start_url).toBe('/');
     expect(manifest.scope).toBe('/');
@@ -33,13 +34,16 @@ test.describe('Lumi Nails PWA', () => {
     expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/foglalas\/?['\"]/);
   });
 
-  test('provides notification and badge helpers without requesting permission automatically', async ({ page }) => {
+  test('provides notification, badge and admin push helpers without requesting permission automatically', async ({ page }) => {
     await page.goto('/');
 
     await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
     const api = await page.evaluate(() => ({
       requestNotificationPermission: typeof window.LumiPWA.requestNotificationPermission,
       subscribeToPush: typeof window.LumiPWA.subscribeToPush,
+      enableAdminPush: typeof window.LumiPWA.enableAdminPush,
+      disableAdminPush: typeof window.LumiPWA.disableAdminPush,
+      hasPushSubscription: typeof window.LumiPWA.hasPushSubscription,
       setBadge: typeof window.LumiPWA.setBadge,
       clearBadge: typeof window.LumiPWA.clearBadge
     }));
@@ -47,8 +51,19 @@ test.describe('Lumi Nails PWA', () => {
     expect(api).toEqual({
       requestNotificationPermission: 'function',
       subscribeToPush: 'function',
+      enableAdminPush: 'function',
+      disableAdminPush: 'function',
+      hasPushSubscription: 'function',
       setBadge: 'function',
       clearBadge: 'function'
     });
+  });
+
+  test('keeps VAPID private material server-side only', async ({ page }) => {
+    const clientSource = await (await page.request.get('/pwa.js')).text();
+    const senderSource = await (await page.request.get('/supabase/functions/send-web-push/index.ts')).text();
+
+    expect(clientSource).not.toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
+    expect(senderSource).toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
   });
 });
