@@ -49,15 +49,22 @@
   addMeta('apple-mobile-web-app-status-bar-style', 'default');
   addMeta('apple-mobile-web-app-title', 'Lumi Nails');
   addMeta('format-detection', 'telephone=yes');
+  ensureViewportFit();
 
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    window.addEventListener('load', async () => {
-      try {
-        PWA.registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-      } catch (error) {
-        console.warn('Lumi PWA service worker registration failed:', error);
-      }
-    }, { once: true });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    if (document.readyState === 'complete') {
+      registerServiceWorker();
+    } else {
+      window.addEventListener('load', registerServiceWorker, { once: true });
+    }
+  }
+
+  async function registerServiceWorker() {
+    try {
+      PWA.registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    } catch (error) {
+      console.warn('Lumi PWA service worker registration failed:', error);
+    }
   }
 
   function addLink(rel, href) {
@@ -76,6 +83,14 @@
       document.head.appendChild(meta);
     }
     meta.content = content;
+  }
+
+  function ensureViewportFit() {
+    const viewport = document.head.querySelector('meta[name="viewport"]');
+    if (!viewport) return;
+    if (!viewport.content.includes('viewport-fit=')) {
+      viewport.content = `${viewport.content}, viewport-fit=cover`;
+    }
   }
 
   function urlBase64ToUint8Array(base64String) {
