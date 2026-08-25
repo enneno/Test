@@ -422,6 +422,66 @@ test('a publikus foglalási útvonalak megőrzik a kártya- és ikonstílusukat'
     });
 });
 
+test('a foglalási űrlap alapstílusai a publikus bundle-ben maradnak', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+
+    const desktop = await page.evaluate(() => {
+        const stilus = selector => getComputedStyle(document.querySelector(selector));
+        const technikai = stilus('#foglalas-szolgatatas');
+        const fej = stilus('.foglalas-lepes-fej');
+        const szam = stilus('.foglalas-lepes-szam');
+        const asszisztens = stilus('.foglalas-asszisztens');
+        const stilusRacs = stilus('.foglalas-stilus-racs');
+        const stilusKartya = stilus('.foglalas-stilus-kartya');
+        const feltoltes = stilus('.foglalas-kepfeltoltes');
+        const fajlInput = stilus('#foglalas-inspiracio-kep');
+        const adatRacs = stilus('.foglalas-adat-racs');
+
+        return {
+            technikaiPozicio: technikai.position,
+            technikaiSzelesseg: technikai.width,
+            technikaiMagassag: technikai.height,
+            fejMegjelenes: fej.display,
+            szamMegjelenes: szam.display,
+            asszisztensMegjelenes: asszisztens.display,
+            stilusRacsMegjelenes: stilusRacs.display,
+            stilusRacsOszlopok: stilusRacs.gridTemplateColumns.split(' ').length,
+            stilusKartyaMegjelenes: stilusKartya.display,
+            feltoltesMegjelenes: feltoltes.display,
+            fajlInputPozicio: fajlInput.position,
+            fajlInputAtlatszosag: fajlInput.opacity,
+            adatRacsMegjelenes: adatRacs.display,
+            adatRacsOszlopok: adatRacs.gridTemplateColumns.split(' ').length
+        };
+    });
+
+    expect(desktop).toEqual({
+        technikaiPozicio: 'absolute',
+        technikaiSzelesseg: '1px',
+        technikaiMagassag: '1px',
+        fejMegjelenes: 'grid',
+        szamMegjelenes: 'flex',
+        asszisztensMegjelenes: 'grid',
+        stilusRacsMegjelenes: 'grid',
+        stilusRacsOszlopok: 2,
+        stilusKartyaMegjelenes: 'grid',
+        feltoltesMegjelenes: 'flex',
+        fajlInputPozicio: 'absolute',
+        fajlInputAtlatszosag: '0',
+        adatRacsMegjelenes: 'grid',
+        adatRacsOszlopok: 3
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const mobile = await page.evaluate(() => ({
+        stilusRacsOszlopok: getComputedStyle(document.querySelector('.foglalas-stilus-racs')).gridTemplateColumns.split(' ').length,
+        adatRacsOszlopok: getComputedStyle(document.querySelector('.foglalas-adat-racs')).gridTemplateColumns.split(' ').length
+    }));
+    expect(mobile).toEqual({ stilusRacsOszlopok: 1, adatRacsOszlopok: 1 });
+});
+
 test('a teljes oldalas foglalási űrlap minden részt egyben mutat és megőrzi a választásokat', async ({ page }) => {
     await page.route('**/rest/v1/services*', route => route.fulfill({
         status: 200,
