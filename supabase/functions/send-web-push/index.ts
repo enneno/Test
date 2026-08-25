@@ -18,23 +18,23 @@ type BookingRecord = {
 };
 
 serve(async (req) => {
-  if (req.method !== "POST") {
-    return json({ ok: false, error: "method_not_allowed" }, 405);
-  }
+  if (req.method !== "POST") return json({ ok: false, error: "method_not_allowed" }, 405);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-    const vapidPublicKey = (Deno.env.get("WEB_PUSH_VAPID_PUBLIC_KEY") || "").trim();
-    const vapidPrivateKey = (Deno.env.get("WEB_PUSH_VAPID_PRIVATE_KEY") || "").trim();
-    const vapidSubject = (Deno.env.get("WEB_PUSH_VAPID_SUBJECT") || "mailto:luminails.xx@gmail.com").trim();
+    if (!supabaseUrl || !serviceRoleKey) return json({ ok: false, error: "missing_environment" }, 500);
 
-    if (!supabaseUrl || !serviceRoleKey || !vapidPublicKey || !vapidPrivateKey) {
-      return json({ ok: false, error: "missing_environment" }, 500);
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    const config = await loadPushConfig(supabase);
+    if (!config.publicKey || !config.privateKey || !config.webhookSecret) {
+      return json({ ok: false, error: "push_not_configured" }, 503);
     }
 
-    const token = bearerToken(req.headers.get("authorization"));
-    if (!token || token !== serviceRoleKey) {
+    const requestSecret = String(req.headers.get("x-lumi-web-push-secret") || "");
+    if (!constantTimeEqual(requestSecret, config.webhookSecret)) {
       return json({ ok: false, error: "not_authorized" }, 401);
     }
 
@@ -44,13 +44,7 @@ serve(async (req) => {
     const oldRecord = normalizeBooking(body.old_record);
 
     const notificationKind = bookingNotificationKind(eventType, record, oldRecord);
-    if (!notificationKind) {
-      return json({ ok: true, skipped: true });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-    });
+    if (!notificationKind) return json({ ok: true, skipped: true });
 
     let serviceName = "Időpont";
     if (record.service_id) {
@@ -81,19 +75,15 @@ serve(async (req) => {
         const sent = await sendPushNotification(
           {
             endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.p256dh,
-              auth: subscription.auth_secret,
-            },
+            keys: { p256dh: subscription.p256dh, auth: subscription.auth_secret },
           },
           payload,
           {
-            publicKey: vapidPublicKey,
-            privateKey: vapidPrivateKey,
-            subject: vapidSubject,
+            publicKey: config.publicKey,
+            privateKey: config.privateKey,
+            subject: config.subject,
           },
         );
-
         results.push({ id: subscription.id, ok: Boolean(sent) });
       } catch (error) {
         const status = errorStatus(error);
@@ -106,7 +96,6 @@ serve(async (req) => {
             .update({ disabled_at: new Date().toISOString(), updated_at: new Date().toISOString() })
             .eq("id", subscription.id);
         }
-
         results.push({ id: subscription.id, ok: false, status, error: message });
       }
     }
@@ -123,6 +112,18 @@ serve(async (req) => {
     return json({ ok: false, error: "unexpected_error" }, 500);
   }
 });
+
+async function loadPushConfig(client: any) {
+  const { data, error } = await client.rpc("get_web_push_server_config");
+  if (error) throw new Error(`push_config: ${error.message}`);
+  const value = data && typeof data === "object" ? data : {};
+  return {
+    publicKey: String(value.vapid_public_key || "").trim(),
+    privateKey: String(value.vapid_private_key || "").trim(),
+    subject: String(value.vapid_subject || "mailto:luminails.xx@gmail.com").trim(),
+    webhookSecret: String(value.webhook_secret || "").trim(),
+  };
+}
 
 function bookingNotificationKind(eventType: string, record: BookingRecord, oldRecord: BookingRecord) {
   if (eventType === "INSERT") return "new_booking";
@@ -158,7 +159,6 @@ function createPayload(kind: string, booking: BookingRecord, serviceName: string
 function formatBudapestDate(value: unknown) {
   const date = new Date(String(value || ""));
   if (Number.isNaN(date.getTime())) return "";
-
   return new Intl.DateTimeFormat("hu-HU", {
     timeZone: "Europe/Budapest",
     month: "short",
@@ -172,9 +172,13 @@ function normalizeBooking(value: unknown): BookingRecord {
   return value && typeof value === "object" ? value as BookingRecord : {};
 }
 
-function bearerToken(header: string | null) {
-  const match = String(header || "").match(/^Bearer\s+(.+)$/i);
-  return match?.[1]?.trim() || "";
+function constantTimeEqual(a: string, b: string) {
+  const left = new TextEncoder().encode(a);
+  const right = new TextEncoder().encode(b);
+  if (left.length !== right.length) return false;
+  let diff = 0;
+  for (let i = 0; i < left.length; i += 1) diff |= left[i] ^ right[i];
+  return diff === 0;
 }
 
 function errorStatus(error: unknown) {
@@ -182,9 +186,7 @@ function errorStatus(error: unknown) {
   const source = error as Record<string, unknown>;
   const direct = Number(source.statusCode || source.status || 0);
   if (Number.isFinite(direct) && direct > 0) return direct;
-  const response = source.response && typeof source.response === "object"
-    ? source.response as Record<string, unknown>
-    : {};
+  const response = source.response && typeof source.response === "object" ? source.response as Record<string, unknown> : {};
   const nested = Number(response.status || 0);
   return Number.isFinite(nested) ? nested : 0;
 }
