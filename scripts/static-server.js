@@ -36,6 +36,8 @@ const PUBLIC_ROOT_FILES = new Set([
     'admin-export.js',
     'admin-supabase.js',
     'booking.js',
+    'booking-manage.js',
+    'booking-manage.css',
     'account.js',
     'script.js',
     'style.css',
