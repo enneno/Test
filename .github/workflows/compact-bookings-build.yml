@@ -62,7 +62,7 @@ jobs:
               if (text !== 'Árlista') throw new Error('Services label was not renamed: ' + text);
             }
             const css = await (await page.request.get('http://127.0.0.1:8101/admin-v2.css')).text();
-            for (const token of ['zyx-booking-list-compact', 'admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled', '[data-foglalas-reszletek][aria-expanded="true"]']) {
+            for (const token of ['Compact booking catalogue', 'admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled', '[data-foglalas-reszletek][aria-expanded="true"]']) {
               if (!css.includes(token)) throw new Error('Missing compact booking CSS token: ' + token);
             }
             await browser.close();
