@@ -35,3 +35,7 @@ Ez a fájl a `pwa-app-copy` próbaághoz tartozik. A `main` és az éles Supabas
 Safari → Megosztás → Hozzáadás a Főképernyőhöz → Lumi Nails ikon megnyitása → Admin → `Értesítések bekapcsolása`.
 
 Az iPhone értesítési engedélyét a rendszer csak felhasználói műveletre kéri. A foglaló, fiók és admin oldal nem kap offline oldalcache-t, ezért elavult foglalási vagy személyes adat nem jelenik meg cache-ből.
+
+## Jelenlegi státusz
+
+A PWA és Web Push forrás elkészült a külön ágon, de a push backend szándékosan nincs még deployolva az éles Supabase-re. A GitHub Actions futás eredményét a jelenlegi connectorból nem tudtam megerősíteni, ezért élesítés előtt a `npm run verify` és egy valódi HTTPS/iPhone teszt kötelező.
