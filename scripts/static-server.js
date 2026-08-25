@@ -38,6 +38,8 @@ const PUBLIC_ROOT_FILES = new Set([
     'booking.js',
     'booking-manage.js',
     'booking-manage.css',
+    'home-account-strip.js',
+    'home-account-strip.css',
     'account.js',
     'script.js',
     'style.css',
