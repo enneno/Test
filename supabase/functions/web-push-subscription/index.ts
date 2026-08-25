@@ -8,22 +8,16 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
-  if (req.method !== "POST") {
-    return json({ ok: false, error: "method_not_allowed" }, 405);
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") return json({ ok: false, error: "method_not_allowed" }, 405);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
-    const adminEmail = (Deno.env.get("ADMIN_EMAIL") || "").trim().toLowerCase();
-    const vapidPublicKey = (Deno.env.get("WEB_PUSH_VAPID_PUBLIC_KEY") || "").trim();
+    const adminEmail = (Deno.env.get("ADMIN_EMAIL") || "llevisimon@gmail.com").trim().toLowerCase();
 
-    if (!supabaseUrl || !serviceRoleKey || !anonKey || !adminEmail || !vapidPublicKey) {
+    if (!supabaseUrl || !serviceRoleKey || !anonKey || !adminEmail) {
       return json({ ok: false, error: "missing_environment" }, 500);
     }
 
@@ -41,22 +35,22 @@ serve(async (req) => {
       return json({ ok: false, error: "not_authorized" }, 403);
     }
 
+    const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    const config = await loadPushConfig(adminClient);
+    if (!config.publicKey) return json({ ok: false, error: "push_not_configured" }, 503);
+
     const body = await req.json().catch(() => ({}));
     const action = String(body.action || "").trim();
 
     if (action === "config") {
-      return json({ ok: true, vapid_public_key: vapidPublicKey });
+      return json({ ok: true, vapid_public_key: config.publicKey });
     }
-
-    const adminClient = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-    });
 
     if (action === "subscribe") {
       const subscription = normalizeSubscription(body.subscription);
-      if (!subscription) {
-        return json({ ok: false, error: "invalid_subscription" }, 400);
-      }
+      if (!subscription) return json({ ok: false, error: "invalid_subscription" }, 400);
 
       const now = new Date().toISOString();
       const { error } = await adminClient
@@ -76,15 +70,12 @@ serve(async (req) => {
         console.error("web-push-subscription upsert failed", error.message);
         return json({ ok: false, error: "subscription_save_failed" }, 500);
       }
-
       return json({ ok: true, subscribed: true });
     }
 
     if (action === "unsubscribe") {
       const endpoint = String(body.endpoint || "").trim();
-      if (!validEndpoint(endpoint)) {
-        return json({ ok: false, error: "invalid_endpoint" }, 400);
-      }
+      if (!validEndpoint(endpoint)) return json({ ok: false, error: "invalid_endpoint" }, 400);
 
       const { error } = await adminClient
         .from("web_push_subscriptions")
@@ -96,7 +87,6 @@ serve(async (req) => {
         console.error("web-push-subscription disable failed", error.message);
         return json({ ok: false, error: "subscription_remove_failed" }, 500);
       }
-
       return json({ ok: true, subscribed: false });
     }
 
@@ -107,28 +97,27 @@ serve(async (req) => {
   }
 });
 
+async function loadPushConfig(client: any) {
+  const { data, error } = await client.rpc("get_web_push_server_config");
+  if (error) throw new Error(`push_config: ${error.message}`);
+  const value = data && typeof data === "object" ? data : {};
+  return { publicKey: String(value.vapid_public_key || "").trim() };
+}
+
 function normalizeSubscription(value: unknown) {
   if (!value || typeof value !== "object") return null;
   const source = value as Record<string, unknown>;
-  const keys = source.keys && typeof source.keys === "object"
-    ? source.keys as Record<string, unknown>
-    : {};
+  const keys = source.keys && typeof source.keys === "object" ? source.keys as Record<string, unknown> : {};
   const endpoint = String(source.endpoint || "").trim();
   const p256dh = String(keys.p256dh || "").trim();
   const auth = String(keys.auth || "").trim();
-
   if (!validEndpoint(endpoint) || p256dh.length < 20 || auth.length < 8) return null;
   if (endpoint.length > 4000 || p256dh.length > 1000 || auth.length > 1000) return null;
-
   return { endpoint, keys: { p256dh, auth } };
 }
 
 function validEndpoint(value: string) {
-  try {
-    return new URL(value).protocol === "https:";
-  } catch {
-    return false;
-  }
+  try { return new URL(value).protocol === "https:"; } catch { return false; }
 }
 
 function bearerToken(header: string | null) {
