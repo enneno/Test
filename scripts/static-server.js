@@ -40,6 +40,7 @@ const PUBLIC_ROOT_FILES = new Set([
     'booking-manage.css',
     'home-account-strip.js',
     'home-account-strip.css',
+    'typography-tuning.css',
     'account-entry.js',
     'account.js',
     'script.js',
