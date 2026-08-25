@@ -35,6 +35,16 @@ test.describe('Lumi Nails PWA', () => {
     expect(source).not.toContain('offline.html');
   });
 
+  test('PWA bootstrap does not alter viewport or normal Safari rendering rules', async ({ page }) => {
+    const response = await page.request.get('/pwa.js');
+    expect(response.ok()).toBeTruthy();
+
+    const source = await response.text();
+    expect(source).not.toContain('viewport-fit=cover');
+    expect(source).not.toContain('ensureViewportFit');
+    expect(source).not.toContain("addMeta('format-detection'");
+  });
+
   test('provides notification, badge and admin push helpers without requesting permission automatically', async ({ page }) => {
     await page.goto('/');
 
