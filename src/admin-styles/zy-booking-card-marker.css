@@ -1,6 +1,6 @@
 /* Shared booking-card marker typography.
    The online LUMI reference and the manual-booking marker are one visual role.
-   Change this block to update both together. */
+   Keep them intentionally quieter than the customer name. */
 
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-azonosito,
@@ -11,8 +11,8 @@
   max-width: 100%;
   margin: 0;
   padding: 0;
-  color: var(--admin-rose-dark);
-  line-height: 1.2;
+  color: var(--admin-v2-subtle);
+  line-height: 1.15;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
@@ -21,8 +21,9 @@
 ) {
   color: inherit;
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
-  font-size: var(--lumi-font-micro);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 8px;
+  font-weight: 680;
+  letter-spacing: 0.025em;
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
