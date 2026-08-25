@@ -48,6 +48,26 @@ window.lumiSupabaseClient = (() => {
 })();
 
 (() => {
+    const isHomePath = location.pathname === '/' || location.pathname === '/index.html';
+    if (!isHomePath) return;
+
+    if (!document.querySelector('link[data-lumi-home-account-strip]')) {
+        const style = document.createElement('link');
+        style.rel = 'stylesheet';
+        style.href = '/home-account-strip.css?v=1';
+        style.dataset.lumiHomeAccountStrip = 'true';
+        document.head.appendChild(style);
+    }
+
+    if (!document.querySelector('script[data-lumi-home-account-strip]')) {
+        const script = document.createElement('script');
+        script.src = '/home-account-strip.js?v=1';
+        script.dataset.lumiHomeAccountStrip = 'true';
+        document.head.appendChild(script);
+    }
+})();
+
+(() => {
     // The CMS module already owns the real save logic and binds it to #admin-cms-save.
     // Keep that target present before admin-content.js initializes so the Admin v2
     // page-level save button can call the existing save path instead of duplicating it.
