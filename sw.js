@@ -1,4 +1,4 @@
-const LUMI_CACHE_VERSION = 'lumi-pwa-v1';
+const LUMI_CACHE_VERSION = 'lumi-pwa-v2';
 const LUMI_STATIC_CACHE = `${LUMI_CACHE_VERSION}-static`;
 const LUMI_PAGES_CACHE = `${LUMI_CACHE_VERSION}-pages`;
 
@@ -6,7 +6,6 @@ const CORE_ASSETS = [
   '/',
   '/arlista/',
   '/galeria/',
-  '/foglalas/',
   '/offline.html',
   '/manifest.webmanifest',
   '/style.css',
@@ -17,10 +16,10 @@ const CORE_ASSETS = [
   '/kepek/apple-touch-icon.png'
 ];
 
-const PRIVATE_PATH_PREFIXES = ['/admin', '/fiokom'];
+const NETWORK_ONLY_PATH_PREFIXES = ['/admin', '/fiokom', '/foglalas'];
 
-function isPrivatePath(pathname) {
-  return PRIVATE_PATH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+function isNetworkOnlyPath(pathname) {
+  return NETWORK_ONLY_PATH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 self.addEventListener('install', (event) => {
@@ -50,7 +49,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (isPrivatePath(url.pathname)) {
+  if (isNetworkOnlyPath(url.pathname)) {
     if (request.mode === 'navigate') {
       event.respondWith(
         fetch(request).catch(() => caches.match('/offline.html'))
