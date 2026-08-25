@@ -346,21 +346,3 @@
     max-width: 112px;
   }
 }
-
-@media (max-width: 390px) {
-  .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-    width: 122px;
-    min-width: 122px;
-    max-width: 122px;
-  }
-
-  .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-db-kartya-tiltas:not(.szerkeszt) .admin-db-statusz:disabled {
-    width: 104px;
-    min-width: 104px;
-    max-width: 104px;
-  }
-
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok {
-    gap: 2px;
-  }
-}
