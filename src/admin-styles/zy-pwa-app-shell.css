@@ -1,0 +1,271 @@
+/* Standalone/PWA admin shell.
+   Browser/desktop admin keeps the normal topbar and sidebar. */
+
+.admin-body.admin-v2.lumi-admin-standalone {
+  --pwa-admin-tabbar-height: 58px;
+  --pwa-admin-tabbar-visual-bottom: 0px;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar {
+  z-index: 76;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 0;
+  min-height: 0;
+  height: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar > .admin-v2-mobile-brand,
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar > .admin-v2-topbar-copy,
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar-actions > .admin-v2-button,
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-notification-wrap > [data-admin-v2-notifications-toggle] {
+  display: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar-actions,
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-notification-wrap {
+  position: static;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-notification-panel {
+  position: fixed;
+  z-index: 110;
+  top: auto;
+  right: 10px;
+  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  width: min(340px, calc(100vw - 20px));
+  max-height: min(55vh, 420px);
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-sidebar {
+  z-index: 90;
+  transform: translateX(calc(-100% - 24px));
+  transition: transform 190ms ease;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .admin-sidebar {
+  transform: translateX(0);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-v2-nav-backdrop {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  background: rgba(42, 31, 28, 0.46);
+  transition: opacity 190ms ease, visibility 190ms ease;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .admin-v2-nav-backdrop {
+  visibility: visible;
+  opacity: 1;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
+  width: 100%;
+  min-height: 100vh;
+  margin-left: 0;
+  padding: 16px 12px calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 30px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-live-panel,
+.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-layout {
+  min-height: 100vh;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-status {
+  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
+  position: fixed;
+  z-index: 75;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: start;
+  min-height: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px));
+  padding: 6px 7px max(6px, env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(79, 59, 53, 0.12);
+  background: rgba(255, 252, 249, 0.94);
+  box-shadow: 0 -8px 28px rgba(54, 39, 34, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button::before {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: transparent;
+  content: "";
+  transition: background-color 150ms ease, transform 150ms ease, opacity 150ms ease;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open)::before {
+  background: var(--admin-v2-brand-soft);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open) {
+  color: var(--admin-v2-brand-dark);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button svg,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add svg {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save {
+  color: #fff;
+  transform: translateY(-8px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save::before {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--admin-v2-brand-dark);
+  box-shadow: 0 8px 20px rgba(71, 47, 41, 0.24);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled {
+  color: rgba(255, 255, 255, 0.76);
+  cursor: default;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled::before {
+  opacity: 0.38;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+  position: absolute;
+  z-index: 2;
+  top: 2px;
+  left: calc(50% + 4px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count {
+  display: grid;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  place-items: center;
+  border: 2px solid rgba(255, 252, 249, 0.96);
+  border-radius: 999px;
+  color: #fff;
+  background: var(--admin-v2-danger);
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgba(255, 252, 249, 0.96);
+  border-radius: 999px;
+  background: var(--admin-v2-danger);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count[hidden],
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot[hidden] {
+  display: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add {
+  position: fixed;
+  z-index: 75;
+  right: 15px;
+  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 14px);
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--admin-v2-brand-dark);
+  box-shadow: 0 9px 24px rgba(71, 47, 41, 0.25);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-tabbar,
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-quick-add {
+  pointer-events: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 700px) {
+  .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
+    right: max(0px, calc((100vw - 620px) / 2));
+    left: max(0px, calc((100vw - 620px) / 2));
+    border-right: 1px solid rgba(79, 59, 53, 0.1);
+    border-left: 1px solid rgba(79, 59, 53, 0.1);
+    border-radius: 18px 18px 0 0;
+  }
+}
