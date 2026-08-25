@@ -6,21 +6,24 @@
     let aktualisFoglalas = null;
 
     window.LUMI_SECURE_BOOKING_MANAGER_ACTIVE = true;
-    document.addEventListener('DOMContentLoaded', biztonsagosFoglalasKezeloElokeszitese);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', biztonsagosFoglalasKezeloElokeszitese);
+    } else {
+        biztonsagosFoglalasKezeloElokeszitese();
+    }
 
     function biztonsagosFoglalasKezeloElokeszitese() {
-        const form = document.getElementById('foglalas-ellenorzes-urlap');
+        let form = document.getElementById('foglalas-ellenorzes-urlap')
+            || document.getElementById('foglalas-ellenorzes-urlap-secure');
         if (!form) return;
 
-        // A régi booking.js ugyanebben a DOMContentLoaded körben keresné ezt az ID-t.
-        // Ideiglenesen elrejtjük előle, majd a dispatch után visszaállítjuk és az új kezelőt kötjük rá.
-        form.id = 'foglalas-ellenorzes-urlap-secure-init';
+        // A régi booking.js kizárólag az eredeti ID-t keresi. A külön ID garantálja,
+        // hogy az egykódos legacy kezelő nem tud ugyanarra az űrlapra rákötődni.
+        if (form.id !== 'foglalas-ellenorzes-urlap-secure') {
+            form.id = 'foglalas-ellenorzes-urlap-secure';
+        }
         feluletBiztonsagosraAlakitasa(form);
-
-        queueMicrotask(() => {
-            form.id = 'foglalas-ellenorzes-urlap';
-            biztonsagosFoglalasKezeloBekotese(form);
-        });
+        biztonsagosFoglalasKezeloBekotese(form);
     }
 
     function feluletBiztonsagosraAlakitasa(form) {
@@ -62,7 +65,7 @@
             kontakt.className = 'urlap-mezo';
             kontakt.placeholder = 'pelda@email.hu vagy +36 20 123 4567';
             kontakt.autocomplete = 'off';
-            kontakt.inputMode = 'email';
+            kontakt.inputMode = 'text';
             kontakt.maxLength = 254;
             kontakt.required = true;
             kontaktCsoport.append(kontaktCimke, kontakt);
@@ -82,6 +85,9 @@
     }
 
     function biztonsagosFoglalasKezeloBekotese(form) {
+        if (form.dataset.secureBookingManagerBound === 'true') return;
+        form.dataset.secureBookingManagerBound = 'true';
+
         const input = document.getElementById('foglalas-azonosito');
         const kontakt = document.getElementById('foglalas-elerhetoseg');
         const eredmeny = document.getElementById('foglalas-ellenorzes-eredmeny');
