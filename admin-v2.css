@@ -8645,6 +8645,35 @@ body.admin-body {
   }
 }
 
+/* Shared booking-card marker typography.
+   The online LUMI reference and the manual-booking marker are one visual role.
+   Change this block to update both together. */
+
+.admin-body.admin-v2 #admin-panel-foglalasok :is(
+  .admin-foglalas-azonosito,
+  .admin-db-kartya-tiltas .admin-kartya-tipus
+) {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--admin-rose-dark);
+  line-height: 1.2;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok :is(
+  .admin-foglalas-azonosito code,
+  .admin-db-kartya-tiltas .admin-kartya-tipus
+) {
+  color: inherit;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: var(--lumi-font-micro);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
 /* Canonical admin component system.
    This is the LAST admin CSS source in the bundle. Change the tokens here when
    the visual size of admin controls must change globally. Legacy rules may set
