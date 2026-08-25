@@ -20,3 +20,12 @@ window.lumiSupabaseClient = (() => {
         return client;
     };
 })();
+
+(() => {
+    if (document.querySelector('script[data-lumi-pwa]')) return;
+    const script = document.createElement('script');
+    script.src = '/pwa.js?v=1';
+    script.defer = true;
+    script.dataset.lumiPwa = 'true';
+    document.head.appendChild(script);
+})();
