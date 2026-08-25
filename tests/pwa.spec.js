@@ -14,7 +14,7 @@ test.describe('Lumi Nails PWA', () => {
     const manifest = await response.json();
     expect(manifest.id).toBe('/');
     expect(manifest.name).toBe('Lumi Nails');
-    expect(manifest.start_url).toBe('/');
+    expect(manifest.start_url).toBe('/admin/');
     expect(manifest.scope).toBe('/');
     expect(manifest.display).toBe('standalone');
     expect(manifest.icons).toEqual(expect.arrayContaining([
@@ -43,6 +43,8 @@ test.describe('Lumi Nails PWA', () => {
     expect(source).not.toContain('viewport-fit=cover');
     expect(source).not.toContain('ensureViewportFit');
     expect(source).not.toContain("addMeta('format-detection'");
+    expect(source).not.toContain('setupStandaloneAdminEntry');
+    expect(source).not.toContain('pwa-admin-entry');
   });
 
   test('provides notification, badge and admin push helpers without requesting permission automatically', async ({ page }) => {
