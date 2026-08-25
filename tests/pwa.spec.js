@@ -60,9 +60,13 @@ test.describe('Lumi Nails PWA', () => {
   });
 
   test('keeps VAPID private material server-side only', async ({ page }) => {
-    const clientSource = await (await page.request.get('/pwa.js')).text();
-    const senderSource = await (await page.request.get('/supabase/functions/send-web-push/index.ts')).text();
+    const clientResponse = await page.request.get('/pwa.js');
+    const senderResponse = await page.request.get('/supabase/functions/send-web-push/index.ts');
+    expect(clientResponse.ok()).toBeTruthy();
+    expect(senderResponse.ok()).toBeTruthy();
 
+    const clientSource = await clientResponse.text();
+    const senderSource = await senderResponse.text();
     expect(clientSource).not.toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
     expect(senderSource).toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
   });
