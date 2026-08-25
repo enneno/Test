@@ -22,6 +22,15 @@ window.lumiSupabaseClient = (() => {
 })();
 
 (() => {
+    if (document.querySelector('link[data-lumi-typography-tuning]')) return;
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = '/typography-tuning.css?v=1';
+    style.dataset.lumiTypographyTuning = 'true';
+    document.head.appendChild(style);
+})();
+
+(() => {
     // Load the verified self-service booking manager before booking.js registers
     // its legacy one-reference-only handler. Parser-time loading keeps the order deterministic.
     const isBookingPath = location.pathname === '/foglalas' || location.pathname.startsWith('/foglalas/');
@@ -54,7 +63,7 @@ window.lumiSupabaseClient = (() => {
     if (!document.querySelector('link[data-lumi-home-account-strip]')) {
         const style = document.createElement('link');
         style.rel = 'stylesheet';
-        style.href = '/home-account-strip.css?v=1';
+        style.href = '/home-account-strip.css?v=2';
         style.dataset.lumiHomeAccountStrip = 'true';
         document.head.appendChild(style);
     }
