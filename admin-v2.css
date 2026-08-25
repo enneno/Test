@@ -9548,6 +9548,146 @@ body.admin-body {
   }
 }
 
+/* Dedicated gallery-image workspace inside the content editor.
+   Gallery page copy stays under Oldalak; image management lives on its own tab. */
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="page"] .cms-gallery-editor {
+  display: none;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-section-picker,
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-field-count,
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-section-body > :not(.cms-gallery-editor) {
+  display: none;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab-gallery[aria-selected="true"] {
+  color: var(--admin-v2-ink);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 5px 14px rgba(65, 45, 39, 0.08);
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-editor-card-header {
+  padding-bottom: 12px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-section-body {
+  padding-top: 12px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-editor {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 13px 14px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 13px;
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header h3 {
+  margin: 0 0 3px;
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  padding: 10px;
+  border-radius: 13px;
+  background: var(--admin-v2-surface);
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item h4 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
+  min-height: 38px;
+  padding: 8px 9px;
+  font-size: 10px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-field > .cms-field-label,
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-url,
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls > button {
+  display: none;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-preview {
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 5;
+  border-radius: 10px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-preview img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls {
+  display: block;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-upload-button {
+  width: 100%;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo {
+  margin-top: 0;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions .admin-veszely-gomb {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header .admin-hozzaadas {
+    width: 100%;
+  }
+}
+
 /* Canonical admin component system.
    This is the LAST admin CSS source in the bundle. Change the tokens here when
    the visual size of admin controls must change globally. Legacy rules may set
