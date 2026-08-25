@@ -50,7 +50,7 @@ jobs:
             fi
             sleep 1
           done
-          npx playwright test tests/pwa.spec.js --grep "standalone admin uses icon tabbar" --project=chromium
+          npx playwright test tests/pwa.spec.js --grep "standalone admin uses icon tabbar"
 
       - name: Commit generated admin assets
         shell: bash
