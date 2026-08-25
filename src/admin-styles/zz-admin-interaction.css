@@ -12,27 +12,30 @@
 */
 
 .admin-body.admin-v2 {
-  --admin-ui-field-height: 38px;
-  --admin-ui-choice-height: 38px;
-  --admin-ui-button-height: 40px;
-  --admin-ui-icon-button-size: 34px;
+  --admin-ui-field-height: 34px;
+  --admin-ui-choice-height: 34px;
+  --admin-ui-button-height: 36px;
+  --admin-ui-icon-button-size: 32px;
   --admin-ui-touch-target: 44px;
   --admin-ui-control-radius: 11px;
   --admin-ui-icon-radius: 10px;
-  --admin-ui-field-padding-x: 12px;
-  --admin-ui-choice-padding-x: 12px;
-  --admin-ui-button-padding-x: 16px;
-  --admin-ui-textarea-min-height: 84px;
+  --admin-ui-field-padding-x: 10px;
+  --admin-ui-choice-padding-x: 10px;
+  --admin-ui-button-padding-x: 14px;
+  --admin-ui-textarea-min-height: 76px;
   --admin-ui-control-line-height: 1.2;
-  --admin-ui-ios-field-optical-ratio: 0.36;
-  --admin-ui-ios-choice-optical-ratio: 0.36;
+  --admin-ui-action-font-size: 12px;
+  --admin-ui-placeholder-font-size: 12px;
+  --admin-ui-ios-field-optical-ratio: 0.34;
+  --admin-ui-ios-choice-optical-ratio: 0.34;
 }
 
-/* Display-only statuses. These are not form controls. */
+/* Display-only statuses. These are not form controls and deliberately share
+   the same typography token as action/button labels. */
 .admin-body.admin-v2 .admin-statusz,
 .admin-body.admin-v2 .admin-pill,
 .admin-body.admin-v2 .admin-allapot-jelzes {
-  font-size: 12px;
+  font-size: var(--admin-ui-action-font-size);
   line-height: 1.2;
 }
 
@@ -54,9 +57,18 @@
   width: 100%;
   min-width: 0;
   min-height: var(--admin-ui-textarea-min-height);
-  padding: 10px var(--admin-ui-field-padding-x);
+  padding: 8px var(--admin-ui-field-padding-x);
   border-radius: var(--admin-ui-control-radius);
-  line-height: 1.45;
+  line-height: 1.4;
+}
+
+/* Placeholder typography is owned centrally as well. On iOS the actual input
+   stays large enough to prevent automatic zoom; only the placeholder is drawn
+   at the compact visual size. */
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
+  font-size: var(--admin-ui-placeholder-font-size);
+  font-size-adjust: none;
+  line-height: var(--admin-ui-control-line-height);
 }
 
 /* Choice controls have their own role. This includes .admin-db-statusz. */
@@ -81,11 +93,13 @@
   .admin-tab,
   .admin-v2-nav-item,
   .admin-v2-public-link,
+  .admin-v2-profile,
   .admin-v2-logout,
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
-  .admin-foglalas-nezet-gomb
+  .admin-foglalas-nezet-gomb,
+  .cms-upload-button
 ) {
   position: relative;
   box-sizing: border-box;
@@ -99,6 +113,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--admin-ui-control-radius);
+  font-size: var(--admin-ui-action-font-size);
   line-height: 1.15;
   overflow: visible;
 }
@@ -112,11 +127,13 @@
   .admin-tab,
   .admin-v2-nav-item,
   .admin-v2-public-link,
+  .admin-v2-profile,
   .admin-v2-logout,
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
-  .admin-foglalas-nezet-gomb
+  .admin-foglalas-nezet-gomb,
+  .cms-upload-button
 )::after {
   position: absolute;
   top: calc((var(--admin-ui-touch-target) - var(--admin-ui-button-height)) / -2);
@@ -129,6 +146,7 @@
 /* Compact icon actions use one visual size everywhere. */
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .admin-v2-icon-button,
+  .admin-kereses-torles,
   .admin-kis-gomb.admin-frissites-ikon-gomb,
   .admin-kis-gomb.admin-naptar-torles-x,
   .admin-kis-gomb.admin-idosav-torles-x
@@ -143,12 +161,14 @@
   padding: 0;
   place-items: center;
   border-radius: var(--admin-ui-icon-radius);
+  font-size: var(--admin-ui-action-font-size);
   line-height: 1;
   overflow: visible;
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .admin-v2-icon-button,
+  .admin-kereses-torles,
   .admin-kis-gomb.admin-naptar-torles-x,
   .admin-kis-gomb.admin-idosav-torles-x
 )::after {
@@ -168,7 +188,8 @@
 }
 
 /* iOS anti-zoom is preserved, but fields and choices remain separate roles.
-   No special smaller optical ratio is applied to status selectors. */
+   Their optical size can be changed centrally without lowering the computed
+   font size below the anti-zoom threshold. */
 @media screen and (max-width: 768px) {
   .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
   .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
@@ -180,5 +201,10 @@
   .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
     font-size: max(22px, 1em);
     font-size-adjust: var(--admin-ui-ios-choice-optical-ratio);
+  }
+
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
+    font-size: var(--admin-ui-placeholder-font-size);
+    font-size-adjust: none;
   }
 }
