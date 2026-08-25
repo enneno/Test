@@ -100,27 +100,32 @@ for (const token of requiredControlTokens) {
     }
 }
 
-if (!interactionCss.includes('height: var(--admin-ui-field-height) !important;')) {
+if (!interactionCss.includes('height: var(--admin-ui-field-height);') ||
+    !interactionCss.includes('min-height: var(--admin-ui-field-height);')) {
     fail('editable admin fields are not owned by the canonical field-height token.');
 }
 
-if (!interactionCss.includes('.admin-body.admin-v2 select,') ||
-    !interactionCss.includes('.admin-body.admin-v2 .admin-db-statusz {') ||
-    !interactionCss.includes('height: var(--admin-ui-choice-height) !important;')) {
+if (!interactionCss.includes('select,') ||
+    !interactionCss.includes('.admin-db-statusz {') ||
+    !interactionCss.includes('height: var(--admin-ui-choice-height);')) {
     fail('admin select/status choices are not owned by the canonical choice-control role.');
 }
 
-if (!interactionCss.includes('height: var(--admin-ui-button-height) !important;')) {
+if (!interactionCss.includes('height: var(--admin-ui-button-height);')) {
     fail('admin text buttons are not owned by the canonical button-height token.');
 }
 
-if (!interactionCss.includes('width: var(--admin-ui-icon-button-size) !important;') ||
+if (!interactionCss.includes('width: var(--admin-ui-icon-button-size);') ||
     !interactionCss.includes('var(--admin-ui-touch-target)')) {
     fail('admin icon buttons do not preserve compact visuals with a tokenized touch target.');
 }
 
 if (interactionCss.includes('--lumi-input-optical-ratio: 0.3')) {
-    fail('status selectors must not use the old input-specific optical-size override.');
+    fail('status selectors must not use the old input-specific optical-size override in the final component layer.');
+}
+
+if (interactionCss.includes('!important')) {
+    fail('the canonical admin component layer must use the cascade, not !important.');
 }
 
 const config = fs.readFileSync(path.join(root, 'supabase-config.js'), 'utf8');
