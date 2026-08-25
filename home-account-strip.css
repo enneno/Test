@@ -1,0 +1,216 @@
+.fooldal .fiok-ajanlo {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid rgba(185, 133, 143, 0.14);
+    border-bottom: 1px solid rgba(185, 133, 143, 0.16);
+    background:
+        radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.72), transparent 30%),
+        linear-gradient(105deg, #f8eee9 0%, #f6e7e5 48%, #f3e1e4 100%);
+}
+
+.fooldal .fiok-ajanlo-belso {
+    width: min(1400px, calc(100% - 72px));
+    margin: 0 auto;
+    padding: clamp(34px, 4vw, 58px) 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.95fr) auto;
+    align-items: center;
+    gap: clamp(28px, 4vw, 64px);
+}
+
+.fooldal .fiok-ajanlo-szoveg {
+    max-width: 620px;
+}
+
+.fooldal .fiok-ajanlo-kicker {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #9d6878;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.fooldal .fiok-ajanlo h2 {
+    margin: 0;
+    color: #4e3630;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(34px, 3.4vw, 52px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+}
+
+.fooldal .fiok-ajanlo-szoveg > p {
+    max-width: 590px;
+    margin: 14px 0 0;
+    color: rgba(78, 54, 48, 0.72);
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(14px, 1.1vw, 16px);
+    line-height: 1.68;
+}
+
+.fooldal .fiok-ajanlo-elonyok {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    min-width: 0;
+}
+
+.fooldal .fiok-ajanlo-elonyok > span {
+    min-width: 0;
+    padding: 4px 20px;
+    border-left: 1px solid rgba(157, 104, 120, 0.18);
+}
+
+.fooldal .fiok-ajanlo-elonyok strong,
+.fooldal .fiok-ajanlo-elonyok small {
+    display: block;
+}
+
+.fooldal .fiok-ajanlo-elonyok strong {
+    color: #4e3630;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.fooldal .fiok-ajanlo-elonyok small {
+    margin-top: 5px;
+    color: rgba(78, 54, 48, 0.58);
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.fooldal .fiok-ajanlo-akciok {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    min-width: 205px;
+}
+
+.fooldal .fiok-ajanlo-gomb {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 11px 18px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.fooldal .fiok-ajanlo-gomb:hover {
+    transform: translateY(-1px);
+}
+
+.fooldal .fiok-ajanlo-gomb-kiemelt {
+    background: #4e3630;
+    color: #fffaf6;
+    border-color: #4e3630;
+}
+
+.fooldal .fiok-ajanlo-gomb-kiemelt:hover {
+    background: #382722;
+    border-color: #382722;
+}
+
+.fooldal .fiok-ajanlo-gomb-masodlagos {
+    background: rgba(255, 250, 246, 0.48);
+    color: #6f4a56;
+    border-color: rgba(157, 104, 120, 0.28);
+}
+
+.fooldal .fiok-ajanlo-gomb-masodlagos:hover {
+    background: rgba(255, 250, 246, 0.76);
+    border-color: rgba(157, 104, 120, 0.42);
+}
+
+@media (max-width: 1100px) {
+    .fooldal .fiok-ajanlo-belso {
+        width: min(100% - 48px, 960px);
+        grid-template-columns: minmax(0, 1fr) minmax(210px, auto);
+    }
+
+    .fooldal .fiok-ajanlo-elonyok {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .fooldal .fiok-ajanlo-akciok {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
+
+@media (max-width: 700px) {
+    .fooldal .fiok-ajanlo-belso {
+        width: calc(100% - 32px);
+        padding: 30px 0 32px;
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .fooldal .fiok-ajanlo h2 {
+        max-width: 10ch;
+        font-size: clamp(34px, 11vw, 46px);
+    }
+
+    .fooldal .fiok-ajanlo-szoveg > p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .fooldal .fiok-ajanlo-elonyok {
+        grid-column: 1;
+        grid-row: auto;
+        grid-template-columns: 1fr;
+        gap: 0;
+        border-top: 1px solid rgba(157, 104, 120, 0.14);
+        border-bottom: 1px solid rgba(157, 104, 120, 0.14);
+    }
+
+    .fooldal .fiok-ajanlo-elonyok > span {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 2px;
+        border-left: 0;
+    }
+
+    .fooldal .fiok-ajanlo-elonyok > span + span {
+        border-top: 1px solid rgba(157, 104, 120, 0.11);
+    }
+
+    .fooldal .fiok-ajanlo-elonyok small {
+        margin-top: 0;
+        text-align: right;
+    }
+
+    .fooldal .fiok-ajanlo-akciok {
+        grid-column: 1;
+        grid-row: auto;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .fooldal .fiok-ajanlo-gomb {
+        width: 100%;
+    }
+}
