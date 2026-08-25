@@ -26,7 +26,7 @@
             </div>
 
             <div class="fiok-ajanlo-akciok">
-                <a href="/fiokom/" class="fiok-ajanlo-gomb fiok-ajanlo-gomb-kiemelt">Saját fiók létrehozása</a>
+                <a href="/fiokom/?view=regisztracio" class="fiok-ajanlo-gomb fiok-ajanlo-gomb-kiemelt">Saját fiók létrehozása</a>
                 <a href="/fiokom/" class="fiok-ajanlo-gomb fiok-ajanlo-gomb-masodlagos">Már van fiókom</a>
             </div>
         </div>
