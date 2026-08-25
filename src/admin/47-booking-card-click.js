@@ -33,7 +33,7 @@
         const observer = new MutationObserver(() => {
             lista.querySelectorAll('.admin-foglalas-kartya').forEach(kartyaElokeszitese);
         });
-        observer.observe(lista, { childList: true, subtree: true });
+        observer.observe(lista, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
         lista.querySelectorAll('.admin-foglalas-kartya').forEach(kartyaElokeszitese);
     });
 
