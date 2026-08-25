@@ -37,43 +37,43 @@
 }
 
 /* Single-line editable fields. Status selectors are deliberately NOT in this group. */
-.admin-body.admin-v2 input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]) {
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]) {
   width: 100%;
   min-width: 0;
-  height: var(--admin-ui-field-height) !important;
-  min-height: var(--admin-ui-field-height) !important;
-  padding-top: 0 !important;
-  padding-right: var(--admin-ui-field-padding-x) !important;
-  padding-bottom: 0 !important;
-  padding-left: var(--admin-ui-field-padding-x) !important;
-  border-radius: var(--admin-ui-control-radius) !important;
+  height: var(--admin-ui-field-height);
+  min-height: var(--admin-ui-field-height);
+  padding-top: 0;
+  padding-right: var(--admin-ui-field-padding-x);
+  padding-bottom: 0;
+  padding-left: var(--admin-ui-field-padding-x);
+  border-radius: var(--admin-ui-control-radius);
   line-height: var(--admin-ui-control-line-height);
 }
 
-.admin-body.admin-v2 textarea {
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
   width: 100%;
   min-width: 0;
-  min-height: var(--admin-ui-textarea-min-height) !important;
-  padding: 10px var(--admin-ui-field-padding-x) !important;
-  border-radius: var(--admin-ui-control-radius) !important;
+  min-height: var(--admin-ui-textarea-min-height);
+  padding: 10px var(--admin-ui-field-padding-x);
+  border-radius: var(--admin-ui-control-radius);
   line-height: 1.45;
 }
 
 /* Choice controls have their own role. This includes .admin-db-statusz. */
-.admin-body.admin-v2 select,
-.admin-body.admin-v2 .admin-db-statusz {
-  height: var(--admin-ui-choice-height) !important;
-  min-height: var(--admin-ui-choice-height) !important;
-  padding-top: 0 !important;
-  padding-right: var(--admin-ui-choice-padding-x) !important;
-  padding-bottom: 0 !important;
-  padding-left: var(--admin-ui-choice-padding-x) !important;
-  border-radius: var(--admin-ui-control-radius) !important;
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
+.admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
+  height: var(--admin-ui-choice-height);
+  min-height: var(--admin-ui-choice-height);
+  padding-top: 0;
+  padding-right: var(--admin-ui-choice-padding-x);
+  padding-bottom: 0;
+  padding-left: var(--admin-ui-choice-padding-x);
+  border-radius: var(--admin-ui-control-radius);
   line-height: var(--admin-ui-control-line-height);
 }
 
 /* Canonical text/action button geometry. Visual variants may still own colors. */
-.admin-body.admin-v2 :is(
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .gomb,
   .admin-gomb,
   .admin-hozzaadas,
@@ -89,21 +89,22 @@
 ) {
   position: relative;
   box-sizing: border-box;
-  height: var(--admin-ui-button-height) !important;
-  min-height: var(--admin-ui-button-height) !important;
-  padding-top: 0 !important;
-  padding-right: var(--admin-ui-button-padding-x) !important;
-  padding-bottom: 0 !important;
-  padding-left: var(--admin-ui-button-padding-x) !important;
+  display: inline-flex;
+  height: var(--admin-ui-button-height);
+  min-height: var(--admin-ui-button-height);
+  padding-top: 0;
+  padding-right: var(--admin-ui-button-padding-x);
+  padding-bottom: 0;
+  padding-left: var(--admin-ui-button-padding-x);
   align-items: center;
   justify-content: center;
-  border-radius: var(--admin-ui-control-radius) !important;
+  border-radius: var(--admin-ui-control-radius);
   line-height: 1.15;
   overflow: visible;
 }
 
 /* 44px effective target without making the visible text button 44px tall. */
-.admin-body.admin-v2 :is(
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .gomb,
   .admin-gomb,
   .admin-hozzaadas,
@@ -126,30 +127,30 @@
 }
 
 /* Compact icon actions use one visual size everywhere. */
-.admin-body.admin-v2 :is(
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .admin-v2-icon-button,
-  .admin-frissites-ikon-gomb,
-  .admin-naptar-torles-x,
-  .admin-idosav-torles-x
+  .admin-kis-gomb.admin-frissites-ikon-gomb,
+  .admin-kis-gomb.admin-naptar-torles-x,
+  .admin-kis-gomb.admin-idosav-torles-x
 ) {
   position: relative;
-  display: inline-grid !important;
-  flex: 0 0 var(--admin-ui-icon-button-size) !important;
-  width: var(--admin-ui-icon-button-size) !important;
-  min-width: var(--admin-ui-icon-button-size) !important;
-  height: var(--admin-ui-icon-button-size) !important;
-  min-height: var(--admin-ui-icon-button-size) !important;
-  padding: 0 !important;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-icon-button-size);
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
   place-items: center;
-  border-radius: var(--admin-ui-icon-radius) !important;
-  line-height: 1 !important;
+  border-radius: var(--admin-ui-icon-radius);
+  line-height: 1;
   overflow: visible;
 }
 
-.admin-body.admin-v2 :is(
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .admin-v2-icon-button,
-  .admin-naptar-torles-x,
-  .admin-idosav-torles-x
+  .admin-kis-gomb.admin-naptar-torles-x,
+  .admin-kis-gomb.admin-idosav-torles-x
 )::after {
   position: absolute;
   inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
@@ -157,7 +158,7 @@
 }
 
 /* Refresh sits next to another control: expand its hit area away from the neighbour. */
-.admin-body.admin-v2 .admin-frissites-ikon-gomb::after {
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb::after {
   position: absolute;
   top: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
   right: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) * -1);
@@ -169,15 +170,15 @@
 /* iOS anti-zoom is preserved, but fields and choices remain separate roles.
    No special smaller optical ratio is applied to status selectors. */
 @media screen and (max-width: 768px) {
-  .admin-body.admin-v2 input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
-  .admin-body.admin-v2 textarea {
-    font-size: max(22px, 1em) !important;
-    font-size-adjust: var(--admin-ui-ios-field-optical-ratio) !important;
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
+    font-size: max(22px, 1em);
+    font-size-adjust: var(--admin-ui-ios-field-optical-ratio);
   }
 
-  .admin-body.admin-v2 select,
-  .admin-body.admin-v2 .admin-db-statusz {
-    font-size: max(22px, 1em) !important;
-    font-size-adjust: var(--admin-ui-ios-choice-optical-ratio) !important;
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
+  .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
+    font-size: max(22px, 1em);
+    font-size-adjust: var(--admin-ui-ios-choice-optical-ratio);
   }
 }
