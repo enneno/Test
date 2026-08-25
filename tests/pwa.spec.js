@@ -93,7 +93,7 @@ test.describe('Lumi Nails PWA', () => {
     expect(count).toBe(0);
   });
 
-  test('standalone admin stays responsive while floating save is active', async ({ page }) => {
+  test('standalone admin uses icon tabbar and quick-add action', async ({ page }) => {
     await page.addInitScript(() => {
       Object.defineProperty(window.navigator, 'standalone', {
         configurable: true,
@@ -103,8 +103,16 @@ test.describe('Lumi Nails PWA', () => {
 
     await page.goto('/admin/');
     await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
-    await expect(page.locator('#pwa-admin-floating-save')).toHaveCount(1);
-    expect(await page.evaluate(() => document.readyState)).toBe('complete');
+    await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
+    await expect(page.locator('#pwa-admin-tabbar')).toHaveCount(1);
+    await expect(page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button')).toHaveCount(6);
+    await expect(page.locator('#pwa-admin-quick-add')).toHaveCount(1);
+    await expect(page.locator('#pwa-admin-floating-save')).toHaveCount(0);
+
+    const labels = await page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button').evaluateAll(buttons =>
+      buttons.map(button => button.getAttribute('aria-label'))
+    );
+    expect(labels).toEqual(['Menü', 'Áttekintés', 'Foglalások', 'Mentés', 'Munkaidő', 'Értesítések']);
   });
 
   test('keeps VAPID private material out of client-side code', async ({ page }) => {
