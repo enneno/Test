@@ -47,7 +47,7 @@ test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async 
         expect(source, file).not.toContain('admin-lebego-mentes');
     }
 });
-test('az admin Vendégfiókok nézete csak regisztrált Auth-fiókokat kér le', async () => {
+test('az admin Regisztrált tagok nézete csak az Auth-fiókok minimális adatait kéri le', async () => {
     const source = fs.readFileSync(
         path.resolve(__dirname, '..', 'src', 'admin', '12-customer-profiles.js'),
         'utf8'
@@ -58,15 +58,26 @@ test('az admin Vendégfiókok nézete csak regisztrált Auth-fiókokat kér le',
     );
 
     expect(source).toContain(".rpc('admin_registered_customer_profiles')");
-    expect(source).toContain(".rpc('admin_registered_customer_bookings'");
+    expect(source).not.toContain('admin_registered_customer_bookings');
+    expect(source).not.toContain('booking_count');
+    expect(source).not.toContain('next_booking_at');
+    expect(source).not.toContain('Foglalások megnyitása');
     expect(source).not.toContain(".from('admin_customer_profiles')");
     expect(source).not.toContain(".from('admin_customer_bookings')");
 
     expect(sql).toContain('drop view if exists public.admin_customer_profiles');
     expect(sql).toContain('drop view if exists public.admin_customer_bookings');
+    expect(sql).toContain('drop function if exists public.admin_registered_customer_bookings(uuid)');
+    expect(sql).not.toContain('create function public.admin_registered_customer_bookings');
     expect(sql).not.toContain('create view public.admin_customer_profiles');
     expect(sql).not.toContain('create view public.admin_customer_bookings');
-    expect(sql).toContain('if not public.is_lumi_admin() then');
+
+    const profileFunction = sql.match(
+        /create function public\.admin_registered_customer_profiles\(\)[\s\S]*?revoke all on function public\.admin_registered_customer_profiles\(\)/
+    )?.[0] || '';
+    expect(profileFunction).toContain('if not public.is_lumi_admin() then');
+    expect(profileFunction).not.toContain('public.bookings');
+    expect(profileFunction).not.toContain('booking_count');
     expect(sql).toContain('revoke all on function public.admin_registered_customer_profiles() from public, anon');
     expect(sql).toContain('grant execute on function public.admin_registered_customer_profiles() to authenticated, service_role');
 });

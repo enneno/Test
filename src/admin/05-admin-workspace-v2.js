@@ -20,9 +20,9 @@
             save: 'Módosítások mentése'
         },
         vendegek: {
-            kicker: 'Regisztrált fiókok',
-            title: 'Vendégfiókok',
-            description: 'A Fiókom oldalon regisztrált vendégek neve, e-mail-címe, telefonszáma és foglalásai.'
+            kicker: 'Vendégfiókok',
+            title: 'Regisztrált tagok',
+            description: 'A Fiókom oldalon regisztrált tagok neve, e-mail-címe és telefonszáma.'
         },
         idosavok: {
             kicker: 'Elérhetőség',
@@ -141,7 +141,7 @@
             <p class="admin-v2-nav-label">Munkaterület</p>
             ${adminV2NavGomb('attekintes', 'Áttekintés', adminV2Ikon('overview'))}
             ${adminV2NavGomb('foglalasok', 'Időpontok', adminV2Ikon('calendar'), '<span class="admin-v2-nav-count" data-admin-v2-pending-count>0</span>')}
-            ${adminV2NavGomb('vendegek', 'Vendégfiókok', adminV2Ikon('users'))}
+            ${adminV2NavGomb('vendegek', 'Regisztrált tagok', adminV2Ikon('users'))}
             ${adminV2NavGomb('munkaido', 'Munkaidő', adminV2Ikon('clock'))}
             ${adminV2NavGomb('weboldal', 'Weboldal', adminV2Ikon('website'))}
             ${adminV2NavGomb('kommunikacio', 'Kommunikáció', adminV2Ikon('mail'), '<span class="admin-v2-nav-alert" data-admin-v2-email-alert hidden><span class="sr-only">Emailhiba</span></span>')}
@@ -752,7 +752,7 @@
         const groupLabels = {
             attekintes: 'Áttekintés',
             foglalasok: 'Időpontok',
-            vendegek: 'Vendégfiókok',
+            vendegek: 'Regisztrált tagok',
             munkaido: 'Munkaidő',
             weboldal: 'Weboldal',
             kommunikacio: 'Kommunikáció',

@@ -20,8 +20,6 @@
         szolgaltatasok: [],
         kuponok: [],
         vendegProfilok: [],
-        aktivVendegProfil: '',
-        vendegProfilKereses: '',
         vendegProfilKeresId: 0,
         esemenynaploOldal: 1,
         esemenynaploOldalMeret: 10,

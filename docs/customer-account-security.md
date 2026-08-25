@@ -10,7 +10,7 @@
 - Régi foglalás csak a bejelentkezett felhasználó Supabase-ben hitelesített e-mailjének pontos egyezése után kapcsolható a fiókhoz.
 - A profilértékek nem jogosultsági források. A név és telefonszám felhasználói adat; adminjogot kizárólag a privát admin-engedélylista adhat.
 - Ugyanaz a Supabase Auth-felhasználó használhatja a vendégfiókot és – külön engedély esetén – az admint. Az adminjogot nem az e-mailhez tartozó vendégprofil, hanem az `is_lumi_admin()` ellenőrzés adja, ezért a két felület nem keveri össze a jogosultságokat.
-- Az admin Vendégfiókok listája kizárólag a valódi, nem anonim és nem törölt Supabase Auth-regisztrációkat mutatja. Az `auth.users` nincs publikus nézeten kitéve; a minimális név-, e-mail-, telefon- és megerősítési adatokat külön, `is_lumi_admin()` ellenőrzésű RPC adja vissza.
+- Az admin Regisztrált tagok listája kizárólag a valódi, nem anonim és nem törölt Supabase Auth-regisztrációkat mutatja. Az `auth.users` nincs publikus nézeten kitéve; csak a nevet, az e-mail-címet és a telefonszámot adja vissza egy `is_lumi_admin()` ellenőrzésű RPC.
 - A `cancel_my_booking` RPC csak a `customer_user_id = auth.uid()` tulajdonosi feltétellel megtalált foglalást adja át a közös lemondási tranzakciónak.
 - A kóddal és a fiókból indított lemondás ugyanazt a szerveroldali szabályt használja. Ha az időpont 24 órán belül kezdődik, a rövid indok kötelező; múltbeli vagy nem aktív foglalás online nem mondható le.
 - A lemondás státuszváltása, eseménynaplója és visszaigazoló e-mail-munkája egy adatbázis-tranzakcióban jön létre. Az ismételt kérés nem küldhet második levelet.
