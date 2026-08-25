@@ -117,3 +117,14 @@ window.lumiSupabaseClient = (() => {
     script.dataset.lumiPwa = 'true';
     document.head.appendChild(script);
 })();
+
+(() => {
+    const isAdminPath = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+    if (!isAdminPath || document.querySelector('script[data-lumi-pwa-admin-shell]')) return;
+
+    const script = document.createElement('script');
+    script.src = '/pwa-admin-shell.js?v=1';
+    script.defer = true;
+    script.dataset.lumiPwaAdminShell = 'true';
+    document.head.appendChild(script);
+})();
