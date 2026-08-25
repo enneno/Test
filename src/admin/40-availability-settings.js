@@ -489,7 +489,7 @@
     function adminKartyaSzerkesztesKapcsolasa(kartya, gomb) {
         const nyitva = !kartya.classList.contains('szerkeszt');
         kartya.classList.toggle('szerkeszt', nyitva);
-        gomb.textContent = nyitva ? 'Bezárás' : 'Szerkesztés';
+        gomb.innerHTML = `${adminV2Ikon(nyitva ? 'close' : 'edit')}<span>${nyitva ? 'Bezárás' : 'Szerkesztés'}</span>`;
         gomb.setAttribute('aria-expanded', String(nyitva));
     }
 

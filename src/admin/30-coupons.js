@@ -51,7 +51,7 @@
                 <div class="admin-kompakt-kartya-vezerlok">
                     <span class="admin-allapot-jelzo${kupon.active ? '' : ' inaktiv'}">${kupon.active ? 'Aktív' : 'Inaktív'}</span>
                     ${kupon.show_on_home ? '<span class="admin-allapot-jelzo">Főoldalon</span>' : ''}
-                    <button type="button" class="admin-kis-gomb" data-admin-kartya-toggle aria-expanded="${String(ujKupon)}">${ujKupon ? 'Bezárás' : 'Szerkesztés'}</button>
+                    <button type="button" class="admin-kis-gomb admin-ikonos-gomb" data-admin-kartya-toggle aria-expanded="${String(ujKupon)}">${adminV2Ikon(ujKupon ? 'close' : 'edit')}<span>${ujKupon ? 'Bezárás' : 'Szerkesztés'}</span></button>
                 </div>
             </div>
             <div class="admin-kompakt-szerkeszto">
@@ -71,9 +71,9 @@
                     <label class="admin-mezo admin-kupon-sorrend">Sorrend<input type="number" step="1" data-mezo="sort_order" value="${Number(kupon.sort_order) || 0}"></label>
                 </div>
                 <div class="admin-db-akciok admin-kupon-akciok">
-                    <button type="button" class="admin-kis-gomb" data-kupon-mozgat="fel">↑ Feljebb</button>
-                    <button type="button" class="admin-kis-gomb" data-kupon-mozgat="le">↓ Lejjebb</button>
-                    <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-kupon-torles>Törlés</button>
+                    <button type="button" class="admin-kis-gomb admin-ikonos-gomb" data-kupon-mozgat="fel">${adminV2Ikon('up')}<span>Feljebb</span></button>
+                    <button type="button" class="admin-kis-gomb admin-ikonos-gomb" data-kupon-mozgat="le">${adminV2Ikon('down')}<span>Lejjebb</span></button>
+                    <button type="button" class="admin-kis-gomb admin-veszely-gomb admin-ikonos-gomb" data-kupon-torles>${adminV2Ikon('trash')}<span>Törlés</span></button>
                 </div>
             </div>
         `;

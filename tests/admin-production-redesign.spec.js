@@ -739,6 +739,59 @@ test.describe('production admin redesign', () => {
 
         expect(browserErrors).toEqual([]);
     });
+
+    test('mobile: content and price editors use progressive disclosure without overflow', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+
+        await page.getByRole('button', { name: 'Navigáció megnyitása' }).click();
+        await page.locator('.admin-v2-sidebar [data-admin-v2-nav="weboldal"]').click();
+        await expect(page.locator('#admin-panel-szovegek')).toHaveClass(/aktiv/);
+        await expect(page.locator('#admin-cms-root')).toBeVisible();
+        await expect(page.getByText('Tartalomszerkesztő', { exact: true })).toHaveCount(0);
+        await expect(page.locator('.admin-v2-page-description')).toHaveCount(0);
+
+        const sectionPicker = page.locator('.cms-section-picker');
+        const sectionIndex = page.locator('.cms-section-index');
+        await expect(sectionPicker).toBeVisible();
+        await expect(sectionIndex).toBeHidden();
+
+        const sectionSelect = sectionPicker.locator('select');
+        const choices = await sectionSelect.locator('option').evaluateAll(options => options.map(option => ({
+            label: option.textContent.trim(),
+            value: option.value
+        })));
+        expect(choices.length).toBeGreaterThan(1);
+        await sectionSelect.selectOption(choices[1].value);
+        await expect(page.locator('.cms-editor-card-header h3')).toContainText(choices[1].label);
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-content-mobile.png', fullPage: true });
+        }
+
+        await page.locator('#admin-panel-szovegek [data-admin-v2-panel="szolgaltatasok"]').click();
+        const pricePanel = page.locator('#admin-panel-szolgaltatasok');
+        await expect(pricePanel).toHaveClass(/aktiv/);
+        await expect(pricePanel.locator('.admin-db-kartya')).toHaveCount(2);
+
+        const firstCard = pricePanel.locator('.admin-db-kartya').first();
+        await firstCard.locator('[data-admin-kartya-toggle]').click();
+        await expect(firstCard.locator('.admin-szerkeszto-szakasz')).toHaveCount(2);
+        await expect(firstCard.locator('.admin-szerkeszto-szakasz legend')).toHaveText(['Alapadatok', 'Ár és időtartam']);
+        await expect(firstCard.locator('[data-mezo="sort_order"]')).toHaveAttribute('type', 'hidden');
+
+        const editorMetrics = await pricePanel.evaluate(panel => ({
+            panelOverflow: panel.scrollWidth - panel.clientWidth,
+            documentOverflow: document.documentElement.scrollWidth - window.innerWidth,
+            toggleHeight: panel.querySelector('[data-admin-kartya-toggle]').getBoundingClientRect().height
+        }));
+        expect(editorMetrics.panelOverflow).toBeLessThanOrEqual(1);
+        expect(editorMetrics.documentOverflow).toBeLessThanOrEqual(1);
+        expect(editorMetrics.toggleHeight).toBeGreaterThanOrEqual(44);
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-prices-mobile.png', fullPage: true });
+        }
+        expect(browserErrors).toEqual([]);
+    });
+
     test('the bell opens a notification list and routes each live item to its workflow', async ({ page }) => {
         const browserErrors = await openAdmin(page, { width: 390, height: 844 });
         const bell = page.getByRole('button', { name: 'Értesítések megnyitása' });
@@ -776,6 +829,44 @@ test.describe('production admin redesign', () => {
         await panel.getByRole('button', { name: /emailhiba/i }).click();
         await expect(page.locator('#admin-panel-esemenynaplo')).toHaveClass(/aktiv/);
         await expect(panel).toBeHidden();
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('the standalone app bell stays open and the desktop topbar leaves no mobile remnants', async ({ page }) => {
+        await page.addInitScript(() => {
+            Object.defineProperty(window.navigator, 'standalone', {
+                configurable: true,
+                value: true
+            });
+        });
+
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+        await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
+        await expect(page.locator('.admin-v2-topbar')).toBeHidden();
+        await expect(page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button')).toHaveCount(5);
+
+        const bell = page.locator('[data-pwa-admin-notifications]');
+        await bell.click();
+
+        const panel = page.getByRole('region', { name: 'Értesítések' });
+        await expect(panel).toBeVisible();
+        await expect(bell).toHaveAttribute('aria-expanded', 'true');
+        await expect(panel).toContainText('1 megerősítésre vár');
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-pwa-notifications-mobile.png', fullPage: true });
+        }
+
+        await bell.click();
+        await expect(panel).toBeHidden();
+        await page.evaluate(() => {
+            document.querySelector('.admin-v2-sidebar [data-admin-v2-nav="weboldal"]')?.click();
+        });
+        await expect(page.locator('#admin-panel-szovegek')).toHaveClass(/aktiv/);
+        await expect(page.locator('.cms-section-picker')).toBeVisible();
+        await expect(page.locator('.admin-v2-topbar')).toBeHidden();
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-redesign-pwa-content-mobile.png', fullPage: true });
+        }
         expect(browserErrors).toEqual([]);
     });
 });

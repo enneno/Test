@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/admin-v2.css?v=69ee42779c31">
+    <link rel="stylesheet" href="/admin-v2.css?v=98cf77acea9e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -181,7 +181,6 @@
                 </div>
 
                 <div id="admin-panel-szolgaltatasok" class="admin-db-panel">
-                    <p class="admin-info">Ez az élő árlista. Amit itt módosítasz, azt használja az árlista oldal és az időpontfoglalás is, így nem kell két helyen átírni.</p>
                     <div class="admin-panel-akciok">
                         <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas" title="Új árlista tétel">Új tétel</button>
                     </div>
@@ -189,7 +188,6 @@
                 </div>
 
                 <div id="admin-panel-kuponok" class="admin-db-panel">
-                    <p class="admin-info">Itt kezelheted az akciókat és kuponkódokat. Csak az aktív, érvényes kupon jelenik meg a főoldalon és a foglalásnál.</p>
                     <div class="admin-panel-akciok">
                         <button type="button" id="admin-kupon-hozzaadas" class="admin-hozzaadas">Új kupon</button>
                     </div>
@@ -197,7 +195,6 @@
                 </div>
 
                 <div id="admin-panel-idosavok" class="admin-db-panel">
-                    <p class="admin-info">Itt konkrét dátumokra tudod megadni, mikor dolgozol. Például egy hónapra előre felveheted a napokat, és a foglalás csak ezeket fogja felajánlani.</p>
                     <div id="admin-idosav-naptar" class="admin-naptar-blokk">
                         <div class="admin-naptar-fej">
                             <label class="admin-mezo">
@@ -252,7 +249,6 @@
                 </div>
 
                 <div id="admin-panel-tiltasok" class="admin-db-panel">
-                    <p class="admin-info">Ha valaki Instagramon, Messengerben vagy személyesen foglal, itt vedd ki azt az időt. A publikus foglalásból automatikusan eltűnik minden időpont, ami ütközne vele.</p>
                     <form id="admin-tiltas-form" class="admin-naptar-blokk admin-tiltas-blokk">
                         <div class="admin-naptar-tomeges admin-tiltas-sor">
                             <label class="admin-mezo">
@@ -278,7 +274,6 @@
                 </div>
 
                 <div id="admin-panel-esemenynaplo" class="admin-db-panel">
-                    <p class="admin-info">Itt l&aacute;tod a foglal&aacute;si rendszer fontos esem&eacute;nyeit: foglal&aacute;s l&eacute;trej&ouml;tt, email siker&uuml;lt, email hiba, admin m&oacute;dos&iacute;t&aacute;s. Ha valami furcsa t&ouml;rt&eacute;nik, itt &eacute;rdemes el&ouml;sz&ouml;r r&aacute;n&eacute;zni.</p>
                     <div class="admin-panel-akciok">
                         <div class="admin-panel-gombcsoport">
                             <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas" title="Eseménynapló frissítése">Frissítés</button>
@@ -324,17 +319,8 @@
                 </div>
 
                         <div id="admin-panel-szovegek" class="admin-db-panel admin-cms-panel">
-                <div class="admin-cms-heading">
-                    <div>
-                        <h2>Tartalomszerkesztő</h2>
-                        <p>Válassz egy területet és szekciót. Egyszerre csak az éppen szerkesztett tartalom jelenik meg.</p>
-                    </div>
-                    <div class="admin-cms-main-actions">
-                        <button type="button" id="admin-cms-reload" class="admin-kis-gomb">Újratöltés</button>
-                    </div>
-                </div>
-
-                <p id="admin-cms-status" class="admin-status" aria-live="polite"></p>
+                            <button type="button" id="admin-cms-reload" class="admin-kis-gomb">Újratöltés</button>
+                            <p id="admin-cms-status" class="admin-status" aria-live="polite"></p>
                             <div id="admin-cms-root"></div>
                         </div>
                     </div>
@@ -347,11 +333,11 @@
     <div id="lablec-helye"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
-    <script src="/supabase-config.js?v=4d8171b2030e"></script>
+    <script src="/supabase-config.js?v=84d7307ff175"></script>
     <script src="/script.js?v=3ba079e2d5eb"></script>
-    <script src="/admin-supabase.js?v=efe50335539b"></script>
+    <script src="/admin-supabase.js?v=a5660e1439bb"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
-    <script src="/admin-content.js?v=9acedf35852b"></script>
+    <script src="/admin-content.js?v=4dcbd5fdbbb6"></script>
 </body>
 
 </html>

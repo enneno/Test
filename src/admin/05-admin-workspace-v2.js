@@ -16,58 +16,48 @@
         foglalasok: {
             kicker: 'Foglalások és kieső idők',
             title: 'Időpontok',
-            description: 'Keresés, státuszkezelés, naptár és a vendéghez tartozó adatok egy munkafelületen.',
             save: 'Módosítások mentése'
         },
         vendegek: {
             kicker: 'Vendégfiókok',
-            title: 'Regisztrált tagok',
-            description: 'A Fiókom oldalon regisztrált tagok neve, e-mail-címe és telefonszáma.'
+            title: 'Regisztrált tagok'
         },
         idosavok: {
             kicker: 'Elérhetőség',
             title: 'Munkaidő',
-            description: 'Foglalható napok és időablakok kezelése.',
             save: 'Munkaidő mentése'
         },
         tiltasok: {
             kicker: 'Elérhetőség',
             title: 'Kieső időszakok',
-            description: 'Külső foglalások, szabadságok és más nem foglalható idők.',
             save: 'Kieső idő mentése'
         },
         szovegek: {
             kicker: 'Tartalomkezelés',
             title: 'Weboldal',
-            description: 'Oldalak, galéria és általános weboldalszövegek.',
             save: 'Tartalom mentése'
         },
         szolgaltatasok: {
             kicker: 'Weboldal és foglalás',
             title: 'Szolgáltatások és árlista',
-            description: 'A publikus árlista és a foglalható szolgáltatások közös forrása.',
             save: 'Árlista mentése'
         },
         kuponok: {
             kicker: 'Weboldal és foglalás',
             title: 'Ajánlatok és kuponok',
-            description: 'Aktív kedvezmények, érvényesség és megjelenés.',
             save: 'Kuponok mentése'
         },
         esemenynaplo: {
             kicker: 'Emailek és értesítések',
-            title: 'Kommunikáció',
-            description: 'Küldési események, hibák és a foglalási rendszer fontos változásai.'
+            title: 'Kommunikáció'
         },
         emailteszt: {
             kicker: 'Emailek és értesítések',
-            title: 'Email ellenőrzés',
-            description: 'A teljes automatikus emailkészlet biztonságos tesztküldése.'
+            title: 'Email ellenőrzés'
         },
         beallitasok: {
             kicker: 'Rendszer és fiók',
             title: 'Beállítások',
-            description: 'Ritkábban változó szalon-, megjelenési és fiókbeállítások.',
             save: 'Beállítások mentése'
         }
     });
@@ -353,9 +343,8 @@
                 <div>
                     <p class="admin-v2-kicker">${copy.kicker}</p>
                     <h1>${copy.title}</h1>
-                    <p>${copy.description}</p>
                 </div>
-                ${copy.save ? `<div class="admin-v2-page-actions"><button type="button" class="admin-v2-button admin-v2-button-primary" data-admin-v2-save>${copy.save}</button></div>` : ''}
+                ${copy.save ? `<div class="admin-v2-page-actions"><button type="button" class="admin-v2-button admin-v2-button-primary" data-admin-v2-save>${adminV2Ikon('check')}<span>${copy.save}</span></button></div>` : ''}
             `;
 
             const pageActions = heading.querySelector('.admin-v2-page-actions');
@@ -366,6 +355,20 @@
                 exportGomb.classList.remove('admin-kis-gomb');
                 exportGomb.classList.add('admin-v2-button', 'admin-v2-button-secondary');
                 pageActions.append(exportGomb);
+            }
+
+            const kapcsolodoMuvelet = {
+                szovegek: document.getElementById('admin-cms-reload'),
+                szolgaltatasok: document.getElementById('admin-szolgaltatas-hozzaadas'),
+                kuponok: document.getElementById('admin-kupon-hozzaadas')
+            }[tab];
+            if (pageActions && kapcsolodoMuvelet) {
+                const isReload = tab === 'szovegek';
+                const regiTarolo = kapcsolodoMuvelet.closest('.admin-panel-akciok');
+                kapcsolodoMuvelet.className = 'admin-v2-button admin-v2-button-secondary';
+                kapcsolodoMuvelet.innerHTML = `${adminV2Ikon(isReload ? 'refresh' : 'plus')}<span>${isReload ? 'Újratöltés' : kapcsolodoMuvelet.textContent}</span>`;
+                pageActions.prepend(kapcsolodoMuvelet);
+                if (regiTarolo && !regiTarolo.children.length) regiTarolo.remove();
             }
 
             panel.prepend(heading);
@@ -1218,12 +1221,16 @@
             settings: '<circle cx="12" cy="12" r="3"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"></path>',
             arrow: '<path d="m9 6 6 6-6 6"></path>',
             menu: '<path d="M4 7h16M4 12h16M4 17h16"></path>',
-            bell: '<path d="M6 17h12l-1.5-2v-4a4.5 4.5 0 0 0-9 0v4zM10 20h4"></path>',
-            refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"></path>',
+            bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path>',
+            refresh: '<path d="M20 6v5h-5M4 18v-5h5M6.1 9a7 7 0 0 1 11.7-2.6L20 11M4 13l2.2 4.6A7 7 0 0 0 17.9 15"></path>',
             plus: '<path d="M12 5v14M5 12h14"></path>',
             check: '<path d="m5 12 4 4L19 6"></path>',
-            alert: '<path d="M12 4 3 20h18zM12 9v5M12 17h.01"></path>',
-            edit: '<path d="m5 16-1 4 4-1L18 9l-3-3zM13 8l3 3"></path>'
+            edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>',
+            close: '<path d="M6 6l12 12M18 6 6 18"></path>',
+            up: '<path d="m6 15 6-6 6 6"></path>',
+            down: '<path d="m6 9 6 6 6-6"></path>',
+            trash: '<path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"></path>',
+            alert: '<path d="M12 4 3 20h18zM12 9v5M12 17h.01"></path>'
         };
         return `<svg aria-hidden="true" viewBox="0 0 24 24">${paths[name] || paths.arrow}</svg>`;
     }

@@ -163,7 +163,6 @@
    separately because it must remain absolutely positioned inside its input. */
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .admin-v2-icon-button,
-  .admin-kis-gomb.admin-frissites-ikon-gomb,
   .admin-kis-gomb.admin-naptar-torles-x,
   .admin-kis-gomb.admin-idosav-torles-x
 ) {
@@ -190,6 +189,45 @@
   position: absolute;
   inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
   content: "";
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button {
+  flex-basis: var(--admin-ui-touch-target);
+  width: var(--admin-ui-touch-target);
+  min-width: var(--admin-ui-touch-target);
+  height: var(--admin-ui-touch-target);
+  min-height: var(--admin-ui-touch-target);
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button::after {
+  inset: 0;
+}
+
+/* A frissítés önálló sorművelet, ezért a látható gomb is kitölti a teljes
+   érintési célterületet. Így nem lóg túl a lapozó szélén egy rejtett hit-area. */
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-touch-target);
+  width: var(--admin-ui-touch-target);
+  min-width: var(--admin-ui-touch-target);
+  height: var(--admin-ui-touch-target);
+  min-height: var(--admin-ui-touch-target);
+  padding: 0;
+  place-items: center;
+  border-radius: var(--admin-ui-icon-radius);
+  line-height: 1;
+}
+
+/* Az ikonnal és felirattal rendelkező kártyaműveletek teljes méretű,
+   jól célozható gombok maradnak mobilon is. */
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb {
+  height: auto;
+  min-height: var(--admin-ui-touch-target);
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb::after {
+  inset: 0;
 }
 
 /* Booking filters: search and status are two equal-height controls with labels
@@ -247,13 +285,10 @@
   content: "";
 }
 
-/* Refresh sits next to another control: expand its hit area away from the neighbour. */
+/* A látható frissítésgomb már 44px, ezért nincs szükség túlérő hit-area-ra. */
 .admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb::after {
   position: absolute;
-  top: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
-  right: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) * -1);
-  bottom: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
-  left: 0;
+  inset: 0;
   content: "";
 }
 

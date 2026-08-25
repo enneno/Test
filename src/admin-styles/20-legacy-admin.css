@@ -2993,7 +2993,7 @@ body.admin-body {
 
 .admin-body .cms-view-tabs {
     display: flex;
-    overflow-x: auto;
+    overflow: hidden;
     gap: 5px;
     padding: 5px;
     border: 1px solid var(--admin-line);
@@ -3009,13 +3009,13 @@ body.admin-body {
 
 .admin-body .cms-view-tab {
     display: flex;
-    flex: 1 0 auto;
+    flex: 1 1 0;
     align-items: center;
     justify-content: center;
-    min-width: 118px;
-    min-height: 42px;
+    min-width: 0;
+    min-height: 48px;
     gap: 8px;
-    padding: 0 14px;
+    padding: 6px 10px;
     color: var(--admin-muted);
     border: 0;
     border-radius: 10px;
@@ -3023,6 +3023,8 @@ body.admin-body {
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-button-compact);
     font-weight: 750;
+    line-height: 1.25;
+    text-align: center;
     cursor: pointer;
 }
 
@@ -3046,6 +3048,27 @@ body.admin-body {
     border-radius: 999px;
     background: #f2e4e7;
     font-size: var(--lumi-font-micro);
+}
+
+.admin-body .cms-section-picker {
+    display: none;
+    min-width: 0;
+    gap: 6px;
+    color: var(--admin-muted);
+    font-size: var(--lumi-font-caption);
+    font-weight: 750;
+}
+
+.admin-body .cms-section-picker select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 42px 0 13px;
+    border: 1px solid var(--admin-line);
+    border-radius: 11px;
+    color: var(--admin-ink);
+    background-color: var(--ui-off-white);
+    font: inherit;
+    font-size: var(--lumi-font-control);
 }
 
 .admin-body .cms-view-intro {
@@ -3087,21 +3110,22 @@ body.admin-body {
 
 .admin-body .cms-editor-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
     align-items: start;
-    gap: 8px;
+    gap: 20px;
     min-width: 0;
 }
 
 .admin-body .cms-section-index {
-    position: static;
-    display: flex;
-    overflow-x: auto;
-    gap: 6px;
+    position: sticky;
+    top: 82px;
+    display: grid;
+    overflow: visible;
+    gap: 7px;
     width: 100%;
-    padding: 0 0 10px;
+    padding: 0;
     border: 0;
-    border-bottom: 1px solid var(--admin-line);
+    border-bottom: 0;
     border-radius: 0;
     background: transparent;
     scrollbar-width: none;
@@ -3109,12 +3133,12 @@ body.admin-body {
 
 .admin-body .cms-section-index-button {
     display: grid;
-    flex: 0 0 auto;
+    flex: none;
     gap: 2px;
     width: auto;
-    min-width: 142px;
-    min-height: 48px;
-    padding: 7px 11px;
+    min-width: 0;
+    min-height: 54px;
+    padding: 9px 12px;
     color: var(--admin-ink);
     border: 1px solid var(--admin-line);
     border-radius: 9px;
@@ -3167,12 +3191,8 @@ body.admin-body {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
     gap: 6px 16px;
-    padding: 12px 2px 14px;
+    padding: 2px 2px 16px;
     border-bottom: 1px solid var(--admin-line);
-}
-
-.admin-body .cms-editor-card-header .cms-view-eyebrow {
-    display: none;
 }
 
 .admin-body .cms-editor-card-header h3 {
@@ -3182,15 +3202,6 @@ body.admin-body {
     font-size: clamp(25px, 2.3vw, 31px);
     font-weight: 600;
     line-height: 1;
-}
-
-.admin-body .cms-editor-card-header p {
-    grid-column: 1 / -1;
-    max-width: 720px;
-    margin: 0;
-    color: var(--admin-muted);
-    font-size: var(--lumi-font-caption);
-    line-height: 1.5;
 }
 
 .admin-body .cms-field-count {
@@ -3216,24 +3227,23 @@ body.admin-body {
 
 .admin-body .cms-fieldsets {
     display: grid;
-    gap: 0;
+    gap: 8px;
 }
 
 .admin-body .cms-fieldset {
-    overflow: visible;
-    border: 0;
-    border-bottom: 1px solid var(--admin-line);
-    border-radius: 0;
-    background: transparent;
+    overflow: hidden;
+    border: 1px solid var(--admin-line);
+    border-radius: 12px;
+    background: var(--ui-off-white);
 }
 
 .admin-body .cms-fieldset summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 44px;
+    min-height: 48px;
     gap: 10px;
-    padding: 0 2px;
+    padding: 0 14px;
     color: var(--admin-ink);
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-label);
@@ -3248,7 +3258,7 @@ body.admin-body {
 
 .admin-body .cms-fieldset summary:hover {
     color: var(--admin-rose-dark);
-    background: transparent;
+    background: #faf6f2;
 }
 
 .admin-body .cms-fieldset summary small {
@@ -3259,20 +3269,21 @@ body.admin-body {
 }
 
 .admin-body .cms-fieldset summary::after {
-    width: 18px;
-    color: var(--admin-rose-dark);
-    content: "+";
-    font-size: 17px;
-    font-weight: 500;
-    text-align: center;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--admin-rose-dark);
+    border-bottom: 1.5px solid var(--admin-rose-dark);
+    content: "";
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 160ms ease;
 }
 
 .admin-body .cms-fieldset[open] summary::after {
-    content: "−";
+    transform: rotate(225deg) translate(-2px, -2px);
 }
 
 .admin-body .cms-fieldset-grid {
-    padding: 10px 0 16px;
+    padding: 4px 14px 16px;
     border-top: 0;
     background: transparent;
 }
@@ -3308,15 +3319,15 @@ body.admin-body {
 
     .admin-body .cms-editor-layout {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .admin-body .cms-section-picker {
+        display: grid;
     }
 
     .admin-body .cms-section-index {
-        padding: 6px;
-    }
-
-    .admin-body .cms-section-index-button {
-        min-width: 150px;
-        min-height: 50px;
+        display: none;
     }
 
     .admin-body .cms-field-grid {
@@ -3437,6 +3448,23 @@ body.admin-body {
 }
 
 @media (max-width: 520px) {
+    .admin-body .cms-view-tabs {
+        gap: 3px;
+        padding: 4px;
+    }
+
+    .admin-body .cms-view-tab {
+        min-height: 52px;
+        padding-inline: 6px;
+        font-size: var(--lumi-font-caption);
+        white-space: normal;
+    }
+
+    .admin-body .cms-view-tab small {
+        min-width: 18px;
+        min-height: 18px;
+    }
+
     .admin-body .cms-view-intro {
         align-items: flex-start;
         flex-direction: column;
@@ -4918,6 +4946,29 @@ body.admin-body {
     font-size: var(--lumi-font-button-compact);
 }
 
+.admin-body .admin-kompakt-kartya-vezerlok .admin-ikonos-gomb {
+    min-height: 44px;
+}
+
+.admin-body .admin-ikonos-gomb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    gap: 7px;
+}
+
+.admin-body .admin-ikonos-gomb svg {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
 .admin-body .admin-kompakt-szerkeszto {
     display: none;
     margin-top: 12px;
@@ -4941,50 +4992,64 @@ body.admin-body {
 }
 
 /* Árlista */
-#admin-panel-szolgaltatasok .admin-db-grid-szolgaltatas {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+#admin-panel-szolgaltatasok .admin-szolgaltatas-szerkeszto-racs {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+    align-items: start;
+    gap: 10px;
+}
+
+#admin-panel-szolgaltatasok .admin-szerkeszto-szakasz {
+    min-width: 0;
+    margin: 0;
+    padding: 12px;
+    border: 1px solid var(--admin-line);
+    border-radius: 11px;
+    background: var(--ui-off-white);
+}
+
+#admin-panel-szolgaltatasok .admin-szerkeszto-szakasz legend {
+    padding: 0 5px;
+    color: var(--admin-ink);
+    font-size: var(--lumi-font-label);
+    font-weight: 800;
+}
+
+#admin-panel-szolgaltatasok .admin-szolgaltatas-alapadatok {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
 }
 
-#admin-panel-szolgaltatasok .admin-szolgaltatas-nev {
-    grid-column: 1 / 6;
-    grid-row: 1;
-}
-
-#admin-panel-szolgaltatasok .admin-szolgaltatas-foglalasi-nev {
-    grid-column: 6 / 11;
-    grid-row: 1;
-}
-
 #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok {
-    grid-column: 11 / 13;
-    grid-row: 1;
-    grid-template-columns: 1fr;
-    align-self: stretch;
-    gap: 4px;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
 }
 
 #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok {
-    grid-column: 1 / 11;
-    grid-row: 2;
-    grid-template-columns: minmax(140px, 1.4fr) minmax(110px, 0.9fr) minmax(68px, 0.48fr) minmax(68px, 0.48fr);
-}
-
-#admin-panel-szolgaltatasok .admin-sorrend-mezo {
-    grid-column: 11 / 13;
-    grid-row: 2;
+    display: grid;
+    grid-template-columns: minmax(118px, 1.25fr) minmax(96px, 0.9fr) minmax(64px, 0.55fr) minmax(64px, 0.55fr);
+    gap: 7px;
 }
 
 #admin-panel-szolgaltatasok .admin-mezo input,
 #admin-panel-szolgaltatasok .admin-mezo select {
-    min-height: 38px;
+    min-height: 44px;
 }
 
 #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok .admin-checkbox {
-    min-height: 32px;
-    padding: 3px 7px;
+    min-height: 44px;
+    padding: 6px 9px;
     border-radius: 7px;
     background: var(--ui-off-white);
+}
+
+#admin-panel-szolgaltatasok .admin-sorrend-akciok {
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
 /* Kuponok */
@@ -5357,6 +5422,10 @@ body.admin-body {
 }
 
 @container admin-workspace (max-width: 700px) {
+    #admin-panel-szolgaltatasok .admin-szolgaltatas-szerkeszto-racs {
+        grid-template-columns: 1fr;
+    }
+
     .admin-body .admin-kompakt-kartya-fej {
         grid-template-columns: 1fr;
         gap: 9px;
@@ -5481,8 +5550,8 @@ body.admin-body {
     }
 
     #admin-panel-szolgaltatasok .admin-szolgaltatas-szamok {
-        grid-template-columns: minmax(82px, 1fr) minmax(72px, 0.85fr) minmax(48px, 0.5fr) minmax(48px, 0.5fr);
-        gap: 5px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
     }
 
     #admin-panel-szolgaltatasok .admin-szolgaltatas-fej-opciok {

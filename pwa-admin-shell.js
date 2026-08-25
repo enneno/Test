@@ -17,17 +17,24 @@
 
     body.classList.add('lumi-admin-standalone');
 
+    function mountNotificationPanel() {
+      const panel = document.querySelector('[data-admin-v2-notification-panel]');
+      if (panel && panel.parentElement !== tartalom) tartalom.append(panel);
+      return panel;
+    }
+
+    mountNotificationPanel();
+
     const tabbar = document.createElement('nav');
     tabbar.id = 'pwa-admin-tabbar';
     tabbar.className = 'pwa-admin-tabbar';
     tabbar.setAttribute('aria-label', 'Admin alkalmazás navigáció');
     tabbar.innerHTML = `
       ${appButton('menu', 'Menü', 'data-pwa-admin-menu')}
-      ${appButton('overview', 'Áttekintés', 'data-admin-v2-nav="attekintes"')}
       ${appButton('calendar', 'Foglalások', 'data-admin-v2-nav="foglalasok"', '<span class="pwa-admin-tabbar-count" data-admin-v2-pending-count hidden>0</span>')}
       ${appButton('save', 'Mentés', 'data-pwa-admin-save', '', 'pwa-admin-tabbar-save')}
       ${appButton('clock', 'Munkaidő', 'data-admin-v2-nav="munkaido"')}
-      ${appButton('bell', 'Értesítések', 'data-pwa-admin-notifications', '<span class="pwa-admin-tabbar-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>')}
+      ${appButton('bell', 'Értesítések', 'data-pwa-admin-notifications aria-expanded="false" aria-controls="admin-v2-notification-panel"', '<span class="pwa-admin-tabbar-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>')}
     `;
 
     const quickAdd = document.createElement('button');
@@ -52,6 +59,8 @@
 
       const notificationButton = event.target.closest('[data-pwa-admin-notifications]');
       if (notificationButton) {
+        event.stopPropagation();
+        mountNotificationPanel();
         document.querySelector('.admin-v2-topbar [data-admin-v2-notifications-toggle]')?.click();
         queueRefresh();
         return;
@@ -78,6 +87,7 @@
 
     function refreshStandaloneAdminShell() {
       removeLegacyFloatingSave();
+      const notificationPanel = mountNotificationPanel();
 
       const activeGroup = body.dataset.adminV2Group || body.dataset.adminV2Tab || 'attekintes';
       tabbar.querySelectorAll('[data-admin-v2-nav]').forEach(button => {
@@ -91,7 +101,6 @@
       menu?.classList.toggle('is-open', menuOpen);
       menu?.setAttribute('aria-expanded', String(menuOpen));
 
-      const notificationPanel = document.querySelector('[data-admin-v2-notification-panel]');
       const notification = tabbar.querySelector('[data-pwa-admin-notifications]');
       const notificationOpen = Boolean(notificationPanel && !notificationPanel.hidden);
       notification?.classList.toggle('is-active', notificationOpen);
@@ -163,13 +172,12 @@
   function appIcon(name) {
     const paths = {
       menu: '<path d="M5 7h14M5 12h14M5 17h14"></path>',
-      overview: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path>',
-      calendar: '<path d="M6 3v3M18 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1z"></path>',
-      save: '<path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6"></path>',
-      clock: '<circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path>',
-      bell: '<path d="M7 17h10M9 20h6M6.5 17c1-1.2 1.5-2.8 1.5-4.5V10a4 4 0 0 1 8 0v2.5c0 1.7.5 3.3 1.5 4.5"></path>',
+      calendar: '<path d="M6 2v4M18 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2zM7 13h3M14 13h3M7 17h3"></path>',
+      save: '<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"></path>',
+      clock: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path>',
+      bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path>',
       plus: '<path d="M12 5v14M5 12h14"></path>'
     };
-    return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.overview}</svg>`;
+    return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.menu}</svg>`;
   }
 })();

@@ -488,6 +488,18 @@
         const layout = document.createElement('div');
         layout.className = 'cms-editor-layout';
 
+        const sectionPicker = document.createElement('label');
+        sectionPicker.className = 'cms-section-picker';
+        sectionPicker.innerHTML = `
+            <span>Szerkesztett szekció</span>
+            <select data-cms-section-select aria-label="${escapeAttribute(activeView.title)} szekciói">
+                ${activeView.groups.map(groupIndex => {
+                    const group = GROUPS[groupIndex];
+                    const shortTitle = group.title.replace(/^(Főoldal|Foglalás)\s+[–-]\s+/i, '');
+                    return `<option value="${groupIndex}"${groupIndex === state.cmsGroup ? ' selected' : ''}>${escapeHtml(shortTitle)}</option>`;
+                }).join('')}
+            </select>`;
+
         const index = document.createElement('nav');
         index.className = 'cms-section-index';
         index.setAttribute('aria-label', `${activeView.title} szekciói`);
@@ -514,11 +526,9 @@
         editorHeader.className = 'cms-editor-card-header';
         editorHeader.innerHTML = `
             <div>
-                <span class="cms-view-eyebrow">${escapeHtml(activeView.title)}</span>
                 <h3>${escapeHtml(activeGroup.title)}</h3>
             </div>
-            <span class="cms-field-count">${activeGroup.fields.length} mező</span>
-            <p>${escapeHtml(activeGroup.description || '')}</p>`;
+            <span class="cms-field-count">${activeGroup.fields.length} mező</span>`;
 
         const body = document.createElement('div');
         body.className = 'cms-section-body';
@@ -526,7 +536,7 @@
         if (activeGroup.gallery) body.appendChild(renderGallery());
 
         editor.append(editorHeader, body);
-        layout.append(index, editor);
+        layout.append(sectionPicker, index, editor);
         root.append(tabs, layout);
         window.requestAnimationFrame(() => {
             tabs.scrollLeft = state.cmsViewScroll;
@@ -694,6 +704,17 @@
     }
 
     async function cmsChange(event) {
+        const sectionSelect = event.target.closest('[data-cms-section-select]');
+        if (sectionSelect) {
+            rememberCmsScroll();
+            readForm();
+            const nextGroup = Number(sectionSelect.value);
+            if (!Number.isInteger(nextGroup) || nextGroup === state.cmsGroup) return;
+            state.cmsGroup = nextGroup;
+            render();
+            return;
+        }
+
         const homeSelection = event.target.closest('[data-cms-home-gallery-select]');
         if (homeSelection) {
             const items = state.content.galeria?.elemek || [];
