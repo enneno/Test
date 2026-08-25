@@ -41,7 +41,7 @@ window.lumiSupabaseClient = (() => {
 
     if (document.querySelector('script[data-lumi-pwa]')) return;
     const script = document.createElement('script');
-    script.src = '/pwa.js?v=3';
+    script.src = '/pwa.js?v=4';
     script.defer = true;
     script.dataset.lumiPwa = 'true';
     document.head.appendChild(script);
