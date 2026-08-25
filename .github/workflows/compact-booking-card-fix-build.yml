@@ -1,0 +1,134 @@
+name: Compact booking card fix build
+
+on:
+  push:
+    branches:
+      - compact-booking-card-fix
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bundles
+        run: npm run build
+
+      - name: Refresh asset versions
+        run: npm run assets:version
+
+      - name: Verify site and admin CSS
+        run: npm run check
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify compact booking card interaction
+        shell: bash
+        run: |
+          npm run serve > /tmp/luminails-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:8101/admin/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          node - <<'NODE'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            await page.goto('http://127.0.0.1:8101/admin/');
+            await page.evaluate(() => {
+              document.body.classList.add('admin-v2');
+              const protectedArea = document.getElementById('admin-tartalom');
+              if (protectedArea) protectedArea.hidden = false;
+              const list = document.getElementById('admin-foglalas-lista');
+              list.innerHTML = `
+                <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-cancelled_by_customer" data-id="test-booking" data-tipus="booking">
+                  <div class="admin-db-kartya-fej">
+                    <div class="admin-foglalas-fosor">
+                      <div class="admin-foglalas-nev-blokk">
+                        <p class="admin-kartya-tipus admin-foglalas-azonosito"><code>LUMI-TEST</code></p>
+                        <h3>Teszt Vendég</h3>
+                        <p class="admin-foglalas-rovid-szolgaltatas">Építés - M méret</p>
+                      </div>
+                      <p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">16/08/26</span><span class="admin-foglalas-ido">10:00 – 13:00</span></p>
+                    </div>
+                    <div class="admin-foglalas-vezerlok">
+                      <select class="admin-db-statusz" data-foglalas-statusz disabled><option selected>Vendég mondta le</option></select>
+                      <button type="button" class="admin-kis-gomb" data-foglalas-reszletek aria-expanded="false">Részletek</button>
+                      <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
+                    </div>
+                  </div>
+                  <div class="admin-foglalas-reszletek admin-foglalas-reszletek-kompakt"><p>Teszt részlet</p></div>
+                </article>`;
+            });
+            await page.waitForTimeout(150);
+
+            const card = page.locator('#admin-foglalas-lista .admin-foglalas-kartya');
+            if (!(await card.evaluate(el => el.classList.contains('admin-foglalas-kartya-kattinthato')))) throw new Error('Card click enhancer did not initialize.');
+
+            const detailsDisplay = await card.locator('[data-foglalas-reszletek]').evaluate(el => getComputedStyle(el).display);
+            if (detailsDisplay !== 'none') throw new Error('Separate details button is still visible.');
+
+            const editFont = await card.locator('[data-foglalas-szerkesztes]').evaluate(el => getComputedStyle(el).fontSize);
+            if (editFont !== '0px') throw new Error('Edit text is still visible: ' + editFont);
+
+            const boxes = await card.evaluate(el => {
+              const box = selector => el.querySelector(selector).getBoundingClientRect();
+              return {
+                date: box('.admin-foglalas-datum'),
+                time: box('.admin-foglalas-ido'),
+                marker: box('.admin-foglalas-azonosito'),
+                name: box('h3'),
+                status: box('.admin-db-statusz'),
+                edit: box('[data-foglalas-szerkesztes]')
+              };
+            });
+            if (Math.abs(boxes.date.top - boxes.time.top) > 3) throw new Error('Date and time are not on one row.');
+            if (!(boxes.date.bottom <= boxes.marker.top + 3)) throw new Error('Date row is not above booking identity.');
+            if (!(boxes.marker.top < boxes.name.top)) throw new Error('Marker is not above customer name.');
+            if (boxes.status.right > boxes.edit.left + 1) throw new Error('Status overlaps edit action.');
+            if (boxes.status.width < 115) throw new Error('Status pill is still too narrow: ' + boxes.status.width);
+
+            await card.locator('h3').click();
+            await page.waitForTimeout(50);
+            if (!(await card.evaluate(el => el.classList.contains('admin-foglalas-kartya-nyitott')))) throw new Error('Card click did not open details.');
+            await card.locator('h3').click();
+            await page.waitForTimeout(50);
+            if (await card.evaluate(el => el.classList.contains('admin-foglalas-kartya-nyitott'))) throw new Error('Second card click did not close details.');
+
+            await browser.close();
+          })().catch(error => { console.error(error); process.exit(1); });
+          NODE
+
+      - name: Commit generated assets
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin-v2.css admin-supabase.js admin/index.html
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+            exit 0
+          fi
+          git commit -m "Build refined compact booking cards"
+          git push origin HEAD:compact-booking-card-fix
