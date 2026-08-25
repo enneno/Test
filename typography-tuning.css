@@ -1,11 +1,13 @@
-/* Shared public typography tuning.
-   Keep these as role overrides so components using the shared caption role stay consistent. */
+/* Shared typography tuning.
+   Keep these as role overrides so components using the shared roles stay consistent. */
 :root {
     --lumi-font-caption: 14px;
+    --lumi-font-label: 15px;
 }
 
 @media screen and (max-width: 768px) {
     :root {
         --lumi-font-caption: 13px;
+        --lumi-font-label: 14px;
     }
 }
