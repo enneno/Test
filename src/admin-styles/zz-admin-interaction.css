@@ -34,7 +34,11 @@
    the same typography token as action/button labels. */
 .admin-body.admin-v2 .admin-statusz,
 .admin-body.admin-v2 .admin-pill,
-.admin-body.admin-v2 .admin-allapot-jelzes,
+.admin-body.admin-v2 .admin-allapot-jelzes {
+  font-size: var(--admin-ui-action-font-size);
+  line-height: 1.2;
+}
+
 .admin-body.admin-v2 .admin-db-statusz-fix {
   font-size: var(--admin-ui-action-font-size);
   line-height: 1.2;
