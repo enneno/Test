@@ -22,7 +22,8 @@ window.lumiSupabaseClient = (() => {
 })();
 
 (() => {
-    if (document.querySelector('link[data-lumi-typography-tuning]')) return;
+    const isAdminPath = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+    if (isAdminPath || document.querySelector('link[data-lumi-typography-tuning]')) return;
     const style = document.createElement('link');
     style.rel = 'stylesheet';
     style.href = '/typography-tuning.css?v=2';

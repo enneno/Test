@@ -8,7 +8,9 @@
     "build": "node scripts/build-assets.js",
     "build:check": "node scripts/build-assets.js --check",
     "assets:version": "node scripts/update-asset-versions.js",
-    "check": "node scripts/check-site.js && npm run build:check",
+    "admin:css:isolate": "node scripts/admin-css-isolation.js --fix",
+    "admin:css:check": "node scripts/admin-css-isolation.js --check",
+    "check": "node scripts/check-site.js && npm run build:check && npm run admin:css:check",
     "test": "playwright test",
     "verify": "npm run build && npm run assets:version && npm run check && npm test"
   },

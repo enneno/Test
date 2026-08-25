@@ -1,0 +1,201 @@
+/* Admin-only foundation. The admin must not depend on the public style.css bundle. */
+:root {
+  --akcentus: #b9858f;
+  --akcentus-vilagos: #d9aaa7;
+  --tinta: #2b2521;
+  --barna: #5d4d46;
+  --krem: #fdf4e2;
+  --kartya: #fffaf4;
+  --szoveg: #655e57;
+  --rozsa-halvany: #f1ded9;
+  --zsalyaszurke: #a7b7a1;
+
+  --ui-primary: #91766e;
+  --ui-on-primary: #fff9f5;
+  --ui-accent: #f0d7d5;
+  --ui-on-accent: #211b19;
+  --ui-bg: #f3ece3;
+  --ui-surface: #fff9f5;
+  --ui-soft: #e7d8d3;
+  --ui-highlight: #f3ece3;
+  --ui-warm: #f0d7d5;
+  --ui-off-black: #211b19;
+  --ui-off-white: #fff9f5;
+  --ui-ink: var(--ui-primary);
+  --ui-muted: #6f5e58;
+  --ui-rose: var(--ui-accent);
+  --ui-rose-dark: var(--ui-primary);
+  --ui-line: rgba(145, 118, 110, 0.16);
+  --ui-line-strong: rgba(145, 118, 110, 0.3);
+  --ui-header-height: 82px;
+
+  --lumi-radius-pill: 999px;
+  --lumi-radius-card: 28px;
+  --lumi-radius-control: 16px;
+  --lumi-button-height: 44px;
+  --lumi-button-font: 'Outfit', 'Montserrat', sans-serif;
+  --lumi-font-micro: 11px;
+  --lumi-font-caption: 13px;
+  --lumi-font-label: 14px;
+  --lumi-font-body-small: 16px;
+  --lumi-font-body: 18px;
+  --lumi-font-lead: 19px;
+  --lumi-font-button: 13px;
+  --lumi-font-button-compact: 12px;
+  --lumi-font-control: 18px;
+  --lumi-font-calendar: 11px;
+  --lumi-control-bg: rgba(255, 250, 244, 0.92);
+  --lumi-control-border: rgba(185, 133, 143, 0.24);
+  --lumi-control-border-strong: rgba(185, 133, 143, 0.5);
+  --lumi-control-focus: 0 0 0 3px rgba(185, 133, 143, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  --lumi-soft-shadow: 0 14px 34px rgba(70, 48, 42, 0.1);
+  --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%2364524d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --szin-szoveg: var(--ui-ink);
+  --szin-szoveg-halvany: var(--ui-muted);
+  --szin-kiemeles: var(--ui-primary);
+}
+
+html {
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: #f7f4f1;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body.admin-body {
+  min-width: 0;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--tinta);
+  background: #f7f4f1;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+body.admin-body *,
+body.admin-body *::before,
+body.admin-body *::after {
+  box-sizing: border-box;
+}
+
+body.admin-body button,
+body.admin-body input,
+body.admin-body select,
+body.admin-body textarea,
+body.admin-body [role="button"] {
+  font: inherit;
+  touch-action: manipulation;
+}
+
+body.admin-body button,
+body.admin-body a,
+body.admin-body label,
+body.admin-body input,
+body.admin-body select,
+body.admin-body textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.admin-body [hidden] {
+  display: none !important;
+}
+
+.logo-lumi {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.logo-nails {
+  position: relative;
+  padding-left: 11px;
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--lumi-font-micro);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.logo-nails::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 22px;
+  background: currentColor;
+  opacity: 0.24;
+  transform: translateY(-50%);
+  content: "";
+}
+
+.gomb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  max-width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--ui-on-primary);
+  background: var(--ui-rose-dark);
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--lumi-font-button);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.gomb:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.urlap-mezo {
+  width: 100%;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid rgba(185, 133, 143, 0.28);
+  border-radius: var(--lumi-radius-control);
+  color: var(--tinta);
+  background: #fffaf4;
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--lumi-font-control);
+  color-scheme: light;
+}
+
+.urlap-mezo::placeholder {
+  color: rgba(43, 37, 33, 0.52);
+  opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+  :root {
+    --lumi-font-micro: 10px;
+    --lumi-font-caption: 12px;
+    --lumi-font-label: 13px;
+    --lumi-font-body-small: 14px;
+    --lumi-font-body: 16px;
+    --lumi-font-lead: 17px;
+    --lumi-font-button: 13px;
+    --lumi-font-button-compact: 12px;
+    --lumi-font-control: 16px;
+    --lumi-font-calendar: 10px;
+  }
+}
