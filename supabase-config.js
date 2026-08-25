@@ -68,6 +68,21 @@ window.lumiSupabaseClient = (() => {
 })();
 
 (() => {
+    const isAccountPath = location.pathname === '/fiokom' || location.pathname.startsWith('/fiokom/');
+    if (!isAccountPath || document.querySelector('script[data-lumi-account-entry]')) return;
+
+    if (document.readyState === 'loading') {
+        document.write('<script src="/account-entry.js?v=1" data-lumi-account-entry><\/script>');
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '/account-entry.js?v=1';
+    script.dataset.lumiAccountEntry = 'true';
+    document.head.appendChild(script);
+})();
+
+(() => {
     // The CMS module already owns the real save logic and binds it to #admin-cms-save.
     // Keep that target present before admin-content.js initializes so the Admin v2
     // page-level save button can call the existing save path instead of duplicating it.
