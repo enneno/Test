@@ -123,7 +123,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 520px) {
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
     grid-template-columns: 1fr;
   }
