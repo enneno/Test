@@ -144,45 +144,55 @@
 
   function setupAdminPushControls() {
     const attach = () => {
-      // The current admin UI creates this settings action row dynamically.
-      // Wait for that row instead of attaching to the hidden legacy admin header.
       const actions = document.querySelector('.admin-v2-account-actions');
       if (!actions || document.getElementById('admin-push-toggle')) return false;
 
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.id = 'admin-push-toggle';
-      button.className = 'admin-v2-button admin-v2-button-secondary';
-      button.textContent = 'Értesítések bekapcsolása';
+      ensurePushSwitchStyles();
 
+      const control = document.createElement('label');
+      control.id = 'admin-push-toggle';
+      control.className = 'lumi-push-switch-row';
+      control.innerHTML = `
+        <span class="lumi-push-switch-copy">
+          <strong>Értesítések</strong>
+          <small>Ezen az eszközön</small>
+        </span>
+        <span class="lumi-push-switch-control">
+          <input id="admin-push-toggle-input" type="checkbox" role="switch" aria-label="Értesítések ezen az eszközön">
+          <span class="lumi-push-switch-track" aria-hidden="true"><span class="lumi-push-switch-thumb"></span></span>
+          <span id="admin-push-state" class="lumi-push-switch-state">KI</span>
+        </span>
+      `;
+
+      const input = control.querySelector('#admin-push-toggle-input');
+      const state = control.querySelector('#admin-push-state');
       const status = document.createElement('span');
       status.id = 'admin-push-status';
+      status.className = 'lumi-push-switch-status';
       status.setAttribute('aria-live', 'polite');
-      status.style.display = 'block';
-      status.style.width = '100%';
-      status.style.marginTop = '10px';
-      status.style.fontSize = '13px';
 
-      actions.appendChild(button);
-      actions.insertAdjacentElement('afterend', status);
+      actions.insertAdjacentElement('afterend', control);
+      control.insertAdjacentElement('afterend', status);
 
-      refreshPushButton(button, status);
-      button.addEventListener('click', async () => {
-        button.disabled = true;
-        status.textContent = '';
+      refreshPushSwitch(input, state, status);
+      input.addEventListener('change', async () => {
+        const requestedState = input.checked;
+        input.disabled = true;
+        state.textContent = '…';
+        status.textContent = requestedState ? 'Értesítések bekapcsolása…' : 'Értesítések kikapcsolása…';
+
         try {
-          if (await PWA.hasPushSubscription()) {
-            await PWA.disableAdminPush();
-            status.textContent = 'Az értesítések ki vannak kapcsolva ezen az eszközön.';
-          } else {
+          if (requestedState) {
             await PWA.enableAdminPush();
             status.textContent = 'Az értesítések be vannak kapcsolva ezen az eszközön.';
+          } else {
+            await PWA.disableAdminPush();
+            status.textContent = 'Az értesítések ki vannak kapcsolva ezen az eszközön.';
           }
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : 'Az értesítési beállítás nem sikerült.';
         } finally {
-          button.disabled = false;
-          await refreshPushButton(button, status, false);
+          await refreshPushSwitch(input, state, status, false);
         }
       });
 
@@ -195,6 +205,121 @@
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
     window.setTimeout(() => observer.disconnect(), 10000);
+  }
+
+  function ensurePushSwitchStyles() {
+    if (document.getElementById('lumi-push-switch-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'lumi-push-switch-styles';
+    style.textContent = `
+      .lumi-push-switch-row {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid rgba(42, 31, 33, .12);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, .55);
+        box-sizing: border-box;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .lumi-push-switch-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .lumi-push-switch-copy strong { font-size: 14px; }
+      .lumi-push-switch-copy small { font-size: 12px; opacity: .65; }
+      .lumi-push-switch-control {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        flex: 0 0 auto;
+      }
+      #admin-push-toggle-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .lumi-push-switch-track {
+        position: relative;
+        width: 48px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(42, 31, 33, .22);
+        transition: background .18s ease, opacity .18s ease;
+      }
+      .lumi-push-switch-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+        transition: transform .18s ease;
+      }
+      #admin-push-toggle-input:checked + .lumi-push-switch-track {
+        background: #b9858f;
+      }
+      #admin-push-toggle-input:checked + .lumi-push-switch-track .lumi-push-switch-thumb {
+        transform: translateX(20px);
+      }
+      #admin-push-toggle-input:focus-visible + .lumi-push-switch-track {
+        outline: 3px solid rgba(185, 133, 143, .28);
+        outline-offset: 2px;
+      }
+      #admin-push-toggle-input:disabled + .lumi-push-switch-track { opacity: .55; }
+      .lumi-push-switch-state {
+        min-width: 22px;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+      }
+      .lumi-push-switch-status {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+        font-size: 12px;
+        opacity: .72;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  async function refreshPushSwitch(input, state, status, updateStatus = true) {
+    if (!PWA.supportsNotifications()) {
+      input.checked = false;
+      input.disabled = true;
+      state.textContent = 'N/A';
+      if (updateStatus) status.textContent = 'Ezen az eszközön a Web Push nem érhető el.';
+      return;
+    }
+
+    try {
+      const active = await PWA.hasPushSubscription();
+      input.checked = active;
+      input.disabled = false;
+      state.textContent = active ? 'BE' : 'KI';
+      if (updateStatus) {
+        status.textContent = active
+          ? 'Ez az eszköz fel van iratkozva a Lumi Nails értesítésekre.'
+          : 'Az értesítések ki vannak kapcsolva ezen az eszközön.';
+      }
+    } catch {
+      input.checked = false;
+      input.disabled = false;
+      state.textContent = 'KI';
+      if (updateStatus) status.textContent = 'Az értesítési állapot nem olvasható.';
+    }
   }
 
   function setupStandaloneAdminFloatingSave() {
@@ -252,23 +377,6 @@
       return window.getComputedStyle(panel).display !== 'none';
     });
     return activePanel?.querySelector('[data-admin-v2-save]') || null;
-  }
-
-  async function refreshPushButton(button, status, updateStatus = true) {
-    if (!PWA.supportsNotifications()) {
-      button.textContent = 'Értesítések nem támogatottak';
-      button.disabled = true;
-      if (updateStatus) status.textContent = 'Ezen az eszközön a Web Push nem érhető el.';
-      return;
-    }
-
-    try {
-      const active = await PWA.hasPushSubscription();
-      button.textContent = active ? 'Értesítések kikapcsolása' : 'Értesítések bekapcsolása';
-      if (updateStatus && active) status.textContent = 'Ez az eszköz fel van iratkozva a Lumi Nails értesítésekre.';
-    } catch {
-      button.textContent = 'Értesítések bekapcsolása';
-    }
   }
 
   function getSupabaseClient() {
