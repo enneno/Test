@@ -4,7 +4,7 @@
   "short_name": "Lumi Nails",
   "description": "Lumi Nails Tatabánya – szolgáltatások, galéria és online időpontfoglalás.",
   "lang": "hu-HU",
-  "start_url": "/",
+  "start_url": "/admin/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
