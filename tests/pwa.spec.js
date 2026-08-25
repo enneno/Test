@@ -93,6 +93,20 @@ test.describe('Lumi Nails PWA', () => {
     expect(count).toBe(0);
   });
 
+  test('standalone admin stays responsive while floating save is active', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(window.navigator, 'standalone', {
+        configurable: true,
+        value: true
+      });
+    });
+
+    await page.goto('/admin/');
+    await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
+    await expect(page.locator('#pwa-admin-floating-save')).toHaveCount(1);
+    expect(await page.evaluate(() => document.readyState)).toBe('complete');
+  });
+
   test('keeps VAPID private material out of client-side code', async ({ page }) => {
     const clientResponse = await page.request.get('/pwa.js');
     expect(clientResponse.ok()).toBeTruthy();

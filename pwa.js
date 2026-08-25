@@ -225,13 +225,18 @@
 
     const refresh = () => {
       const source = getActiveAdminSaveButton();
-      button.hidden = !source;
-      button.disabled = !source || source.disabled;
+      const shouldHide = !source;
+      const shouldDisable = !source || source.disabled;
+      if (button.hidden !== shouldHide) button.hidden = shouldHide;
+      if (button.disabled !== shouldDisable) button.disabled = shouldDisable;
       button.setAttribute('aria-label', source?.textContent?.trim() || 'Mentés');
     };
 
     refresh();
-    const observer = new MutationObserver(refresh);
+    const observer = new MutationObserver((mutations) => {
+      if (mutations.every((mutation) => mutation.target === button)) return;
+      refresh();
+    });
     observer.observe(document.body, {
       childList: true,
       subtree: true,
