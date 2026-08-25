@@ -17,6 +17,8 @@ type BookingRecord = {
   service_id?: string;
 };
 
+const CANCELLED_STATUSES = new Set(['cancelled', 'cancelled_by_customer']);
+
 serve(async (req) => {
   if (req.method !== "POST") return json({ ok: false, error: "method_not_allowed" }, 405);
 
@@ -127,7 +129,13 @@ async function loadPushConfig(client: any) {
 
 function bookingNotificationKind(eventType: string, record: BookingRecord, oldRecord: BookingRecord) {
   if (eventType === "INSERT") return "new_booking";
-  if (eventType === "UPDATE" && record.status === "cancelled" && oldRecord.status !== "cancelled") return "cancelled";
+  if (
+    eventType === "UPDATE"
+    && CANCELLED_STATUSES.has(String(record.status || ''))
+    && !CANCELLED_STATUSES.has(String(oldRecord.status || ''))
+  ) {
+    return "cancelled";
+  }
   return "";
 }
 
