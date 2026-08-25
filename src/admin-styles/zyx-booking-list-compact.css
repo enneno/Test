@@ -1,0 +1,326 @@
+/* Compact booking catalogue.
+   Mirrors the price-list idea: scan first, open details only when needed. */
+
+.admin-body.admin-v2 #admin-panel-foglalasok {
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-lista {
+  gap: 0;
+  border-top: 1px solid var(--admin-v2-border);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya {
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 1px solid var(--admin-v2-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt):hover {
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 60px;
+  gap: 10px;
+  padding: 7px 0;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  gap: 2px 7px;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  margin: 0;
+  overflow: hidden;
+  color: var(--admin-v2-ink);
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 780;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk .admin-kartya-tipus,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk .admin-foglalas-azonosito {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--admin-v2-muted);
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
+  display: grid;
+  min-width: 86px;
+  gap: 1px;
+  margin: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum {
+  color: var(--admin-v2-ink);
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.2;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
+  color: var(--admin-v2-muted);
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+/* In the collapsed list the disabled status select behaves like a status pill.
+   When Edit is opened it returns to the regular editable select. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
+  width: auto;
+  min-width: 0;
+  max-width: 126px;
+  height: 26px;
+  min-height: 26px;
+  padding: 0 8px;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  color: var(--admin-v2-ink);
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 999px;
+  background: var(--admin-v2-surface-soft);
+  font-size: 9px;
+  font-weight: 760;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  opacity: 1;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-pending .admin-db-statusz:disabled {
+  color: var(--admin-v2-warning);
+  border-color: #ead7b8;
+  background: var(--admin-v2-warning-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-confirmed .admin-db-statusz:disabled,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-done .admin-db-statusz:disabled,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-blocked .admin-db-statusz:disabled {
+  color: var(--admin-v2-success);
+  border-color: #cfe0d5;
+  background: var(--admin-v2-success-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-cancelled .admin-db-statusz:disabled,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-statusz-cancelled_by_customer .admin-db-statusz:disabled {
+  color: var(--admin-v2-danger);
+  border-color: #e7c8ca;
+  background: var(--admin-v2-danger-soft);
+}
+
+/* Details and edit are visually icon buttons while their text remains in the DOM
+   as the accessible name. */
+.admin-body.admin-v2 #admin-panel-foglalasok :is([data-foglalas-reszletek], [data-foglalas-szerkesztes], .admin-kezi-ido-naptar) {
+  position: relative;
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--admin-ui-icon-radius);
+  font-size: 0;
+  line-height: 1;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek]::before {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: "";
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek][aria-expanded="true"]::before {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::before {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt [data-foglalas-szerkesztes]::before,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt [data-foglalas-szerkesztes]::after {
+  position: absolute;
+  width: 13px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt [data-foglalas-szerkesztes]::before {
+  transform: rotate(45deg);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt [data-foglalas-szerkesztes]::after {
+  transform: rotate(-45deg);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
+  width: 12px;
+  height: 11px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  content: "";
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::after {
+  position: absolute;
+  top: 9px;
+  width: 8px;
+  height: 1.5px;
+  background: currentColor;
+  content: "";
+}
+
+/* Cancellation notes belong to the detail state, not the scan view. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-lemondasi-megjegyzes {
+  display: none;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott .admin-foglalas-lemondasi-megjegyzes,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-foglalas-lemondasi-megjegyzes {
+  display: grid;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt {
+  padding-block: 0;
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszletek,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-lemondasi-megjegyzes {
+  margin-inline: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    min-height: 58px;
+    padding: 6px 0;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor {
+    grid-template-columns: minmax(0, 1fr) 78px;
+    gap: 7px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 {
+    font-size: 11px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas {
+    font-size: 8px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
+    min-width: 0;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum {
+    font-size: 9px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
+    font-size: 8px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
+    max-width: 105px;
+    padding-inline: 7px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya {
+    padding-inline: 2px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 5px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor {
+    grid-template-columns: minmax(0, 1fr) 68px;
+    gap: 5px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk {
+    gap: 1px 5px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
+    max-width: 92px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok {
+    gap: 2px;
+  }
+}
