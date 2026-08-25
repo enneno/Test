@@ -23,15 +23,16 @@ test.describe('Lumi Nails PWA', () => {
     ]));
   });
 
-  test('keeps live-data pages out of the offline page cache', async ({ page }) => {
+  test('service worker does not intercept or cache normal website requests', async ({ page }) => {
     const response = await page.request.get('/sw.js');
     expect(response.ok()).toBeTruthy();
 
     const source = await response.text();
-    expect(source).toContain("const NETWORK_ONLY_PATH_PREFIXES = ['/admin', '/fiokom', '/foglalas']");
-    expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/admin\/?['\"]/);
-    expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/fiokom\/?['\"]/);
-    expect(source).not.toMatch(/CORE_ASSETS\s*=\s*\[[\s\S]*['\"]\/foglalas\/?['\"]/);
+    expect(source).not.toContain("addEventListener('fetch'");
+    expect(source).not.toContain('caches.open');
+    expect(source).not.toContain('caches.match');
+    expect(source).not.toContain('cache.put');
+    expect(source).not.toContain('offline.html');
   });
 
   test('provides notification, badge and admin push helpers without requesting permission automatically', async ({ page }) => {
@@ -80,15 +81,12 @@ test.describe('Lumi Nails PWA', () => {
     expect(count).toBe(0);
   });
 
-  test('keeps VAPID private material server-side only', async ({ page }) => {
+  test('keeps VAPID private material out of client-side code', async ({ page }) => {
     const clientResponse = await page.request.get('/pwa.js');
-    const senderResponse = await page.request.get('/supabase/functions/send-web-push/index.ts');
     expect(clientResponse.ok()).toBeTruthy();
-    expect(senderResponse.ok()).toBeTruthy();
 
     const clientSource = await clientResponse.text();
-    const senderSource = await senderResponse.text();
     expect(clientSource).not.toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
-    expect(senderSource).toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
+    expect(clientSource).not.toContain('vapid_private_key');
   });
 });
