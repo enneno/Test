@@ -1,0 +1,16 @@
+/* Booking action icon details that must keep the shared 44px effective target. */
+
+.admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
+  background:
+    linear-gradient(to bottom, transparent 3px, currentColor 3px 4.5px, transparent 4.5px);
+}
+
+.admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-kezi-ido-naptar::after {
+  position: absolute;
+  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
+  width: auto;
+  height: auto;
+  background: transparent;
+  content: "";
+  transform: none;
+}
