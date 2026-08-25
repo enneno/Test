@@ -1,0 +1,48 @@
+{
+  "id": "/",
+  "name": "Lumi Nails",
+  "short_name": "Lumi Nails",
+  "description": "Lumi Nails Tatabánya – szolgáltatások, galéria és online időpontfoglalás.",
+  "lang": "hu-HU",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#fdf4e2",
+  "theme_color": "#b9858f",
+  "icons": [
+    {
+      "src": "/kepek/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/kepek/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Időpontfoglalás",
+      "short_name": "Foglalás",
+      "url": "/foglalas/",
+      "icons": [{ "src": "/kepek/favicon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Árlista",
+      "short_name": "Árlista",
+      "url": "/arlista/",
+      "icons": [{ "src": "/kepek/favicon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Galéria",
+      "short_name": "Galéria",
+      "url": "/galeria/",
+      "icons": [{ "src": "/kepek/favicon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "categories": ["beauty", "lifestyle"]
+}
