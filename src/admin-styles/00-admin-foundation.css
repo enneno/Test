@@ -104,7 +104,7 @@ body.admin-body textarea {
 }
 
 body.admin-body [hidden] {
-  display: none !important;
+  display: none;
 }
 
 .logo-lumi {
