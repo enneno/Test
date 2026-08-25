@@ -190,76 +190,167 @@ grant execute on function public.finish_booking_review_request(uuid, boolean, te
 revoke all on function public.enqueue_new_booking_email(uuid) from public, anon, authenticated;
 grant execute on function public.enqueue_new_booking_email(uuid) to service_role;
 
--- Profiles are derived from bookings, so there is no second PII store to drift or leak.
-create view public.admin_customer_profiles
-with (security_invoker = true, security_barrier = true)
-as
-with normalized as (
-    select
-        case
-            when nullif(trim(customer_email), '') is not null
-                then 'email:' || lower(trim(customer_email))
-            when nullif(trim(customer_phone), '') is not null
-                then 'phone:' || regexp_replace(customer_phone, '[^0-9+]', '', 'g')
-            else 'booking:' || id::text
-        end as customer_key,
-        nullif(trim(customer_name), '') as customer_name,
-        nullif(lower(trim(customer_email)), '') as customer_email,
-        nullif(trim(customer_phone), '') as customer_phone,
-        starts_at,
-        status
-    from public.bookings
+-- Registered accounts are sourced from auth.users, but auth data is never exposed as a public view.
+drop view if exists public.admin_customer_bookings;
+drop view if exists public.admin_customer_profiles;
+
+drop function if exists public.admin_registered_customer_profiles();
+create function public.admin_registered_customer_profiles()
+returns table (
+    user_id uuid,
+    customer_name text,
+    customer_email text,
+    customer_phone text,
+    registered_at timestamptz,
+    email_confirmed_at timestamptz,
+    booking_count integer,
+    completed_count integer,
+    cancelled_count integer,
+    next_booking_at timestamptz,
+    last_booking_at timestamptz
 )
-select
-    customer_key,
-    (array_agg(customer_name order by starts_at desc) filter (where customer_name is not null))[1] as customer_name,
-    (array_agg(customer_email order by starts_at desc) filter (where customer_email is not null))[1] as customer_email,
-    (array_agg(customer_phone order by starts_at desc) filter (where customer_phone is not null))[1] as customer_phone,
-    count(*)::integer as booking_count,
-    count(*) filter (where status = 'done')::integer as completed_count,
-    count(*) filter (where status in ('cancelled', 'cancelled_by_customer'))::integer as cancelled_count,
-    min(starts_at) filter (
-        where starts_at >= now() and status in ('pending', 'confirmed')
-    ) as next_booking_at,
-    max(starts_at) as last_booking_at
-from normalized
-group by customer_key;
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+    if not public.is_lumi_admin() then
+        raise exception 'Admin jogosultság szükséges.' using errcode = '42501';
+    end if;
 
-create view public.admin_customer_bookings
-with (security_invoker = true, security_barrier = true)
-as
-select
-    case
-        when nullif(trim(bookings.customer_email), '') is not null
-            then 'email:' || lower(trim(bookings.customer_email))
-        when nullif(trim(bookings.customer_phone), '') is not null
-            then 'phone:' || regexp_replace(bookings.customer_phone, '[^0-9+]', '', 'g')
-        else 'booking:' || bookings.id::text
-    end as customer_key,
-    bookings.id,
-    bookings.public_reference,
-    bookings.customer_name,
-    bookings.customer_email,
-    bookings.customer_phone,
-    bookings.starts_at,
-    bookings.ends_at,
-    bookings.status,
-    bookings.created_at,
-    bookings.note,
-    bookings.nail_style,
-    bookings.nail_style_note,
-    services.name as service_name,
-    services.price_text
-from public.bookings
-left join public.services on services.id = bookings.service_id;
+    return query
+    select
+        users.id as user_id,
+        coalesce(
+            nullif(trim(profiles.full_name), ''),
+            nullif(trim(users.raw_user_meta_data ->> 'full_name'), ''),
+            nullif(trim(users.raw_user_meta_data ->> 'name'), ''),
+            split_part(users.email, '@', 1)
+        )::text as customer_name,
+        trim(users.email)::text as customer_email,
+        coalesce(
+            nullif(trim(profiles.phone), ''),
+            nullif(trim(users.raw_user_meta_data ->> 'phone'), ''),
+            nullif(trim(users.phone), '')
+        )::text as customer_phone,
+        users.created_at as registered_at,
+        users.email_confirmed_at,
+        statistics.booking_count,
+        statistics.completed_count,
+        statistics.cancelled_count,
+        statistics.next_booking_at,
+        statistics.last_booking_at
+    from auth.users as users
+    left join public.customer_profiles as profiles
+        on profiles.user_id = users.id
+    left join lateral (
+        select
+            count(*)::integer as booking_count,
+            count(*) filter (where bookings.status = 'done')::integer as completed_count,
+            count(*) filter (
+                where bookings.status in ('cancelled', 'cancelled_by_customer')
+            )::integer as cancelled_count,
+            min(bookings.starts_at) filter (
+                where bookings.starts_at >= now()
+                  and bookings.status in ('pending', 'confirmed')
+            ) as next_booking_at,
+            max(bookings.starts_at) as last_booking_at
+        from public.bookings as bookings
+        where bookings.customer_user_id = users.id
+           or (
+                bookings.customer_user_id is null
+                and nullif(trim(bookings.customer_email), '') is not null
+                and lower(trim(bookings.customer_email)) = lower(trim(users.email))
+           )
+    ) as statistics on true
+    where coalesce(users.is_anonymous, false) = false
+      and users.deleted_at is null
+      and nullif(trim(users.email), '') is not null
+    order by users.created_at desc;
+end;
+$$;
 
-revoke all on table public.admin_customer_profiles from public, anon;
-revoke all on table public.admin_customer_bookings from public, anon;
-grant select on table public.admin_customer_profiles, public.admin_customer_bookings to authenticated, service_role;
+revoke all on function public.admin_registered_customer_profiles() from public, anon;
+grant execute on function public.admin_registered_customer_profiles() to authenticated, service_role;
 
-comment on view public.admin_customer_profiles is
-'Admin-only customer summary derived from booking data. RLS is enforced through security_invoker.';
-comment on view public.admin_customer_bookings is
-'Admin-only customer booking history. RLS is enforced through security_invoker.';
+drop function if exists public.admin_registered_customer_bookings(uuid);
+create function public.admin_registered_customer_bookings(p_user_id uuid)
+returns table (
+    id uuid,
+    public_reference text,
+    customer_name text,
+    customer_email text,
+    customer_phone text,
+    starts_at timestamptz,
+    ends_at timestamptz,
+    status text,
+    created_at timestamptz,
+    note text,
+    nail_style text,
+    nail_style_note text,
+    service_name text,
+    price_text text
+)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+    account_email text;
+begin
+    if not public.is_lumi_admin() then
+        raise exception 'Admin jogosultság szükséges.' using errcode = '42501';
+    end if;
+
+    select lower(trim(users.email))
+    into account_email
+    from auth.users as users
+    where users.id = p_user_id
+      and coalesce(users.is_anonymous, false) = false
+      and users.deleted_at is null;
+
+    if account_email is null then
+        return;
+    end if;
+
+    return query
+    select
+        bookings.id,
+        bookings.public_reference,
+        bookings.customer_name,
+        bookings.customer_email,
+        bookings.customer_phone,
+        bookings.starts_at,
+        bookings.ends_at,
+        bookings.status,
+        bookings.created_at,
+        bookings.note,
+        bookings.nail_style,
+        bookings.nail_style_note,
+        services.name as service_name,
+        services.price_text
+    from public.bookings as bookings
+    left join public.services as services
+        on services.id = bookings.service_id
+    where bookings.customer_user_id = p_user_id
+       or (
+            bookings.customer_user_id is null
+            and nullif(trim(bookings.customer_email), '') is not null
+            and lower(trim(bookings.customer_email)) = account_email
+       )
+    order by bookings.starts_at desc
+    limit 50;
+end;
+$$;
+
+revoke all on function public.admin_registered_customer_bookings(uuid) from public, anon;
+grant execute on function public.admin_registered_customer_bookings(uuid) to authenticated, service_role;
+
+comment on function public.admin_registered_customer_profiles() is
+'Admin-only list of real, non-anonymous Supabase Auth registrations with minimal contact and booking data.';
+comment on function public.admin_registered_customer_bookings(uuid) is
+'Admin-only booking history for one registered Supabase Auth user.';
 
 commit;

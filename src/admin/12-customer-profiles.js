@@ -7,9 +7,9 @@
         panel.innerHTML = `
             <div class="admin-v2-page-heading">
                 <div>
-                    <p class="admin-v2-kicker">Kapcsolatok és előzmények</p>
-                    <h1>Vendégek</h1>
-                    <p>A foglalásokból összeállított, csak admin számára elérhető vendégnézet.</p>
+                    <p class="admin-v2-kicker">Regisztrált fiókok</p>
+                    <h1>Vendégfiókok</h1>
+                    <p>A Fiókom oldalon regisztrált vendégek adatai és foglalási előzményei.</p>
                 </div>
                 <div class="admin-v2-page-actions">
                     <button type="button" class="admin-v2-button admin-v2-button-secondary" data-vendeg-frissites>
@@ -20,19 +20,19 @@
             <div class="admin-vendeg-toolbar">
                 <label class="admin-vendeg-kereses">
                     <span>Keresés</span>
-                    <input type="search" data-vendeg-kereses placeholder="Név, email vagy telefonszám" autocomplete="off">
+                    <input type="search" data-vendeg-kereses placeholder="Név, e-mail vagy telefonszám" autocomplete="off">
                 </label>
                 <p class="admin-vendeg-osszefoglalo" data-vendeg-osszefoglalo aria-live="polite">Betöltés…</p>
             </div>
             <div class="admin-vendeg-layout">
-                <div class="admin-vendeg-lista" data-vendeg-lista aria-label="Vendégek listája">
-                    <p class="admin-vendeg-ures">Vendégek betöltése…</p>
+                <div class="admin-vendeg-lista" data-vendeg-lista aria-label="Regisztrált vendégfiókok listája">
+                    <p class="admin-vendeg-ures">Vendégfiókok betöltése…</p>
                 </div>
                 <aside class="admin-vendeg-reszlet" data-vendeg-reszlet aria-live="polite">
                     <div class="admin-vendeg-reszlet-ures">
                         <span>${adminV2Ikon('users')}</span>
-                        <strong>Válassz egy vendéget</strong>
-                        <p>Itt jelennek meg az elérhetőségei és a foglalási előzményei.</p>
+                        <strong>Válassz egy vendégfiókot</strong>
+                        <p>Itt jelennek meg a regisztrációs adatai és a foglalási előzményei.</p>
                     </div>
                 </aside>
             </div>
@@ -72,25 +72,23 @@
         const keresId = ++allapot.vendegProfilKeresId;
         const lista = panel.querySelector('[data-vendeg-lista]');
         const osszefoglalo = panel.querySelector('[data-vendeg-osszefoglalo]');
-        if (lista) lista.innerHTML = '<p class="admin-vendeg-ures">Vendégek betöltése…</p>';
+        if (lista) lista.innerHTML = '<p class="admin-vendeg-ures">Vendégfiókok betöltése…</p>';
         if (osszefoglalo) osszefoglalo.textContent = 'Betöltés…';
 
         const { data, error } = await allapot.kliens
-            .from('admin_customer_profiles')
-            .select('*')
-            .order('last_booking_at', { ascending: false });
+            .rpc('admin_registered_customer_profiles');
 
         if (keresId !== allapot.vendegProfilKeresId) return;
         if (error) {
-            if (lista) lista.innerHTML = '<p class="admin-vendeg-ures admin-vendeg-hiba">Nem sikerült betölteni a vendégeket.</p>';
+            if (lista) lista.innerHTML = '<p class="admin-vendeg-ures admin-vendeg-hiba">Nem sikerült betölteni a vendégfiókokat.</p>';
             if (osszefoglalo) osszefoglalo.textContent = 'Betöltési hiba';
-            onlineStatusz('Nem sikerült betölteni a vendégprofilokat.', true);
+            onlineStatusz('Nem sikerült betölteni a regisztrált vendégfiókokat.', true);
             return;
         }
 
         allapot.vendegProfilok = Array.isArray(data) ? data : [];
-        if (!allapot.vendegProfilok.some(item => item.customer_key === allapot.aktivVendegProfil)) {
-            allapot.aktivVendegProfil = allapot.vendegProfilok[0]?.customer_key || '';
+        if (!allapot.vendegProfilok.some(item => item.user_id === allapot.aktivVendegProfil)) {
+            allapot.aktivVendegProfil = allapot.vendegProfilok[0]?.user_id || '';
         }
         vendegProfilListaRenderelese();
         if (allapot.aktivVendegProfil) vendegProfilReszletBetoltese(allapot.aktivVendegProfil);
@@ -110,26 +108,27 @@
         });
 
         osszefoglalo.textContent = keresett
-            ? `${profilok.length} találat · ${allapot.vendegProfilok.length} vendégből`
-            : `${allapot.vendegProfilok.length} vendég`;
+            ? `${profilok.length} találat · ${allapot.vendegProfilok.length} fiókból`
+            : `${allapot.vendegProfilok.length} regisztrált fiók`;
 
         if (!profilok.length) {
-            lista.innerHTML = `<p class="admin-vendeg-ures">${keresett ? 'Nincs a keresésnek megfelelő vendég.' : 'Még nincs megjeleníthető vendég.'}</p>`;
+            lista.innerHTML = `<p class="admin-vendeg-ures">${keresett ? 'Nincs a keresésnek megfelelő vendégfiók.' : 'Még nincs regisztrált vendégfiók.'}</p>`;
             return;
         }
 
         lista.innerHTML = profilok.map(profile => {
-            const aktiv = profile.customer_key === allapot.aktivVendegProfil;
+            const aktiv = profile.user_id === allapot.aktivVendegProfil;
             const kovetkezo = profile.next_booking_at
                 ? `Következő: ${html(vendegDatumIdo(profile.next_booking_at))}`
                 : 'Nincs közelgő időpont';
             return `
                 <button type="button" class="admin-vendeg-sor${aktiv ? ' is-active' : ''}"
-                    data-admin-vendeg-id="${attr(profile.customer_key)}" aria-pressed="${String(aktiv)}">
+                    data-admin-vendeg-id="${attr(profile.user_id)}" aria-pressed="${String(aktiv)}">
                     <span class="admin-vendeg-monogram">${html(vendegMonogram(profile.customer_name))}</span>
                     <span class="admin-vendeg-sor-copy">
-                        <strong>${html(profile.customer_name || 'Névtelen vendég')}</strong>
-                        <small>${html(profile.customer_email || profile.customer_phone || 'Nincs elérhetőség')}</small>
+                        <strong>${html(profile.customer_name || 'Névtelen fiók')}</strong>
+                        <small>${html(profile.customer_email || 'Nincs e-mail-cím')}</small>
+                        <small>${html(profile.customer_phone || 'Nincs telefonszám')}</small>
                         <small>${kovetkezo}</small>
                     </span>
                     <span class="admin-vendeg-darab">${Number(profile.booking_count) || 0}<small>foglalás</small></span>
@@ -138,23 +137,19 @@
         }).join('');
     }
 
-    async function vendegProfilReszletBetoltese(customerKey) {
+    async function vendegProfilReszletBetoltese(userId) {
         const panel = document.getElementById('admin-panel-vendegek');
         const reszlet = panel?.querySelector('[data-vendeg-reszlet]');
-        const profile = allapot.vendegProfilok.find(item => item.customer_key === customerKey);
+        const profile = allapot.vendegProfilok.find(item => item.user_id === userId);
         if (!reszlet || !profile || !allapot.kliens) return;
 
         const keresId = ++allapot.vendegProfilKeresId;
         reszlet.innerHTML = '<p class="admin-vendeg-ures">Előzmények betöltése…</p>';
 
         const { data, error } = await allapot.kliens
-            .from('admin_customer_bookings')
-            .select('*')
-            .eq('customer_key', customerKey)
-            .order('starts_at', { ascending: false })
-            .limit(50);
+            .rpc('admin_registered_customer_bookings', { p_user_id: userId });
 
-        if (keresId !== allapot.vendegProfilKeresId || allapot.aktivVendegProfil !== customerKey) return;
+        if (keresId !== allapot.vendegProfilKeresId || allapot.aktivVendegProfil !== userId) return;
         if (error) {
             reszlet.innerHTML = '<p class="admin-vendeg-ures admin-vendeg-hiba">Nem sikerült betölteni az előzményeket.</p>';
             return;
@@ -165,14 +160,16 @@
             <header class="admin-vendeg-reszlet-fej">
                 <span class="admin-vendeg-monogram admin-vendeg-monogram-large">${html(vendegMonogram(profile.customer_name))}</span>
                 <div>
-                    <p class="admin-v2-kicker">Vendégprofil</p>
-                    <h2>${html(profile.customer_name || 'Névtelen vendég')}</h2>
+                    <p class="admin-v2-kicker">Regisztrált vendég</p>
+                    <h2>${html(profile.customer_name || 'Névtelen fiók')}</h2>
                     <p>${Number(profile.booking_count) || 0} foglalás · ${Number(profile.completed_count) || 0} teljesítve</p>
                 </div>
             </header>
             <div class="admin-vendeg-kapcsolatok">
                 ${vendegKapcsolatLink('Email', profile.customer_email, 'mailto:')}
                 ${vendegKapcsolatLink('Telefon', profile.customer_phone, 'tel:')}
+                ${vendegKapcsolatAdat('Regisztráció', vendegDatumIdo(profile.registered_at))}
+                ${vendegKapcsolatAdat('E-mail állapota', profile.email_confirmed_at ? 'Megerősítve' : 'Megerősítésre vár')}
             </div>
             <button type="button" class="admin-v2-button admin-v2-button-secondary admin-vendeg-foglalasok-gomb"
                 data-admin-vendeg-foglalasok="${attr(profile.customer_email || profile.customer_phone || profile.customer_name)}">
@@ -190,6 +187,10 @@
     function vendegKapcsolatLink(label, value, protocol) {
         if (!value) return `<div><span>${label}</span><small>Nincs megadva</small></div>`;
         return `<a href="${protocol}${attr(value)}"><span>${label}</span><strong>${html(value)}</strong></a>`;
+    }
+
+    function vendegKapcsolatAdat(label, value) {
+        return `<div><span>${html(label)}</span><strong>${html(value)}</strong></div>`;
     }
 
     function vendegFoglalasSor(booking) {

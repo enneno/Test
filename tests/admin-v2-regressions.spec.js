@@ -47,3 +47,26 @@ test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async 
         expect(source, file).not.toContain('admin-lebego-mentes');
     }
 });
+test('az admin Vendégfiókok nézete csak regisztrált Auth-fiókokat kér le', async () => {
+    const source = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin', '12-customer-profiles.js'),
+        'utf8'
+    );
+    const sql = fs.readFileSync(
+        path.resolve(__dirname, '..', 'supabase-admin-customer-profiles-security.sql'),
+        'utf8'
+    );
+
+    expect(source).toContain(".rpc('admin_registered_customer_profiles')");
+    expect(source).toContain(".rpc('admin_registered_customer_bookings'");
+    expect(source).not.toContain(".from('admin_customer_profiles')");
+    expect(source).not.toContain(".from('admin_customer_bookings')");
+
+    expect(sql).toContain('drop view if exists public.admin_customer_profiles');
+    expect(sql).toContain('drop view if exists public.admin_customer_bookings');
+    expect(sql).not.toContain('create view public.admin_customer_profiles');
+    expect(sql).not.toContain('create view public.admin_customer_bookings');
+    expect(sql).toContain('if not public.is_lumi_admin() then');
+    expect(sql).toContain('revoke all on function public.admin_registered_customer_profiles() from public, anon');
+    expect(sql).toContain('grant execute on function public.admin_registered_customer_profiles() to authenticated, service_role');
+});

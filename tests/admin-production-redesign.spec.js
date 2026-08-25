@@ -92,14 +92,14 @@ function fixtures() {
                 services: { name: 'Epites - S', price_text: '9 000 Ft' }
             }
         ],
-        admin_customer_profiles: [
-            { customer_key: 'email:anna.nagy@example.test', customer_name: 'Nagy Anna', customer_email: 'anna.nagy@example.test', customer_phone: '+36 30 111 2233', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 10), last_booking_at: isoAt(0, 10) },
-            { customer_key: 'email:dorka.kiss@example.test', customer_name: 'Kiss Dorka', customer_email: 'dorka.kiss@example.test', customer_phone: '+36 20 222 3344', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 14), last_booking_at: isoAt(0, 14) },
-            { customer_key: 'email:luca.toth@example.test', customer_name: 'Toth Luca', customer_email: 'luca.toth@example.test', customer_phone: '+36 70 333 4455', booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(1, 9), last_booking_at: isoAt(1, 9) },
-            { customer_key: 'email:petra.farkas@example.test', customer_name: 'Farkas Petra', customer_email: 'petra.farkas@example.test', customer_phone: '+36 30 444 5566', booking_count: 1, completed_count: 0, cancelled_count: 1, next_booking_at: null, last_booking_at: isoAt(2, 13) }
+        admin_registered_customer_profiles: [
+            { user_id: 'customer-anna', customer_name: 'Nagy Anna', customer_email: 'anna.nagy@example.test', customer_phone: '+36 30 111 2233', registered_at: isoAt(-30, 9), email_confirmed_at: isoAt(-30, 9), booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 10), last_booking_at: isoAt(0, 10) },
+            { user_id: 'customer-dorka', customer_name: 'Kiss Dorka', customer_email: 'dorka.kiss@example.test', customer_phone: '+36 20 222 3344', registered_at: isoAt(-20, 9), email_confirmed_at: isoAt(-20, 9), booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(0, 14), last_booking_at: isoAt(0, 14) },
+            { user_id: 'customer-luca', customer_name: 'Toth Luca', customer_email: 'luca.toth@example.test', customer_phone: '+36 70 333 4455', registered_at: isoAt(-10, 9), email_confirmed_at: isoAt(-10, 9), booking_count: 1, completed_count: 0, cancelled_count: 0, next_booking_at: isoAt(1, 9), last_booking_at: isoAt(1, 9) },
+            { user_id: 'customer-petra', customer_name: 'Farkas Petra', customer_email: 'petra.farkas@example.test', customer_phone: '+36 30 444 5566', registered_at: isoAt(-5, 9), email_confirmed_at: null, booking_count: 1, completed_count: 0, cancelled_count: 1, next_booking_at: null, last_booking_at: isoAt(2, 13) }
         ],
-        admin_customer_bookings: [
-            { customer_key: 'email:anna.nagy@example.test', id: '00000000-0000-4000-8000-000000000001', public_reference: 'LUMI-DEMO1', starts_at: isoAt(0, 10), ends_at: isoAt(0, 12), status: 'confirmed', created_at: isoAt(-4, 12), service_name: 'Erositett gel lakk', price_text: '6 500 Ft' }
+        admin_registered_customer_bookings: [
+            { account_user_id: 'customer-anna', id: '00000000-0000-4000-8000-000000000001', public_reference: 'LUMI-DEMO1', starts_at: isoAt(0, 10), ends_at: isoAt(0, 12), status: 'confirmed', created_at: isoAt(-4, 12), service_name: 'Erositett gel lakk', price_text: '6 500 Ft' }
         ],
         blocked_times: [
             {
@@ -334,6 +334,14 @@ async function installSupabaseBoundaryMock(page) {
                 if (name === 'is_lumi_admin') {
                     return { data: true, error: null };
                 }
+                if (name === 'admin_registered_customer_profiles') {
+                    return { data: clone(seed.admin_registered_customer_profiles), error: null };
+                }
+                if (name === 'admin_registered_customer_bookings') {
+                    const rows = seed.admin_registered_customer_bookings
+                        .filter(row => row.account_user_id === args?.p_user_id);
+                    return { data: clone(rows), error: null };
+                }
                 if (name === 'apply_admin_booking_changes') {
                     for (const change of args?.p_changes || []) {
                         const rows = change.type === 'blocked' ? seed.blocked_times : seed.bookings;
@@ -435,9 +443,12 @@ test.describe('production admin redesign', () => {
 
         await page.locator('[data-admin-v2-nav="vendegek"]').click();
         await expect(page.locator('#admin-panel-vendegek')).toHaveClass(/aktiv/);
-        await expect(page.locator('#admin-panel-vendegek .admin-v2-page-heading h1')).toHaveText('Vendégek');
+        await expect(page.locator('#admin-panel-vendegek .admin-v2-page-heading h1')).toHaveText('Vendégfiókok');
         await expect(page.locator('[data-vendeg-lista] .admin-vendeg-sor')).toHaveCount(4);
+        await expect(page.locator('[data-vendeg-lista] .admin-vendeg-sor').first()).toContainText('anna.nagy@example.test');
+        await expect(page.locator('[data-vendeg-lista] .admin-vendeg-sor').first()).toContainText('+36 30 111 2233');
         await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Nagy Anna');
+        await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Megerősítve');
         await expect(page.locator('[data-vendeg-reszlet]')).toContainText('Erositett gel lakk');
         await expect(page.locator('.admin-v2-profile strong')).toHaveText('Szofi');
         await expect(page.locator('.admin-v2-avatar')).toHaveText('SZ');
