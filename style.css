@@ -5629,6 +5629,10 @@ textarea:focus-visible {
 }
 
 .foglalas-ut-kartya {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    align-content: start;
+    gap: 14px;
     min-height: 236px;
     padding: 28px;
     border: 0;
@@ -5636,6 +5640,70 @@ textarea:focus-visible {
     background: var(--ui-surface);
     box-shadow: none;
     color: var(--ui-ink);
+    text-decoration: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.foglalas-ut-ikon {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.foglalas-ut-ikon-grafika {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.55;
+}
+
+.foglalas-ut-cim {
+    display: block;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.foglalas-ut-leiras {
+    display: block;
+    color: var(--ui-muted);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.6;
+}
+
+.foglalas-ut-gomb {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    align-self: end;
+    gap: 7px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid currentColor;
+    font-size: var(--lumi-font-button-compact);
+    font-weight: 750;
+    letter-spacing: 0.055em;
+    line-height: 1.25;
+}
+
+.foglalas-ut-gomb::after {
+    content: "↗";
+    font-size: 12px;
+    line-height: 1;
+}
+
+.foglalas-ut-kartya[data-booking-path] .foglalas-ut-gomb::after {
+    content: "↓";
 }
 
 .foglalas-ut-kartya:hover {
@@ -6468,11 +6536,15 @@ textarea:focus-visible {
 }
 
 .foglalas-ut-kartya:not(.foglalas-ut-kartya-kiemelt) .foglalas-ut-ikon {
-    background: var(--ui-rose-dark);
+    border-color: rgba(145, 118, 110, 0.28);
+    background: rgba(145, 118, 110, 0.08);
+    color: var(--ui-rose-dark);
 }
 
 .foglalas-ut-kartya-kiemelt .foglalas-ut-ikon {
+    border-color: rgba(255, 249, 245, 0.24);
     background: rgba(255, 249, 245, 0.14);
+    color: var(--ui-off-white);
 }
 
 .foglalas-ut-kartya:focus-visible,

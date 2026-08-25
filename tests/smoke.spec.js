@@ -378,6 +378,50 @@ test('a foglalási kapcsolati linkek a tényleges tartalombetöltéskor frissül
     await expect(page.locator('[data-booking-contact="sms"]')).toHaveAttribute('href', smsUrl);
 });
 
+test('a publikus foglalási útvonalak megőrzik a kártya- és ikonstílusukat', async ({ page }) => {
+    const kartyaStilus = async () => page.locator('.foglalas-ut-kartya').first().evaluate(kartya => {
+        const ikon = kartya.querySelector('.foglalas-ut-ikon');
+        const cim = kartya.querySelector('.foglalas-ut-cim');
+        const kartyaCss = getComputedStyle(kartya);
+        const ikonCss = getComputedStyle(ikon);
+        const cimCss = getComputedStyle(cim);
+
+        return {
+            kartyaMegjelenes: kartyaCss.display,
+            ikonMegjelenes: ikonCss.display,
+            ikonSzelesseg: ikonCss.width,
+            ikonMagassag: ikonCss.height,
+            cimBetutipus: cimCss.fontFamily,
+            cimBetumeret: cimCss.fontSize,
+            cimAlahuzas: cimCss.textDecorationLine
+        };
+    });
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
+    expect(await kartyaStilus()).toEqual({
+        kartyaMegjelenes: 'grid',
+        ikonMegjelenes: 'flex',
+        ikonSzelesseg: '42px',
+        ikonMagassag: '42px',
+        cimBetutipus: '"Cormorant Garamond", serif',
+        cimBetumeret: '28px',
+        cimAlahuzas: 'none'
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    expect(await kartyaStilus()).toEqual({
+        kartyaMegjelenes: 'grid',
+        ikonMegjelenes: 'flex',
+        ikonSzelesseg: '34px',
+        ikonMagassag: '34px',
+        cimBetutipus: '"Cormorant Garamond", serif',
+        cimBetumeret: '21px',
+        cimAlahuzas: 'none'
+    });
+});
+
 test('a teljes oldalas foglalási űrlap minden részt egyben mutat és megőrzi a választásokat', async ({ page }) => {
     await page.route('**/rest/v1/services*', route => route.fulfill({
         status: 200,
