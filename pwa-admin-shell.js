@@ -123,6 +123,7 @@
 
     const bodyObserver = new MutationObserver(queueRefresh);
     bodyObserver.observe(body, {
+      childList: true,
       attributes: true,
       attributeFilter: ['class', 'data-admin-v2-group', 'data-admin-v2-tab']
     });
