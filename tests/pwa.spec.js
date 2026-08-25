@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('playwright/test');
 
 test.describe('Lumi Nails PWA', () => {
   test('publishes a valid installable manifest', async ({ page }) => {
