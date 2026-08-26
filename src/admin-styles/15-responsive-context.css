@@ -1,0 +1,7 @@
+/* Responsive workspace context only.
+   Feature files own their @container rules; this file owns the named container. */
+
+.admin-body.admin-v2 .admin-workspace-main {
+  container: admin-workspace / inline-size;
+  min-width: 0;
+}
