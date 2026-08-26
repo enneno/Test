@@ -2601,6 +2601,7 @@ function arlistaFeliratokFrissitese() {
         const inspiracioKepek = foglalasInspiracioKepek(foglalas);
         const kuponKod = foglalasKuponKod(foglalas);
         const megjegyzes = foglalasMegjegyzesMegjelenites(foglalas);
+        const koromStilus = foglalasKoromStilusMegjelenites(foglalas);
         const lemondasiMegjegyzes = vendegLemondasMegjegyzese(foglalas);
         const foglalasAzonosito = String(foglalas.public_reference || '').trim();
         kartya.dataset.inspiracioKepek = JSON.stringify(inspiracioKepek);
@@ -2640,9 +2641,10 @@ function arlistaFeliratokFrissitese() {
                     <p class="admin-foglalas-meta-email"><strong>Email</strong><a href="mailto:${html(foglalas.customer_email)}">${html(foglalas.customer_email)}</a></p>
                     <p class="admin-foglalas-meta-telefon"><strong>Tel</strong><a href="tel:${html(foglalas.customer_phone.replace(/\s/g, ''))}">${html(foglalas.customer_phone)}</a></p>
                 </div>
-                ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon: ${html(kuponKod)}</strong></p>` : ''}
-                ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Megjegyz\u00e9s:</strong> ${html(megjegyzes)}</p>` : ''}
-                ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció:</strong> <span class="admin-inspiracio-akciok"><button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button><button type="button" class="admin-kis-gomb admin-veszely-gomb admin-inspiracio-torles" data-inspiracio-torles>Képek törlése</button></span></p>` : ''}
+                ${koromStilus ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-korom-stilus"><strong>Köröm stílus</strong><span>${html(koromStilus)}</span></p>` : ''}
+                ${megjegyzes ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-megjegyzes"><strong>Megjegyzés</strong><span>${html(megjegyzes)}</span></p>` : ''}
+                ${kuponKod ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles admin-foglalas-kupon"><strong>Kupon</strong><span>${html(kuponKod)}</span></p>` : ''}
+                ${inspiracioKepek.length ? `<p class="admin-foglalas-reszlet-sor admin-foglalas-reszlet-szeles"><strong>Inspiráció</strong><span class="admin-inspiracio-akciok"><button type="button" class="admin-inspiracio-link" data-inspiracio-megnyitas>${inspiracioKepek.length} kép megnyitása</button><button type="button" class="admin-kis-gomb admin-veszely-gomb admin-inspiracio-torles" data-inspiracio-torles>Képek törlése</button></span></p>` : ''}
             </div>            <div class="admin-idopont-szerkeszto">
                 <label class="admin-mezo">Dátum<input type="date" data-idopont-mezo="date" value="${attr(datumInputErtek(foglalas.starts_at))}" disabled></label>
                 <label class="admin-mezo">Kezdés<input type="time" data-idopont-mezo="start_time" value="${attr(idoInputErtek(foglalas.starts_at))}" disabled></label>
@@ -2666,14 +2668,28 @@ function arlistaFeliratokFrissitese() {
         return talalat?.[1] ? talalat[1].toUpperCase() : '';
     }
 
-    function foglalasMegjegyzesMegjelenites(foglalas) {
-        const note = String(foglalas?.note || '').trim();
-        if (!note) return '';
+    function foglalasKoromStilusMegjelenites(foglalas) {
+        const direktStilus = String(foglalas?.nail_style || '').trim();
+        if (direktStilus) return direktStilus;
 
-        return note
+        const noteSorok = String(foglalas?.note || '')
             .split(/\r?\n/)
             .map(sor => sor.trim())
-            .filter(sor => sor && !/^(Kupon:|Alap\u00e1r:|Kedvezm\u00e9ny:|V\u00e9g\u00f6sszeg:)/i.test(sor))
+            .filter(Boolean);
+        const stilusSor = noteSorok.find(sor => /^Köröm stílus:/i.test(sor));
+        return stilusSor ? stilusSor.replace(/^Köröm stílus:\s*/i, '').trim() : '';
+    }
+
+    function foglalasMegjegyzesMegjelenites(foglalas) {
+        const note = String(foglalas?.note || '').trim();
+        const stilusMegjegyzes = String(foglalas?.nail_style_note || '').trim();
+
+        const tisztitottNote = note
+            .split(/\r?\n/)
+            .map(sor => sor.trim())
+            .filter(sor => sor
+                && !/^(Kupon:|Alap\u00e1r:|Kedvezm\u00e9ny:|V\u00e9g\u00f6sszeg:)/i.test(sor)
+                && !/^Köröm stílus:/i.test(sor))
             .join(' ')
             .replace(/\s*Kupon:\s*[A-Z0-9_-]+(?:\s*\([^)]*\))?(?:\s*Alap\u00e1r:[\s\S]*)?$/i, '')
             .replace(/\s*Alap\u00e1r:\s*[\s\S]*$/i, '')
@@ -2681,6 +2697,11 @@ function arlistaFeliratokFrissitese() {
             .replace(/\s*V\u00e9g\u00f6sszeg:\s*[\s\S]*$/i, '')
             .replace(/\s{2,}/g, ' ')
             .trim();
+
+        return [stilusMegjegyzes, tisztitottNote]
+            .filter(Boolean)
+            .filter((ertek, index, lista) => lista.indexOf(ertek) === index)
+            .join(' · ');
     }
 
     async function foglalasInspiracioLinkekAlairasa(foglalasok) {
