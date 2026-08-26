@@ -4,6 +4,11 @@
 
   if (!isAdminPath || !isStandalone) return;
 
+  const viewportMeta = document.querySelector('meta[name="viewport"]');
+  if (viewportMeta) {
+    viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupStandaloneAdminShell, { once: true });
   } else {

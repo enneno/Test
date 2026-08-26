@@ -701,7 +701,7 @@
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
                     <button type="button" class="admin-kis-gomb" data-foglalas-reszletek aria-expanded="false">Részletek</button>
-                    <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             ${lemondasiMegjegyzes ? `
@@ -933,8 +933,8 @@
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
                     </select>
-                    <button type="button" class="admin-kis-gomb admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
-                    <button type="button" class="admin-kis-gomb" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
+                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             <div class="admin-idopont-szerkeszto">

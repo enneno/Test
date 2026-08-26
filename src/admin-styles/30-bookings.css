@@ -410,11 +410,11 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
   height: 32px;
   min-height: 32px;
-  padding: 0 10px 0 28px;
+  padding: 0 8px 0 24px;
   appearance: none;
   -webkit-appearance: none;
   border-radius: 999px;
-  background-image: radial-gradient(circle at 14px 50%, currentColor 0 3.5px, transparent 4px);
+  background-image: radial-gradient(circle at 12px 50%, currentColor 0 3.5px, transparent 4px);
   background-repeat: no-repeat;
   font-size: 12px;
   font-size-adjust: none;
@@ -439,8 +439,13 @@
   padding: 0;
   place-items: center;
   overflow: visible;
+  border: 1px solid var(--admin-v2-border);
   border-radius: var(--admin-ui-icon-radius);
+  color: var(--booking-state-color);
+  background: var(--admin-v2-surface);
   font-size: 0;
+  cursor: pointer;
+  touch-action: manipulation;
   line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::before,
@@ -474,6 +479,7 @@
   -webkit-mask-image: var(--booking-icon-calendar);
   mask-image: var(--booking-icon-calendar);
 }
+.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::after,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::after {
   position: absolute;
   inset: calc((var(--admin-ui-touch-target) - var(--booking-action-size)) / -2);
@@ -882,7 +888,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 138px; }
+  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 148px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya { padding-right: 2px; padding-left: 8px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { min-height: 88px; gap: 6px; padding: 8px 0; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 17px; line-height: 1.2; }
