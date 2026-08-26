@@ -4,151 +4,141 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const fix = process.argv.includes('--fix');
 const adminHtmlPath = path.join(root, 'admin', 'index.html');
 const adminStyleDir = path.join(root, 'src', 'admin-styles');
-const workspaceCssPath = path.join(adminStyleDir, 'admin-workspace-v2.css');
-const interactionCssPath = path.join(adminStyleDir, 'zz-admin-interaction.css');
-const forbiddenPublicSources = [
-    path.join(root, 'src', 'styles', '20-content-admin.css'),
-    path.join(root, 'src', 'styles', '35-admin-booking.css'),
-    path.join(root, 'src', 'styles', '40-admin.css')
+
+const expectedFiles = [
+  '00-foundation.css',
+  '05-panel-state.css',
+  '10-components.css',
+  '15-responsive-context.css',
+  '20-workspace.css',
+  '30-bookings.css',
+  '40-content-editor.css',
+  '45-gallery-editor.css',
+  '50-services.css',
+  '60-coupons.css',
+  '70-availability.css',
+  '80-communications.css',
+  '90-customers.css',
+  '95-pwa.css'
 ];
 
 function localStylesheets(html) {
-    return [...html.matchAll(/<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi)]
-        .map(match => match[1])
-        .filter(href => href.startsWith('/') && href.includes('.css'));
+  return [...html.matchAll(/<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi)]
+    .map(match => match[1])
+    .filter(href => href.startsWith('/') && href.includes('.css'));
+}
+
+function cssRules(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, '');
 }
 
 function fail(message) {
-    console.error(`ADMIN CSS ISOLATION ERROR: ${message}`);
-    process.exitCode = 1;
+  console.error(`ADMIN CSS ARCHITECTURE ERROR: ${message}`);
+  process.exitCode = 1;
 }
 
-let adminHtml = fs.readFileSync(adminHtmlPath, 'utf8');
-let workspaceCss = fs.readFileSync(workspaceCssPath, 'utf8');
-
-if (fix) {
-    adminHtml = adminHtml.replace(/^\s*<link\s+rel=["']stylesheet["']\s+href=["']\/style\.css[^"']*["']>\s*\r?\n/gim, '');
-
-    workspaceCss = workspaceCss.replace(
-` .admin-body.admin-v2 .admin-statusz,
-.admin-body.admin-v2 .admin-pill,
-.admin-body.admin-v2 .admin-allapot-jelzes {
-  font-size: 9px;
-  line-height: 1.2;
-}`.trimStart(),
-`.admin-body.admin-v2 .admin-statusz,
-.admin-body.admin-v2 .admin-pill,
-.admin-body.admin-v2 .admin-allapot-jelzes {
-  font-size: 12px;
-  line-height: 1.2;
-}`
-    );
-
-    const physicalTouchBlock = `  .admin-body.admin-v2 .admin-v2-nav-item,\n  .admin-body.admin-v2 .admin-v2-public-link,\n  .admin-body.admin-v2 .admin-v2-profile,\n  .admin-body.admin-v2 .admin-v2-logout,\n  .admin-body.admin-v2 .admin-v2-icon-button,\n  .admin-body.admin-v2 .admin-v2-button,\n  .admin-body.admin-v2 .admin-panel .admin-v2-button,\n  .admin-body.admin-v2 .admin-v2-subnav button,\n  .admin-body.admin-v2 .admin-v2-task-item > button {\n    min-height: 44px;\n  }\n\n  .admin-body.admin-v2 .admin-v2-icon-button {\n    width: 44px;\n    height: 44px;\n  }\n`;
-    workspaceCss = workspaceCss.replace(physicalTouchBlock, '');
-
-    fs.writeFileSync(adminHtmlPath, adminHtml, 'utf8');
-    fs.writeFileSync(workspaceCssPath, workspaceCss, 'utf8');
-}
-
+const adminHtml = fs.readFileSync(adminHtmlPath, 'utf8');
 const styles = localStylesheets(adminHtml);
 if (styles.length !== 1 || !styles[0].startsWith('/admin-v2.css')) {
-    fail(`admin/index.html must load exactly one local stylesheet (/admin-v2.css). Found: ${styles.join(', ') || 'none'}`);
+  fail(`admin/index.html must load exactly one local stylesheet (/admin-v2.css). Found: ${styles.join(', ') || 'none'}`);
 }
-
 if (/\/style\.css(?:\?|["'])/i.test(adminHtml)) {
-    fail('admin/index.html still references the public /style.css bundle.');
+  fail('admin/index.html must not load the public /style.css bundle.');
 }
 
-for (const oldPath of forbiddenPublicSources) {
-    if (fs.existsSync(oldPath)) {
-        fail(`admin-only source still exists in public src/styles: ${path.relative(root, oldPath)}`);
-    }
+const actualFiles = fs.readdirSync(adminStyleDir)
+  .filter(name => name.endsWith('.css'))
+  .sort((a, b) => a.localeCompare(b, 'en'));
+const expectedSorted = [...expectedFiles].sort((a, b) => a.localeCompare(b, 'en'));
+if (JSON.stringify(actualFiles) !== JSON.stringify(expectedSorted)) {
+  fail(`admin source manifest differs. Expected: ${expectedSorted.join(', ')}. Found: ${actualFiles.join(', ')}`);
 }
 
-if (!workspaceCss.includes('font-size: 12px;') || workspaceCss.includes('font-size: 9px;\n  line-height: 1.2;')) {
-    fail('admin status typography was not normalized to 12px in the admin source.');
+const cssByFile = new Map();
+for (const name of actualFiles) {
+  if (/^(?:zy|zz)|legacy|override|polish|final-fix|hotfix/i.test(name)) {
+    fail(`temporary/cascade-order filename is forbidden: ${name}`);
+  }
+  const css = fs.readFileSync(path.join(adminStyleDir, name), 'utf8');
+  const rules = cssRules(css);
+  cssByFile.set(name, rules);
+  if (rules.includes('!important')) {
+    fail(`!important declaration is forbidden in admin CSS: ${name}`);
+  }
+  if (/\.foglalas-(?:oldal|asszisztens|nyito|ut-kartya)\b/.test(rules)) {
+    fail(`public booking-page CSS leaked into admin bundle: ${name}`);
+  }
 }
 
-const adminCssSources = fs.readdirSync(adminStyleDir)
-    .filter(name => name.endsWith('.css'))
-    .sort((left, right) => left.localeCompare(right, 'en'));
-
-if (adminCssSources.at(-1) !== 'zz-admin-interaction.css') {
-    fail(`zz-admin-interaction.css must remain the final admin CSS source. Current last source: ${adminCssSources.at(-1) || 'none'}`);
+const componentCss = cssByFile.get('10-components.css');
+const requiredTokens = [
+  '--admin-ui-field-height:',
+  '--admin-ui-choice-height:',
+  '--admin-ui-button-height:',
+  '--admin-ui-icon-button-size:',
+  '--admin-ui-touch-target:',
+  '--admin-ui-control-radius:',
+  '--admin-ui-field-padding-x:',
+  '--admin-ui-choice-padding-x:',
+  '--admin-ui-button-padding-x:',
+  '--admin-ui-action-font-size:',
+  '--admin-ui-placeholder-font-size:'
+];
+for (const token of requiredTokens) {
+  if (!componentCss.includes(token)) fail(`canonical component token is missing: ${token}`);
 }
 
-const interactionCss = fs.readFileSync(interactionCssPath, 'utf8');
-const requiredControlTokens = [
-    '--admin-ui-field-height:',
-    '--admin-ui-choice-height:',
-    '--admin-ui-button-height:',
-    '--admin-ui-icon-button-size:',
-    '--admin-ui-touch-target:',
-    '--admin-ui-control-radius:',
-    '--admin-ui-field-padding-x:',
-    '--admin-ui-choice-padding-x:',
-    '--admin-ui-button-padding-x:',
-    '--admin-ui-action-font-size:',
-    '--admin-ui-placeholder-font-size:'
+/* Feature IDs have one feature owner. The workspace may also scope its generic
+   page-action shell to a panel; that remains workspace ownership, not feature styling. */
+const ownership = [
+  { pattern: '#admin-panel-foglalasok', owners: ['20-workspace.css', '30-bookings.css'] },
+  { pattern: '#admin-panel-szolgaltatasok', owners: ['50-services.css'] },
+  { pattern: '#admin-panel-kuponok', owners: ['60-coupons.css'] },
+  { pattern: '#admin-panel-idosavok', owners: ['70-availability.css'] },
+  { pattern: '#admin-idosav-', owners: ['70-availability.css'] },
+  { pattern: '#admin-tiltas-', owners: ['70-availability.css'] },
+  { pattern: '#admin-panel-esemenynaplo', owners: ['80-communications.css'] },
+  { pattern: '#admin-esemenynaplo-', owners: ['80-communications.css'] },
+  { pattern: '.admin-email-teszt-', owners: ['80-communications.css'] },
+  { pattern: '#admin-panel-szovegek', owners: ['40-content-editor.css', '45-gallery-editor.css'] }
 ];
 
-for (const token of requiredControlTokens) {
-    if (!interactionCss.includes(token)) {
-        fail(`canonical admin control token is missing: ${token}`);
-    }
+for (const rule of ownership) {
+  const offenders = actualFiles.filter(name => {
+    if (rule.owners.includes(name)) return false;
+    return cssByFile.get(name).includes(rule.pattern);
+  });
+  if (offenders.length) {
+    fail(`${rule.pattern} has non-owner CSS: ${offenders.join(', ')}; owner: ${rule.owners.join(' / ')}`);
+  }
 }
 
-if (!interactionCss.includes('height: var(--admin-ui-field-height);') ||
-    !interactionCss.includes('min-height: var(--admin-ui-field-height);')) {
-    fail('editable admin fields are not owned by the canonical field-height token.');
+const panelStateCss = cssByFile.get('05-panel-state.css');
+if (!panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel') ||
+    !panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel.aktiv')) {
+  fail('canonical panel visibility rules must live in 05-panel-state.css.');
 }
 
-if (!interactionCss.includes('select,') ||
-    !interactionCss.includes('.admin-db-statusz {') ||
-    !interactionCss.includes('height: var(--admin-ui-choice-height);')) {
-    fail('admin select/status choices are not owned by the canonical choice-control role.');
+const responsiveContextCss = cssByFile.get('15-responsive-context.css');
+if (!responsiveContextCss.includes('container: admin-workspace / inline-size')) {
+  fail('named admin-workspace responsive context must live in 15-responsive-context.css.');
 }
 
-if (!interactionCss.includes('height: var(--admin-ui-button-height);')) {
-    fail('admin text buttons are not owned by the canonical button-height token.');
+const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-assets.js'), 'utf8');
+for (const name of expectedFiles) {
+  if (!buildScript.includes(`'${name}'`)) fail(`admin bundle order is missing ${name}`);
 }
-
-if (!interactionCss.includes('font-size: var(--admin-ui-action-font-size);')) {
-    fail('admin action/button typography is not owned by the canonical action-font token.');
-}
-
-const statusTypographyBlock = interactionCss.match(/\.admin-body\.admin-v2 \.admin-statusz,[\s\S]*?\.admin-allapot-jelzes \{[\s\S]*?\}/)?.[0] || '';
-if (!statusTypographyBlock.includes('font-size: var(--admin-ui-action-font-size);')) {
-    fail('display-only admin statuses must use the same font-size token as buttons.');
-}
-
-if (!interactionCss.includes('::placeholder') ||
-    !interactionCss.includes('font-size: var(--admin-ui-placeholder-font-size);')) {
-    fail('admin placeholder typography is not owned by the canonical placeholder token.');
-}
-
-if (!interactionCss.includes('width: var(--admin-ui-icon-button-size);') ||
-    !interactionCss.includes('var(--admin-ui-touch-target)')) {
-    fail('admin icon buttons do not preserve compact visuals with a tokenized touch target.');
-}
-
-if (interactionCss.includes('--lumi-input-optical-ratio: 0.3')) {
-    fail('status selectors must not use the old input-specific optical-size override in the final component layer.');
-}
-
-if (interactionCss.includes('!important')) {
-    fail('the canonical admin component layer must use the cascade, not !important.');
+if (!buildScript.includes('files: ADMIN_STYLE_FILES')) {
+  fail('admin bundle must use an explicit source manifest instead of filename sorting.');
 }
 
 const config = fs.readFileSync(path.join(root, 'supabase-config.js'), 'utf8');
 if (!config.includes('isAdminPath') || !config.includes('isAdminPath || document.querySelector')) {
-    fail('supabase-config.js does not explicitly exclude admin from public typography-tuning.css injection.');
+  fail('supabase-config.js does not explicitly exclude admin from public typography injection.');
 }
 
 if (!process.exitCode) {
-    console.log(`OK admin CSS isolation and component system: ${styles[0]}`);
+  console.log(`OK admin CSS architecture: ${expectedFiles.length} explicit sources -> ${styles[0]}`);
 }

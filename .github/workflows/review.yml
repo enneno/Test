@@ -31,5 +31,5 @@ jobs:
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
-      - name: Verify site
-        run: npm run verify
+      - name: Verify admin
+        run: npm run verify:admin

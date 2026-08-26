@@ -1,0 +1,319 @@
+/* Availability, bookable dates and blocked-time management.
+   This file owns #admin-panel-idosavok, #admin-idosav-* and #admin-tiltas-* layouts. */
+
+.admin-body.admin-v2 #admin-panel-idosavok > .admin-panel-akciok { margin: 0 0 11px; }
+.admin-body.admin-v2 #admin-panel-idosavok .admin-idosav-lista-akciok {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.admin-body.admin-v2 .admin-naptar-blokk {
+  min-width: 0;
+  margin-bottom: 20px;
+  padding: 14px;
+  border: 1px solid rgba(185, 133, 143, .16);
+  border-radius: 16px;
+  background: rgba(185, 133, 143, .06);
+}
+.admin-body.admin-v2 .admin-naptar-fej,
+.admin-body.admin-v2 .admin-naptar-lista-fej {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.admin-body.admin-v2 .admin-naptar-fej { align-items: end; }
+.admin-body.admin-v2 .admin-naptar-akciok { display: flex; gap: 10px; }
+.admin-body.admin-v2 .admin-naptar-napnevek,
+.admin-body.admin-v2 .admin-naptar-racs {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.admin-body.admin-v2 .admin-naptar-napnevek {
+  margin-bottom: 8px;
+  color: var(--barna);
+  font-size: var(--lumi-font-caption);
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+.admin-body.admin-v2 .admin-naptar-nap {
+  min-height: 48px;
+  border: 1px solid rgba(185, 133, 143, .18);
+  border-radius: 12px;
+  color: var(--tinta);
+  background: #fffdf8;
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--lumi-font-label);
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+.admin-body.admin-v2 .admin-naptar-nap:hover {
+  border-color: rgba(185, 133, 143, .42);
+  background: rgba(185, 133, 143, .08);
+}
+.admin-body.admin-v2 .admin-naptar-nap.kijelolt {
+  border-color: var(--akcentus);
+  color: #fffaf4;
+  background: var(--akcentus);
+}
+.admin-body.admin-v2 .admin-naptar-ures { min-height: 48px; }
+.admin-body.admin-v2 .admin-naptar-kijelolt-lista {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.admin-body.admin-v2 .admin-naptar-sor {
+  display: grid;
+  grid-template-columns: minmax(138px, 1fr) minmax(96px, .55fr) minmax(96px, .55fr) auto;
+  align-items: end;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid rgba(185, 133, 143, .16);
+  border-radius: 12px;
+  background: rgba(255, 250, 244, .78);
+}
+.admin-body.admin-v2 .admin-naptar-datum {
+  color: var(--barna);
+  font-size: var(--lumi-font-label);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.admin-body.admin-v2 .admin-kozos-idosav-sor {
+  display: grid;
+  grid-template-columns: minmax(112px, 140px) minmax(112px, 140px) minmax(72px, 86px) auto;
+  align-items: end;
+  justify-content: start;
+  gap: 10px;
+}
+.admin-body.admin-v2 .admin-idosav-grid {
+  display: grid;
+  grid-template-columns: minmax(132px, 1.2fr) minmax(82px, .7fr) minmax(82px, .7fr) auto;
+  align-items: end;
+  gap: 8px;
+}
+.admin-body.admin-v2 .admin-idosav-kartya { padding: 12px; }
+
+/* Final compact bookable-date workspace */
+.admin-body.admin-v2 #admin-idosav-naptar {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  grid-template-areas:
+    "month bulk"
+    "weekdays selected-title"
+    "calendar selected-list"
+    "status status";
+  align-items: start;
+  gap: 8px 18px;
+  margin: 0 0 12px;
+  padding: 14px;
+  background: #f8f4f0;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej {
+  grid-area: month;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+  margin: 0;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej .admin-mezo {
+  width: 100%;
+  max-width: none;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-akciok {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-napnevek {
+  grid-area: weekdays;
+  gap: 4px;
+  margin-top: 5px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-racs {
+  grid-area: calendar;
+  gap: 4px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-nap,
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-ures { min-height: 36px; }
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-nap {
+  border-radius: 7px;
+  font-size: var(--lumi-font-label);
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor {
+  grid-area: bulk;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(86px, 1fr)) auto;
+  align-items: end;
+  gap: 7px;
+  margin: 0;
+  padding: 0 0 11px;
+  border-bottom: 1px solid var(--admin-line);
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor > .admin-mezo,
+.admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor > .admin-hozzaadas {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej {
+  grid-area: selected-title;
+  align-items: center;
+  margin: 0;
+  padding-top: 3px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej h3 {
+  margin: 0;
+  font-size: 22px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-kijelolt-lista {
+  grid-area: selected-list;
+  max-height: 252px;
+  margin: 0;
+  padding-right: 3px;
+  overflow-y: auto;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor {
+  grid-template-columns: minmax(80px, .85fr) minmax(72px, 1fr) minmax(72px, 1fr) 34px;
+  gap: 6px;
+  padding: 7px;
+  border-radius: 8px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar #admin-naptar-status {
+  grid-area: status;
+  margin: 2px 0 0;
+}
+
+.admin-body.admin-v2 #admin-idosav-lista {
+  gap: 0;
+  border-top: 1px solid var(--admin-line);
+}
+.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya {
+  padding: 9px 7px;
+  border: 0;
+  border-bottom: 1px solid var(--admin-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
+  grid-template-columns: minmax(160px, 1.2fr) minmax(100px, .65fr) minmax(100px, .65fr) 36px;
+  align-items: center;
+  gap: 8px;
+}
+.admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid .admin-mezo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  font-size: var(--lumi-font-label);
+}
+
+/* Blocked times */
+.admin-body.admin-v2 #admin-tiltas-form {
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8f4f0;
+}
+.admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, .58fr) minmax(0, .58fr) minmax(0, 1.4fr);
+  align-items: end;
+  gap: 8px;
+  margin: 0;
+}
+.admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo,
+.admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles {
+  grid-column: auto;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
+.admin-body.admin-v2 #admin-tiltas-lista {
+  gap: 0;
+  border-top: 1px solid var(--admin-line);
+}
+.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya {
+  padding: 12px 7px;
+  border: 0;
+  border-bottom: 1px solid var(--admin-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+.admin-body.admin-v2 #admin-tiltas-lista .admin-kartya-tipus { margin-bottom: 3px; }
+.admin-body.admin-v2 #admin-tiltas-lista h3 { font-size: 21px; }
+.admin-body.admin-v2 #admin-tiltas-lista p {
+  margin-top: 3px;
+  color: var(--admin-muted);
+  font-size: var(--lumi-font-body-small);
+}
+
+@container admin-workspace (max-width: 700px) {
+  .admin-body.admin-v2 #admin-idosav-naptar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "month"
+      "weekdays"
+      "calendar"
+      "bulk"
+      "selected-title"
+      "selected-list"
+      "status";
+  }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor {
+    margin-top: 8px;
+    padding-top: 11px;
+    border-top: 1px solid var(--admin-line);
+  }
+  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor { grid-template-columns: 1fr 1fr; }
+  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo:first-child,
+  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles { grid-column: 1 / -1; }
+}
+
+@container admin-workspace (max-width: 480px) {
+  .admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya,
+  .admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya { padding-inline: 3px; }
+  .admin-body.admin-v2 #admin-idosav-naptar { padding: 11px; }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej { grid-template-columns: 1fr; }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej {
+    flex-direction: row;
+    align-items: center;
+  }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-kijelolt-lista { max-height: 300px; }
+  .admin-body.admin-v2 #admin-panel-idosavok .admin-idosav-lista-akciok {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-body.admin-v2 #admin-panel-idosavok .admin-idosav-lista-akciok > * { width: 100%; }
+  .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
+    grid-template-columns: minmax(96px, 1.2fr) repeat(2, minmax(58px, .7fr)) 34px;
+    gap: 5px;
+  }
+  .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid .admin-mezo {
+    display: block;
+    font-size: 0;
+  }
+  .admin-body.admin-v2 #admin-tiltas-form { padding: 10px; }
+  .admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+}

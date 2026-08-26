@@ -1,0 +1,15 @@
+/* Admin panel state only.
+   This file owns whether workspace panels participate in layout. */
+
+.admin-body.admin-v2 .admin-db-panel {
+  display: none;
+}
+
+.admin-body.admin-v2 .admin-db-panel.aktiv {
+  display: block;
+}
+
+.admin-body.admin-v2 .admin-panel {
+  min-width: 0;
+  max-width: 100%;
+}
