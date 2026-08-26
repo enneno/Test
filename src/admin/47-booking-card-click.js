@@ -41,7 +41,9 @@
         const reszletekGomb = kartya.querySelector('[data-foglalas-reszletek]');
         if (!reszletekGomb) return;
         if (!kartya.hasAttribute('tabindex')) kartya.tabIndex = 0;
-        kartya.classList.add('admin-foglalas-kartya-kattinthato');
+        if (!kartya.classList.contains('admin-foglalas-kartya-kattinthato')) {
+            kartya.classList.add('admin-foglalas-kartya-kattinthato');
+        }
         kartyaAriaFrissitese(kartya);
     }
 
