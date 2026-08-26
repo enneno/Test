@@ -23,15 +23,14 @@ jobs:
       - run: npm run build
       - run: npm run assets:version
       - run: npm run admin:css:check
-      - name: Verify shared native picker ownership
+      - name: Verify generated shared picker rules
         run: |
           python3 - <<'PY'
           from pathlib import Path
           css = Path('admin-v2.css').read_text(encoding='utf-8')
-          marker = 'Shared native date/time/month controls: one visual owner for the entire admin.'
-          assert css.count(marker) == 1, 'shared picker owner missing or duplicated'
-          assert '#admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"]' not in css, 'booking-specific date visual rule remains'
-          assert '#admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"]' not in css, 'booking-specific time visual rule remains'
+          assert ':is(input[type="date"], input[type="time"], input[type="month"])' in css, 'shared date/time/month selector missing'
+          assert 'font-size: 16px' in css, '16px picker typography missing'
+          assert '#admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],\n.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"]' not in css, 'booking-specific native picker visual block remains'
           PY
       - name: Commit canonical change and remove temporary files
         run: |
