@@ -36,9 +36,12 @@ test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async 
         'admin/index.html',
         'src/admin/00-bootstrap-auth-calendar.js',
         'admin-content.js',
-        'src/admin-styles/admin-workspace-v2.css',
+        'src/admin-styles/05-panel-state.css',
+        'src/admin-styles/10-components.css',
+        'src/admin-styles/20-workspace.css',
+        'src/admin-styles/30-bookings.css',
+        'src/admin-styles/40-content-editor.css',
         'src/styles/10-public-components.css',
-        'src/styles/40-admin.css',
         'src/styles/99-unified-design.css'
     ];
 
@@ -47,6 +50,7 @@ test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async 
         expect(source, file).not.toContain('admin-lebego-mentes');
     }
 });
+
 test('az admin Regisztrált tagok nézete csak az Auth-fiókok minimális adatait kéri le', async () => {
     const source = fs.readFileSync(
         path.resolve(__dirname, '..', 'src', 'admin', '12-customer-profiles.js'),
