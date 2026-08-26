@@ -9,6 +9,7 @@ const adminStyleDir = path.join(root, 'src', 'admin-styles');
 
 const expectedFiles = [
   '00-foundation.css',
+  '05-panel-state.css',
   '10-components.css',
   '20-workspace.css',
   '30-bookings.css',
@@ -111,6 +112,12 @@ for (const rule of ownership) {
   if (offenders.length) {
     fail(`${rule.pattern} has non-owner CSS: ${offenders.join(', ')}; owner: ${rule.owners.join(' / ')}`);
   }
+}
+
+const panelStateCss = cssByFile.get('05-panel-state.css');
+if (!panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel') ||
+    !panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel.aktiv')) {
+  fail('canonical panel visibility rules must live in 05-panel-state.css.');
 }
 
 const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-assets.js'), 'utf8');
