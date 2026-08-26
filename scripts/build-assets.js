@@ -5,6 +5,7 @@ const root = path.resolve(__dirname, '..');
 
 const ADMIN_STYLE_FILES = [
     '00-foundation.css',
+    '05-panel-state.css',
     '20-workspace.css',
     '30-bookings.css',
     '40-content-editor.css',
