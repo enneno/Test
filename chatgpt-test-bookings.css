@@ -14,11 +14,21 @@
   transform: translateY(-5px);
 }
 
+/* Date + start + end stay on one compact row. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr) minmax(0, .9fr);
+  gap: 6px;
+  align-items: end;
+}
+
+/* Canonical booking CSS makes Date span both columns; the test layout keeps it in column 1. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]) {
+  grid-column: auto;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+  box-sizing: border-box;
+  width: 100%;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -26,24 +36,25 @@
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
+  position: relative;
+  display: block;
   box-sizing: border-box;
-  inline-size: calc(100% - 2px);
-  width: calc(100% - 2px);
-  max-inline-size: calc(100% - 2px);
-  max-width: calc(100% - 2px);
+  inline-size: 100%;
+  width: 100%;
+  max-inline-size: 100%;
+  max-width: 100%;
   min-inline-size: 0;
   min-width: 0;
-  height: 38px;
-  min-height: 38px;
-  padding: 0 27px 0 8px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 24px 0 6px;
   overflow: hidden;
-  font-size: 12px;
+  background-position: right 6px center;
+  background-size: 14px 14px;
+  font-size: 11px;
   line-height: 1;
+  text-align: left;
   white-space: nowrap;
-}
-
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"] {
-  text-align: center;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
@@ -57,12 +68,9 @@
   overflow: hidden;
   font-size: inherit;
   line-height: 1;
+  text-align: left;
   text-overflow: clip;
   white-space: nowrap;
-}
-
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"]::-webkit-date-and-time-value {
-  text-align: center;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
@@ -78,9 +86,16 @@
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-calendar-picker-indicator {
-  width: 20px;
-  max-width: 20px;
-  margin: 0 -2px 0 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  max-width: 28px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
@@ -88,5 +103,21 @@
     height: 78px;
     min-height: 78px;
     padding-block: 6px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr) minmax(0, .9fr);
+    gap: 5px;
+  }
+
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
+    height: 34px;
+    min-height: 34px;
+    padding-right: 21px;
+    padding-left: 5px;
+    background-position: right 5px center;
+    background-size: 13px 13px;
+    font-size: 10px;
   }
 }
