@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -149,7 +149,63 @@ jobs:
 
       - name: Restore standard workflow and commit clean result
         run: |
-          git show HEAD^:.github/workflows/pages.yml > .github/workflows/pages.yml
+          cat > .github/workflows/pages.yml <<'EOF'
+          name: Deploy static site to Pages
+
+          on:
+            push:
+              branches:
+                - main
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+            pages: write
+            id-token: write
+
+          concurrency:
+            group: pages
+            cancel-in-progress: true
+
+          jobs:
+            deploy:
+              environment:
+                name: github-pages
+                url: ${{ steps.deployment.outputs.page_url }}
+              runs-on: ubuntu-latest
+              steps:
+                - name: Checkout
+                  uses: actions/checkout@v4
+
+                - name: Setup Node
+                  uses: actions/setup-node@v4
+                  with:
+                    node-version: 24
+                    cache: npm
+
+                - name: Install dependencies
+                  run: npm ci
+
+                - name: Install Edge for Playwright
+                  run: npx playwright install --with-deps msedge
+
+                - name: Verify admin release
+                  run: npm run verify:admin
+
+                - name: Setup Pages
+                  uses: actions/configure-pages@v5
+
+                - name: Upload static files
+                  uses: actions/upload-pages-artifact@v4
+                  with:
+                    path: .
+                    include-hidden-files: true
+
+                - name: Deploy to GitHub Pages
+                  id: deployment
+                  uses: actions/deploy-pages@v4
+          EOF
+          sed -i 's/^          //' .github/workflows/pages.yml
           rm -f .github/workflows/one-time-booking-picker-final-v2.yml
           rm -f scripts/booking-picker-final-trigger.txt
           git config user.name "github-actions[bot]"
