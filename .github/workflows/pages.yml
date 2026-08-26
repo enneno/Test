@@ -37,8 +37,14 @@ jobs:
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
-      - name: Verify site
-        run: npm run verify
+      - name: Build and validate site
+        run: |
+          npm run build
+          npm run assets:version
+          npm run check
+
+      - name: Verify production admin
+        run: npx playwright test tests/admin-production-redesign.spec.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
