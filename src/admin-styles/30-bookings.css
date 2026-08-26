@@ -45,6 +45,12 @@
   grid-template-rows: auto var(--admin-ui-choice-height);
 }
 
+.admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-statusz-szuro {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-input {
   position: relative;
   min-width: 0;
