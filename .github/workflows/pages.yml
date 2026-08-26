@@ -4,16 +4,15 @@ on:
   push:
     branches:
       - main
-      - CHATGPT_TEST
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -25,8 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,173 +34,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply CHATGPT_TEST booking UI fix
-        if: github.ref == 'refs/heads/CHATGPT_TEST'
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path('src/admin-styles/30-bookings.css')
-          css = path.read_text(encoding='utf-8')
-
-          replacements = [
-              (
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
-  height: 96px;
-  min-height: 96px;
-}''',
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
-  height: 78px;
-  min-height: 78px;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-foglalas-idopont {
-  top: 13px;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-foglalas-vezerlok {
-  transform: translateY(-5px);
-}'''
-              ),
-              (
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
-  grid-column: 1 / -1;
-}''',
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
-  grid-column: 1 / -1;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has(input[type="date"]),
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has(input[type="time"]) {
-  overflow: hidden;
-}'''
-              ),
-              (
-                  '''  inline-size: 100%;
-  width: 100%;
-  max-inline-size: 100%;
-  max-width: 100%;
-  min-inline-size: 0;
-  min-width: 0;
-  height: 42px;
-  min-height: 42px;
-  padding: 0 32px 0 10px;''',
-                  '''  inline-size: calc(100% - 1px);
-  width: calc(100% - 1px);
-  max-inline-size: calc(100% - 1px);
-  max-width: calc(100% - 1px);
-  min-inline-size: 0;
-  min-width: 0;
-  height: 38px;
-  min-height: 38px;
-  padding: 0 28px 0 8px;'''
-              ),
-              (
-                  '''  font-size: 13px;
-  font-weight: 720;
-  line-height: 1;
-  text-align: left;
-}''',
-                  '''  font-size: 12px;
-  font-weight: 720;
-  line-height: 1;
-  text-align: left;
-}'''
-              ),
-              (
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  text-align: left;
-  white-space: nowrap;
-}''',
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-size: inherit;
-  text-align: left;
-  text-overflow: clip;
-  white-space: nowrap;
-}'''
-              ),
-              (
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}''',
-                  '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}'''
-              ),
-              (
-                  '''  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { min-height: 96px; gap: 4px 10px; padding: 8px 0; }''',
-                  '''  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { min-height: 78px; gap: 4px 10px; padding: 6px 0; }'''
-              )
-          ]
-
-          for old, new in replacements:
-              if old not in css:
-                  raise SystemExit(f'Expected CSS block not found:\n{old[:120]}')
-              css = css.replace(old, new, 1)
-
-          path.write_text(css, encoding='utf-8')
-          PY
-
-      - name: Build generated assets
-        if: github.ref == 'refs/heads/CHATGPT_TEST'
-        run: npm run build
-
-      - name: Refresh asset versions
-        if: github.ref == 'refs/heads/CHATGPT_TEST'
-        run: npm run assets:version
-
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
       - name: Verify admin release
         run: npm run verify:admin
 
-      - name: Commit verified CHATGPT_TEST result
-        if: github.ref == 'refs/heads/CHATGPT_TEST'
-        shell: bash
-        run: |
-          git checkout origin/main -- .github/workflows/pages.yml
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/admin-styles/30-bookings.css admin-v2.css admin/index.html .github/workflows/pages.yml
-          git commit -m "Compact booking cards and contain iOS pickers"
-          git push origin HEAD:CHATGPT_TEST
-
       - name: Setup Pages
-        if: github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
 
       - name: Upload static files
-        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
           include-hidden-files: true
 
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v4
