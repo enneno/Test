@@ -1,7 +1,7 @@
 /* Final booking-card polish.
    Icons use Lucide shapes from the Lucide family available in the 21st icon catalog.
-   Keep this file after zz-admin-interaction.css so these booking-specific rules own
-   the final mobile geometry without changing the canonical global control tokens. */
+   Keep this file near the end of the admin CSS sources so these booking-specific rules
+   own the final mobile geometry without changing the canonical global control tokens. */
 
 .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok {
   --booking-status-width: 142px;
