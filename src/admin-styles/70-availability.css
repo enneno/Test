@@ -319,10 +319,6 @@
     align-self: center;
     justify-self: end;
   }
-  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor input[type="time"] {
-    width: 100%;
-    min-width: 0;
-  }
   .admin-body.admin-v2 #admin-panel-idosavok .admin-idosav-lista-akciok {
     display: grid;
     grid-template-columns: 1fr 1fr;
