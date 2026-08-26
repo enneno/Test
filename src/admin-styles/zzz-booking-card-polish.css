@@ -15,8 +15,8 @@
    Normal bookings keep an invisible calendar slot, so the status never jumps
    horizontally when the real calendar action is absent. */
 .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-vezerlok {
-  display: grid !important;
-  grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size) !important;
+  display: grid;
+  grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);
   grid-template-rows: var(--booking-action-size);
   align-items: center;
   justify-content: end;
@@ -27,9 +27,9 @@
 
 .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-db-statusz {
   grid-column: 1;
-  width: var(--booking-status-width) !important;
-  min-width: var(--booking-status-width) !important;
-  max-width: var(--booking-status-width) !important;
+  width: var(--booking-status-width);
+  min-width: var(--booking-status-width);
+  max-width: var(--booking-status-width);
 }
 
 .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-kezi-ido-naptar {
@@ -51,9 +51,9 @@
 /* Status colors are presentation, not edit-state decoration: they stay visible
    both while the select is disabled and while it is editable. */
 .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-statusz-pending .admin-db-statusz {
-  color: #8a621b !important;
-  border-color: #e4c98c !important;
-  background-color: #fbf2dc !important;
+  color: #8a621b;
+  border-color: #e4c98c;
+  background-color: #fbf2dc;
   -webkit-text-fill-color: currentColor;
   opacity: 1;
 }
@@ -63,9 +63,9 @@
   .admin-foglalas-statusz-done,
   .admin-foglalas-statusz-blocked
 ) .admin-db-statusz {
-  color: #426e50 !important;
-  border-color: #c2d9c9 !important;
-  background-color: #edf6ef !important;
+  color: #426e50;
+  border-color: #c2d9c9;
+  background-color: #edf6ef;
   -webkit-text-fill-color: currentColor;
   opacity: 1;
 }
@@ -74,9 +74,9 @@
   .admin-foglalas-statusz-cancelled,
   .admin-foglalas-statusz-cancelled_by_customer
 ) .admin-db-statusz {
-  color: #96494e !important;
-  border-color: #e1bcc0 !important;
-  background-color: #faecee !important;
+  color: #96494e;
+  border-color: #e1bcc0;
+  background-color: #faecee;
   -webkit-text-fill-color: currentColor;
   opacity: 1;
 }
@@ -218,9 +218,9 @@
   }
 
   .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-db-kartya-tiltas:not(.szerkeszt) .admin-db-statusz:disabled {
-    width: var(--booking-status-width) !important;
-    min-width: var(--booking-status-width) !important;
-    max-width: var(--booking-status-width) !important;
+    width: var(--booking-status-width);
+    min-width: var(--booking-status-width);
+    max-width: var(--booking-status-width);
   }
 
   .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-foglalas-reszletek,
