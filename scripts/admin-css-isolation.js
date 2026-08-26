@@ -88,8 +88,10 @@ for (const token of requiredTokens) {
   if (!componentCss.includes(token)) fail(`canonical component token is missing: ${token}`);
 }
 
+/* Feature IDs have one feature owner. The workspace may also scope its generic
+   page-action shell to a panel; that remains workspace ownership, not feature styling. */
 const ownership = [
-  { pattern: '#admin-panel-foglalasok', owners: ['30-bookings.css'] },
+  { pattern: '#admin-panel-foglalasok', owners: ['20-workspace.css', '30-bookings.css'] },
   { pattern: '#admin-panel-szolgaltatasok', owners: ['50-services.css'] },
   { pattern: '#admin-panel-kuponok', owners: ['60-coupons.css'] },
   { pattern: '#admin-panel-idosavok', owners: ['70-availability.css'] },
