@@ -1,0 +1,86 @@
+name: Fix CHATGPT_TEST picker centering and status clipping
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-picker-centering-status.yml'
+permissions:
+  contents: write
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - name: Apply targeted canonical CSS changes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          components = Path('src/admin-styles/10-components.css')
+          bookings = Path('src/admin-styles/30-bookings.css')
+          c = components.read_text(encoding='utf-8')
+          b = bookings.read_text(encoding='utf-8')
+
+          old = '''  padding: 0 20px 0 5px;\n  overflow: hidden;'''
+          new = '''  padding: 0 30px 0 5px;\n  overflow: hidden;'''
+          if c.count(old) != 1:
+              raise SystemExit(f'Expected exactly one shared picker padding block, found {c.count(old)}')
+          c = c.replace(old, new, 1)
+
+          old = '''  overflow: hidden;\n  font-size: 20px;\n  line-height: 1;\n  text-align: center;\n  white-space: nowrap;'''
+          new = '''  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  overflow: hidden;\n  font-size: 20px;\n  line-height: 1.1;\n  text-align: center;\n  white-space: nowrap;'''
+          if c.count(old) != 1:
+              raise SystemExit(f'Expected one WebKit value block, found {c.count(old)}')
+          c = c.replace(old, new, 1)
+
+          old = '''  margin: 0;\n  padding: 0;\n  font-size: 20px;\n  line-height: 1;\n}\n\n.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(\n  input[type="date"]::-webkit-datetime-edit-year-field,'''
+          new = '''  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n  font-size: 20px;\n  line-height: 1.1;\n}\n\n.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(\n  input[type="date"]::-webkit-datetime-edit-year-field,'''
+          if c.count(old) != 1:
+              raise SystemExit(f'Expected one WebKit edit wrapper block, found {c.count(old)}')
+          c = c.replace(old, new, 1)
+
+          old = '''  font-size: 20px;\n  line-height: 1;\n}\n\n.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]):focus {'''
+          new = '''  font-size: 20px;\n  line-height: 1.1;\n}\n\n.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]):focus {'''
+          if c.count(old) != 1:
+              raise SystemExit(f'Expected one WebKit field line-height block, found {c.count(old)}')
+          c = c.replace(old, new, 1)
+
+          old = '''  letter-spacing: -.01em;\n  line-height: 1;\n  text-align: center;'''
+          new = '''  letter-spacing: -.01em;\n  line-height: 1.25;\n  text-align: center;'''
+          if b.count(old) != 1:
+              raise SystemExit(f'Expected one common status line-height block, found {b.count(old)}')
+          b = b.replace(old, new, 1)
+
+          components.write_text(c, encoding='utf-8')
+          bookings.write_text(b, encoding='utf-8')
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify targeted result
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          c = Path('src/admin-styles/10-components.css').read_text(encoding='utf-8')
+          b = Path('src/admin-styles/30-bookings.css').read_text(encoding='utf-8')
+          assert 'padding: 0 30px 0 5px;' in c
+          assert c.count('font-size: 20px;') >= 4
+          assert 'align-items: center;' in c
+          assert 'justify-content: center;' in c
+          assert 'line-height: 1.25;' in b
+          PY
+      - name: Commit and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/chatgpt-test-picker-centering-status.yml
+          git add src/admin-styles/10-components.css src/admin-styles/30-bookings.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-picker-centering-status.yml
+          git commit -m "Center shared date controls and fix status text clipping"
+          git push origin HEAD:CHATGPT_TEST
