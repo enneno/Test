@@ -1,23 +1,43 @@
 /* CHATGPT_TEST only: compact collapsed booking cards and iOS picker containment. */
 
+.admin-body.admin-v2 #admin-panel-foglalasok {
+  --booking-status-width: 176px;
+}
+
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
   height: 78px;
   min-height: 78px;
   padding-block: 6px;
 }
 
+/* Keep the appointment date/time a little higher, away from the action row. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-foglalas-idopont {
-  top: 13px;
+  top: 8px;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-foglalas-vezerlok {
   transform: translateY(-5px);
 }
 
+/* Regular bookings only have status + edit. Do not reserve an invisible calendar-button slot. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar)) {
+  grid-template-columns: var(--booking-status-width) var(--booking-action-size);
+  width: calc(var(--booking-status-width) + var(--booking-action-size) + 5px);
+  min-width: calc(var(--booking-status-width) + var(--booking-action-size) + 5px);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
+  display: none;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar)) > [data-foglalas-szerkesztes] {
+  grid-column: 2;
+}
+
 /* Date + start + end stay on one compact row. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr) minmax(0, .9fr);
-  gap: 6px;
+  grid-template-columns: minmax(0, 1.28fr) minmax(0, .86fr) minmax(0, .86fr);
+  gap: 8px;
   align-items: end;
 }
 
@@ -39,19 +59,21 @@
   position: relative;
   display: block;
   box-sizing: border-box;
-  inline-size: 100%;
-  width: 100%;
-  max-inline-size: 100%;
-  max-width: 100%;
+  inline-size: calc(100% - 2px);
+  width: calc(100% - 2px);
+  max-inline-size: calc(100% - 2px);
+  max-width: calc(100% - 2px);
   min-inline-size: 0;
   min-width: 0;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 24px 0 6px;
+  height: 34px;
+  min-height: 34px;
+  margin: 0 2px 0 0;
+  padding: 0 19px 0 5px;
   overflow: hidden;
-  background-position: right 6px center;
-  background-size: 14px 14px;
-  font-size: 11px;
+  background-position: right 4px center;
+  background-size: 12px 12px;
+  font-size: 9px;
+  font-weight: 680;
   line-height: 1;
   text-align: left;
   white-space: nowrap;
@@ -89,8 +111,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 28px;
-  max-width: 28px;
+  width: 24px;
+  max-width: 24px;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -99,6 +121,10 @@
 }
 
 @media (max-width: 768px) {
+  .admin-body.admin-v2 #admin-panel-foglalasok {
+    --booking-status-width: 176px;
+  }
+
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
     height: 78px;
     min-height: 78px;
@@ -106,18 +132,18 @@
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr) minmax(0, .9fr);
-    gap: 5px;
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, .86fr) minmax(0, .86fr);
+    gap: 7px;
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
-    height: 34px;
-    min-height: 34px;
-    padding-right: 21px;
-    padding-left: 5px;
-    background-position: right 5px center;
-    background-size: 13px 13px;
-    font-size: 10px;
+    height: 32px;
+    min-height: 32px;
+    padding-right: 17px;
+    padding-left: 4px;
+    background-position: right 3px center;
+    background-size: 11px 11px;
+    font-size: 8.5px;
   }
 }
