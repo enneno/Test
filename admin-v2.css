@@ -2628,7 +2628,7 @@ body.admin-body [hidden] {
   background-size: 15px 15px;
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 720;
   line-height: 1;
   text-align: left;
@@ -2641,7 +2641,7 @@ body.admin-body [hidden] {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-size: 7px;
+  font-size: 12px;
   line-height: 1;
   text-align: left;
   white-space: nowrap;
@@ -2654,7 +2654,7 @@ body.admin-body [hidden] {
   min-width: 0;
   margin: 0;
   padding: 0;
-  font-size: 7px;
+  font-size: 12px;
   line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(
@@ -2667,7 +2667,7 @@ body.admin-body [hidden] {
   input[type="time"]::-webkit-datetime-edit-ampm-field,
   input[type="time"]::-webkit-datetime-edit-text
 ) {
-  font-size: 7px;
+  font-size: 12px;
   line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"] {
