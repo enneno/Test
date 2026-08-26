@@ -1,0 +1,44 @@
+name: Unify CHATGPT_TEST admin date controls v2
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-unify-date-controls-v2.yml'
+permissions:
+  contents: write
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - name: Apply targeted shared picker migration
+        run: python3 _chatgpt_unify_date_controls.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify shared native picker ownership
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          css = Path('admin-v2.css').read_text(encoding='utf-8')
+          marker = 'Shared native date/time/month controls: one visual owner for the entire admin.'
+          assert css.count(marker) == 1, 'shared picker owner missing or duplicated'
+          assert '#admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"]' not in css, 'booking-specific date visual rule remains'
+          assert '#admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"]' not in css, 'booking-specific time visual rule remains'
+          PY
+      - name: Commit canonical change and remove temporary files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/chatgpt-test-unify-date-controls-v2.yml
+          rm _chatgpt_unify_date_controls.py
+          git add src/admin-styles/10-components.css src/admin-styles/30-bookings.css src/admin-styles/70-availability.css src/admin-styles/95-pwa.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-unify-date-controls-v2.yml _chatgpt_unify_date_controls.py
+          git commit -m "Unify admin native date controls"
+          git push origin HEAD:CHATGPT_TEST
