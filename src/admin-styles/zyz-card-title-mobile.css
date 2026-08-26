@@ -1,0 +1,7 @@
+/* Keep the compact booking row readable on mobile while matching the admin design system. */
+@media (max-width: 768px) {
+  .admin-body.admin-v2 #admin-tartalom #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 {
+    font-size: 17px;
+    line-height: 1.2;
+  }
+}
