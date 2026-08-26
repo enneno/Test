@@ -1,0 +1,70 @@
+name: Tune CHATGPT_TEST canonical booking fonts
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Tune canonical booking font sizes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/admin-styles/30-bookings.css')
+          s = p.read_text()
+          old = '''  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 16px; line-height: 1.2; }'''
+          new = '''  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 14px; line-height: 1.2; }'''
+          if old not in s:
+              raise SystemExit('mobile booking name rule not found')
+          s = s.replace(old, new, 1)
+          old = '''  font-size: 9px;\n  font-weight: 720;\n  line-height: 1;\n  text-align: left;\n}'''
+          new = '''  font-size: 7px;\n  font-weight: 720;\n  line-height: 1;\n  text-align: left;\n}'''
+          if old not in s:
+              raise SystemExit('date/time input font rule not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build canonical admin CSS
+        run: npm run build
+
+      - name: Refresh asset versions
+        run: npm run assets:version
+
+      - name: Check admin CSS ownership
+        run: npm run admin:css:check
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/chatgpt-test-font-tune.yml
+
+      - name: Commit font tuning
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/admin-styles/30-bookings.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-font-tune.yml
+          git commit -m 'Tune canonical booking font sizes' || exit 0
+          git push origin HEAD:CHATGPT_TEST
