@@ -1,7 +1,7 @@
-/* CHATGPT_TEST only: compact collapsed booking cards and iOS picker containment. */
+/* CHATGPT_TEST only: compact booking cards and iOS picker containment. */
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
-  --booking-status-width: 176px;
+  --booking-status-width: 148px;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
@@ -10,7 +10,7 @@
   padding-block: 6px;
 }
 
-/* Keep the appointment date/time a little higher, away from the action row. */
+/* Keep the appointment date/time slightly above the action row. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-foglalas-idopont {
   top: 8px;
 }
@@ -19,25 +19,24 @@
   transform: translateY(-5px);
 }
 
-/* Regular bookings only have status + edit. Do not reserve an invisible calendar-button slot. */
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar)) {
-  grid-template-columns: var(--booking-status-width) var(--booking-action-size);
-  width: calc(var(--booking-status-width) + var(--booking-action-size) + 5px);
-  min-width: calc(var(--booking-status-width) + var(--booking-action-size) + 5px);
+/* Keep the canonical three control columns: status + calendar slot + edit slot.
+   When there is no calendar action, the canonical invisible placeholder preserves its space. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok {
+  grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);
+  width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
+  min-width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
 }
 
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
-  display: none;
-}
-
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar)) > [data-foglalas-szerkesztes] {
-  grid-column: 2;
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-db-statusz {
+  width: var(--booking-status-width);
+  min-width: var(--booking-status-width);
+  max-width: var(--booking-status-width);
 }
 
 /* Date + start + end stay on one compact row. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: minmax(0, 1.28fr) minmax(0, .86fr) minmax(0, .86fr);
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, .91fr) minmax(0, .91fr);
+  gap: 7px;
   align-items: end;
 }
 
@@ -68,11 +67,11 @@
   height: 34px;
   min-height: 34px;
   margin: 0 2px 0 0;
-  padding: 0 19px 0 5px;
+  padding: 0 21px 0 6px;
   overflow: hidden;
-  background-position: right 4px center;
+  background-position: right 5px center;
   background-size: 12px 12px;
-  font-size: 9px;
+  font-size: 10.5px;
   font-weight: 680;
   line-height: 1;
   text-align: left;
@@ -122,7 +121,7 @@
 
 @media (max-width: 768px) {
   .admin-body.admin-v2 #admin-panel-foglalasok {
-    --booking-status-width: 176px;
+    --booking-status-width: 148px;
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
@@ -132,18 +131,18 @@
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-    grid-template-columns: minmax(0, 1.28fr) minmax(0, .86fr) minmax(0, .86fr);
-    gap: 7px;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, .91fr) minmax(0, .91fr);
+    gap: 6px;
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
-    height: 32px;
-    min-height: 32px;
-    padding-right: 17px;
-    padding-left: 4px;
-    background-position: right 3px center;
+    height: 33px;
+    min-height: 33px;
+    padding-right: 19px;
+    padding-left: 5px;
+    background-position: right 4px center;
     background-size: 11px 11px;
-    font-size: 8.5px;
+    font-size: 10px;
   }
 }
