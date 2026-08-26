@@ -2349,17 +2349,24 @@ function arlistaFeliratokFrissitese() {
         const lista = foglalasSzurtElemek();
         const osszes = foglalasOsszesOldal();
         const vanElem = lista.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.foglalasOldal} / ${osszes}` : '0 / 0';
         return `
-            <div class="admin-lapozo-nav" role="group" aria-label="Foglal\u00e1sok lapoz\u00e1sa">
-                <button type="button" class="admin-kis-gomb" data-foglalas-oldal="elozo" ${allapot.foglalasOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
-                <span>${vanElem ? `${allapot.foglalasOldal} / ${osszes}` : '0 / 0'}</span>
-                <button type="button" class="admin-kis-gomb" data-foglalas-oldal="kovetkezo" ${allapot.foglalasOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+            <div class="admin-lapozo-nav" role="group" aria-label="Foglalások lapozása">
+                <button type="button" class="admin-pagination-button" data-foglalas-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.foglalasOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-foglalas-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.foglalasOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
             </div>
             <div class="admin-lapozo-jobb">
-                <div class="admin-oldalmeret" role="group" aria-label="Foglal\u00e1sok oldalank\u00e9nt">
-                    <span>Oldalank\u00e9nt</span>
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
                     ${oldalmeretGombok(allapot.foglalasOldalMeret, 'foglalas-oldalmeret')}
-                </div>
+                </label>
             </div>
         `;
     }
@@ -2616,7 +2623,7 @@ function arlistaFeliratokFrissitese() {
                         ${statuszOption('cancelled', 'Általam lemondva', foglalas.status)}
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
-                    <button type="button" class="admin-kis-gomb" data-foglalas-reszletek aria-expanded="false">Részletek</button>
+                    <button type="button" class="admin-booking-details-trigger" data-foglalas-reszletek aria-expanded="false">Részletek</button>
                     <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>

@@ -302,7 +302,6 @@
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
-  .admin-foglalas-nezet-gomb,
   .cms-upload-button
 ) {
   position: relative;
@@ -332,7 +331,6 @@
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
-  .admin-foglalas-nezet-gomb,
   .cms-upload-button
 )::after {
   position: absolute;
@@ -594,4 +592,29 @@
   .admin-body .admin-db-form {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* Booking refresh icon: canonical SVG geometry. */
+.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb {
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 11px;
+  color: var(--admin-v2-brand);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
+}
+.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

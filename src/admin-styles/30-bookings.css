@@ -943,3 +943,295 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-sor { grid-template-columns: 78px minmax(0, 1fr); gap: 9px; min-height: 58px; padding: 8px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-statusz { grid-column: 2; width: fit-content; padding: 3px 6px; white-space: normal; }
 }
+\n\n/* Booking UI polish batch 2: segmented view, pagination and compact detail panel. */
+.admin-body.admin-v2 #admin-panel-foglalasok {
+  --booking-status-width: 154px;
+  --booking-icon-list: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E");
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezetvalto {
+  display: inline-grid;
+  width: 168px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: #f1ece8;
+  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb {
+  display: inline-flex;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 760;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  background: currentColor;
+  content: "";
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 14px 14px;
+  mask-size: 14px 14px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb[data-foglalas-nezet="lista"]::before {
+  -webkit-mask-image: var(--booking-icon-list);
+  mask-image: var(--booking-icon-list);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb[data-foglalas-nezet="naptar"]::before {
+  -webkit-mask-image: var(--booking-icon-calendar);
+  mask-image: var(--booking-icon-calendar);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb.aktiv {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo {
+  min-height: 44px;
+  gap: 8px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
+  display: inline-flex;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 740;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:not(:disabled):hover {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:disabled {
+  cursor: default;
+  opacity: .34;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-page {
+  display: grid;
+  min-width: 46px;
+  height: 36px;
+  padding: 0 8px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
+  font-size: 11px;
+  font-weight: 820;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
+  font-weight: 760;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
+  width: 62px;
+  min-width: 62px;
+  height: 38px;
+  min-height: 38px;
+  padding-left: 10px;
+  border-color: var(--admin-v2-border);
+  border-radius: 11px;
+  background-color: var(--admin-v2-surface);
+  font-size: 11px;
+  font-weight: 780;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
+  width: 100%;
+  justify-content: space-between;
+  gap: 12px;
+  padding-right: 4px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum::after {
+  display: none;
+  content: none;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
+  margin-left: auto;
+  text-align: right;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
+  height: 96px;
+  min-height: 96px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger {
+  display: none;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
+  padding: 0 10px;
+  background-image: none;
+  font-size: 11px;
+  font-weight: 780;
+  letter-spacing: -.01em;
+  line-height: 1;
+  text-align: center;
+  text-align-last: center;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott .admin-db-kartya-fej,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-kartya-fej {
+  min-height: 80px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszletek {
+  margin: 0 0 10px;
+  padding: 10px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface);
+  box-shadow: 0 3px 12px rgba(67, 42, 35, .045);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid p {
+  min-width: 0;
+  padding: 7px 8px;
+  gap: 3px;
+  border: 1px solid rgba(232, 223, 217, .82);
+  border-radius: 9px;
+  background: var(--admin-v2-surface-soft);
+  font-size: 10px;
+  line-height: 1.25;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid strong {
+  color: var(--admin-v2-subtle);
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: .08em;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid :is(span, a) {
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.25;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor {
+  margin: 6px 0 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(232, 223, 217, .82);
+  border-radius: 9px;
+  color: var(--admin-v2-ink);
+  background: var(--admin-v2-surface-soft);
+  font-size: 10px;
+  line-height: 1.35;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor > strong {
+  font-size: 9px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr) minmax(0, .75fr);
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 10px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface);
+  box-shadow: 0 3px 12px rgba(67, 42, 35, .04);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+  gap: 3px;
+  font-size: 9px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo textarea {
+  height: 48px;
+  min-height: 48px;
+  padding: 6px 8px;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok {
+  margin: 0 0 10px;
+  padding: 7px 0 0;
+}
+
+@media (max-width: 768px) {
+  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 154px; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
+    height: 96px;
+    min-height: 96px;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszletek {
+    padding: 8px;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr) minmax(0, .8fr);
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
+    width: 38px;
+    min-width: 38px;
+    padding: 0;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button > span {
+    display: none;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size > span {
+    display: none;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
+    width: 56px;
+    min-width: 56px;
+  }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid {
+    gap: 5px;
+  }
+}
