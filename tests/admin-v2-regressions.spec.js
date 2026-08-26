@@ -85,3 +85,26 @@ test('az admin Regisztrált tagok nézete csak az Auth-fiókok minimális adatai
     expect(sql).toContain('revoke all on function public.admin_registered_customer_profiles() from public, anon');
     expect(sql).toContain('grant execute on function public.admin_registered_customer_profiles() to authenticated, service_role');
 });
+
+
+test('a foglalás szerkesztő bezárásakor a részletes nézet is bezár', async () => {
+    const source = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin', '10-bookings-events.js'),
+        'utf8'
+    );
+
+    expect(source).toContain("foglalasReszletekKapcsolasa(kartya, true);");
+    expect(source).toContain("foglalasReszletekKapcsolasa(kartya, false);");
+});
+
+test('a foglalás szerkesztő dátuma külön soron, az idők két oszlopban maradnak', async () => {
+    const source = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),
+        'utf8'
+    );
+
+    expect(source).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
+    expect(source).toContain('.admin-mezo:has([data-idopont-mezo="date"])');
+    expect(source).toContain('background-image: var(--booking-icon-calendar);');
+    expect(source).toContain('background-image: var(--booking-icon-clock);');
+});

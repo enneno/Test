@@ -1440,7 +1440,11 @@
 
         const aktiv = !kartya.classList.contains('szerkeszt');
         kartya.classList.toggle('szerkeszt', aktiv);
-        if (aktiv) foglalasReszletekKapcsolasa(kartya, true);
+        if (aktiv) {
+            foglalasReszletekKapcsolasa(kartya, true);
+        } else {
+            foglalasReszletekKapcsolasa(kartya, false);
+        }
 
         kartya.querySelectorAll('[data-idopont-mezo], [data-foglalas-statusz]').forEach(mezoElem => {
             mezoElem.disabled = !aktiv;
