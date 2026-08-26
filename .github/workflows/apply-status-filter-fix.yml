@@ -1,0 +1,42 @@
+name: Apply status filter sizing fix
+
+on:
+  push:
+    branches:
+      - refactor/admin-css-ownership
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[status-filter-sized]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/admin-css-ownership
+
+      - name: Keep booking status filter inside its responsive column
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/admin-styles/30-bookings.css')
+          css = path.read_text(encoding='utf-8')
+          anchor = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo {\n  grid-template-rows: auto var(--admin-ui-choice-height);\n}\n'''
+          rule = '''\n.admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-statusz-szuro {\n  width: 100%;\n  min-width: 0;\n  max-width: 100%;\n}\n'''
+          if rule in css:
+              raise SystemExit(0)
+          if anchor not in css:
+              raise SystemExit('Expected booking status filter anchor not found')
+          path.write_text(css.replace(anchor, anchor + rule, 1), encoding='utf-8')
+          PY
+
+      - name: Commit patch
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/admin-styles/30-bookings.css
+          git commit -m "Constrain booking status filter [status-filter-sized]"
+          git push origin HEAD:refactor/admin-css-ownership
