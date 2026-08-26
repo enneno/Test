@@ -293,10 +293,10 @@
   background-size: 15px 15px;
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 720;
   line-height: 1;
-  text-align: left;
+  text-align: center;
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="month"]) {
@@ -315,9 +315,9 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -329,7 +329,7 @@
   min-width: 0;
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1;
 }
 
@@ -346,7 +346,7 @@
   input[type="time"]::-webkit-datetime-edit-ampm-field,
   input[type="time"]::-webkit-datetime-edit-text
 ) {
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1;
 }
 
