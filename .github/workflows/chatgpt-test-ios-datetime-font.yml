@@ -1,0 +1,124 @@
+name: Apply CHATGPT_TEST iOS datetime font sizing
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Size iOS datetime inner text in canonical booking CSS
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/admin-styles/30-bookings.css')
+          s = p.read_text()
+          old = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  white-space: nowrap;
+}'''
+          new = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-size: 7px;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+}'''
+          if old not in s:
+              raise SystemExit('webkit date-and-time value block not found')
+          s = s.replace(old, new, 1)
+
+          old = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}'''
+          new = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 7px;
+  line-height: 1;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field,
+  input[type="time"]::-webkit-datetime-edit-ampm-field,
+  input[type="time"]::-webkit-datetime-edit-text
+) {
+  font-size: 7px;
+  line-height: 1;
+}'''
+          if old not in s:
+              raise SystemExit('webkit datetime edit block not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build canonical admin CSS
+        run: npm run build
+
+      - name: Refresh asset versions
+        run: npm run assets:version
+
+      - name: Check admin CSS ownership
+        run: npm run admin:css:check
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/chatgpt-test-ios-datetime-font.yml
+
+      - name: Commit canonical iOS datetime font sizing
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/admin-styles/30-bookings.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-ios-datetime-font.yml
+          git commit -m 'Size iOS datetime inner text in canonical booking CSS' || exit 0
+          git push origin HEAD:CHATGPT_TEST
