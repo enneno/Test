@@ -11,6 +11,7 @@ const expectedFiles = [
   '00-foundation.css',
   '05-panel-state.css',
   '10-components.css',
+  '15-responsive-context.css',
   '20-workspace.css',
   '30-bookings.css',
   '40-content-editor.css',
@@ -118,6 +119,11 @@ const panelStateCss = cssByFile.get('05-panel-state.css');
 if (!panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel') ||
     !panelStateCss.includes('.admin-body.admin-v2 .admin-db-panel.aktiv')) {
   fail('canonical panel visibility rules must live in 05-panel-state.css.');
+}
+
+const responsiveContextCss = cssByFile.get('15-responsive-context.css');
+if (!responsiveContextCss.includes('container: admin-workspace / inline-size')) {
+  fail('named admin-workspace responsive context must live in 15-responsive-context.css.');
 }
 
 const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-assets.js'), 'utf8');
