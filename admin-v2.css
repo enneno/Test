@@ -1883,7 +1883,7 @@ body.admin-body [hidden] {
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
-  --booking-status-width: 154px;
+  --booking-status-width: 148px;
   --booking-action-size: var(--admin-ui-icon-button-size);
   --booking-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
   --booking-icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
@@ -2275,18 +2275,18 @@ body.admin-body [hidden] {
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: "identity controls";
   align-items: end;
-  min-height: 96px;
+  min-height: 78px;
   gap: 0 12px;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
-  height: 96px;
-  min-height: 96px;
+  height: 78px;
+  min-height: 78px;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor { display: contents; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
   position: absolute;
-  top: 8px;
+  top: 6px;
   right: 0;
   display: grid;
   min-width: 0;
@@ -2578,8 +2578,8 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .875fr) minmax(0, .875fr);
+  gap: 6px;
   margin-top: 8px;
   padding: 9px 0 0;
   border: 0;
@@ -2588,39 +2588,70 @@ body.admin-body [hidden] {
   background: transparent;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
   gap: 5px;
+  overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 9px;
   font-weight: 760;
   line-height: 1.15;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
   grid-column: 1 / -1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
   position: relative;
+  display: block;
   box-sizing: border-box;
+  inline-size: 100%;
   width: 100%;
+  max-inline-size: 100%;
+  max-width: 100%;
+  min-inline-size: 0;
   min-width: 0;
-  height: 42px;
-  min-height: 42px;
-  padding: 0 38px 0 12px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 20px 0 5px;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
   border: 1px solid var(--admin-v2-border);
   border-radius: 12px;
   color: var(--admin-v2-ink);
   background-color: var(--admin-v2-surface);
-  background-position: right 12px center;
+  background-position: right 10px center;
   background-repeat: no-repeat;
-  background-size: 16px 16px;
+  background-size: 15px 15px;
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 720;
   line-height: 1;
   text-align: left;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  white-space: nowrap;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"] {
   background-image: var(--booking-icon-calendar);
@@ -2634,9 +2665,10 @@ body.admin-body [hidden] {
   outline: 0;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-calendar-picker-indicator {
-  width: 24px;
+  width: 22px;
+  max-width: 22px;
   height: 100%;
-  margin: 0 -4px 0 0;
+  margin: 0;
   opacity: 0;
   cursor: pointer;
 }
@@ -4653,7 +4685,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]),
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
