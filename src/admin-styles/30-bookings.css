@@ -1134,7 +1134,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas { font-size: 10px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum { font-size: 11px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido { font-size: 10px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled { font-size: 16px; font-size-adjust: none; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled { font-size: 14px; font-size-adjust: none; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz { font-size: 11px; font-size-adjust: none; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid { gap: 8px 14px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid :is(span, a) { font-size: 10.5px; }
