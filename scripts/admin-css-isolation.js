@@ -28,6 +28,10 @@ function localStylesheets(html) {
     .filter(href => href.startsWith('/') && href.includes('.css'));
 }
 
+function cssRules(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
 function fail(message) {
   console.error(`ADMIN CSS ARCHITECTURE ERROR: ${message}`);
   process.exitCode = 1;
@@ -50,20 +54,23 @@ if (JSON.stringify(actualFiles) !== JSON.stringify(expectedSorted)) {
   fail(`admin source manifest differs. Expected: ${expectedSorted.join(', ')}. Found: ${actualFiles.join(', ')}`);
 }
 
+const cssByFile = new Map();
 for (const name of actualFiles) {
   if (/^(?:zy|zz)|legacy|override|polish|final-fix|hotfix/i.test(name)) {
     fail(`temporary/cascade-order filename is forbidden: ${name}`);
   }
   const css = fs.readFileSync(path.join(adminStyleDir, name), 'utf8');
-  if (css.includes('!important')) {
-    fail(`!important is forbidden in admin CSS: ${name}`);
+  const rules = cssRules(css);
+  cssByFile.set(name, rules);
+  if (rules.includes('!important')) {
+    fail(`!important declaration is forbidden in admin CSS: ${name}`);
   }
-  if (/\.foglalas-(?:oldal|asszisztens|nyito|ut-kartya)\b/.test(css)) {
+  if (/\.foglalas-(?:oldal|asszisztens|nyito|ut-kartya)\b/.test(rules)) {
     fail(`public booking-page CSS leaked into admin bundle: ${name}`);
   }
 }
 
-const componentCss = fs.readFileSync(path.join(adminStyleDir, '10-components.css'), 'utf8');
+const componentCss = cssByFile.get('10-components.css');
 const requiredTokens = [
   '--admin-ui-field-height:',
   '--admin-ui-choice-height:',
@@ -97,8 +104,7 @@ const ownership = [
 for (const rule of ownership) {
   const offenders = actualFiles.filter(name => {
     if (rule.owners.includes(name)) return false;
-    const css = fs.readFileSync(path.join(adminStyleDir, name), 'utf8');
-    return css.includes(rule.pattern);
+    return cssByFile.get(name).includes(rule.pattern);
   });
   if (offenders.length) {
     fail(`${rule.pattern} has non-owner CSS: ${offenders.join(', ')}; owner: ${rule.owners.join(' / ')}`);

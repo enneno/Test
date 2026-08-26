@@ -30,6 +30,7 @@ const bundles = [
         sourceDir: 'src/admin-styles',
         extension: '.css',
         files: ADMIN_STYLE_FILES,
+        stripComments: true,
         banner: '/* Generated from src/admin-styles by npm run build. Edit the source parts, not this file. */\n\n'
     },
     {
@@ -83,7 +84,10 @@ function sourceFiles(bundle) {
 function renderBundle(bundle) {
     const files = sourceFiles(bundle);
     if (!files.length) throw new Error(`No sources found in ${bundle.sourceDir}`);
-    const body = files.map(file => fs.readFileSync(file, 'utf8').trimEnd()).join('\n\n');
+    let body = files.map(file => fs.readFileSync(file, 'utf8').trimEnd()).join('\n\n');
+    if (bundle.stripComments) {
+        body = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n{3,}/g, '\n\n').trim();
+    }
     return `${bundle.banner}${body}\n`;
 }
 
