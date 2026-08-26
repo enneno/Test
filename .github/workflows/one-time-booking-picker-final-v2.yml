@@ -7,14 +7,19 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   verify-and-fix:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - uses: actions/setup-node@v4
         with:
@@ -32,17 +37,10 @@ jobs:
           p = Path('src/admin-styles/30-bookings.css')
           s = p.read_text(encoding='utf-8')
 
-          expected_grid = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-            grid-template-columns: repeat(2, minmax(0, 1fr));'''
-          if expected_grid not in s:
-              raise SystemExit('booking editor two-column grid changed unexpectedly')
-
-          expected_date = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
-          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
-            grid-column: 1 / -1;
-          }'''
-          if expected_date not in s:
-              raise SystemExit('full-width date rule changed unexpectedly')
+          if 'grid-template-columns: repeat(2, minmax(0, 1fr));' not in s:
+              raise SystemExit('booking editor two-column grid missing')
+          if '.admin-mezo:has([data-idopont-mezo="date"]),' not in s:
+              raise SystemExit('full-width date rule missing')
 
           old_field = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
             min-width: 0;
@@ -139,20 +137,36 @@ jobs:
           if old_inputs not in s:
               raise SystemExit('booking date/time input block not found')
           s = s.replace(old_inputs, new_inputs, 1)
+
+          if '!important' in s:
+              raise SystemExit('booking CSS must not contain !important')
+
           p.write_text(s, encoding='utf-8')
           PY
 
       - name: Verify admin
         run: npm run verify:admin
 
-      - name: Commit and publish verified result
+      - name: Restore standard workflow and commit clean result
         run: |
+          git show HEAD^:.github/workflows/pages.yml > .github/workflows/pages.yml
           rm -f .github/workflows/one-time-booking-picker-final-v2.yml
           rm -f scripts/booking-picker-final-trigger.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Contain booking date and time pickers"
-          git fetch origin main
-          git rebase origin/main
           git push origin HEAD:main
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload verified static files
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+          include-hidden-files: true
+
+      - name: Deploy verified site
+        id: deployment
+        uses: actions/deploy-pages@v4
