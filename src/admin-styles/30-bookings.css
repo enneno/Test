@@ -913,6 +913,9 @@ body.admin-modal-nyitva { overflow: hidden; }
     padding-bottom: 12px;
   }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo { width: 112px; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-jobb .admin-oldalmeret > span {
+    display: none;
+  }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-fej {
     align-items: stretch;
     flex-direction: column-reverse;
