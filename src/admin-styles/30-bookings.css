@@ -766,6 +766,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-size: 7px;
+  line-height: 1;
   text-align: left;
   white-space: nowrap;
 }
@@ -777,6 +779,21 @@
   min-width: 0;
   margin: 0;
   padding: 0;
+  font-size: 7px;
+  line-height: 1;
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field,
+  input[type="time"]::-webkit-datetime-edit-ampm-field,
+  input[type="time"]::-webkit-datetime-edit-text
+) {
+  font-size: 7px;
+  line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"] {
   background-image: var(--booking-icon-calendar);
