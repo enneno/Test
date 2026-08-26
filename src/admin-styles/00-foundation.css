@@ -1,4 +1,4 @@
-/* Admin-only foundation. The admin must not depend on the public style.css bundle. */
+/* Admin foundation: tokens, reset and shared brand primitives only. */
 :root {
   --akcentus: #b9858f;
   --akcentus-vilagos: #d9aaa7;
@@ -68,6 +68,16 @@ html {
 }
 
 body.admin-body {
+  --admin-primary: var(--ui-primary);
+  --admin-accent: var(--ui-accent);
+  --admin-ink: var(--ui-primary);
+  --admin-muted: var(--ui-muted);
+  --admin-surface: var(--ui-surface);
+  --admin-canvas: #f8f6f1;
+  --admin-soft: var(--ui-soft);
+  --admin-line: var(--ui-line);
+  --admin-rose: var(--ui-accent);
+  --admin-rose-dark: var(--ui-primary);
   min-width: 0;
   min-height: 100vh;
   margin: 0;

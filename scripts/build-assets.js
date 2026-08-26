@@ -3,6 +3,21 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 
+const ADMIN_STYLE_FILES = [
+    '00-foundation.css',
+    '10-components.css',
+    '20-workspace.css',
+    '30-bookings.css',
+    '40-content-editor.css',
+    '45-gallery-editor.css',
+    '50-services.css',
+    '60-coupons.css',
+    '70-availability.css',
+    '80-communications.css',
+    '90-customers.css',
+    '95-pwa.css'
+];
+
 const bundles = [
     {
         output: 'style.css',
@@ -14,6 +29,7 @@ const bundles = [
         output: 'admin-v2.css',
         sourceDir: 'src/admin-styles',
         extension: '.css',
+        files: ADMIN_STYLE_FILES,
         banner: '/* Generated from src/admin-styles by npm run build. Edit the source parts, not this file. */\n\n'
     },
     {
@@ -48,16 +64,26 @@ function sourceFiles(bundle) {
         throw new Error(`Missing source directory: ${bundle.sourceDir}`);
     }
 
+    if (Array.isArray(bundle.files)) {
+        return bundle.files.map(name => {
+            const file = path.join(directory, name);
+            if (!fs.existsSync(file)) {
+                throw new Error(`Missing source file for ${bundle.output}: ${bundle.sourceDir}/${name}`);
+            }
+            return file;
+        });
+    }
+
     return fs.readdirSync(directory)
-        .filter((name) => name.endsWith(bundle.extension))
+        .filter(name => name.endsWith(bundle.extension))
         .sort((left, right) => left.localeCompare(right, 'en'))
-        .map((name) => path.join(directory, name));
+        .map(name => path.join(directory, name));
 }
 
 function renderBundle(bundle) {
     const files = sourceFiles(bundle);
     if (!files.length) throw new Error(`No sources found in ${bundle.sourceDir}`);
-    const body = files.map((file) => fs.readFileSync(file, 'utf8').trimEnd()).join('\n\n');
+    const body = files.map(file => fs.readFileSync(file, 'utf8').trimEnd()).join('\n\n');
     return `${bundle.banner}${body}\n`;
 }
 
