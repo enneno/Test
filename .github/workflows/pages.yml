@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,18 +39,149 @@ jobs:
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
+      - name: Apply canonical booking picker containment fix
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('src/admin-styles/30-bookings.css')
+          s = p.read_text(encoding='utf-8')
+
+          expected_grid = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
+            grid-template-columns: repeat(2, minmax(0, 1fr));'''
+          if expected_grid not in s:
+              raise SystemExit('booking editor two-column grid changed unexpectedly')
+
+          expected_date = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
+            grid-column: 1 / -1;
+          }'''
+          if expected_date not in s:
+              raise SystemExit('full-width date rule changed unexpectedly')
+
+          old_field = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+            min-width: 0;
+            gap: 5px;
+            color: var(--admin-v2-muted);
+            font-size: 9px;
+            font-weight: 760;
+            line-height: 1.15;
+          }'''
+          new_field = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            gap: 5px;
+            overflow: hidden;
+            color: var(--admin-v2-muted);
+            font-size: 9px;
+            font-weight: 760;
+            line-height: 1.15;
+          }'''
+          if old_field not in s:
+              raise SystemExit('booking editor field block not found')
+          s = s.replace(old_field, new_field, 1)
+
+          old_inputs = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            height: 42px;
+            min-height: 42px;
+            padding: 0 38px 0 12px;
+            border: 1px solid var(--admin-v2-border);
+            border-radius: 12px;
+            color: var(--admin-v2-ink);
+            background-color: var(--admin-v2-surface);
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px 16px;
+            box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 720;
+            line-height: 1;
+            text-align: left;
+          }'''
+          new_inputs = '''.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
+            position: relative;
+            display: block;
+            box-sizing: border-box;
+            inline-size: 100%;
+            width: 100%;
+            max-inline-size: 100%;
+            max-width: 100%;
+            min-inline-size: 0;
+            min-width: 0;
+            height: 42px;
+            min-height: 42px;
+            padding: 0 32px 0 10px;
+            overflow: hidden;
+            appearance: none;
+            -webkit-appearance: none;
+            border: 1px solid var(--admin-v2-border);
+            border-radius: 12px;
+            color: var(--admin-v2-ink);
+            background-color: var(--admin-v2-surface);
+            background-position: right 10px center;
+            background-repeat: no-repeat;
+            background-size: 15px 15px;
+            box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 720;
+            line-height: 1;
+            text-align: left;
+          }
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            text-align: left;
+            white-space: nowrap;
+          }
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
+          .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+          }'''
+          if old_inputs not in s:
+              raise SystemExit('booking date/time input block not found')
+          s = s.replace(old_inputs, new_inputs, 1)
+
+          if '!important' in new_field or '!important' in new_inputs:
+              raise SystemExit('containment fix must not use !important')
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
       - name: Verify admin release
         run: npm run verify:admin
+
+      - name: Commit clean verified source result
+        run: |
+          git show bebe30e2aa62a2def0a5ac16b3a8701f121d2a0f:.github/workflows/pages.yml > .github/workflows/pages.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/admin-styles/30-bookings.css .github/workflows/pages.yml
+          git commit -m "Contain booking date and time pickers"
+          git push origin HEAD:main
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload static files
+      - name: Upload verified static files
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
           include-hidden-files: true
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy verified site
         id: deployment
         uses: actions/deploy-pages@v4
