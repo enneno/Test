@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
     <link rel="stylesheet" href="/admin-v2.css?v=fb83a3685ffb">
-    <link rel="stylesheet" href="/chatgpt-test-bookings.css?v=2">
+    <link rel="stylesheet" href="/chatgpt-test-bookings.css?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -22,3 +22,323 @@
 
 <body class="admin-body">
     <div id="fejlec-helye"></div>
+
+    <main class="admin-oldal">
+        <section id="admin-bejelentkezes-panel" class="admin-fejlec admin-auth-panel">
+            <p class="admin-eyebrow">Lumi Nails admin</p>
+            <h1 class="admin-cim">Bejelentkezés</h1>
+            <p class="admin-leiras">Az online foglalások és idősávok kezeléséhez jelentkezz be a Supabase-ben létrehozott admin fiókkal.</p>
+
+            <form id="admin-login-form" class="admin-login-form">
+                <input type="hidden" id="admin-email" value="llevisimon@gmail.com" autocomplete="username">
+                <label class="admin-mezo-cimke" for="admin-jelszo">
+                    <span>Jelszó</span>
+                    <input type="password" id="admin-jelszo" class="urlap-mezo" autocomplete="current-password" required>
+                </label>
+                <button type="submit" class="gomb admin-gomb">Belépés</button>
+            </form>
+
+            <p id="admin-auth-status" class="admin-status" aria-live="polite"></p>
+        </section>
+
+        <div id="admin-tartalom" class="admin-vedett" hidden>
+            <section class="admin-fejlec admin-workspace-header">
+                <p class="admin-eyebrow">Lumi Nails szerkesztő</p>
+                <h1 class="admin-cim">Lumi Nails kezelőfelület</h1>
+                <p class="admin-leiras">Minden foglalás, időpont, ár, kupon és weboldalszöveg egy átlátható munkafelületen.</p>
+
+                <div class="admin-akciok">
+                    <button type="button" id="admin-kijelentkezes" class="gomb admin-gomb">Kijelentkezés</button>
+                    <button type="button" id="admin-jelszo-valtas-gomb" class="gomb admin-gomb">Jelszó csere</button>
+                </div>
+
+                <form id="admin-jelszo-form" class="admin-jelszo-form" hidden>
+                    <label class="admin-mezo-cimke" for="admin-uj-jelszo">
+                        <span>Új jelszó</span>
+                        <input type="password" id="admin-uj-jelszo" class="urlap-mezo" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="admin-jelszo-tipp" required>
+                    </label>
+                    <label class="admin-mezo-cimke" for="admin-uj-jelszo-ismet">
+                        <span>Új jelszó még egyszer</span>
+                        <input type="password" id="admin-uj-jelszo-ismet" class="urlap-mezo" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="admin-jelszo-tipp" required>
+                    </label>
+                    <p id="admin-jelszo-tipp" class="admin-leiras">8–128 karaktert használj, legalább egy kisbetűvel, egy nagybetűvel és egy számmal.</p>
+                    <button type="submit" class="gomb admin-gomb">Jelszó mentése</button>
+                </form>
+
+                <p id="admin-jelszo-status" class="admin-status" aria-live="polite"></p>
+            </section>
+
+            <section class="admin-panel admin-live-panel">
+                <div class="admin-panel-fej">
+                    <div>
+                        <span class="admin-panel-kicker">Napi működés és tartalom</span>
+                        <h2>Munkaterület</h2>
+                    </div>
+                    <p>Válassz egy területet bal oldalon. A mentés mindig az éppen megnyitott nézet módosításait rögzíti.</p>
+                </div>
+
+                <div class="admin-workspace-layout">
+                    <aside class="admin-sidebar" aria-label="Admin navigáció">
+                        <div class="admin-sidebar-fej">
+                            <span>Kezelés</span>
+                            <small>8 terület</small>
+                        </div>
+                        <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
+                    <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
+                    <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
+                    <button type="button" class="admin-tab" data-admin-tab="kuponok">Kuponok</button>
+                    <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
+                    <button type="button" class="admin-tab" data-admin-tab="tiltasok">Foglalt idők</button>
+                    <button type="button" class="admin-tab" data-admin-tab="esemenynaplo">Eseménynapló</button>
+                            <button type="button" class="admin-tab" data-admin-tab="emailteszt">E-mail teszt</button>
+                            <button type="button" class="admin-tab" data-admin-tab="szovegek">Weboldal tartalma</button>
+                        </div>
+                        <p class="admin-sidebar-tipp">A függő foglalások száma automatikusan megjelenik a menüpont mellett.</p>
+                    </aside>
+
+                    <div class="admin-workspace-main">
+                        <p id="admin-online-status" class="admin-status admin-workspace-status" aria-live="polite"></p>
+
+                <div id="admin-panel-foglalasok" class="admin-db-panel aktiv">
+                    <div class="admin-panel-akciok admin-panel-akciok-keresessel">
+                        <div class="admin-foglalas-muvelet-tarolo" hidden>
+                            <button type="button" id="admin-foglalas-frissites" class="admin-kis-gomb admin-frissites-ikon-gomb" aria-label="Foglalások frissítése" title="Foglalások frissítése">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M20 11a8 8 0 1 0-2.34 5.66"></path>
+                                    <path d="M20 4v7h-7"></path>
+                                </svg>
+                            </button>
+                            <button type="button" id="admin-foglalas-export" class="admin-kis-gomb" data-admin-export="foglalasok" title="A jelenleg l&aacute;that&oacute; foglal&aacute;sok export&aacute;l&aacute;sa">Excel export</button>
+                        </div>
+                        <div class="admin-kereses-mezo">
+                            <label for="admin-foglalas-kereses">Keres&eacute;s</label>
+                            <div class="admin-kereses-input">
+                                <input type="search" id="admin-foglalas-kereses" placeholder="N&eacute;v, e-mail vagy telefon">
+                                <button type="button" id="admin-foglalas-kereses-torles" class="admin-kereses-torles" aria-label="Keres&eacute;s t&ouml;rl&eacute;se" title="Keres&eacute;s t&ouml;rl&eacute;se" hidden>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path d="M6 6l12 12M18 6L6 18"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="admin-kereses-mezo admin-statusz-szuro-mezo" for="admin-foglalas-statusz-szuro">
+                            <span>St&aacute;tusz</span>
+                            <select id="admin-foglalas-statusz-szuro">
+                                <option value="all">&Ouml;sszes</option>
+                                <option value="pending">F&uuml;gg&#337;ben</option>
+                                <option value="confirmed">Visszaigazolva</option>
+                                <option value="done">K&eacute;sz</option>
+                                <option value="cancelled">Általam lemondva</option>
+                                <option value="cancelled_by_customer">Vendég mondta le</option>
+                                <option value="blocked">Kézi – foglalt</option>
+                                <option value="blocked_all">Minden kézi idő</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div id="admin-vendeg-lemondas-jelzes" class="admin-vendeg-lemondas-jelzes" role="status" aria-live="polite" hidden>
+                        <div class="admin-vendeg-lemondas-szoveg">
+                            <span class="admin-vendeg-lemondas-kicker">Új lemondás</span>
+                            <strong>Vendég által lemondott időpontok</strong>
+                            <p id="admin-vendeg-lemondas-uzenet"><span id="admin-vendeg-lemondas-darab">0</span> új vendéglemondás vár arra, hogy átnézd.</p>
+                        </div>
+                        <div class="admin-vendeg-lemondas-akciok">
+                            <button type="button" id="admin-vendeg-lemondas-megnyitas" class="admin-kis-gomb" aria-label="Új lemondások megnyitása">Megnyitás</button>
+                            <button type="button" id="admin-vendeg-lemondas-tudomasulvetel" class="admin-kis-gomb admin-vendeg-lemondas-nyugtazas" aria-label="Új lemondások nyugtázása">Nyugtázás</button>
+                        </div>
+                    </div>
+                    <div class="admin-foglalas-attekintes">
+                        <div class="admin-foglalas-nezetvalto" role="group" aria-label="Foglalások megjelenítése">
+                            <button type="button" class="admin-foglalas-nezet-gomb aktiv" data-foglalas-nezet="lista" aria-pressed="true">Lista</button>
+                            <button type="button" class="admin-foglalas-nezet-gomb" data-foglalas-nezet="naptar" aria-pressed="false">Naptár</button>
+                        </div>
+                        <p id="admin-foglalas-osszefoglalo" class="admin-foglalas-osszefoglalo" aria-live="polite"></p>
+                    </div>
+                    <div id="admin-foglalas-lista-nezet">
+                        <div id="admin-foglalas-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
+                        <div id="admin-foglalas-lista" class="admin-db-lista"></div>
+                        <div id="admin-foglalas-lapozo" class="admin-lapozo"></div>
+                    </div>
+                    <section id="admin-foglalas-naptar" class="admin-foglalas-naptar" aria-labelledby="admin-foglalas-naptar-cim" hidden>
+                        <div class="admin-foglalas-naptar-fej">
+                            <div class="admin-foglalas-naptar-leptetes">
+                                <button type="button" class="admin-kis-gomb" data-foglalas-naptar-lepes="-1">Előző</button>
+                                <button type="button" class="admin-kis-gomb" data-foglalas-naptar-ma>Ma</button>
+                                <button type="button" class="admin-kis-gomb" data-foglalas-naptar-lepes="1">Következő</button>
+                            </div>
+                            <h3 id="admin-foglalas-naptar-cim" tabindex="-1"></h3>
+                        </div>
+                        <div class="admin-foglalas-naptar-hetfej" aria-hidden="true">
+                            <span>H</span><span>K</span><span>Sze</span><span>Cs</span><span>P</span><span>Szo</span><span>V</span>
+                        </div>
+                        <div id="admin-foglalas-naptar-racs" class="admin-foglalas-naptar-racs" role="grid" aria-label="Foglalási naptár"></div>
+                        <div class="admin-foglalas-napi-panel">
+                            <div class="admin-foglalas-napi-fej">
+                                <h4 id="admin-foglalas-napi-cim">Válassz egy napot</h4>
+                                <span id="admin-foglalas-napi-darab"></span>
+                            </div>
+                            <div id="admin-foglalas-napi-lista" class="admin-foglalas-napi-lista"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="admin-panel-szolgaltatasok" class="admin-db-panel">
+                    <div class="admin-panel-akciok">
+                        <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas" title="Új árlista tétel">Új tétel</button>
+                    </div>
+                    <div id="admin-szolgaltatas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-kuponok" class="admin-db-panel">
+                    <div class="admin-panel-akciok">
+                        <button type="button" id="admin-kupon-hozzaadas" class="admin-hozzaadas">Új kupon</button>
+                    </div>
+                    <div id="admin-kupon-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-idosavok" class="admin-db-panel">
+                    <div id="admin-idosav-naptar" class="admin-naptar-blokk">
+                        <div class="admin-naptar-fej">
+                            <label class="admin-mezo">
+                                Hónap
+                                <input type="month" id="admin-naptar-honap">
+                            </label>
+                            <div class="admin-naptar-akciok">
+                                <button type="button" id="admin-naptar-elozo" class="admin-kis-gomb">Előző</button>
+                                <button type="button" id="admin-naptar-kovetkezo" class="admin-kis-gomb">Következő</button>
+                            </div>
+                        </div>
+
+                        <div class="admin-naptar-napnevek" aria-hidden="true">
+                            <span>H</span>
+                            <span>K</span>
+                            <span>Sze</span>
+                            <span>Cs</span>
+                            <span>P</span>
+                            <span>Szo</span>
+                            <span>V</span>
+                        </div>
+                        <div id="admin-naptar-racs" class="admin-naptar-racs"></div>
+
+                        <div class="admin-naptar-tomeges admin-kozos-idosav-sor">
+                            <label class="admin-mezo">
+                                Közös kezdés
+                                <input type="time" id="admin-naptar-kozos-kezdes" value="09:00">
+                            </label>
+                            <label class="admin-mezo">
+                                Közös vége
+                                <input type="time" id="admin-naptar-kozos-vege" value="18:00">
+                            </label>
+                            <label class="admin-mezo">
+                                Időpontok sűrűsége
+                                <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">
+                            </label>
+                            <button type="button" id="admin-naptar-kozos-alkalmazas" class="admin-hozzaadas">Kijelöltekre beállítom</button>
+                        </div>
+
+                        <div class="admin-naptar-lista-fej">
+                            <h3>Kijelölt napok</h3>
+                            <button type="button" id="admin-naptar-kijeloles-torles" class="admin-kis-gomb admin-veszely-gomb">Kijelölés törlése</button>
+                        </div>
+                        <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista"></div>
+                        <p id="admin-naptar-status" class="admin-status" aria-live="polite"></p>
+                    </div>
+                    <div class="admin-panel-akciok admin-idosav-lista-akciok">
+                        <button type="button" id="admin-idosav-lepes-osszes" class="admin-kis-gomb" title="Lépés alkalmazása minden napra">Lépés minden napra</button>
+                        <button type="button" id="admin-idosav-osszes-torles" class="admin-kis-gomb admin-veszely-gomb" title="Összes beállított nap törlése">Összes nap törlése</button>
+                    </div>
+                    <div id="admin-idosav-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-tiltasok" class="admin-db-panel">
+                    <form id="admin-tiltas-form" class="admin-naptar-blokk admin-tiltas-blokk">
+                        <div class="admin-naptar-tomeges admin-tiltas-sor">
+                            <label class="admin-mezo">
+                                Dátum
+                                <input type="date" id="admin-tiltas-datum" required>
+                            </label>
+                            <label class="admin-mezo">
+                                Kezdés
+                                <input type="time" id="admin-tiltas-kezdes" required>
+                            </label>
+                            <label class="admin-mezo">
+                                Vége
+                                <input type="time" id="admin-tiltas-vege" required>
+                            </label>
+                            <label class="admin-mezo admin-mezo-szeles">
+                                Név / megjegyzés
+                                <input type="text" id="admin-tiltas-ok" placeholder="Pl. Anna Instagram, külső foglalás" required>
+                            </label>
+
+                        </div>
+                    </form>
+                    <div id="admin-tiltas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-esemenynaplo" class="admin-db-panel">
+                    <div class="admin-panel-akciok">
+                        <div class="admin-panel-gombcsoport">
+                            <button type="button" id="admin-esemenynaplo-frissites" class="admin-hozzaadas" title="Eseménynapló frissítése">Frissítés</button>
+                            <button type="button" id="admin-esemenynaplo-export" class="admin-kis-gomb" data-admin-export="esemenyek" title="A jelenleg l&aacute;that&oacute; esem&eacute;nyek export&aacute;l&aacute;sa">Excel export</button>
+                        </div>
+                    </div>
+                    <div id="admin-esemenynaplo-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
+                    <div id="admin-esemenynaplo-lista" class="admin-db-lista"></div>
+                    <div id="admin-esemenynaplo-lapozo" class="admin-lapozo"></div>
+                </div>
+
+                <div id="admin-panel-emailteszt" class="admin-db-panel admin-email-teszt-panel">
+                    <div class="admin-email-teszt-fej">
+                        <div>
+                            <span class="admin-panel-kicker">Biztonságos ellenőrzés</span>
+                            <h2>Teszt e-mailek</h2>
+                            <p>
+                                A rendszer minden e-mail típusból küld egy mintát a
+                                <strong>luminails.xx@gmail.com</strong> címre. A teszt nem hoz létre
+                                foglalást, nem módosít státuszt és nem foglal le időpontot.
+                            </p>
+                        </div>
+                        <button type="button" id="admin-email-teszt-kuldes" class="admin-hozzaadas">
+                            9 teszt e-mail küldése
+                        </button>
+                    </div>
+
+                    <ul class="admin-email-teszt-lista" aria-label="Kiküldött e-mail típusok">
+                        <li>Új foglalás – tulajdonos</li>
+                        <li>Foglalás beérkezett – vendég</li>
+                        <li>Visszaigazolva</li>
+                        <li>Visszaigazolva és módosítva</li>
+                        <li>Időpont módosítva</li>
+                        <li>Függőben</li>
+                        <li>Lemondva</li>
+                        <li>Időpont-emlékeztető</li>
+                        <li>Értékeléskérés</li>
+                    </ul>
+
+                    <p id="admin-email-teszt-statusz"
+                       class="admin-email-teszt-statusz"
+                       aria-live="polite"></p>
+                </div>
+
+                        <div id="admin-panel-szovegek" class="admin-db-panel admin-cms-panel">
+                            <button type="button" id="admin-cms-reload" class="admin-kis-gomb">Újratöltés</button>
+                            <p id="admin-cms-status" class="admin-status" aria-live="polite"></p>
+                            <div id="admin-cms-root"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <div id="lablec-helye"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
+    <script src="/supabase-config.js?v=84d7307ff175"></script>
+    <script src="/script.js?v=8aba5f50ba23"></script>
+    <script src="/admin-supabase.js?v=8cfcedad72a0"></script>
+    <script src="/admin-export.js?v=7f5a873b8293"></script>
+    <script src="/admin-content.js?v=4dcbd5fdbbb6"></script>
+</body>
+
+</html>
