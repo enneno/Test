@@ -36,4 +36,5 @@ jobs:
           PY
 
       - name: Run failing booking mobile test
-        run: npx playwright test tests/admin-production-redesign.spec.js --grep "mobile: the drawer, touch targets and booking page fit the viewport" --reporter=line
+        run: |
+          npx playwright test tests/admin-production-redesign.spec.js --grep "mobile: the drawer, touch targets and booking page fit the viewport" --reporter=line
