@@ -1,0 +1,72 @@
+name: Fine tune CHATGPT_TEST canonical booking CSS
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Fine tune canonical booking CSS
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/admin-styles/30-bookings.css')
+          s = p.read_text()
+          replacements = {
+              '--booking-status-width: 148px;': '--booking-status-width: 142px;',
+              '.admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 154px; }': '.admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 142px; }',
+              '.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 17px; line-height: 1.2; }': '.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 16px; line-height: 1.2; }',
+          }
+          for old, new in replacements.items():
+              if old not in s:
+                  raise SystemExit(f'Missing expected CSS rule: {old}')
+              s = s.replace(old, new, 1)
+          old = '  font-size: 10px;\n  font-weight: 720;\n  line-height: 1;\n  text-align: left;'
+          new = '  font-size: 9px;\n  font-weight: 720;\n  line-height: 1;\n  text-align: left;'
+          if old not in s:
+              raise SystemExit('Missing expected date/time font-size rule')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build canonical admin CSS
+        run: npm run build
+
+      - name: Refresh asset versions
+        run: npm run assets:version
+
+      - name: Check admin CSS ownership
+        run: npm run admin:css:check
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/chatgpt-test-fine-tune.yml
+
+      - name: Commit fine tuning
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fine tune booking typography and status width"
+          git push origin CHATGPT_TEST
