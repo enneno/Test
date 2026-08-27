@@ -4603,11 +4603,12 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]),
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
-font-size-adjust: none;
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz,
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
+    font-size: 11px;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
   }
 }
 
@@ -4626,6 +4627,7 @@ font-size-adjust: none;
   --admin-ui-control-line-height: 1.2;
   --admin-ui-action-font-size: 11px;
   --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-input-font-size: 12px;
   --admin-ui-select-font-size: 11px;
   --admin-ui-page-size-font-size: 11px;
   --admin-ui-picker-font-size: 20px;
@@ -4873,7 +4875,13 @@ font-size-adjust: none;
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {
-  font-size: 12px;
+  font-size: var(--admin-ui-input-font-size);
+}
+
+@media (display-mode: browser) and (max-width: 768px) {
+  .admin-body.admin-v2 {
+    --admin-ui-input-font-size: 16px;
+  }
 }
 
 .admin-body.admin-v2 {

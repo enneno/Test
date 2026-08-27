@@ -258,10 +258,11 @@
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]),
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
-font-size-adjust: none;
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz,
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
+    font-size: 11px;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
   }
 }
