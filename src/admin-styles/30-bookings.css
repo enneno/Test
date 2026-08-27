@@ -1055,22 +1055,85 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 @container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button span { display: none; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button { width: 36px; padding: 0; }
-
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
-    align-items: center;
-    flex-flow: row wrap;
-    gap: 8px;
-    padding-block: 8px 10px;
-  }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo > label,
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo > span { display: none; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo {
+      grid-template-rows: var(--admin-ui-field-height);
+      gap: 0;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo {
+      grid-template-rows: var(--admin-ui-choice-height);
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button span { display: none; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      min-height: 30px;
+      padding: 0;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-page {
+      min-width: 40px;
+      height: 30px;
+      padding-inline: 6px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-nav { padding: 2px; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo {
+      min-height: 36px;
+      gap: 6px 8px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-felso { margin: 6px 0; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
+      width: 54px;
+      min-width: 54px;
+      height: 34px;
+      min-height: 34px;
+      padding-left: 8px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-frissites {
+      width: 34px;
+      min-width: 34px;
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-frissites svg {
+      width: 16px;
+      height: 16px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
+      align-items: center;
+      flex-flow: row wrap;
+      min-height: 40px;
+      gap: 6px;
+      padding-block: 5px 6px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezetvalto {
+      width: 138px;
+      gap: 2px;
+      padding: 2px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb {
+      height: 30px;
+      min-height: 30px;
+      gap: 5px;
+      padding-inline: 8px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
+      width: 12px;
+      height: 12px;
+      flex-basis: 12px;
+      -webkit-mask-size: 12px 12px;
+      mask-size: 12px 12px;
+    }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-osszefoglalo { flex: 1 1 150px; text-align: right; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
-    grid-template-columns: minmax(0, 1fr) 112px;
-    grid-template-areas: "search status";
-    gap: 9px;
-    padding-bottom: 12px;
-  }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
+      grid-template-columns: minmax(0, 1fr) 112px;
+      grid-template-areas: "search status";
+      gap: 9px;
+      margin-bottom: 5px;
+      padding-bottom: 8px;
+    }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo { width: 112px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-jobb .admin-oldalmeret > span {
     display: none;
