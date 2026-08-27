@@ -2382,16 +2382,10 @@ function arlistaFeliratokFrissitese() {
 
     function foglalasLapozoRenderelese() {
         const elemek = adminElemek();
-        const frissitesGomb = elemek.foglalasFrissites;
         const htmlTartalom = foglalasLapozoHtml();
         [elemek.foglalasLapozoFelso, elemek.foglalasLapozo].filter(Boolean).forEach(lapozo => {
             lapozo.innerHTML = htmlTartalom;
         });
-
-        const felsoJobbOldal = elemek.foglalasLapozoFelso?.querySelector('.admin-lapozo-jobb');
-        if (felsoJobbOldal && frissitesGomb) {
-            felsoJobbOldal.append(frissitesGomb);
-        }
     }
 
     function foglalasLapozoKattintas(event) {
