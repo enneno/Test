@@ -365,10 +365,15 @@
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
-  width: 22px;
-  max-width: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 25px;
+  max-width: 25px;
   height: 100%;
   margin: 0;
+  padding: 0;
   opacity: 0;
   cursor: pointer;
 }
