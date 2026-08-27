@@ -1,0 +1,81 @@
+name: Fix CHATGPT_TEST native picker indicator zone
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+    paths:
+      - .github/workflows/chatgpt-test-fix-native-indicator-zone.yml
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Patch only native picker indicator zone
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('src/admin-styles/10-components.css')
+          s = p.read_text(encoding='utf-8')
+          old = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
+            width: 22px;
+            max-width: 22px;
+            height: 100%;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+          }'''
+          new = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 25px;
+            max-width: 25px;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+          }'''
+          if old not in s:
+            raise SystemExit('Expected indicator block not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+
+      - name: Verify targeted result
+        shell: bash
+        run: |
+          grep -F 'grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);' src/admin-styles/30-bookings.css
+          grep -F 'background-position: right 5px center;' src/admin-styles/10-components.css
+          grep -F 'width: 25px;' src/admin-styles/10-components.css
+          grep -F 'position: absolute;' src/admin-styles/10-components.css
+
+      - name: Commit result and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git reset .github/workflows/chatgpt-test-fix-native-indicator-zone.yml
+          git rm .github/workflows/chatgpt-test-fix-native-indicator-zone.yml
+          git add -A
+          git commit -m "Fix native picker indicator zone"
+          git push origin CHATGPT_TEST
