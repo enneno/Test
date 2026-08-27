@@ -1,0 +1,70 @@
+name: Unify CHATGPT_TEST select font
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  unify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Patch canonical select font ownership
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          components = Path('src/admin-styles/10-components.css')
+          bookings = Path('src/admin-styles/30-bookings.css')
+
+          c = components.read_text()
+          b = bookings.read_text()
+
+          select_block = '.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {\n  appearance: none;\n  -webkit-appearance: none;\n  padding-right: 34px;'
+          replacement = '.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {\n  appearance: none;\n  -webkit-appearance: none;\n  font-size: 11px;\n  font-size-adjust: none;\n  padding-right: 34px;'
+          if select_block not in c:
+              raise SystemExit('shared select block not found')
+          c = c.replace(select_block, replacement, 1)
+
+          status_font = '  font-size: 11px;\n  font-size-adjust: none;\n  font-weight: 780;'
+          if status_font not in b:
+              raise SystemExit('booking status font block not found')
+          b = b.replace(status_font, '  font-weight: 780;', 1)
+
+          components.write_text(c)
+          bookings.write_text(b)
+          PY
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          c = Path('src/admin-styles/10-components.css').read_text()
+          b = Path('src/admin-styles/30-bookings.css').read_text()
+          assert 'font-size: 11px;' in c[c.index('.admin-body :is(select, .admin-db-statusz'):c.index('.admin-body select::-ms-expand')]
+          status = b[b.index('#admin-panel-foglalasok .admin-db-statusz {'):b.index('#admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt)')]
+          assert 'font-size: 11px;' not in status
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          rm -f .github/workflows/chatgpt-test-unify-select-font.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unify admin select font at 11px"
+          git push origin CHATGPT_TEST
