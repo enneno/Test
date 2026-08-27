@@ -64,4 +64,4 @@ jobs:
           git commit -m 'Build gallery layout and pagination'
           git push origin HEAD:CHATGPT_TEST
 
-# Retry after gallery pagination fixture tolerance adjustment.
+# Retry after add-to-top ordering waits for the native CMS render.
