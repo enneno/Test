@@ -223,6 +223,8 @@
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
   appearance: none;
   -webkit-appearance: none;
+  font-size: 11px;
+  font-size-adjust: none;
   padding-right: 34px;
   background-image: var(--lumi-select-arrow);
   background-repeat: no-repeat;

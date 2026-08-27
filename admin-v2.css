@@ -2403,8 +2403,6 @@ body.admin-body [hidden] {
   background-color: var(--booking-state-bg);
   background-repeat: no-repeat;
   -webkit-text-fill-color: currentColor;
-  font-size: 11px;
-  font-size-adjust: none;
   font-weight: 780;
   letter-spacing: -.01em;
   line-height: 1.25;
@@ -4835,6 +4833,8 @@ font-size-adjust: none;
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
   appearance: none;
   -webkit-appearance: none;
+  font-size: 11px;
+  font-size-adjust: none;
   padding-right: 34px;
   background-image: var(--lumi-select-arrow);
   background-repeat: no-repeat;
