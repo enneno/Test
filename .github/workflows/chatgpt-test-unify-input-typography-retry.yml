@@ -1,0 +1,53 @@
+name: Retry unified admin text input typography
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Patch canonical input rule
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/admin-styles/10-components.css')
+          s = p.read_text()
+          needle = '  font-size: var(--admin-ui-input-font-size);\n}'
+          replacement = '  font-family: inherit;\n  font-size: var(--admin-ui-input-font-size);\n  font-weight: 400;\n  line-height: var(--admin-ui-control-line-height);\n}'
+          if s.count(needle) != 1:
+              raise SystemExit(f'Expected one canonical input font-size owner, found {s.count(needle)}')
+          p.write_text(s.replace(needle, replacement, 1))
+          PY
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify
+        shell: bash
+        run: |
+          grep -q 'font-weight: 400;' src/admin-styles/10-components.css
+          grep -q 'font-family: inherit;' src/admin-styles/10-components.css
+      - name: Commit verified result
+        shell: bash
+        run: |
+          rm -f .github/workflows/chatgpt-test-unify-input-typography.yml
+          rm -f .github/workflows/chatgpt-test-unify-input-typography-retry.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unify admin text input typography"
+          git push origin CHATGPT_TEST
