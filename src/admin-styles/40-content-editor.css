@@ -282,39 +282,33 @@ body.cms-image-lightbox-open { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
+  gap: 0;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-index { display: none; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
+  display: block;
+  padding: 10px;
   border: 1px solid var(--admin-v2-border);
-  border-radius: 13px;
-  background: var(--admin-v2-surface);
+  border-bottom: 0;
+  border-radius: 15px 15px 0 0;
+  background: var(--admin-v2-surface-soft);
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker > span {
-  color: var(--admin-v2-muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  display: none;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker select {
   width: 100%;
   min-width: 0;
-  min-height: var(--admin-ui-choice-height);
-  padding: 0 34px 0 10px;
+  min-height: 46px;
+  padding: 0 40px 0 14px;
   border: 1px solid var(--admin-v2-border);
-  border-radius: 10px;
+  border-radius: 11px;
   color: var(--admin-v2-ink);
-  background-color: var(--admin-v2-surface-soft);
-  box-shadow: none;
-  font-size: 12px;
+  background-color: var(--admin-v2-surface);
+  box-shadow: 0 2px 8px rgba(67, 42, 35, .045);
+  font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card {
   overflow: hidden;
@@ -322,6 +316,9 @@ body.cms-image-lightbox-open { overflow: hidden; }
   border-radius: 15px;
   background: var(--admin-v2-surface);
   box-shadow: var(--admin-v2-shadow);
+}
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root:not([data-lumi-cms-gallery-context="images"]) .cms-editor-card {
+  border-radius: 0 0 15px 15px;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card-header {
   display: flex;
@@ -332,6 +329,9 @@ body.cms-image-lightbox-open { overflow: hidden; }
   border-bottom: 1px solid var(--admin-v2-border);
   background: var(--admin-v2-surface-soft);
 }
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root:not([data-lumi-cms-gallery-context="images"]) .cms-editor-card-header {
+  display: none;
+}
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card-header h3 {
   margin: 0;
   font-family: "Manrope", sans-serif;
@@ -341,24 +341,82 @@ body.cms-image-lightbox-open { overflow: hidden; }
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-count { display: none; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-body { padding: 0; }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldsets { display: block; }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldsets {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+}
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset {
   margin: 0;
-  overflow: visible;
-  border: 0;
-  border-bottom: 1px solid var(--admin-v2-border);
-  border-radius: 0;
-  background: transparent;
+  overflow: hidden;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface);
 }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset:last-child { border-bottom: 0; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary {
-  min-height: 48px;
-  padding: 0 14px;
-  font-size: 11px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 8px 12px;
+  list-style: none;
+  color: var(--admin-v2-ink);
+  background: var(--admin-v2-surface);
+  font-size: 12px;
   font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small { color: var(--admin-v2-subtle); font-size: 9px; font-weight: 600; }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary { color: var(--admin-v2-brand-dark); background: var(--admin-v2-brand-soft); }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary::-webkit-details-marker { display: none; }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary::marker { content: ''; }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  justify-self: center;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 150ms ease;
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary:hover {
+  background: var(--admin-v2-surface-soft);
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 999px;
+  color: var(--admin-v2-subtle);
+  background: var(--admin-v2-surface-soft);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: inset 3px 0 0 rgba(163, 93, 117, .45);
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary:hover {
+  background: var(--admin-v2-brand-soft);
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary::after {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary small {
+  color: var(--admin-v2-brand-dark);
+  border-color: rgba(163, 93, 117, .22);
+  background: rgba(255, 255, 255, .58);
+}
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > .cms-fieldset-grid {
+  border-top: 1px solid var(--admin-v2-border);
+}
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset-grid,
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -397,8 +455,32 @@ body.cms-image-lightbox-open { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-szovegek { max-width: none; }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tabs { margin-inline: -2px; }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab { min-height: 36px; padding-inline: 11px; }
-  .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker { padding: 8px 10px; }
+  .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker {
+    padding: 8px;
+    border-radius: 13px 13px 0 0;
+  }
+  .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker select {
+    min-height: 44px;
+    padding-left: 12px;
+    font-size: 12px;
+  }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card { border-radius: 13px; }
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root:not([data-lumi-cms-gallery-context="images"]) .cms-editor-card {
+    border-radius: 0 0 13px 13px;
+  }
+  .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldsets {
+    gap: 7px;
+    padding: 8px;
+  }
+  .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary {
+    min-height: 48px;
+    gap: 8px;
+    padding: 7px 10px;
+  }
+  .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small {
+    min-height: 22px;
+    padding: 3px 7px;
+  }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-image-field {
     display: grid;
     grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
