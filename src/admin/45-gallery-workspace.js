@@ -32,7 +32,7 @@
             if (addButton) {
                 const previousCount = root.querySelectorAll('.cms-gallery-item').length;
                 galleryPage = 1;
-                queueMicrotask(() => promoteNewestGalleryItem(root, previousCount));
+                setTimeout(() => promoteNewestGalleryItem(root, previousCount), 0);
                 return;
             }
 
