@@ -43,21 +43,13 @@ new_sidebar = '''  .admin-body.admin-v2 .admin-sidebar {
   }
 
   .admin-body.admin-v2 .admin-v2-nav-item {
-    display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) auto;
-    justify-items: start;
-    column-gap: 10px;
+    min-height: 44px;
+    justify-content: flex-start;
     text-align: left;
   }
 
   .admin-body.admin-v2 .admin-v2-nav-item > span:not(.admin-v2-nav-count):not(.admin-v2-nav-alert) {
-    width: 100%;
     text-align: left;
-  }
-
-  .admin-body.admin-v2 .admin-v2-nav-count,
-  .admin-body.admin-v2 .admin-v2-nav-alert {
-    justify-self: end;
   }
 
   .admin-body.admin-v2 .admin-v2-sidebar-bottom {
@@ -82,6 +74,23 @@ if old_sidebar not in css:
     raise SystemExit('Expected mobile sidebar block not found')
 css = css.replace(old_sidebar, new_sidebar, 1)
 css_path.write_text(css, encoding='utf-8')
+
+# Sidebar navigation is structural workspace UI, not a centered generic button.
+components_path = Path('src/admin-styles/10-components.css')
+components = components_path.read_text(encoding='utf-8')
+old_members = '''  .admin-tab,
+  .admin-v2-nav-item,
+  .admin-v2-public-link,
+  .admin-v2-profile,
+  .admin-v2-logout,
+  .admin-v2-button,'''
+new_members = '''  .admin-tab,
+  .admin-v2-button,'''
+member_count = components.count(old_members)
+if member_count != 2:
+    raise SystemExit(f'Expected sidebar members in two shared button selectors, found {member_count}')
+components = components.replace(old_members, new_members)
+components_path.write_text(components, encoding='utf-8')
 
 js_path = Path('src/admin/05-admin-workspace-v2.js')
 js = js_path.read_text(encoding='utf-8')
@@ -152,6 +161,7 @@ replacement = '''        await expect.poll(async () => {
                 bodyPosition: bodyStyle.position,
                 bodyOverflow: bodyStyle.overflow,
                 navDisplay: navStyle.display,
+                navJustify: navStyle.justifyContent,
                 navTextAlign: navStyle.textAlign,
                 labelTextAlign: getComputedStyle(label).textAlign
             };
@@ -161,7 +171,8 @@ replacement = '''        await expect.poll(async () => {
         expect(drawerMetrics.logoutBottom).toBeLessThanOrEqual(drawerMetrics.viewportHeight + 1);
         expect(drawerMetrics.bodyPosition).toBe('fixed');
         expect(drawerMetrics.bodyOverflow).toBe('hidden');
-        expect(drawerMetrics.navDisplay).toBe('grid');
+        expect(drawerMetrics.navDisplay).toBe('flex');
+        expect(drawerMetrics.navJustify).toBe('flex-start');
         expect(drawerMetrics.navTextAlign).toBe('left');
         expect(drawerMetrics.labelTextAlign).toBe('left');
 
