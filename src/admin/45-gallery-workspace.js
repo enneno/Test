@@ -155,7 +155,11 @@
             const controls = item.querySelector('.cms-image-controls');
             const choice = Array.from(item.children)
                 .find(child => child.classList?.contains('cms-gallery-home-choice'));
-            if (controls && choice) controls.prepend(choice);
+            if (!controls || !choice) return;
+
+            const label = choice.querySelector('span');
+            if (label) label.textContent = 'Megjelenjen a főoldalon';
+            controls.prepend(choice);
         });
     }
 
