@@ -23,46 +23,48 @@ test('shared CMS image workspace keeps previews left, every control right, and g
             <style>${foundationCss}\n${contentCss}\n${galleryCss}\n${componentsCss}</style>
         </head>
         <body class="admin-body admin-v2">
-            <div id="admin-panel-szovegek">
-                <div id="admin-cms-root">
-                    <div class="cms-image-field admin-mezo admin-mezo-szeles" data-test-general-image>
-                        <span class="cms-field-label">Nyitókép</span>
-                        <div class="cms-image-preview" data-cms-preview="fooldal.hero.kep">
-                            <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23d9aaa7%22/%3E%3C/svg%3E" alt="Teszt kép">
-                            <span>Kép előnézet</span>
-                        </div>
-                        <div class="cms-image-controls">
-                            <label class="admin-hozzaadas cms-upload-button">Kép feltöltése<input type="file"></label>
-                            <button type="button" class="admin-kis-gomb">Kép eltávolítása</button>
-                        </div>
-                        <input class="cms-image-url" value="/kepek/teszt.jpg">
-                    </div>
-
-                    <article class="cms-gallery-item" data-test-gallery-image>
-                        <h4>1. kép</h4>
-                        <label class="cms-gallery-home-choice"><input type="checkbox"><span>Megjelenjen a főoldali galériaátvezetőben</span></label>
-                        <div class="cms-image-field admin-mezo admin-mezo-szeles">
-                            <span class="cms-field-label">Fotó</span>
-                            <div class="cms-image-preview" data-cms-preview="galeria.elemek.0.kep">
-                                <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23c59e9a%22/%3E%3C/svg%3E" alt="Galéria teszt kép">
+            <main id="admin-tartalom">
+                <div id="admin-panel-szovegek">
+                    <div id="admin-cms-root">
+                        <div class="cms-image-field admin-mezo admin-mezo-szeles" data-test-general-image>
+                            <span class="cms-field-label">Nyitókép</span>
+                            <div class="cms-image-preview" data-cms-preview="fooldal.hero.kep">
+                                <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23d9aaa7%22/%3E%3C/svg%3E" alt="Teszt kép">
                                 <span>Kép előnézet</span>
                             </div>
                             <div class="cms-image-controls">
                                 <label class="admin-hozzaadas cms-upload-button">Kép feltöltése<input type="file"></label>
-                                <button type="button" class="admin-kis-gomb" data-cms-remove-image>Kép eltávolítása</button>
+                                <button type="button" class="admin-kis-gomb">Kép eltávolítása</button>
                             </div>
-                            <input class="cms-image-url" value="/kepek/galeria.jpg">
+                            <input class="cms-image-url" value="/kepek/teszt.jpg">
                         </div>
-                        <label class="admin-mezo"><span>Kép leírása</span><input data-cms-path="galeria.elemek.0.kepAlt"></label>
-                        <label class="admin-mezo"><input type="checkbox" data-cms-path="galeria.elemek.0.magas"><span>Magas kiemelt csempe</span></label>
-                        <div class="cms-gallery-actions">
-                            <button type="button" class="admin-kis-gomb" data-cms-gallery-move="up">↑ Feljebb</button>
-                            <button type="button" class="admin-kis-gomb" data-cms-gallery-move="down">↓ Lejjebb</button>
-                            <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-cms-gallery-delete="0">Törlés</button>
-                        </div>
-                    </article>
+
+                        <article class="cms-gallery-item" data-test-gallery-image>
+                            <h4>1. kép</h4>
+                            <label class="cms-gallery-home-choice"><input type="checkbox"><span>Megjelenjen a főoldali galériaátvezetőben</span></label>
+                            <div class="cms-image-field admin-mezo admin-mezo-szeles">
+                                <span class="cms-field-label">Fotó</span>
+                                <div class="cms-image-preview" data-cms-preview="galeria.elemek.0.kep">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23c59e9a%22/%3E%3C/svg%3E" alt="Galéria teszt kép">
+                                    <span>Kép előnézet</span>
+                                </div>
+                                <div class="cms-image-controls">
+                                    <label class="admin-hozzaadas cms-upload-button">Kép feltöltése<input type="file"></label>
+                                    <button type="button" class="admin-kis-gomb" data-cms-remove-image>Kép eltávolítása</button>
+                                </div>
+                                <input class="cms-image-url" value="/kepek/galeria.jpg">
+                            </div>
+                            <label class="admin-mezo"><span>Kép leírása</span><input data-cms-path="galeria.elemek.0.kepAlt"></label>
+                            <label class="admin-mezo"><input type="checkbox" data-cms-path="galeria.elemek.0.magas"><span>Magas kiemelt csempe</span></label>
+                            <div class="cms-gallery-actions">
+                                <button type="button" class="admin-kis-gomb" data-cms-gallery-move="up">↑ Feljebb</button>
+                                <button type="button" class="admin-kis-gomb" data-cms-gallery-move="down">↓ Lejjebb</button>
+                                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-cms-gallery-delete="0">Törlés</button>
+                            </div>
+                        </article>
+                    </div>
                 </div>
-            </div>
+            </main>
             <script>${imageWorkspaceJs}</script>
         </body>
         </html>`);
@@ -102,12 +104,13 @@ test('shared CMS image workspace keeps previews left, every control right, and g
             previewRight: preview.right,
             controlsLeft: controls.left,
             controlsRight: controls.right,
+            actionRects: actionButtons.map(rect => ({ left: rect.left, right: rect.right, width: rect.width })),
             actionsInsideControls: actionButtons.every(rect => rect.left >= controls.left - 1 && rect.right <= controls.right + 1),
             overflow: document.documentElement.scrollWidth - window.innerWidth
         };
     });
     expect(galleryMetrics.previewRight).toBeLessThanOrEqual(galleryMetrics.controlsLeft + 1);
-    expect(galleryMetrics.actionsInsideControls).toBe(true);
+    expect(galleryMetrics.actionsInsideControls, JSON.stringify(galleryMetrics)).toBe(true);
     expect(galleryMetrics.overflow).toBeLessThanOrEqual(1);
 
     await generalField.locator('.cms-image-preview').click();
