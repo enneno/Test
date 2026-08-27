@@ -133,7 +133,7 @@
   margin-bottom: 4px;
   color: var(--admin-rose-dark);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -149,7 +149,7 @@
 }
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-vendeg-lemondas-darab {
   color: var(--admin-rose-dark);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-vendeg-lemondas-akciok {
   display: flex;
@@ -197,7 +197,7 @@
   background: transparent;
   font-family: inherit;
   font-size: 11px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
@@ -232,7 +232,7 @@
   margin: 0;
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   text-align: right;
 }
@@ -266,7 +266,7 @@
   background: transparent;
   font-family: inherit;
   font-size: 10px;
-  font-weight: 740;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
 }
@@ -299,7 +299,7 @@
   background: var(--admin-v2-surface);
   box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
   font-size: 11px;
-  font-weight: 820;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -316,7 +316,7 @@
   margin: 0;
   color: var(--admin-v2-subtle);
   font-size: 9px;
-  font-weight: 760;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
   width: 62px;
@@ -327,7 +327,7 @@
   border-color: var(--admin-v2-border);
   border-radius: 11px;
   background-color: var(--admin-v2-surface);
-  font-weight: 780;
+  font-weight: 600;
 }
 
 /* Canonical card list */
@@ -420,7 +420,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum {
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum::after {
@@ -430,7 +430,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 680;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk {
@@ -453,7 +453,7 @@
   color: var(--admin-v2-subtle);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 9px;
-  font-weight: 680;
+  font-weight: 600;
   letter-spacing: .025em;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -466,7 +466,7 @@
   color: var(--admin-v2-ink);
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -478,7 +478,7 @@
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -524,7 +524,7 @@
   background-color: var(--booking-state-bg);
   background-repeat: no-repeat;
   -webkit-text-fill-color: currentColor;
-  font-weight: 780;
+  font-weight: 600;
   letter-spacing: -.01em;
   line-height: 1.25;
   text-align: center;
@@ -632,7 +632,7 @@
   margin: 0;
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .08em;
   line-height: 1.15;
   text-transform: uppercase;
@@ -641,7 +641,7 @@
   min-width: 0;
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 670;
+  font-weight: 600;
   line-height: 1.28;
   overflow-wrap: anywhere;
 }
@@ -661,7 +661,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor > strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   line-height: 1.25;
   text-transform: uppercase;
@@ -686,7 +686,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-lemondasi-megjegyzes strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   text-transform: uppercase;
 }
@@ -713,7 +713,7 @@
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 9px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
@@ -755,7 +755,7 @@
   background: rgba(185, 133, 143, .08);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-button-compact);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 .admin-inspiracio-modal {
@@ -832,7 +832,7 @@
   margin-top: 7px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 body.admin-modal-nyitva { overflow: hidden; }
@@ -870,7 +870,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-left: 1px solid var(--admin-line);
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
@@ -910,7 +910,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-napszam {
   width: 24px;
   font-size: var(--lumi-font-caption);
-  font-weight: 850;
+  font-weight: 600;
   line-height: 24px;
   text-align: center;
 }
@@ -929,7 +929,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--admin-muted);
   background: #eee7e2;
   font-size: var(--lumi-font-calendar);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 16px;
   text-align: center;
 }
@@ -958,7 +958,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-esemeny time {
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: #783e53; background: #f4e4e9; }
@@ -969,7 +969,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-tovabbi {
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 750;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-panel {
   margin-top: 14px;
@@ -986,14 +986,14 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   font-family: "Cormorant Garamond", serif;
   font-size: 24px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.1;
   text-transform: capitalize;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-fej > span {
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-lista { display: grid; gap: 5px; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-sor {
@@ -1017,7 +1017,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 3px;
   font-size: var(--lumi-font-label);
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-adat {
   display: grid;
@@ -1031,7 +1031,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-radius: 999px;
   background: rgba(255, 249, 245, .66);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 

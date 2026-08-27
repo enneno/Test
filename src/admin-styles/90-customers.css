@@ -6,7 +6,7 @@
   margin: 0 0 12px;
   color: var(--admin-v2-ink);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-vendeg-lista {
@@ -42,7 +42,7 @@
   color: var(--admin-v2-brand-dark);
   background: var(--admin-v2-brand-soft);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 

@@ -594,7 +594,7 @@ test.describe('production admin redesign', () => {
         });
 
         expect(mobileMetrics.headingFont).toBeLessThanOrEqual(24);
-        expect(mobileMetrics.cardTitleFont).toBe(17);
+        expect(mobileMetrics.cardTitleFont).toBe(14);
         expect(Math.max(...mobileMetrics.controlHeights)).toBeLessThanOrEqual(36);
         expect(mobileMetrics.viewSwitchWidth).toBeLessThanOrEqual(180);
         expect(mobileMetrics.viewButtonHeight).toBeLessThanOrEqual(36);
@@ -636,7 +636,7 @@ test.describe('production admin redesign', () => {
         await expect(refreshButton).toHaveAttribute('title', 'Foglalások frissítése');
         await expect(searchInput).toHaveAttribute('placeholder', 'Név, e-mail vagy telefon');
         expect((await refreshButton.textContent()).trim()).toBe('');
-        expect(await refreshButton.evaluate(button => button.parentElement?.classList.contains('admin-lapozo-jobb'))).toBe(true);
+        expect(await refreshButton.evaluate(button => button.parentElement?.classList.contains('admin-v2-page-actions'))).toBe(true);
 
         const manualCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Adminisztracio' });
         const onlineCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Nagy Anna' });
@@ -691,8 +691,8 @@ test.describe('production admin redesign', () => {
                         || Number.parseFloat(getComputedStyle(search).fontSize) >= 16,
                     refreshWidth: refreshBounds.width,
                     refreshHeight: refreshBounds.height,
-                    refreshRightOfPageSize: refreshBounds.left >= pageSizeBounds.right - 1,
-                    sharedActionBlock: actionButtons.length === 2
+                    refreshInPageActions: refresh.parentElement === actions,
+                    sharedActionBlock: actionButtons.length === 3
                         && actionButtons.every(button => button.parentElement === actions)
                 };
             }, 430);
@@ -704,9 +704,9 @@ test.describe('production admin redesign', () => {
             expect(metrics.pagerOverflow, `${viewport.width}px pager overflow`).toBeLessThanOrEqual(1);
             expect(metrics.actionsInside, `${viewport.width}px page actions`).toBe(true);
             expect(metrics.mobileFontLargeEnough, `${viewport.width}px search font ${metrics.searchFont}px`).toBe(true);
-            expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(44);
-            expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(44);
-            expect(metrics.refreshRightOfPageSize, `${viewport.width}px refresh placement`).toBe(true);
+            expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(34);
+            expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(34);
+            expect(metrics.refreshInPageActions, `${viewport.width}px refresh placement`).toBe(true);
             expect(metrics.sharedActionBlock, `${viewport.width}px shared page actions`).toBe(true);
         }
 

@@ -131,7 +131,7 @@ body.admin-body [hidden] {
   padding-left: 11px;
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-micro);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.28em;
   line-height: 1;
   text-transform: uppercase;
@@ -164,7 +164,7 @@ body.admin-body [hidden] {
   background: var(--ui-rose-dark);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-button);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.15;
   letter-spacing: 0.04em;
   text-align: center;
@@ -292,7 +292,7 @@ body.admin-body [hidden] {
   color: #fff;
   background: var(--admin-v2-brand-dark);
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 600;
   transform: translate(-50%, -140%);
   transition: transform 160ms ease;
 }
@@ -397,7 +397,7 @@ body.admin-body [hidden] {
   border-radius: 6px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -413,7 +413,7 @@ body.admin-body [hidden] {
   padding: 11px 10px 4px;
   color: rgba(255, 255, 255, 0.38);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -432,7 +432,7 @@ body.admin-body [hidden] {
   background: transparent;
   font: inherit;
   font-size: 12px;
-  font-weight: 680;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
   touch-action: manipulation;
@@ -489,7 +489,7 @@ body.admin-body [hidden] {
   color: #4b302b;
   background: #e7c1b6;
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-nav-alert {
@@ -554,7 +554,7 @@ body.admin-body [hidden] {
   color: #452f2a;
   background: #ead5cd;
   font-size: 10px;
-  font-weight: 850;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-profile strong,
@@ -583,7 +583,7 @@ body.admin-body [hidden] {
   border-radius: 9px;
   color: rgba(255, 255, 255, 0.76);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   transition: color 160ms ease, background-color 160ms ease;
 }
@@ -657,7 +657,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-v2-topbar-section {
   color: var(--admin-v2-ink);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-topbar-section + p {
@@ -852,7 +852,7 @@ body.admin-body [hidden] {
   margin: 0 0 5px;
   color: var(--admin-v2-brand);
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -862,7 +862,7 @@ body.admin-body [hidden] {
   color: var(--admin-v2-ink);
   font-family: var(--font-display, Georgia, serif);
   font-size: clamp(25px, 2.25vw, 31px);
-  font-weight: 550;
+  font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.025em;
 }
@@ -900,7 +900,7 @@ body.admin-body [hidden] {
   background: var(--admin-v2-surface);
   font: inherit;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
@@ -950,7 +950,7 @@ body.admin-body [hidden] {
   background: transparent;
   font: inherit;
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
@@ -1005,7 +1005,7 @@ body.admin-body [hidden] {
   margin: 0;
   color: var(--admin-v2-muted);
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -1096,7 +1096,7 @@ body.admin-body [hidden] {
   color: var(--admin-v2-ink);
   font-family: inherit;
   font-size: 13px;
-  font-weight: 820;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-card-header p {
@@ -1115,7 +1115,7 @@ body.admin-body [hidden] {
   background: transparent;
   font: inherit;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -1188,7 +1188,7 @@ body.admin-body [hidden] {
 
 .admin-body.admin-v2 .admin-v2-schedule-copy strong {
   font-size: 11px;
-  font-weight: 780;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-copy small {
@@ -1206,7 +1206,7 @@ body.admin-body [hidden] {
   background: var(--admin-v2-info-soft);
   font: inherit;
   font-size: 8px;
-  font-weight: 850;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1287,7 +1287,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-v2-upcoming-list strong,
 .admin-body.admin-v2 .admin-v2-task-item strong {
   font-size: 10px;
-  font-weight: 780;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-upcoming-list small,
@@ -1334,7 +1334,7 @@ body.admin-body [hidden] {
   background: transparent;
   font: inherit;
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -1378,7 +1378,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-v2-communication-summary span {
   color: var(--admin-v2-muted);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
@@ -1446,7 +1446,7 @@ body.admin-body [hidden] {
 
 .admin-body.admin-v2 .admin-v2-settings-header h2 {
   font-size: 13px;
-  font-weight: 820;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-settings-header p {
@@ -2010,7 +2010,7 @@ body.admin-body [hidden] {
   margin-bottom: 4px;
   color: var(--admin-rose-dark);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -2026,7 +2026,7 @@ body.admin-body [hidden] {
 }
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-vendeg-lemondas-darab {
   color: var(--admin-rose-dark);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-vendeg-lemondas-akciok {
   display: flex;
@@ -2073,7 +2073,7 @@ body.admin-body [hidden] {
   background: transparent;
   font-family: inherit;
   font-size: 11px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
@@ -2108,7 +2108,7 @@ body.admin-body [hidden] {
   margin: 0;
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   text-align: right;
 }
@@ -2142,7 +2142,7 @@ body.admin-body [hidden] {
   background: transparent;
   font-family: inherit;
   font-size: 10px;
-  font-weight: 740;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
 }
@@ -2175,7 +2175,7 @@ body.admin-body [hidden] {
   background: var(--admin-v2-surface);
   box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
   font-size: 11px;
-  font-weight: 820;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -2192,7 +2192,7 @@ body.admin-body [hidden] {
   margin: 0;
   color: var(--admin-v2-subtle);
   font-size: 9px;
-  font-weight: 760;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
   width: 62px;
@@ -2203,7 +2203,7 @@ body.admin-body [hidden] {
   border-color: var(--admin-v2-border);
   border-radius: 11px;
   background-color: var(--admin-v2-surface);
-  font-weight: 780;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-lista {
@@ -2295,7 +2295,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum {
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum::after {
@@ -2305,7 +2305,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 680;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk {
@@ -2328,7 +2328,7 @@ body.admin-body [hidden] {
   color: var(--admin-v2-subtle);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 9px;
-  font-weight: 680;
+  font-weight: 600;
   letter-spacing: .025em;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -2341,7 +2341,7 @@ body.admin-body [hidden] {
   color: var(--admin-v2-ink);
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2353,7 +2353,7 @@ body.admin-body [hidden] {
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2399,7 +2399,7 @@ body.admin-body [hidden] {
   background-color: var(--booking-state-bg);
   background-repeat: no-repeat;
   -webkit-text-fill-color: currentColor;
-  font-weight: 780;
+  font-weight: 600;
   letter-spacing: -.01em;
   line-height: 1.25;
   text-align: center;
@@ -2505,7 +2505,7 @@ body.admin-body [hidden] {
   margin: 0;
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .08em;
   line-height: 1.15;
   text-transform: uppercase;
@@ -2514,7 +2514,7 @@ body.admin-body [hidden] {
   min-width: 0;
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 670;
+  font-weight: 600;
   line-height: 1.28;
   overflow-wrap: anywhere;
 }
@@ -2534,7 +2534,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor > strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   line-height: 1.25;
   text-transform: uppercase;
@@ -2559,7 +2559,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-lemondasi-megjegyzes strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   text-transform: uppercase;
 }
@@ -2586,7 +2586,7 @@ body.admin-body [hidden] {
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 9px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
@@ -2627,7 +2627,7 @@ body.admin-body [hidden] {
   background: rgba(185, 133, 143, .08);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-button-compact);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 .admin-inspiracio-modal {
@@ -2704,7 +2704,7 @@ body.admin-body [hidden] {
   margin-top: 7px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 body.admin-modal-nyitva { overflow: hidden; }
@@ -2741,7 +2741,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-left: 1px solid var(--admin-line);
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
@@ -2781,7 +2781,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-napszam {
   width: 24px;
   font-size: var(--lumi-font-caption);
-  font-weight: 850;
+  font-weight: 600;
   line-height: 24px;
   text-align: center;
 }
@@ -2800,7 +2800,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--admin-muted);
   background: #eee7e2;
   font-size: var(--lumi-font-calendar);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 16px;
   text-align: center;
 }
@@ -2829,7 +2829,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-esemeny time {
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: #783e53; background: #f4e4e9; }
@@ -2840,7 +2840,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-tovabbi {
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 750;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-panel {
   margin-top: 14px;
@@ -2857,14 +2857,14 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   font-family: "Cormorant Garamond", serif;
   font-size: 24px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.1;
   text-transform: capitalize;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-fej > span {
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-lista { display: grid; gap: 5px; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-sor {
@@ -2888,7 +2888,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 3px;
   font-size: var(--lumi-font-label);
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-adat {
   display: grid;
@@ -2902,7 +2902,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-radius: 999px;
   background: rgba(255, 249, 245, .66);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -3155,7 +3155,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--tinta);
   background: rgba(255, 255, 255, .58);
   font-size: var(--lumi-font-label);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
   cursor: pointer;
 }
@@ -3196,7 +3196,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 0;
   border-radius: 9px;
   font-size: 11px;
-  font-weight: 720;
+  font-weight: 600;
   white-space: nowrap;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab small { display: none; }
@@ -3232,7 +3232,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker > span {
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -3248,7 +3248,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   background-color: var(--admin-v2-surface-soft);
   box-shadow: none;
   font-size: 12px;
-  font-weight: 760;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card {
   overflow: hidden;
@@ -3270,7 +3270,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-count { display: none; }
@@ -3289,9 +3289,9 @@ body.admin-modal-nyitva { overflow: hidden; }
   min-height: 48px;
   padding: 0 14px;
   font-size: 11px;
-  font-weight: 780;
+  font-weight: 600;
 }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small { color: var(--admin-v2-subtle); font-size: 9px; font-weight: 650; }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small { color: var(--admin-v2-subtle); font-size: 9px; font-weight: 600; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary { color: var(--admin-v2-brand-dark); background: var(--admin-v2-brand-soft); }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset-grid,
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) {
@@ -3300,7 +3300,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 14px;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) { padding-top: 16px; }
-.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 720; }
+.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 600; }
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo input:not([type="checkbox"]),
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo textarea { background: #fff; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-image-field {
@@ -3373,7 +3373,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0 0 3px;
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
@@ -3394,7 +3394,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   font-family: "Manrope", sans-serif;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
@@ -3506,7 +3506,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--admin-v2-ink);
   font-family: "Manrope", sans-serif;
   font-size: 12px;
-  font-weight: 780;
+  font-weight: 600;
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3528,7 +3528,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 0 7px;
   border-radius: 999px;
   font-size: 8px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 22px;
   white-space: nowrap;
 }
@@ -3611,7 +3611,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding-inline: 5px;
   color: var(--admin-v2-brand-dark);
   font-size: 9px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .09em;
   text-transform: uppercase;
 }
@@ -3827,7 +3827,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin-bottom: 8px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
   text-transform: uppercase;
 }
@@ -3839,7 +3839,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   background: #fffdf8;
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   user-select: none;
 }
@@ -3871,7 +3871,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 .admin-naptar-datum {
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 .admin-body.admin-v2 .admin-kozos-idosav-sor {
@@ -4163,7 +4163,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .4px;
   white-space: nowrap;
 }
@@ -4171,7 +4171,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 0;
   font-family: "Manrope", sans-serif;
   font-size: var(--lumi-font-body-small);
-  font-weight: 750;
+  font-weight: 600;
   line-height: 1.3;
 }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-statusz {
@@ -4185,7 +4185,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--tinta);
   background: rgba(255, 250, 244, .82);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-reszletek {
@@ -4205,7 +4205,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-meta {
   color: rgba(83, 67, 59, .62);
   font-size: var(--lumi-font-caption);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-email-teszt-panel { max-width: 980px; }
@@ -4265,7 +4265,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--szin-kiemeles);
   content: counter(email-preview, decimal-leading-zero);
   font-size: var(--lumi-font-micro);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: .08em;
 }
 .admin-body.admin-v2 .admin-email-teszt-statusz {
@@ -4307,7 +4307,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0 0 12px;
   color: var(--admin-v2-ink);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-vendeg-lista {
@@ -4343,7 +4343,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--admin-v2-brand-dark);
   background: var(--admin-v2-brand-soft);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -4587,7 +4587,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: #fff;
   background: var(--admin-v2-danger);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -4695,7 +4695,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 5px;
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .admin-body .admin-mezo span {
@@ -4814,7 +4814,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0 0 4px;
   color: var(--admin-v2-subtle);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
@@ -4827,7 +4827,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: var(--tinta);
   background: rgba(255, 250, 244, 0.8);
   font-family: var(--lumi-button-font);
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
   cursor: pointer;
   touch-action: manipulation;
@@ -4968,7 +4968,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
   font-size: 20px;
-  font-weight: 720;
+  font-weight: 600;
   line-height: 1;
   text-align: center;
 }
@@ -5215,7 +5215,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin-top: 18px;
   padding-bottom: 0;
   color: var(--barna);
-  font-weight: 800;
+  font-weight: 600;
   overflow: visible;
 }
 
@@ -5230,7 +5230,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 6px;
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -5241,7 +5241,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 0 24px 0 10px;
   background-position: right 8px center;
   background-size: 13px 13px;
-  font-weight: 850;
+  font-weight: 600;
 }
 
 .admin-body .admin-lapozo > span {
@@ -5307,7 +5307,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   color: #56715e;
   background: #e8f0e9;
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.05em;
   white-space: nowrap;
   text-transform: uppercase;

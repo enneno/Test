@@ -64,7 +64,7 @@
   color: #fff;
   background: var(--admin-v2-brand-dark);
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 600;
   transform: translate(-50%, -140%);
   transition: transform 160ms ease;
 }
@@ -169,7 +169,7 @@
   border-radius: 6px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -185,7 +185,7 @@
   padding: 11px 10px 4px;
   color: rgba(255, 255, 255, 0.38);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -204,7 +204,7 @@
   background: transparent;
   font: inherit;
   font-size: 12px;
-  font-weight: 680;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
   touch-action: manipulation;
@@ -261,7 +261,7 @@
   color: #4b302b;
   background: #e7c1b6;
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-nav-alert {
@@ -327,7 +327,7 @@
   color: #452f2a;
   background: #ead5cd;
   font-size: 10px;
-  font-weight: 850;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-profile strong,
@@ -356,7 +356,7 @@
   border-radius: 9px;
   color: rgba(255, 255, 255, 0.76);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   transition: color 160ms ease, background-color 160ms ease;
 }
@@ -431,7 +431,7 @@
 .admin-body.admin-v2 .admin-v2-topbar-section {
   color: var(--admin-v2-ink);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-topbar-section + p {
@@ -626,7 +626,7 @@
   margin: 0 0 5px;
   color: var(--admin-v2-brand);
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -636,7 +636,7 @@
   color: var(--admin-v2-ink);
   font-family: var(--font-display, Georgia, serif);
   font-size: clamp(25px, 2.25vw, 31px);
-  font-weight: 550;
+  font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.025em;
 }
@@ -674,7 +674,7 @@
   background: var(--admin-v2-surface);
   font: inherit;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
@@ -724,7 +724,7 @@
   background: transparent;
   font: inherit;
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
@@ -779,7 +779,7 @@
   margin: 0;
   color: var(--admin-v2-muted);
   font-size: 9px;
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -870,7 +870,7 @@
   color: var(--admin-v2-ink);
   font-family: inherit;
   font-size: 13px;
-  font-weight: 820;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-card-header p {
@@ -889,7 +889,7 @@
   background: transparent;
   font: inherit;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -962,7 +962,7 @@
 
 .admin-body.admin-v2 .admin-v2-schedule-copy strong {
   font-size: 11px;
-  font-weight: 780;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-copy small {
@@ -980,7 +980,7 @@
   background: var(--admin-v2-info-soft);
   font: inherit;
   font-size: 8px;
-  font-weight: 850;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1061,7 +1061,7 @@
 .admin-body.admin-v2 .admin-v2-upcoming-list strong,
 .admin-body.admin-v2 .admin-v2-task-item strong {
   font-size: 10px;
-  font-weight: 780;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-upcoming-list small,
@@ -1108,7 +1108,7 @@
   background: transparent;
   font: inherit;
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -1152,7 +1152,7 @@
 .admin-body.admin-v2 .admin-v2-communication-summary span {
   color: var(--admin-v2-muted);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
@@ -1220,7 +1220,7 @@
 
 .admin-body.admin-v2 .admin-v2-settings-header h2 {
   font-size: 13px;
-  font-weight: 820;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-settings-header p {

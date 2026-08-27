@@ -130,7 +130,7 @@ body.admin-body [hidden] {
   padding-left: 11px;
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-micro);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.28em;
   line-height: 1;
   text-transform: uppercase;
@@ -163,7 +163,7 @@ body.admin-body [hidden] {
   background: var(--ui-rose-dark);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-button);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.15;
   letter-spacing: 0.04em;
   text-align: center;

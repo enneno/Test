@@ -35,7 +35,7 @@
   margin-bottom: 8px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
   text-transform: uppercase;
 }
@@ -47,7 +47,7 @@
   background: #fffdf8;
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   user-select: none;
 }
@@ -79,7 +79,7 @@
 .admin-body.admin-v2 .admin-naptar-datum {
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 .admin-body.admin-v2 .admin-kozos-idosav-sor {

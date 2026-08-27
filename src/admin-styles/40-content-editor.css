@@ -139,7 +139,7 @@
   color: var(--tinta);
   background: rgba(255, 255, 255, .58);
   font-size: var(--lumi-font-label);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
   cursor: pointer;
 }
@@ -181,7 +181,7 @@
   gap: 0;
   border-radius: 9px;
   font-size: 11px;
-  font-weight: 720;
+  font-weight: 600;
   white-space: nowrap;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab small { display: none; }
@@ -217,7 +217,7 @@
 .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker > span {
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -233,7 +233,7 @@
   background-color: var(--admin-v2-surface-soft);
   box-shadow: none;
   font-size: 12px;
-  font-weight: 760;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-card {
   overflow: hidden;
@@ -255,7 +255,7 @@
   margin: 0;
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-count { display: none; }
@@ -274,9 +274,9 @@
   min-height: 48px;
   padding: 0 14px;
   font-size: 11px;
-  font-weight: 780;
+  font-weight: 600;
 }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small { color: var(--admin-v2-subtle); font-size: 9px; font-weight: 650; }
+.admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset summary small { color: var(--admin-v2-subtle); font-size: 9px; font-weight: 600; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary { color: var(--admin-v2-brand-dark); background: var(--admin-v2-brand-soft); }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset-grid,
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) {
@@ -285,7 +285,7 @@
   padding: 14px;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) { padding-top: 16px; }
-.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 720; }
+.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 600; }
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo input:not([type="checkbox"]),
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo textarea { background: #fff; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-image-field {

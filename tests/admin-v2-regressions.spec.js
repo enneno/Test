@@ -97,14 +97,17 @@ test('a foglalás szerkesztő bezárásakor a részletes nézet is bezár', asyn
     expect(source).toContain("foglalasReszletekKapcsolasa(kartya, false);");
 });
 
-test('a foglalás szerkesztő dátuma külön soron, az idők két oszlopban maradnak', async () => {
-    const source = fs.readFileSync(
+test('a foglalás szerkesztő dátuma és idői egy sorban maradnak, a pickereket a közös komponens CSS vezérli', async () => {
+    const bookingCss = fs.readFileSync(
         path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),
         'utf8'
     );
+    const componentCss = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin-styles', '10-components.css'),
+        'utf8'
+    );
 
-    expect(source).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
-    expect(source).toContain('.admin-mezo:has([data-idopont-mezo="date"])');
-    expect(source).toContain('background-image: var(--booking-icon-calendar);');
-    expect(source).toContain('background-image: var(--booking-icon-clock);');
+    expect(bookingCss).toContain('grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);');
+    expect(componentCss).toContain('background-image: var(--admin-ui-date-icon);');
+    expect(componentCss).toContain('background-image: var(--admin-ui-time-icon);');
 });

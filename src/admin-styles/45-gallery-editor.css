@@ -44,7 +44,7 @@
   margin: 0 0 3px;
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
@@ -65,7 +65,7 @@
   margin: 0;
   font-family: "Manrope", sans-serif;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
