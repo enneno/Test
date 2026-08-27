@@ -30,7 +30,7 @@ jobs:
           grep -q '"featured featured"' src/admin-styles/45-gallery-editor.css
           grep -q 'grid-template-columns: repeat(2, minmax(0, 1fr))' src/admin-styles/45-gallery-editor.css
           grep -q 'tests/admin-cms-image-workspace.spec.js' package.json
-          grep -q 'id="admin-tartalom"' tests/admin-cms-image-workspace.spec.js
+          grep -q "95-pwa.css" tests/admin-cms-image-workspace.spec.js
           ! grep -q '!important' src/admin-styles/40-content-editor.css
           ! grep -q '!important' src/admin-styles/45-gallery-editor.css
 
