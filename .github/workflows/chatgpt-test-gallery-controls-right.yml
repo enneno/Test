@@ -25,8 +25,9 @@ jobs:
 
       - name: Verify gallery layout source
         run: |
-          grep -q '"preview home"' src/admin-styles/45-gallery-editor.css
-          grep -q 'grid-area: image-controls;' src/admin-styles/45-gallery-editor.css
+          grep -q '"title home"' src/admin-styles/45-gallery-editor.css
+          grep -q '"image image"' src/admin-styles/45-gallery-editor.css
+          grep -q 'grid-area: image;' src/admin-styles/45-gallery-editor.css
           grep -q 'data-cms-path\$=".kepAlt"' src/admin-styles/45-gallery-editor.css
           grep -q 'data-cms-path\$=".magas"' src/admin-styles/45-gallery-editor.css
           ! grep -q '!important' src/admin-styles/45-gallery-editor.css
