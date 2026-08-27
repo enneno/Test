@@ -3,7 +3,6 @@
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
   --booking-status-width: 142px;
-  --booking-action-size: var(--admin-ui-icon-button-size);
   --booking-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
   --booking-icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
   --booking-icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
@@ -176,32 +175,9 @@
   display: inline-grid;
   width: 168px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: #f1ece8;
-  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb {
-  display: inline-flex;
-  height: 34px;
-  min-height: 34px;
-  padding: 0 12px;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
-}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb { gap: 7px; }
+
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
   width: 14px;
   height: 14px;
@@ -223,11 +199,6 @@
   -webkit-mask-image: var(--booking-icon-calendar);
   mask-image: var(--booking-icon-calendar);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb.aktiv {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
-}
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-osszefoglalo {
   margin: 0;
   color: var(--admin-muted);
@@ -243,92 +214,7 @@
   min-height: 44px;
   gap: 8px 12px;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: var(--admin-v2-surface-soft);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
-  display: inline-flex;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 10px;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:not(:disabled):hover {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:disabled {
-  cursor: default;
-  opacity: .34;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-page {
-  display: grid;
-  min-width: 46px;
-  height: 36px;
-  padding: 0 8px;
-  place-items: center;
-  border-radius: 9px;
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
-  font-size: 11px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-jobb {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: auto;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--admin-v2-subtle);
-  font-size: 9px;
-  font-weight: 600;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
-  width: 62px;
-  min-width: 62px;
-  height: 38px;
-  min-height: 38px;
-  padding-left: 10px;
-  border-color: var(--admin-v2-border);
-  border-radius: 11px;
-  background-color: var(--admin-v2-surface);
-  font-weight: 600;
-}
+
 
 /* Canonical card list */
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-lista {
@@ -487,13 +373,13 @@
   grid-area: controls;
   align-self: end;
   display: grid;
-  grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);
-  grid-template-rows: var(--booking-action-size);
+  grid-template-columns: var(--booking-status-width) var(--admin-ui-icon-button-size) var(--admin-ui-icon-button-size);
+  grid-template-rows: var(--admin-ui-icon-button-size);
   align-items: center;
   justify-content: end;
   gap: 5px;
-  width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
-  min-width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
+  width: calc(var(--booking-status-width) + (2 * var(--admin-ui-icon-button-size)) + 10px);
+  min-width: calc(var(--booking-status-width) + (2 * var(--admin-ui-icon-button-size)) + 10px);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-db-statusz {
   grid-column: 1;
@@ -505,8 +391,8 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
   grid-column: 2;
-  width: var(--booking-action-size);
-  height: var(--booking-action-size);
+  width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
   content: "";
   visibility: hidden;
 }
@@ -542,26 +428,9 @@
   cursor: pointer;
 }
 
-/* Lucide action icons */
-.admin-body.admin-v2 #admin-panel-foglalasok :is([data-foglalas-szerkesztes], .admin-kezi-ido-naptar) {
-  position: relative;
-  display: inline-grid;
-  flex: 0 0 var(--booking-action-size);
-  width: var(--booking-action-size);
-  min-width: var(--booking-action-size);
-  height: var(--booking-action-size);
-  min-height: var(--booking-action-size);
-  padding: 0;
-  place-items: center;
-  overflow: visible;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: var(--admin-ui-icon-radius);
+/* Lucide action icons: shared button chrome comes from 10-components.css. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-icon-button {
   color: var(--booking-state-color);
-  background: var(--admin-v2-surface);
-  font-size: 0;
-  cursor: pointer;
-  touch-action: manipulation;
-  line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::before,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
@@ -593,12 +462,6 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
   -webkit-mask-image: var(--booking-icon-calendar);
   mask-image: var(--booking-icon-calendar);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::after,
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::after {
-  position: absolute;
-  inset: calc((var(--admin-ui-touch-target) - var(--booking-action-size)) / -2);
-  content: "";
 }
 
 /* Details and edit state */
@@ -1065,32 +928,6 @@ body.admin-modal-nyitva { overflow: hidden; }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo {
       grid-template-rows: var(--admin-ui-choice-height);
     }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button span { display: none; }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
-      width: 30px;
-      min-width: 30px;
-      height: 30px;
-      min-height: 30px;
-      padding: 0;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-page {
-      min-width: 40px;
-      height: 30px;
-      padding-inline: 6px;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-nav { padding: 2px; }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo {
-      min-height: 36px;
-      gap: 6px 8px;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-felso { margin: 6px 0; }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
-      width: 96px;
-      min-width: 96px;
-      height: 34px;
-      min-height: 34px;
-      padding-left: 10px;
-    }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
       align-items: center;
       flex-flow: row wrap;
@@ -1098,17 +935,8 @@ body.admin-modal-nyitva { overflow: hidden; }
       gap: 6px;
       padding-block: 5px 6px;
     }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezetvalto {
-      width: 138px;
-      gap: 2px;
-      padding: 2px;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb {
-      height: 30px;
-      min-height: 30px;
-      gap: 5px;
-      padding-inline: 8px;
-    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezetvalto { width: 138px; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb { gap: 5px; }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
       width: 12px;
       height: 12px;

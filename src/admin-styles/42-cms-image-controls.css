@@ -11,59 +11,12 @@
   gap: 8px;
 }
 
-.admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button {
-  display: grid;
-  flex: 0 0 var(--admin-ui-touch-target);
-  width: var(--admin-ui-touch-target);
-  min-width: var(--admin-ui-touch-target);
-  height: var(--admin-ui-touch-target);
-  min-height: var(--admin-ui-touch-target);
-  padding: 0;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  color: var(--admin-v2-ink);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 2px 8px rgba(67, 42, 35, 0.055);
-  cursor: pointer;
-  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
-}
 
-.admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button:hover {
-  border-color: rgba(163, 93, 117, 0.34);
-  background: var(--admin-v2-brand-soft);
-  box-shadow: 0 4px 12px rgba(67, 42, 35, 0.075);
-  transform: translateY(-1px);
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button:focus-visible {
-  outline: 2px solid var(--admin-v2-brand);
-  outline-offset: 2px;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button:disabled {
-  opacity: 0.34;
-  cursor: default;
-  transform: none;
-  box-shadow: none;
-}
 
 .admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button-danger {
   color: var(--admin-v2-brand-dark);
   border-color: rgba(163, 93, 117, 0.28);
   background: rgba(185, 133, 143, 0.07);
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek .cms-icon-button svg {
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  pointer-events: none;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek .cms-gallery-upload-proxy,

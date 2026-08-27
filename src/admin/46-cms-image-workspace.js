@@ -130,7 +130,7 @@
                 if (galleryItem) {
                     if (upload) {
                         removeTextNodes(upload);
-                        upload.classList.remove('cms-icon-button');
+                        upload.classList.remove('cms-icon-button', 'admin-control-icon-button');
                         upload.classList.add('cms-gallery-upload-proxy');
                         upload.setAttribute('aria-hidden', 'true');
                         upload.removeAttribute('title');
@@ -216,7 +216,7 @@
         removeTextNodes(label);
         label.querySelector('svg')?.remove();
         label.insertAdjacentHTML('afterbegin', ICONS[icon]);
-        label.classList.add('cms-icon-button');
+        label.classList.add('cms-icon-button', 'admin-control-icon-button');
         label.setAttribute('aria-label', accessibleLabel);
         label.title = accessibleLabel;
         label.dataset.cmsIconified = marker;
@@ -226,7 +226,7 @@
         const marker = `${icon}:${accessibleLabel}:${danger}`;
         if (button.dataset.cmsIconified === marker) return;
         button.innerHTML = ICONS[icon];
-        button.classList.add('cms-icon-button');
+        button.classList.add('cms-icon-button', 'admin-control-icon-button');
         button.classList.toggle('cms-icon-button-danger', danger);
         button.setAttribute('aria-label', accessibleLabel);
         button.title = accessibleLabel;

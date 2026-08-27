@@ -57,7 +57,8 @@
 
 .admin-body .admin-mezo input[type="checkbox"],
 .admin-body .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"] {
+.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"],
+.admin-body .cms-gallery-home-choice input[type="checkbox"] {
   flex: 0 0 18px;
   width: 18px;
   height: 18px;
@@ -200,6 +201,101 @@
 .admin-body .admin-gomb:disabled {
   cursor: default;
   opacity: 0.45;
+}
+
+/* Shared segmented navigation: visual treatment belongs here; feature files own only layout. */
+.admin-body.admin-v2 .admin-segmented {
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: #f3eeea;
+  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
+}
+
+.admin-body.admin-v2 .admin-segmented-item {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-body.admin-v2 :is(.admin-segmented-item.aktiv, .admin-segmented-item[aria-selected="true"]) {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
+}
+
+/* Shared compact icon button. Visual size stays compact; the pseudo element keeps a 44px touch target. */
+.admin-body.admin-v2 .admin-control-icon-button {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-icon-button-size);
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
+  place-items: center;
+  overflow: visible;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: var(--admin-ui-icon-radius);
+  color: var(--admin-v2-brand);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button::after {
+  position: absolute;
+  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
+  content: "";
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:not(:disabled):hover {
+  border-color: rgba(163, 93, 117, .34);
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: 0 3px 10px rgba(67, 42, 35, .075);
+  transform: translateY(-1px);
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:focus-visible {
+  outline: 2px solid var(--admin-v2-brand);
+  outline-offset: 2px;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:disabled {
+  cursor: default;
+  opacity: .34;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 /* Fields: visual treatment and geometry are centralized. */
@@ -539,7 +635,8 @@
   inset: 0;
 }
 
-/* Pagination is shared by bookings and event log. */
+
+/* Shared pagination: bookings, event log and gallery all use this visual primitive. */
 .admin-body .admin-lapozo {
   position: relative;
   z-index: 1;
@@ -560,42 +657,133 @@
   margin-bottom: 12px;
 }
 
-.admin-body .admin-oldalmeret {
+.admin-body .admin-lapozo-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body .admin-pagination-button {
+  display: inline-flex;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-body .admin-pagination-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-body .admin-pagination-button:not(:disabled):hover {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
+}
+
+.admin-body .admin-pagination-button:disabled {
+  cursor: default;
+  opacity: .34;
+}
+
+.admin-body .admin-pagination-page {
+  display: grid;
+  min-width: 46px;
+  height: 36px;
+  padding: 0 8px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-body .admin-lapozo-jobb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.admin-body .admin-oldalmeret,
+.admin-body .admin-pagination-size {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--barna);
-  font-size: var(--lumi-font-label);
+  margin: 0;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.admin-body .admin-oldalmeret-select {
-  width: 64px;
-  min-width: 64px;
-  min-height: 34px;
+.admin-body .admin-oldalmeret-select,
+.admin-body .admin-pagination-size .admin-oldalmeret-select {
+  width: 62px;
+  min-width: 62px;
+  height: 38px;
+  min-height: 38px;
   padding: 0 24px 0 10px;
+  border-color: var(--admin-v2-border);
+  border-radius: var(--admin-ui-control-radius);
+  background-color: var(--admin-v2-surface);
   background-position: right 8px center;
   background-size: 13px 13px;
   font-weight: 600;
 }
 
-.admin-body .admin-lapozo > span {
-  flex: 0 0 auto;
-  min-width: 36px;
-  font-size: var(--lumi-font-label);
-  text-align: center;
-}
-
-.admin-body .admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
-.admin-body .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
-  flex: 0 0 auto;
-  width: auto;
-  min-width: 68px;
-}
-
-.admin-body .admin-lapozo .admin-oldalmeret {
-  margin-left: auto;
+@media (max-width: 480px) {
+  .admin-body .admin-pagination-button span { display: none; }
+  .admin-body .admin-pagination-button {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+  }
+  .admin-body .admin-pagination-page {
+    min-width: 40px;
+    height: 30px;
+    padding-inline: 6px;
+  }
+  .admin-body .admin-lapozo-nav { padding: 2px; }
+  .admin-body .admin-lapozo {
+    min-height: 36px;
+    gap: 6px 8px;
+  }
+  .admin-body .admin-lapozo-felso { margin: 6px 0; }
+  .admin-body .admin-pagination-size .admin-oldalmeret-select,
+  .admin-body .admin-oldalmeret .admin-oldalmeret-select {
+    width: 96px;
+    min-width: 96px;
+    height: 34px;
+    min-height: 34px;
+  }
 }
 
 /* Reusable compact editable rows. */

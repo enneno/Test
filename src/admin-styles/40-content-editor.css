@@ -224,7 +224,7 @@ body.cms-image-lightbox-open { overflow: hidden; }
   line-height: 1.35;
   cursor: pointer;
 }
-.cms-gallery-home-choice input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: var(--akcentus); }
+.cms-gallery-home-choice input { flex: 0 0 auto; margin: 0; }
 .cms-gallery-item .cms-image-field { padding: 0; border: 0; background: transparent; }
 .cms-gallery-item > .admin-mezo { margin-top: 12px; }
 .cms-gallery-actions { justify-content: flex-end; margin-top: 14px; }
@@ -243,42 +243,20 @@ body.cms-image-lightbox-open { overflow: hidden; }
   z-index: 18;
   top: calc(var(--admin-v2-topbar) + 8px);
   display: flex;
-  gap: 4px;
-  padding: 4px;
   overflow-x: auto;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 13px;
-  background: rgba(247, 244, 241, .94);
-  box-shadow: 0 5px 18px rgba(67, 42, 35, .055);
   backdrop-filter: blur(16px);
   scrollbar-width: none;
 }
+
 .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tabs::-webkit-scrollbar { display: none; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab {
   flex: 1 0 auto;
   min-width: max-content;
-  min-height: 38px;
-  padding-inline: 13px;
   gap: 0;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 600;
   white-space: nowrap;
 }
+
 .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab small { display: none; }
-.admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab {
-  border: 0;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
-}
-.admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab[aria-selected="true"] {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 2px 8px rgba(67, 42, 35, .08);
-}
 .admin-body.admin-v2 #admin-panel-szovegek .cms-editor-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -454,7 +432,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
 @media (max-width: 768px) {
   .admin-body.admin-v2 #admin-panel-szovegek { max-width: none; }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tabs { margin-inline: -2px; }
-  .admin-body.admin-v2 #admin-panel-szovegek .cms-view-tab { min-height: 36px; padding-inline: 11px; }
   .admin-body.admin-v2 #admin-panel-szovegek .cms-section-picker {
     padding: 8px;
     border-radius: 13px 13px 0 0;

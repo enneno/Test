@@ -449,15 +449,9 @@ image_controls = replace_between(
     '',
     'cms icon button visual ownership'
 )
-for pattern, label in [
-    (r'\.admin-body\.admin-v2 #admin-panel-szovegek \.cms-icon-button:hover \{.*?\n\}\n\n', 'cms icon hover'),
-    (r'\.admin-body\.admin-v2 #admin-panel-szovegek \.cms-icon-button:focus-visible \{.*?\n\}\n\n', 'cms icon focus'),
-    (r'\.admin-body\.admin-v2 #admin-panel-szovegek \.cms-icon-button:disabled \{.*?\n\}\n\n', 'cms icon disabled'),
-    (r'\.admin-body\.admin-v2 #admin-panel-szovegek \.cms-icon-button svg \{.*?\n\}\n\n', 'cms icon svg')
-]:
-    image_controls, count = re.subn(pattern, '', image_controls, count=1, flags=re.S)
-    if count != 1:
-        raise SystemExit(f'{label}: expected 1 replacement, got {count}')
+image_controls, count = re.subn(r'\.admin-body\.admin-v2 #admin-panel-szovegek \.cms-icon-button svg \{.*?\n\}\n\n', '', image_controls, count=1, flags=re.S)
+if count != 1:
+    raise SystemExit(f'cms icon svg: expected 1 replacement, got {count}')
 write(image_controls_path, image_controls)
 
 

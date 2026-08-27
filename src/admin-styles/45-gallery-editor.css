@@ -70,84 +70,7 @@
   gap: 8px;
 }
 
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: var(--admin-v2-surface);
-}
 
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button {
-  display: grid;
-  width: 34px;
-  min-width: 34px;
-  height: 34px;
-  min-height: 34px;
-  padding: 0;
-  place-items: center;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  cursor: pointer;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button:not(:disabled):hover {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-brand-soft);
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button:disabled {
-  cursor: default;
-  opacity: .34;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-label {
-  display: grid;
-  min-width: 44px;
-  height: 34px;
-  padding-inline: 7px;
-  place-items: center;
-  border-radius: 9px;
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface-soft);
-  font-size: 10px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--admin-v2-subtle);
-  font-size: 9px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size .admin-oldalmeret-select {
-  width: 72px;
-  min-width: 72px;
-  height: 38px;
-  min-height: 38px;
-  padding-left: 10px;
-}
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -285,12 +208,6 @@
     justify-content: space-between;
   }
 
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size .admin-oldalmeret-select {
-    width: 96px;
-    min-width: 96px;
-    height: 34px;
-    min-height: 34px;
-  }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item {
     grid-template-columns: 1fr;

@@ -102,11 +102,14 @@
         const tabs = root.querySelector('.cms-view-tabs');
         if (!tabs) return;
 
+        tabs.classList.add('admin-segmented');
+        tabs.querySelectorAll('.cms-view-tab').forEach(button => button.classList.add('admin-segmented-item'));
+
         let galleryTab = tabs.querySelector('[data-lumi-cms-gallery-tab]');
         if (!galleryTab) {
             galleryTab = document.createElement('button');
             galleryTab.type = 'button';
-            galleryTab.className = 'cms-view-tab cms-view-tab-gallery';
+            galleryTab.className = 'cms-view-tab cms-view-tab-gallery admin-segmented-item';
             galleryTab.dataset.lumiCmsGalleryTab = 'true';
             galleryTab.setAttribute('role', 'tab');
             galleryTab.setAttribute('aria-selected', 'false');
@@ -174,16 +177,16 @@
             pagination.className = 'cms-gallery-pagination';
             pagination.dataset.lumiGalleryPagination = 'true';
             pagination.innerHTML = `
-                <div class="cms-gallery-page-nav" aria-label="Galéria oldalak">
-                    <button type="button" class="cms-gallery-page-button" data-lumi-gallery-page="prev" aria-label="Előző galériaoldal" title="Előző oldal">
+                <div class="admin-lapozo-nav" aria-label="Galéria oldalak">
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="prev" aria-label="Előző galériaoldal" title="Előző oldal">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
                     </button>
-                    <span class="cms-gallery-page-label" data-lumi-gallery-page-label>1 / 1</span>
-                    <button type="button" class="cms-gallery-page-button" data-lumi-gallery-page="next" aria-label="Következő galériaoldal" title="Következő oldal">
+                    <span class="admin-pagination-page" data-lumi-gallery-page-label>1 / 1</span>
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="next" aria-label="Következő galériaoldal" title="Következő oldal">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
                     </button>
                 </div>
-                <label class="cms-gallery-page-size">
+                <label class="admin-oldalmeret admin-pagination-size">
                     <span>Oldalanként</span>
                     <select class="admin-oldalmeret-select" data-lumi-gallery-page-size aria-label="Oldalanként">
                         <option value="10">10</option>

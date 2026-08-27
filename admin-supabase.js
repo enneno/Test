@@ -2530,14 +2530,25 @@ function arlistaFeliratokFrissitese() {
     function esemenynaploLapozoHtml() {
         const osszes = esemenynaploOsszesOldal();
         const vanElem = allapot.esemenynaploElemek.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0';
         return `
-            <div class="admin-oldalmeret" role="group" aria-label="Esem\u00e9nynapl\u00f3 oldalank\u00e9nt">
-                <span>Oldalank\u00e9nt</span>
-                ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+            <div class="admin-lapozo-nav" role="group" aria-label="Eseménynapló lapozása">
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
             </div>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="elozo" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
-            <span>${vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0'}</span>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="kovetkezo" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+            <div class="admin-lapozo-jobb">
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+                </label>
+            </div>
         `;
     }
 
@@ -2643,7 +2654,7 @@ function arlistaFeliratokFrissitese() {
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
                     <button type="button" class="admin-booking-details-trigger" data-foglalas-reszletek aria-expanded="false">Részletek</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             ${lemondasiMegjegyzes ? `
@@ -2895,8 +2906,8 @@ function arlistaFeliratokFrissitese() {
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
                     </select>
-                    <button type="button" class="admin-booking-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             <div class="admin-idopont-szerkeszto">
@@ -5277,11 +5288,14 @@ function arlistaFeliratokFrissitese() {
         const tabs = root.querySelector('.cms-view-tabs');
         if (!tabs) return;
 
+        tabs.classList.add('admin-segmented');
+        tabs.querySelectorAll('.cms-view-tab').forEach(button => button.classList.add('admin-segmented-item'));
+
         let galleryTab = tabs.querySelector('[data-lumi-cms-gallery-tab]');
         if (!galleryTab) {
             galleryTab = document.createElement('button');
             galleryTab.type = 'button';
-            galleryTab.className = 'cms-view-tab cms-view-tab-gallery';
+            galleryTab.className = 'cms-view-tab cms-view-tab-gallery admin-segmented-item';
             galleryTab.dataset.lumiCmsGalleryTab = 'true';
             galleryTab.setAttribute('role', 'tab');
             galleryTab.setAttribute('aria-selected', 'false');
@@ -5349,16 +5363,16 @@ function arlistaFeliratokFrissitese() {
             pagination.className = 'cms-gallery-pagination';
             pagination.dataset.lumiGalleryPagination = 'true';
             pagination.innerHTML = `
-                <div class="cms-gallery-page-nav" aria-label="Galéria oldalak">
-                    <button type="button" class="cms-gallery-page-button" data-lumi-gallery-page="prev" aria-label="Előző galériaoldal" title="Előző oldal">
+                <div class="admin-lapozo-nav" aria-label="Galéria oldalak">
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="prev" aria-label="Előző galériaoldal" title="Előző oldal">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
                     </button>
-                    <span class="cms-gallery-page-label" data-lumi-gallery-page-label>1 / 1</span>
-                    <button type="button" class="cms-gallery-page-button" data-lumi-gallery-page="next" aria-label="Következő galériaoldal" title="Következő oldal">
+                    <span class="admin-pagination-page" data-lumi-gallery-page-label>1 / 1</span>
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="next" aria-label="Következő galériaoldal" title="Következő oldal">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
                     </button>
                 </div>
-                <label class="cms-gallery-page-size">
+                <label class="admin-oldalmeret admin-pagination-size">
                     <span>Oldalanként</span>
                     <select class="admin-oldalmeret-select" data-lumi-gallery-page-size aria-label="Oldalanként">
                         <option value="10">10</option>
@@ -5549,7 +5563,7 @@ function arlistaFeliratokFrissitese() {
                 if (galleryItem) {
                     if (upload) {
                         removeTextNodes(upload);
-                        upload.classList.remove('cms-icon-button');
+                        upload.classList.remove('cms-icon-button', 'admin-control-icon-button');
                         upload.classList.add('cms-gallery-upload-proxy');
                         upload.setAttribute('aria-hidden', 'true');
                         upload.removeAttribute('title');
@@ -5635,7 +5649,7 @@ function arlistaFeliratokFrissitese() {
         removeTextNodes(label);
         label.querySelector('svg')?.remove();
         label.insertAdjacentHTML('afterbegin', ICONS[icon]);
-        label.classList.add('cms-icon-button');
+        label.classList.add('cms-icon-button', 'admin-control-icon-button');
         label.setAttribute('aria-label', accessibleLabel);
         label.title = accessibleLabel;
         label.dataset.cmsIconified = marker;
@@ -5645,7 +5659,7 @@ function arlistaFeliratokFrissitese() {
         const marker = `${icon}:${accessibleLabel}:${danger}`;
         if (button.dataset.cmsIconified === marker) return;
         button.innerHTML = ICONS[icon];
-        button.classList.add('cms-icon-button');
+        button.classList.add('cms-icon-button', 'admin-control-icon-button');
         button.classList.toggle('cms-icon-button-danger', danger);
         button.setAttribute('aria-label', accessibleLabel);
         button.title = accessibleLabel;
