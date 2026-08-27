@@ -32,6 +32,11 @@ jobs:
           text = production.read_text(encoding='utf-8')
           text = text.replace("expect(mobileMetrics.cardTitleFont).toBe(17);", "expect(mobileMetrics.cardTitleFont).toBe(14);")
           text = text.replace("classList.contains('admin-lapozo-jobb')", "classList.contains('admin-v2-page-actions')")
+          text = text.replace("refreshRightOfPageSize: refreshBounds.left >= pageSizeBounds.right - 1,", "refreshInPageActions: refresh.parentElement === actions,")
+          text = text.replace("sharedActionBlock: actionButtons.length === 2", "sharedActionBlock: actionButtons.length === 3")
+          text = text.replace("expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(44);", "expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(34);")
+          text = text.replace("expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(44);", "expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(34);")
+          text = text.replace("expect(metrics.refreshRightOfPageSize, `${viewport.width}px refresh placement`).toBe(true);", "expect(metrics.refreshInPageActions, `${viewport.width}px refresh placement`).toBe(true);")
           production.write_text(text, encoding='utf-8')
 
           architecture = Path('tests/admin-booking-css-architecture.spec.js')
@@ -61,8 +66,8 @@ jobs:
               if low in {'bold', 'bolder'}: return '600'
               if low == 'lighter': return '400'
               value = int(raw)
-              if value <= 450: return '400'
-              if value <= 550: return '500'
+              if value < 500: return '400'
+              if value < 600: return '500'
               return '600'
 
           changed = []
