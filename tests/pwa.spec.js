@@ -112,17 +112,17 @@ test.describe('Lumi Nails PWA', () => {
     const buttons = page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button');
     await expect(buttons.nth(0)).toHaveAttribute('aria-label', 'Menü');
     await expect(buttons.nth(1)).toHaveAttribute('aria-label', 'Foglalások');
-    await expect(buttons.nth(2)).toHaveAttribute('aria-label', /Mentés|menthető módosítás/);
+    await expect(buttons.nth(2)).toHaveAttribute('aria-label', 'Áttekintés');
     await expect(buttons.nth(3)).toHaveAttribute('aria-label', 'Munkaidő');
     await expect(buttons.nth(4)).toHaveAttribute('aria-label', 'Értesítések');
-    await expect(buttons.nth(5)).toHaveAttribute('aria-label', 'Áttekintés');
+    await expect(buttons.nth(5)).toHaveAttribute('aria-label', /Mentés|menthető módosítás/);
   });
 
   test('keeps VAPID private material out of client-side code', async ({ page }) => {
     const clientResponse = await page.request.get('/pwa.js');
     expect(clientResponse.ok()).toBeTruthy();
 
-    const clientSource = await clientResponse.text();
+    const clientSource = await response.text();
     expect(clientSource).not.toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
     expect(clientSource).not.toContain('vapid_private_key');
   });
