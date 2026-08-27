@@ -20,7 +20,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
+          cache: npm
 
       - name: Normalize canonical admin CSS font weights
         run: |
@@ -28,8 +29,7 @@ jobs:
           from pathlib import Path
           import re
 
-          roots = [Path('src/admin-styles')]
-          files = sorted(p for root in roots for p in root.glob('*.css'))
+          files = sorted(Path('src/admin-styles').glob('*.css'))
           pattern = re.compile(r'(font-weight\s*:\s*)(normal|bold|bolder|lighter|[1-9]00|\d{3})(\s*;)', re.I)
 
           def normalize(raw: str) -> str:
@@ -90,18 +90,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build admin assets
-        run: npm run build:admin
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
 
-      - name: Verify admin CSS
-        run: npm run check:admin-css
+      - name: Verify admin release
+        run: npm run verify:admin
 
       - name: Remove temporary workflow and commit result
         run: |
           rm .github/workflows/chatgpt-test-font-weight-normalize.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/admin-styles admin admin-styles.css .github/workflows/chatgpt-test-font-weight-normalize.yml 2>/dev/null || true
           git add -A
           if git diff --cached --quiet; then
             echo 'No changes to commit.'
