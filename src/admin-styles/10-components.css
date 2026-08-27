@@ -17,6 +17,9 @@
   --admin-ui-control-line-height: 1.2;
   --admin-ui-action-font-size: 11px;
   --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-select-font-size: 11px;
+  --admin-ui-page-size-font-size: 11px;
+  --admin-ui-picker-font-size: 20px;
   --admin-ui-ios-field-optical-ratio: 0.32;
   --admin-ui-ios-choice-optical-ratio: 0.32;
 }
@@ -223,7 +226,7 @@
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
   appearance: none;
   -webkit-appearance: none;
-  font-size: 11px;
+  font-size: var(--admin-ui-select-font-size);
   font-size-adjust: none;
   padding-right: 34px;
   background-image: var(--lumi-select-arrow);
@@ -270,6 +273,13 @@
   font-size: 12px;
 }
 
+@media (display-mode: browser) and (max-width: 768px) {
+  .admin-body.admin-v2 {
+    --admin-ui-page-size-font-size: 14px;
+    --admin-ui-picker-font-size: 22px;
+  }
+}
+
 /* Shared native date/time/month controls: one visual owner for the entire admin. */
 .admin-body.admin-v2 {
   --admin-ui-picker-icon-size: 13px;
@@ -304,7 +314,8 @@
   background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
-  font-size: 20px;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
   font-weight: 720;
   line-height: 1;
   text-align: center;
@@ -330,7 +341,10 @@
   justify-content: center;
   height: 100%;
   overflow: hidden;
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
@@ -348,7 +362,10 @@
   height: 100%;
   margin: 0;
   padding: 0;
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
 }
 
@@ -365,7 +382,10 @@
   input[type="time"]::-webkit-datetime-edit-ampm-field,
   input[type="time"]::-webkit-datetime-edit-text
 ) {
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
 }
 
@@ -577,7 +597,7 @@
   padding: 0 24px 0 10px;
   background-position: right 8px center;
   background-size: 13px 13px;
-  font-size: var(--lumi-font-control);
+  font-size: var(--admin-ui-page-size-font-size);
   font-weight: 850;
 }
 

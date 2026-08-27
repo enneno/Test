@@ -2203,7 +2203,6 @@ body.admin-body [hidden] {
   border-color: var(--admin-v2-border);
   border-radius: 11px;
   background-color: var(--admin-v2-surface);
-  font-size: 11px;
   font-weight: 780;
 }
 
@@ -2394,7 +2393,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
   height: 34px;
   min-height: 34px;
-  padding: 0 10px;
+  padding: 0 28px;
   appearance: none;
   -webkit-appearance: none;
   border-color: var(--booking-state-border);
@@ -2411,12 +2410,10 @@ body.admin-body [hidden] {
   opacity: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-  padding-inline: 10px;
   background-image: none;
   cursor: default;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  padding: 0 28px 0 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
   background-position: right 9px center;
   background-size: 14px 14px;
@@ -4629,6 +4626,9 @@ font-size-adjust: none;
   --admin-ui-control-line-height: 1.2;
   --admin-ui-action-font-size: 11px;
   --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-select-font-size: 11px;
+  --admin-ui-page-size-font-size: 11px;
+  --admin-ui-picker-font-size: 20px;
   --admin-ui-ios-field-optical-ratio: 0.32;
   --admin-ui-ios-choice-optical-ratio: 0.32;
 }
@@ -4833,7 +4833,7 @@ font-size-adjust: none;
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
   appearance: none;
   -webkit-appearance: none;
-  font-size: 11px;
+  font-size: var(--admin-ui-select-font-size);
   font-size-adjust: none;
   padding-right: 34px;
   background-image: var(--lumi-select-arrow);
@@ -4878,6 +4878,13 @@ font-size-adjust: none;
   font-size: 12px;
 }
 
+@media (display-mode: browser) and (max-width: 768px) {
+  .admin-body.admin-v2 {
+    --admin-ui-page-size-font-size: 14px;
+    --admin-ui-picker-font-size: 22px;
+  }
+}
+
 .admin-body.admin-v2 {
   --admin-ui-picker-icon-size: 13px;
   --admin-ui-picker-icon-gap: 4px;
@@ -4911,7 +4918,8 @@ font-size-adjust: none;
   background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);
   box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
   font-family: inherit;
-  font-size: 20px;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
   font-weight: 720;
   line-height: 1;
   text-align: center;
@@ -4937,7 +4945,10 @@ font-size-adjust: none;
   justify-content: center;
   height: 100%;
   overflow: hidden;
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
@@ -4955,7 +4966,10 @@ font-size-adjust: none;
   height: 100%;
   margin: 0;
   padding: 0;
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
 }
 
@@ -4972,7 +4986,10 @@ font-size-adjust: none;
   input[type="time"]::-webkit-datetime-edit-ampm-field,
   input[type="time"]::-webkit-datetime-edit-text
 ) {
-  font-size: 20px;
+  font-family: inherit;
+  font-size: var(--admin-ui-picker-font-size);
+  font-size-adjust: none;
+  font-weight: 720;
   line-height: 1.1;
 }
 
@@ -5183,7 +5200,7 @@ font-size-adjust: none;
   padding: 0 24px 0 10px;
   background-position: right 8px center;
   background-size: 13px 13px;
-  font-size: var(--lumi-font-control);
+  font-size: var(--admin-ui-page-size-font-size);
   font-weight: 850;
 }
 

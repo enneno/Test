@@ -327,7 +327,6 @@
   border-color: var(--admin-v2-border);
   border-radius: 11px;
   background-color: var(--admin-v2-surface);
-  font-size: 11px;
   font-weight: 780;
 }
 
@@ -519,7 +518,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
   height: 34px;
   min-height: 34px;
-  padding: 0 10px;
+  padding: 0 28px;
   appearance: none;
   -webkit-appearance: none;
   border-color: var(--booking-state-border);
@@ -536,12 +535,10 @@
   opacity: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-  padding-inline: 10px;
   background-image: none;
   cursor: default;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  padding: 0 28px 0 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
   background-position: right 9px center;
   background-size: 14px 14px;
