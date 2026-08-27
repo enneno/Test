@@ -6,7 +6,7 @@ function source(relativePath) {
     return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');
 }
 
-test('gallery workspace stacks controls, nests the homepage selector, paginates, and promotes new images to the top', async ({ page }) => {
+test('gallery workspace keeps image controls within the preview height, paginates, and promotes new images to the top', async ({ page }) => {
     const adminCss = [
         '00-foundation.css',
         '05-panel-state.css',
@@ -153,6 +153,7 @@ test('gallery workspace stacks controls, nests the homepage selector, paginates,
     await expect(firstItem.locator(':scope > .cms-gallery-home-choice')).toHaveCount(0);
 
     const controlMetrics = await firstItem.evaluate(item => {
+        const preview = item.querySelector('.cms-image-preview').getBoundingClientRect();
         const controls = item.querySelector('.cms-image-controls').getBoundingClientRect();
         const buttons = Array.from(item.querySelectorAll('.cms-image-controls .cms-icon-button'))
             .filter(button => !button.classList.contains('cms-gallery-delete-source'))
@@ -162,15 +163,17 @@ test('gallery workspace stacks controls, nests the homepage selector, paginates,
             })
             .map(button => button.getBoundingClientRect());
         return {
-            controlsLeft: controls.left,
-            buttonRects: buttons.map(rect => ({ left: rect.left, top: rect.top, bottom: rect.bottom })),
+            previewBottom: preview.bottom,
+            controlsBottom: controls.bottom,
+            buttonRects: buttons.map(rect => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })),
             overflow: document.documentElement.scrollWidth - window.innerWidth
         };
     });
     expect(controlMetrics.buttonRects).toHaveLength(3);
-    expect(controlMetrics.buttonRects.every(rect => Math.abs(rect.left - controlMetrics.controlsLeft) <= 1)).toBe(true);
-    expect(controlMetrics.buttonRects[1].top).toBeGreaterThanOrEqual(controlMetrics.buttonRects[0].bottom);
-    expect(controlMetrics.buttonRects[2].top).toBeGreaterThanOrEqual(controlMetrics.buttonRects[1].bottom);
+    expect(Math.max(...controlMetrics.buttonRects.map(rect => rect.top)) - Math.min(...controlMetrics.buttonRects.map(rect => rect.top))).toBeLessThanOrEqual(1);
+    expect(controlMetrics.buttonRects[1].left).toBeGreaterThanOrEqual(controlMetrics.buttonRects[0].right);
+    expect(controlMetrics.buttonRects[2].left).toBeGreaterThanOrEqual(controlMetrics.buttonRects[1].right);
+    expect(controlMetrics.controlsBottom).toBeLessThanOrEqual(controlMetrics.previewBottom + 1);
     expect(controlMetrics.overflow).toBeLessThanOrEqual(2);
 
     await selector.selectOption('20');
