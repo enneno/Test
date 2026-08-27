@@ -5304,9 +5304,27 @@ function arlistaFeliratokFrissitese() {
             openLightbox(preview);
         });
 
-        const observer = new MutationObserver(enhancePreviews);
+        const observer = new MutationObserver(enhanceImageWorkspaces);
         observer.observe(root, { childList: true, subtree: true });
-        enhancePreviews();
+        enhanceImageWorkspaces();
+
+        function enhanceImageWorkspaces() {
+            placeGalleryActionsInImageControls();
+            enhancePreviews();
+        }
+
+        function placeGalleryActionsInImageControls() {
+            root.querySelectorAll('.cms-gallery-item').forEach(item => {
+                const imageControls = item.querySelector('.cms-image-field .cms-image-controls');
+                if (!imageControls) return;
+
+                const actions = Array.from(item.children)
+                    .find(child => child.classList?.contains('cms-gallery-actions'));
+                if (!actions) return;
+
+                imageControls.appendChild(actions);
+            });
+        }
 
         function enhancePreviews() {
             root.querySelectorAll('.cms-image-preview[data-cms-preview]').forEach(preview => {
