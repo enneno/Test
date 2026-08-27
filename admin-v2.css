@@ -2394,9 +2394,9 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger { display: none; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
-  height: 32px;
-  min-height: 32px;
-  padding: 0 10px 2px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 10px;
   appearance: none;
   -webkit-appearance: none;
   border-color: var(--booking-state-border);
@@ -2420,7 +2420,7 @@ body.admin-body [hidden] {
   cursor: default;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  padding: 0 28px 2px 10px;
+  padding: 0 28px 0 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
   background-position: right 9px center;
   background-size: 14px 14px;
@@ -4878,8 +4878,8 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 .admin-body.admin-v2 {
-  --admin-ui-picker-icon-size: 15px;
-  --admin-ui-picker-icon-gap: 5px;
+  --admin-ui-picker-icon-size: 13px;
+  --admin-ui-picker-icon-gap: 4px;
   --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));
   --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
   --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
