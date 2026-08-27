@@ -90,11 +90,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build assets
+        run: npm run build
+
+      - name: Update asset versions
+        run: npm run assets:version
+
+      - name: Run source and CSS checks
+        run: npm run check
+
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
-      - name: Verify admin release
-        run: npm run verify:admin
+      - name: Test admin production redesign
+        run: npx playwright test tests/admin-production-redesign.spec.js
+
+      - name: Test booking CSS architecture
+        run: npx playwright test tests/admin-booking-css-architecture.spec.js
+
+      - name: Test admin regressions
+        run: npx playwright test tests/admin-v2-regressions.spec.js
 
       - name: Remove temporary workflow and commit result
         run: |
