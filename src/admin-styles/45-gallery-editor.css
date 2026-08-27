@@ -32,7 +32,11 @@
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "title pager add";
   align-items: center;
+  gap: 10px;
   margin: 0 0 14px;
   padding: 13px 14px;
   border: 1px solid var(--admin-v2-border);
@@ -40,11 +44,109 @@
   background: var(--admin-v2-surface-soft);
 }
 
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header > div:first-child {
+  grid-area: title;
+  min-width: 0;
+}
+
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header h3 {
   margin: 0 0 3px;
   font-family: "Manrope", sans-serif;
   font-size: 13px;
   font-weight: 600;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header > [data-cms-gallery-add] {
+  grid-area: add;
+  justify-self: end;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-pagination {
+  grid-area: pager;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface);
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button {
+  display: grid;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button:not(:disabled):hover {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button:disabled {
+  cursor: default;
+  opacity: .34;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-label {
+  display: grid;
+  min-width: 44px;
+  height: 34px;
+  padding-inline: 7px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface-soft);
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size .admin-oldalmeret-select {
+  width: 72px;
+  min-width: 72px;
+  height: 38px;
+  min-height: 38px;
+  padding-left: 10px;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
@@ -61,6 +163,10 @@
   background: var(--admin-v2-surface);
 }
 
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item[hidden] {
+  display: none;
+}
+
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item h4 {
   margin: 0;
   font-family: "Manrope", sans-serif;
@@ -69,6 +175,8 @@
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
+  width: 100%;
+  min-width: 0;
   min-height: 38px;
   padding: 8px 9px;
   font-size: 10px;
@@ -102,12 +210,21 @@
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls {
+  display: grid;
+  width: 100%;
+  min-width: 0;
   align-self: start;
-  justify-content: flex-start;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
-  display: contents;
+  display: grid;
+  width: var(--admin-ui-touch-target);
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo {
@@ -118,6 +235,18 @@
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title add"
+      "pager pager";
+  }
+
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-pagination {
+    justify-self: stretch;
+    justify-content: space-between;
+  }
 }
 
 @media (max-width: 520px) {
@@ -126,43 +255,37 @@
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
-    flex-wrap: nowrap;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title add"
+      "pager pager";
+    gap: 10px 8px;
   }
 
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header > div {
-    min-width: 0;
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-page-size .admin-oldalmeret-select {
+    width: 96px;
+    min-width: 96px;
+    height: 34px;
+    min-height: 34px;
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item {
-    grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
-    grid-template-areas:
-      "title home"
-      "image image"
-      "description description";
-    align-items: start;
-    column-gap: 10px;
+    grid-template-columns: 1fr;
     row-gap: 8px;
   }
 
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > h4 {
-    grid-area: title;
-    align-self: center;
-  }
-
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
-    grid-area: home;
-    min-width: 0;
-  }
-
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-field {
-    grid-area: image;
     min-width: 0;
     grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
     gap: 10px;
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo:has([data-cms-path$=".kepAlt"]) {
-    grid-area: description;
     min-width: 0;
   }
 }
