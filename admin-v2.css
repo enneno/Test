@@ -4606,7 +4606,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
-    font-size: 11px;
+    font-size: 14px;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
   }
