@@ -1,0 +1,50 @@
+name: Restore CHATGPT_TEST viewport
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths: ['.github/workflows/chatgpt-test-restore-viewport.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Restore viewport and verify shared control fonts
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('admin/index.html')
+          s=p.read_text()
+          old='width=device-width, initial-scale=1.0, maximum-scale=1.0'
+          new='width=device-width, initial-scale=1.0'
+          if old not in s:
+              raise SystemExit('expected viewport not found')
+          p.write_text(s.replace(old,new,1))
+          c=Path('src/admin-styles/10-components.css').read_text()
+          assert 'font-size: 11px;' in c
+          assert 'font-size: 12px;' in c
+          assert 'font-size: 20px;' in c
+          PY
+          npm ci
+          npm run build
+          npm run assets:version
+          npm run admin:css:check
+      - name: Commit canonical change and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/chatgpt-test-restore-viewport.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Restore admin viewport while keeping shared control fonts"
+          git push origin CHATGPT_TEST
