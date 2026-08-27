@@ -37,10 +37,10 @@
     tabbar.innerHTML = `
       ${appButton('menu', 'Menü', 'data-pwa-admin-menu')}
       ${appButton('calendar', 'Foglalások', 'data-admin-v2-nav="foglalasok"', '<span class="pwa-admin-toolbar-count" data-admin-v2-pending-count hidden>0</span>')}
-      ${appButton('save', 'Mentés', 'data-pwa-admin-save', '', 'pwa-admin-toolbar-save')}
+      ${appButton('overview', 'Áttekintés', 'data-admin-v2-nav="attekintes"')}
       ${appButton('clock', 'Munkaidő', 'data-admin-v2-nav="munkaido"')}
       ${appButton('bell', 'Értesítések', 'data-pwa-admin-notifications aria-expanded="false" aria-controls="admin-v2-notification-panel"', '<span class="pwa-admin-toolbar-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>')}
-      ${appButton('overview', 'Áttekintés', 'data-admin-v2-nav="attekintes"')}
+      ${appButton('save', 'Mentés', 'data-pwa-admin-save', '', 'pwa-admin-toolbar-save')}
     `;
 
     const quickAdd = document.createElement('button');
