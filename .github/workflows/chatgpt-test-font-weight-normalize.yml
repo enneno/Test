@@ -51,14 +51,18 @@ jobs:
               re.M
           )
           replacement = (
-              "test('a foglalás szerkesztő dátuma és idői egy sorban maradnak a beállított aránnyal', async () => {\n"
-              "    const source = fs.readFileSync(\n"
+              "test('a foglalás szerkesztő dátuma és idői egy sorban maradnak, a pickereket a közös komponens CSS vezérli', async () => {\n"
+              "    const bookingCss = fs.readFileSync(\n"
               "        path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),\n"
               "        'utf8'\n"
+              "    );\n"
+              "    const componentCss = fs.readFileSync(\n"
+              "        path.resolve(__dirname, '..', 'src', 'admin-styles', '10-components.css'),\n"
+              "        'utf8'\n"
               "    );\n\n"
-              "    expect(source).toContain('grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);');\n"
-              "    expect(source).toContain('background-image: var(--booking-icon-calendar);');\n"
-              "    expect(source).toContain('background-image: var(--booking-icon-clock);');\n"
+              "    expect(bookingCss).toContain('grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);');\n"
+              "    expect(componentCss).toContain('background-image: var(--admin-ui-date-icon);');\n"
+              "    expect(componentCss).toContain('background-image: var(--admin-ui-time-icon);');\n"
               "});"
           )
           text, count = pattern.subn(replacement, text, count=1)
