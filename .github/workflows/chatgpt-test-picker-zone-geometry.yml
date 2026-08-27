@@ -1,0 +1,64 @@
+name: Fix CHATGPT_TEST picker zone geometry
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths: ['.github/workflows/chatgpt-test-picker-zone-geometry.yml']
+permissions:
+  contents: write
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - name: Patch shared picker geometry only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/admin-styles/10-components.css')
+          s = p.read_text()
+          old_vars = '''.admin-body.admin-v2 {\n  --admin-ui-date-icon: url('''
+          new_vars = '''.admin-body.admin-v2 {\n  --admin-ui-picker-icon-size: 15px;\n  --admin-ui-picker-icon-gap: 5px;\n  --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));\n  --admin-ui-date-icon: url('''
+          if old_vars not in s:
+              raise SystemExit('picker variable owner anchor not found')
+          s = s.replace(old_vars, new_vars, 1)
+          s = s.replace('padding: 0 25px 0 5px;', 'padding: 0 var(--admin-ui-picker-icon-zone) 0 5px;', 1)
+          s = s.replace('background-position: right 2px center;', 'background-position: right var(--admin-ui-picker-icon-gap) center;', 1)
+          s = s.replace('background-size: 15px 15px;', 'background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);', 1)
+          s = s.replace('  width: 25px;\n  max-width: 25px;', '  width: var(--admin-ui-picker-icon-zone);\n  max-width: var(--admin-ui-picker-icon-zone);', 1)
+          p.write_text(s)
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify exact shared geometry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('src/admin-styles/10-components.css').read_text()
+          required = [
+            '--admin-ui-picker-icon-size: 15px;',
+            '--admin-ui-picker-icon-gap: 5px;',
+            '--admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));',
+            'padding: 0 var(--admin-ui-picker-icon-zone) 0 5px;',
+            'background-position: right var(--admin-ui-picker-icon-gap) center;',
+            'background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);',
+            'width: var(--admin-ui-picker-icon-zone);',
+          ]
+          for item in required:
+              assert item in s, item
+          assert 'background-position: right 2px center;' not in s
+          PY
+      - name: Commit result and remove temporary workflow
+        run: |
+          rm .github/workflows/chatgpt-test-picker-zone-geometry.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/admin-styles/10-components.css admin/admin-v2.css admin/index.html .github/workflows/chatgpt-test-picker-zone-geometry.yml
+          git commit -m "Use exact shared picker icon zone geometry"
+          git push origin CHATGPT_TEST
