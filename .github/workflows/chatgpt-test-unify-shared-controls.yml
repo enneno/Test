@@ -26,6 +26,20 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Fix temporary refactor runner
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p = Path('scripts/chatgpt-unify-shared-controls.py')
+          s = p.read_text(encoding='utf-8')
+          start = "for pattern, label in [\n    (r'\\.admin-body\\.admin-v2 #admin-panel-szovegek \\.cms-icon-button:hover"
+          end = "write(image_controls_path, image_controls)"
+          a = s.index(start)
+          b = s.index(end, a)
+          replacement = """image_controls, count = re.subn(r'\\.admin-body\\.admin-v2 #admin-panel-szovegek \\.cms-icon-button svg \\{.*?\\n\\}\\n\\n', '', image_controls, count=1, flags=re.S)\nif count != 1:\n    raise SystemExit(f'cms icon svg: expected 1 replacement, got {count}')\n"""
+          p.write_text(s[:a] + replacement + s[b:], encoding='utf-8')
+          PY
+
       - name: Apply canonical refactor
         run: python3 scripts/chatgpt-unify-shared-controls.py
 
