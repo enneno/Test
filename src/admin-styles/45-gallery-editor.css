@@ -119,7 +119,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  margin-top: 2px;
+  margin: 0;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions .admin-kis-gomb {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 8px;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions .admin-veszely-gomb {
@@ -151,9 +157,8 @@
     grid-template-areas:
       "title home"
       "image image"
-      ". description"
-      ". featured"
-      ". actions";
+      "description description"
+      "featured featured";
     align-items: start;
     column-gap: 10px;
     row-gap: 8px;
@@ -184,11 +189,5 @@
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo:has([data-cms-path$=".magas"]) {
     grid-area: featured;
     min-width: 0;
-  }
-
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
-    grid-area: actions;
-    min-width: 0;
-    margin-top: 0;
   }
 }
