@@ -26,13 +26,22 @@ jobs:
       - name: Apply mobile sidebar fix
         run: python3 scripts/chatgpt-sidebar-mobile-fix.py
 
-      - name: Verify source changes
+      - name: Verify source ownership and changes
         run: |
           grep -q "width: min(244px, calc(100vw - 104px));" src/admin-styles/20-workspace.css
           grep -q "height: 100dvh;" src/admin-styles/20-workspace.css
           grep -q -- "--admin-v2-menu-scroll-offset" src/admin-styles/20-workspace.css
           grep -q "adminV2MenuScrollY" src/admin/05-admin-workspace-v2.js
-          grep -q "drawerMetrics.width" tests/admin-production-redesign.spec.js
+          grep -q "drawerMetrics.navJustify" tests/admin-production-redesign.spec.js
+          python3 - <<'PY'
+          from pathlib import Path
+          css = Path('src/admin-styles/10-components.css').read_text(encoding='utf-8')
+          block = css[css.index('.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(\n  .gomb,'):]
+          block = block[:block.index(') {')]
+          for selector in ('.admin-v2-nav-item', '.admin-v2-public-link', '.admin-v2-profile', '.admin-v2-logout'):
+              if selector in block:
+                  raise SystemExit(f'{selector} is still owned by the generic centered button selector')
+          PY
 
       - name: Install dependencies
         run: npm ci
