@@ -4027,22 +4027,13 @@ body.cms-image-lightbox-open { overflow: hidden; }
   background: rgba(255, 250, 244, .78);
 }
 .admin-body.admin-v2 .admin-naptar-datum {
-  display: flex;
   min-width: 0;
-  align-items: center;
-  gap: 8px;
   color: var(--barna);
   font-size: var(--lumi-font-label);
   font-weight: 600;
   line-height: 1.25;
-}
-.admin-body.admin-v2 .admin-naptar-lista-cim {
-  color: var(--tinta);
-  font-size: 14px;
-  font-weight: 600;
   white-space: nowrap;
 }
-.admin-body.admin-v2 .admin-naptar-datum-ertek { white-space: nowrap; }
 .admin-body.admin-v2 .admin-kozos-idosav-sor {
   display: grid;
   grid-template-columns: minmax(112px, 140px) minmax(112px, 140px) minmax(72px, 86px) auto;
@@ -4130,9 +4121,15 @@ body.cms-image-lightbox-open { overflow: hidden; }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej {
   grid-area: selected-title;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin: 0;
   padding-top: 3px;
+}
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej h3 {
+  margin: 0;
+  color: var(--tinta);
+  font-size: 18px;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-kijelolt-lista {
   grid-area: selected-list;
@@ -4282,10 +4279,8 @@ body.cms-image-lightbox-open { overflow: hidden; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-naptar-datum {
     grid-area: date;
     align-self: center;
-    gap: 6px;
     font-size: 12px;
   }
-  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-cim { font-size: 12px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-mezo:nth-of-type(1) { grid-area: start; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-mezo:nth-of-type(2) { grid-area: end; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-naptar-torles-x {

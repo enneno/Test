@@ -346,16 +346,13 @@
             return;
         }
 
-        datumok.forEach((datum, index) => {
+        datumok.forEach(datum => {
             const ertek = allapot.naptarKijelolesek.get(datum) || naptarAlapIdosav();
             const sor = document.createElement('div');
             sor.className = 'admin-naptar-sor';
             sor.dataset.datum = datum;
             sor.innerHTML = `
-                <div class="admin-naptar-datum">
-                    ${index === 0 ? '<span class="admin-naptar-lista-cim">Kijelölt napok</span>' : ''}
-                    <span class="admin-naptar-datum-ertek">${html(datumRovid(datum))}</span>
-                </div>
+                <div class="admin-naptar-datum">${html(datumRovid(datum))}</div>
                 <label class="admin-mezo">Kezdés<input type="time" data-naptar-mezo="start_time" value="${attr(ertek.start_time)}"></label>
                 <label class="admin-mezo">Vége<input type="time" data-naptar-mezo="end_time" value="${attr(ertek.end_time)}"></label>
                 <button type="button" class="admin-kis-gomb admin-veszely-gomb admin-naptar-torles-x" data-naptar-torles aria-label="Törlés">×</button>

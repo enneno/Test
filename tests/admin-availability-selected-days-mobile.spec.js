@@ -6,7 +6,7 @@ function source(relativePath) {
     return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');
 }
 
-test('selected days keep title beside first date and split start/end evenly on mobile', async ({ page }) => {
+test('selected days keep a fixed header and split start/end evenly on mobile', async ({ page }) => {
     const html = source('admin/index.html');
     const calendarJs = source('src/admin/00-bootstrap-auth-calendar.js');
     const availability = source('src/admin-styles/70-availability.css');
@@ -16,10 +16,10 @@ test('selected days keep title beside first date and split start/end evenly on m
         '70-availability.css'
     ].map(file => source(`src/admin-styles/${file}`)).join('\n');
 
-    expect(html).toContain('class="admin-naptar-kijelolt-lista" aria-label="Kijelölt napok"');
-    expect(html).not.toContain('<h3>Kijelölt napok</h3>');
-    expect(calendarJs).toContain('datumok.forEach((datum, index) => {');
-    expect(calendarJs).toContain('admin-naptar-lista-cim">Kijelölt napok</span>');
+    expect(html).toContain('<h3>Kijelölt napok</h3>');
+    expect(calendarJs).toContain('datumok.forEach(datum => {');
+    expect(calendarJs).not.toContain('admin-naptar-lista-cim');
+    expect(availability).toContain('justify-content: space-between;');
     expect(availability).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -27,9 +27,13 @@ test('selected days keep title beside first date and split start/end evenly on m
     <body class="admin-body admin-v2"><main id="admin-tartalom">
       <div style="container-type:inline-size;container-name:admin-workspace;width:390px">
         <div id="admin-idosav-naptar" class="admin-naptar-blokk">
+          <div class="admin-naptar-lista-fej">
+            <h3>Kijelölt napok</h3>
+            <button type="button" id="admin-naptar-kijeloles-torles" class="admin-kis-gomb admin-veszely-gomb">Kijelölés törlése</button>
+          </div>
           <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista" aria-label="Kijelölt napok">
             <div class="admin-naptar-sor">
-              <div class="admin-naptar-datum"><span class="admin-naptar-lista-cim">Kijelölt napok</span><span class="admin-naptar-datum-ertek">28/08/26</span></div>
+              <div class="admin-naptar-datum">28/08/26</div>
               <label class="admin-mezo">Kezdés<input data-start type="time" value="09:00"></label>
               <label class="admin-mezo">Vége<input data-end type="time" value="18:00"></label>
               <button type="button" class="admin-kis-gomb admin-veszely-gomb admin-naptar-torles-x" data-naptar-torles aria-label="Törlés">×</button>
@@ -40,22 +44,23 @@ test('selected days keep title beside first date and split start/end evenly on m
     </main></body></html>`);
 
     const metrics = await page.evaluate(() => {
-        const title = document.querySelector('.admin-naptar-lista-cim').getBoundingClientRect();
-        const date = document.querySelector('.admin-naptar-datum-ertek').getBoundingClientRect();
+        const title = document.querySelector('.admin-naptar-lista-fej h3').getBoundingClientRect();
+        const clear = document.querySelector('#admin-naptar-kijeloles-torles').getBoundingClientRect();
         const start = document.querySelector('[data-start]').getBoundingClientRect();
         const end = document.querySelector('[data-end]').getBoundingClientRect();
+        const card = document.querySelector('.admin-naptar-sor').textContent;
         return {
-            titleTop: title.top,
-            dateTop: date.top,
+            titleLeft: title.left,
+            clearLeft: clear.left,
             startWidth: start.width,
             endWidth: end.width,
             endValue: document.querySelector('[data-end]').value,
-            endVisible: end.width >= 120
+            cardContainsTitle: card.includes('Kijelölt napok')
         };
     });
 
-    expect(Math.abs(metrics.titleTop - metrics.dateTop)).toBeLessThan(2);
+    expect(metrics.titleLeft).toBeLessThan(metrics.clearLeft);
+    expect(metrics.cardContainsTitle).toBe(false);
     expect(Math.abs(metrics.startWidth - metrics.endWidth)).toBeLessThan(2);
-    expect(metrics.endVisible).toBe(true);
     expect(metrics.endValue).toBe('18:00');
 });
