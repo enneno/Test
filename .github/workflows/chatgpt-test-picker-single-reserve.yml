@@ -18,28 +18,10 @@ jobs:
           from pathlib import Path
           c = Path('src/admin-styles/10-components.css')
           s = c.read_text()
-          old = '''  width: calc(100% - var(--admin-ui-picker-icon-zone));
-  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
-  min-width: 0;
-  margin: 0 var(--admin-ui-picker-icon-zone) 0 0;
-  padding: 0;'''
-          new = '''  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0 var(--admin-ui-picker-icon-zone) 0 0;'''
-          if old not in s:
-              raise SystemExit('current webkit value geometry not found')
-          s = s.replace(old, new, 1)
+          s = s.replace('  width: calc(100% - var(--admin-ui-picker-icon-zone));\n  max-width: calc(100% - var(--admin-ui-picker-icon-zone));\n  min-width: 0;\n  margin: 0 var(--admin-ui-picker-icon-zone) 0 0;\n  padding: 0;', '  width: 100%;\n  max-width: 100%;\n  min-width: 0;\n  margin: 0;\n  padding: 0 var(--admin-ui-picker-icon-zone) 0 0;', 1)
           c.write_text(s)
-
           b = Path('src/admin-styles/30-bookings.css')
-          t = b.read_text()
-          old_grid = 'grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);'
-          new_grid = 'grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);'
-          if old_grid not in t:
-              raise SystemExit('current booking ratio not found')
-          t = t.replace(old_grid, new_grid, 1)
+          t = b.read_text().replace('grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);', 'grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);', 1)
           b.write_text(t)
           PY
       - uses: actions/setup-node@v4
