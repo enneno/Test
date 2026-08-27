@@ -221,8 +221,10 @@
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
   display: grid;
-  width: var(--admin-ui-touch-target);
-  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: calc(var(--admin-ui-touch-target) * 3 + 16px);
+  grid-template-columns: repeat(3, var(--admin-ui-touch-target));
+  justify-content: start;
   gap: 8px;
   margin: 0;
 }
