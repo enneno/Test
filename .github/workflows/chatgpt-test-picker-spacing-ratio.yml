@@ -1,0 +1,72 @@
+name: Tune CHATGPT_TEST picker spacing and editor ratio
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Apply targeted canonical CSS changes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          components = Path('src/admin-styles/10-components.css')
+          s = components.read_text()
+          marker = '/* Shared native date/time/month controls: one visual owner for the entire admin. */'
+          before, block = s.split(marker, 1)
+          old_padding = '  padding: 0 30px 0 5px;'
+          old_position = '  background-position: right 10px center;'
+          assert block.count(old_padding) == 1, block.count(old_padding)
+          assert block.count(old_position) == 1, block.count(old_position)
+          block = block.replace(old_padding, '  padding: 0 25px 0 5px;', 1)
+          block = block.replace(old_position, '  background-position: right 5px center;', 1)
+          components.write_text(before + marker + block)
+
+          bookings = Path('src/admin-styles/30-bookings.css')
+          b = bookings.read_text()
+          old_grid = '  grid-template-columns: minmax(0, 1.5fr) minmax(0, .75fr) minmax(0, .75fr);'
+          new_grid = '  grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);'
+          assert b.count(old_grid) == 1, b.count(old_grid)
+          b = b.replace(old_grid, new_grid, 1)
+          bookings.write_text(b)
+          PY
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+
+      - name: Verify targeted result
+        shell: bash
+        run: |
+          grep -F 'padding: 0 25px 0 5px;' src/admin-styles/10-components.css
+          grep -F 'background-position: right 5px center;' src/admin-styles/10-components.css
+          grep -F 'grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);' src/admin-styles/30-bookings.css
+
+      - name: Commit and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/chatgpt-test-picker-spacing-ratio.yml
+          git add -A
+          git commit -m "Tune picker icon spacing and editor ratio"
+          git push origin CHATGPT_TEST
