@@ -1,0 +1,84 @@
+name: Verify refined PWA toolbar
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-toolbar-refine.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-toolbar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify requested toolbar source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          shell = Path('pwa-admin-shell.js').read_text(encoding='utf-8')
+          css = Path('src/admin-styles/95-pwa.css').read_text(encoding='utf-8')
+          test = Path('tests/pwa.spec.js').read_text(encoding='utf-8')
+          order = [
+              "appButton('menu'",
+              "appButton('calendar'",
+              "appButton('overview'",
+              "appButton('clock'",
+              "appButton('bell'",
+              "appButton('save'",
+          ]
+          positions = [shell.index(token) for token in order]
+          assert positions == sorted(positions), positions
+          assert 'transform: translateY(-4px) scale(1.12);' in css
+          assert 'background: rgba(122, 77, 68, 0.08);' in css
+          assert 'left: calc(50% + 145px);' in css
+          assert 'border-radius: 14px;' in css
+          assert "buttons.nth(2)).toHaveAttribute('aria-label', 'Áttekintés')" in test
+          assert "buttons.nth(5)).toHaveAttribute('aria-label', /Mentés|menthető módosítás/)" in test
+          PY
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Update asset versions
+        run: npm run assets:version
+
+      - name: Check generated assets and CSS architecture
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Run admin regression tests
+        run: npm run test:admin
+
+      - name: Run PWA tests
+        run: npx playwright test tests/pwa.spec.js
+
+      - name: Remove temporary workflow and commit generated result
+        run: |
+          rm .github/workflows/chatgpt-test-toolbar-refine.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo 'No generated changes to commit.'
+            exit 1
+          fi
+          git commit -m 'Build refined PWA toolbar assets'
+          git push origin HEAD:CHATGPT_TEST
