@@ -149,12 +149,11 @@
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item {
     grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
     grid-template-areas:
-      "title title"
-      "preview home"
-      "preview image-controls"
-      "preview description"
-      "preview featured"
-      "preview actions";
+      "title home"
+      "image image"
+      ". description"
+      ". featured"
+      ". actions";
     align-items: start;
     column-gap: 10px;
     row-gap: 8px;
@@ -162,6 +161,7 @@
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > h4 {
     grid-area: title;
+    align-self: center;
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
@@ -170,18 +170,10 @@
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-field {
-    display: contents;
-  }
-
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-preview {
-    grid-area: preview;
-    align-self: start;
+    grid-area: image;
     min-width: 0;
-  }
-
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls {
-    grid-area: image-controls;
-    min-width: 0;
+    grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
+    gap: 10px;
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo:has([data-cms-path$=".kepAlt"]) {
