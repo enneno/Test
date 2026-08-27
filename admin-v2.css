@@ -4212,13 +4212,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
 }
-.admin-body.admin-v2 #admin-tiltas-lista .admin-kartya-tipus { margin-bottom: 3px; }
-.admin-body.admin-v2 #admin-tiltas-lista h3 { font-size: 21px; }
-.admin-body.admin-v2 #admin-tiltas-lista p {
-  margin-top: 3px;
-  color: var(--admin-muted);
-  font-size: var(--lumi-font-body-small);
-}
 
 @container admin-workspace (max-width: 700px) {
   .admin-body.admin-v2 #admin-idosav-naptar {
@@ -4237,8 +4230,9 @@ body.cms-image-lightbox-open { overflow: hidden; }
     padding-top: 11px;
     border-top: 1px solid var(--admin-line);
   }
-  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor { grid-template-columns: 1fr 1fr; }
-  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo:first-child,
+  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor {
+    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, .75fr));
+  }
   .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles { grid-column: 1 / -1; }
 }
 
