@@ -1,0 +1,57 @@
+name: Unify CHATGPT_TEST admin text input typography
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Unify canonical text input typography
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('src/admin-styles/10-components.css')
+          s = p.read_text()
+          old = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {
+  font-size: var(--admin-ui-input-font-size);
+}'''
+          new = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {
+  font-family: inherit;
+  font-size: var(--admin-ui-input-font-size);
+  font-weight: 400;
+  line-height: var(--admin-ui-control-line-height);
+}'''
+          if old not in s:
+              raise SystemExit('Canonical text input rule not found')
+          p.write_text(s.replace(old, new, 1))
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify unified typography
+        shell: bash
+        run: |
+          grep -A6 'input:not(\[type="checkbox"\]).*not(\[type="month"\])' src/admin-styles/10-components.css | grep -q 'font-weight: 400'
+          grep -A6 'input:not(\[type="checkbox"\]).*not(\[type="month"\])' src/admin-styles/10-components.css | grep -q 'font-family: inherit'
+      - name: Commit generated assets and remove workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/chatgpt-test-unify-input-typography.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unify admin text input typography"
+          git push origin CHATGPT_TEST
