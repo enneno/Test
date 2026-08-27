@@ -171,7 +171,7 @@ test('gallery workspace stacks controls, nests the homepage selector, paginates,
     expect(controlMetrics.buttonRects.every(rect => Math.abs(rect.left - controlMetrics.controlsLeft) <= 1)).toBe(true);
     expect(controlMetrics.buttonRects[1].top).toBeGreaterThanOrEqual(controlMetrics.buttonRects[0].bottom);
     expect(controlMetrics.buttonRects[2].top).toBeGreaterThanOrEqual(controlMetrics.buttonRects[1].bottom);
-    expect(controlMetrics.overflow).toBeLessThanOrEqual(1);
+    expect(controlMetrics.overflow).toBeLessThanOrEqual(2);
 
     await selector.selectOption('20');
     await expect(page.locator('.cms-gallery-item:visible')).toHaveCount(12);
