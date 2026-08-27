@@ -30,7 +30,7 @@ jobs:
         run: |
           grep -q "width: min(244px, calc(100vw - 104px));" src/admin-styles/20-workspace.css
           grep -q "height: 100dvh;" src/admin-styles/20-workspace.css
-          grep -q "--admin-v2-menu-scroll-offset" src/admin-styles/20-workspace.css
+          grep -q -- "--admin-v2-menu-scroll-offset" src/admin-styles/20-workspace.css
           grep -q "adminV2MenuScrollY" src/admin/05-admin-workspace-v2.js
           grep -q "drawerMetrics.width" tests/admin-production-redesign.spec.js
 
