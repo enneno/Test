@@ -12,7 +12,7 @@
     "admin:css:check": "node scripts/admin-css-isolation.js --check",
     "check": "node scripts/check-site.js && npm run build:check && npm run admin:css:check",
     "test": "playwright test",
-    "test:admin": "playwright test tests/admin-production-redesign.spec.js tests/admin-booking-css-architecture.spec.js tests/admin-v2-regressions.spec.js",
+    "test:admin": "playwright test tests/admin-production-redesign.spec.js tests/admin-booking-css-architecture.spec.js tests/admin-v2-regressions.spec.js tests/admin-cms-image-workspace.spec.js",
     "verify:admin": "npm run build && npm run assets:version && npm run check && npm run test:admin",
     "verify": "npm run build && npm run assets:version && npm run check && npm test"
   },
