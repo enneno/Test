@@ -1,0 +1,59 @@
+name: Set CHATGPT_TEST PWA select typography to 14px
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Update canonical PWA select typography
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('src/admin-styles/95-pwa.css')
+          s = p.read_text()
+          old = '''  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
+            font-size: 11px;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
+          }'''
+          new = '''  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
+            font-size: 14px;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
+          }'''
+          if old not in s:
+              raise SystemExit('Expected PWA select block not found')
+          p.write_text(s.replace(old, new, 1))
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify only PWA select size changed
+        shell: bash
+        run: |
+          grep -q 'font-size: 14px;' src/admin-styles/95-pwa.css
+          grep -q 'font-size: 20px;' src/admin-styles/10-components.css
+      - name: Commit verified result
+        shell: bash
+        run: |
+          rm -f .github/workflows/chatgpt-test-pwa-select-14.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Set PWA select typography to 14px"
+          git push origin CHATGPT_TEST
