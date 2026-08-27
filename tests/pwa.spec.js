@@ -122,7 +122,7 @@ test.describe('Lumi Nails PWA', () => {
     const clientResponse = await page.request.get('/pwa.js');
     expect(clientResponse.ok()).toBeTruthy();
 
-    const clientSource = await response.text();
+    const clientSource = await clientResponse.text();
     expect(clientSource).not.toContain('WEB_PUSH_VAPID_PRIVATE_KEY');
     expect(clientSource).not.toContain('vapid_private_key');
   });
