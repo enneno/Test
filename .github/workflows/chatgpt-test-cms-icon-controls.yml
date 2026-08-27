@@ -30,6 +30,7 @@ jobs:
           grep -q "data-cms-gallery-delete-proxy" src/admin/46-cms-image-workspace.js
           grep -q "cms-gallery-upload-proxy" src/admin/46-cms-image-workspace.js
           grep -q "display: contents" src/admin-styles/45-gallery-editor.css
+          grep -q "removes legacy tall tile UI" tests/admin-cms-image-workspace.spec.js
           ! grep -q '!important' src/admin-styles/42-cms-image-controls.css
           ! grep -q '!important' src/admin-styles/45-gallery-editor.css
 
