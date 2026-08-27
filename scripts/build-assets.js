@@ -10,6 +10,7 @@ const ADMIN_STYLE_FILES = [
     '20-workspace.css',
     '30-bookings.css',
     '40-content-editor.css',
+    '42-cms-image-controls.css',
     '45-gallery-editor.css',
     '50-services.css',
     '60-coupons.css',
