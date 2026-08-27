@@ -351,10 +351,17 @@
             const exportGomb = tab === 'foglalasok'
                 ? document.getElementById('admin-foglalas-export')
                 : null;
+            const frissitesGomb = tab === 'foglalasok'
+                ? document.getElementById('admin-foglalas-frissites')
+                : null;
             if (pageActions && exportGomb) {
                 exportGomb.classList.remove('admin-kis-gomb');
                 exportGomb.classList.add('admin-v2-button', 'admin-v2-button-secondary');
                 pageActions.append(exportGomb);
+            }
+            if (pageActions && frissitesGomb) {
+                frissitesGomb.className = 'admin-v2-button admin-v2-button-secondary admin-v2-refresh-action';
+                pageActions.append(frissitesGomb);
             }
 
             const kapcsolodoMuvelet = {

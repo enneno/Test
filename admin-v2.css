@@ -2955,22 +2955,11 @@ body.admin-modal-nyitva { overflow: hidden; }
     }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-felso { margin: 6px 0; }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
-      width: 54px;
-      min-width: 54px;
+      width: 96px;
+      min-width: 96px;
       height: 34px;
       min-height: 34px;
-      padding-left: 8px;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-frissites {
-      width: 34px;
-      min-width: 34px;
-      height: 34px;
-      min-height: 34px;
-      padding: 0;
-    }
-    .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-frissites svg {
-      width: 16px;
-      height: 16px;
+      padding-left: 10px;
     }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
       align-items: center;
