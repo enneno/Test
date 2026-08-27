@@ -130,10 +130,6 @@ test('shared CMS image workspace uses icon controls, removes legacy tall tile UI
     expect(generalMetrics.previewRight).toBeLessThanOrEqual(generalMetrics.controlsLeft + 1);
     expect(generalMetrics.overflow).toBeLessThanOrEqual(1);
 
-    await page.locator('#admin-cms-root').evaluate(root => {
-        root.dataset.lumiCmsGalleryContext = 'images';
-    });
-
     await expect(page.locator('[data-cms-gallery-add]')).toHaveAttribute('aria-label', 'Új galériakép');
     await expect(page.locator('[data-cms-gallery-add] svg')).toHaveCount(1);
     expect(await page.locator('[data-cms-gallery-add]').innerText()).toBe('');
