@@ -7,8 +7,10 @@ function source(relativePath) {
 }
 
 test('shared CMS image workspace keeps previews left, every control right, and gallery actions in the same control column', async ({ page }) => {
+    const foundationCss = source('src/admin-styles/00-foundation.css');
     const contentCss = source('src/admin-styles/40-content-editor.css');
     const galleryCss = source('src/admin-styles/45-gallery-editor.css');
+    const componentsCss = source('src/admin-styles/10-components.css');
     const imageWorkspaceJs = source('src/admin/46-cms-image-workspace.js');
 
     expect(contentCss).not.toContain('!important');
@@ -18,7 +20,7 @@ test('shared CMS image workspace keeps previews left, every control right, and g
     await page.setContent(`<!doctype html>
         <html>
         <head>
-            <style>${contentCss}\n${galleryCss}</style>
+            <style>${foundationCss}\n${contentCss}\n${galleryCss}\n${componentsCss}</style>
         </head>
         <body class="admin-body admin-v2">
             <div id="admin-panel-szovegek">
