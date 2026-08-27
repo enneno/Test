@@ -1,0 +1,32 @@
+name: Apply CHATGPT_TEST PWA select 18px
+on:
+  push:
+    branches: [CHATGPT_TEST]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify PWA select size
+        run: |
+          grep -q 'font-size: 18px;' src/admin-styles/95-pwa.css
+      - name: Commit generated assets and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/chatgpt-test-pwa-select-18.yml
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Build PWA select 18px typography"
+          git push origin HEAD:CHATGPT_TEST
