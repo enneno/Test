@@ -1,0 +1,80 @@
+name: Fix CHATGPT_TEST picker real centering
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths: ['.github/workflows/chatgpt-test-picker-real-centering.yml']
+permissions:
+  contents: write
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - name: Apply exact picker content geometry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          components = Path('src/admin-styles/10-components.css')
+          s = components.read_text()
+          old = '''  padding: 0 var(--admin-ui-picker-icon-zone) 0 5px;'''
+          new = '''  padding: 0;'''
+          if old not in s:
+              raise SystemExit('picker input padding anchor not found')
+          s = s.replace(old, new, 1)
+
+          old_value = '''  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;'''
+          new_value = '''  width: calc(100% - var(--admin-ui-picker-icon-zone));
+  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
+  min-width: 0;
+  margin: 0 var(--admin-ui-picker-icon-zone) 0 0;
+  padding: 0;
+  display: flex;'''
+          if old_value not in s:
+              raise SystemExit('webkit value geometry anchor not found')
+          s = s.replace(old_value, new_value, 1)
+          components.write_text(s)
+
+          bookings = Path('src/admin-styles/30-bookings.css')
+          b = bookings.read_text()
+          old_grid = 'grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);'
+          new_grid = 'grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);'
+          if old_grid not in b:
+              raise SystemExit('booking editor grid anchor not found')
+          b = b.replace(old_grid, new_grid, 1)
+          bookings.write_text(b)
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify targeted result
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          c = Path('src/admin-styles/10-components.css').read_text()
+          b = Path('src/admin-styles/30-bookings.css').read_text()
+          assert 'padding: 0;' in c
+          assert 'width: calc(100% - var(--admin-ui-picker-icon-zone));' in c
+          assert 'max-width: calc(100% - var(--admin-ui-picker-icon-zone));' in c
+          assert 'margin: 0 var(--admin-ui-picker-icon-zone) 0 0;' in c
+          assert 'grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);' in b
+          PY
+      - name: Commit result and remove temporary workflow
+        run: |
+          rm .github/workflows/chatgpt-test-picker-real-centering.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/admin-styles/10-components.css src/admin-styles/30-bookings.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-picker-real-centering.yml
+          git commit -m "Center picker values in actual content area"
+          git push origin CHATGPT_TEST
