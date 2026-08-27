@@ -2578,7 +2578,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);
   gap: 6px;
   margin-top: 8px;
   padding: 9px 0 0;
@@ -4926,11 +4926,11 @@ body.admin-modal-nyitva { overflow: hidden; }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-date-and-time-value {
   box-sizing: border-box;
-  width: calc(100% - var(--admin-ui-picker-icon-zone));
-  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
-  margin: 0 var(--admin-ui-picker-icon-zone) 0 0;
-  padding: 0;
+  margin: 0;
+  padding: 0 var(--admin-ui-picker-icon-zone) 0 0;
   display: flex;
   align-items: center;
   justify-content: center;

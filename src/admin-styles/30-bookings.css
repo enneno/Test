@@ -703,7 +703,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: minmax(0, 1.9fr) minmax(0, .55fr) minmax(0, .55fr);
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);
   gap: 6px;
   margin-top: 8px;
   padding: 9px 0 0;
