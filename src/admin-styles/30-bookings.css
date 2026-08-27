@@ -648,7 +648,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor {
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
-  align-items: start;
+  align-items: baseline;
   gap: 10px;
   margin: 7px 0 0;
   padding: 7px 0 0;
@@ -728,8 +728,12 @@
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok {
   margin-top: 7px;
-  padding-top: 7px;
+  padding: 7px 0 12px;
+  align-items: center;
   border-top: 1px solid rgba(73, 58, 52, .09);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok [data-foglalas-torles] {
+  padding-inline: 10px;
 }
 
 /* Inspiration controls and modal */
