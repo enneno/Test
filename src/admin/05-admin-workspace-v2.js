@@ -360,8 +360,10 @@
                 pageActions.append(exportGomb);
             }
             if (pageActions && frissitesGomb) {
+                const regiMuveletTarolo = frissitesGomb.closest('.admin-foglalas-muvelet-tarolo');
                 frissitesGomb.className = 'admin-v2-button admin-v2-button-secondary admin-v2-refresh-action';
                 pageActions.append(frissitesGomb);
+                if (regiMuveletTarolo && !regiMuveletTarolo.children.length) regiMuveletTarolo.remove();
             }
 
             const kapcsolodoMuvelet = {

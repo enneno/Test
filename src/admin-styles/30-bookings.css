@@ -1054,7 +1054,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-inspiracio-modal-racs { grid-template-columns: 1fr; }
 }
 
-@container admin-workspace (max-width: 480px) {
+@media (max-width: 480px) {
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo > label,
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo > span { display: none; }
     .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo {
