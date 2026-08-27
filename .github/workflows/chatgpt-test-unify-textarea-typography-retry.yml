@@ -1,0 +1,44 @@
+name: Retry admin textarea typography
+on:
+  push:
+    branches: [CHATGPT_TEST]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Patch textarea into shared typography rule
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/admin-styles/10-components.css')
+          s=p.read_text()
+          old='.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {\n  font-family: inherit;\n  font-size: var(--admin-ui-input-font-size);\n  font-weight: 400;\n  line-height: var(--admin-ui-control-line-height);\n}'
+          new='.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]), textarea) {\n  font-family: inherit;\n  font-size: var(--admin-ui-input-font-size);\n  font-weight: 400;\n  line-height: var(--admin-ui-control-line-height);\n}'
+          if old not in s:
+              raise SystemExit('shared input typography rule not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify shared textarea typography
+        run: grep -F 'textarea) {' src/admin-styles/10-components.css
+      - name: Commit verified result
+        run: |
+          rm -f .github/workflows/chatgpt-test-unify-textarea-typography.yml .github/workflows/chatgpt-test-unify-textarea-typography-retry.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Share input typography with textareas" || exit 0
+          git push origin CHATGPT_TEST
