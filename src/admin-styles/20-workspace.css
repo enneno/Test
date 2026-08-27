@@ -1311,7 +1311,6 @@
 .admin-body.admin-v2 .admin-panel select,
 .admin-body.admin-v2 .admin-panel textarea,
 .admin-body.admin-v2 .admin-panel button {
-  font-size: 13px;
 }
 
 .admin-body.admin-v2 .admin-db-toolbar input,
@@ -1623,8 +1622,7 @@
   .admin-body.admin-v2 .admin-panel input,
   .admin-body.admin-v2 .admin-panel select {
     min-height: 44px;
-    font-size: 16px;
-  }
+}
 
   .admin-body.admin-v2 .admin-db-kartya,
   .admin-body.admin-v2 .admin-foglalas-kartya,

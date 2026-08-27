@@ -262,7 +262,6 @@
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
-    font-size: 14px;
-    font-size-adjust: none;
+font-size-adjust: none;
   }
 }

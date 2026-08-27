@@ -1536,7 +1536,6 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-panel select,
 .admin-body.admin-v2 .admin-panel textarea,
 .admin-body.admin-v2 .admin-panel button {
-  font-size: 13px;
 }
 
 .admin-body.admin-v2 .admin-db-toolbar input,
@@ -1847,8 +1846,7 @@ body.admin-body [hidden] {
   .admin-body.admin-v2 .admin-panel input,
   .admin-body.admin-v2 .admin-panel select {
     min-height: 44px;
-    font-size: 16px;
-  }
+}
 
   .admin-body.admin-v2 .admin-db-kartya,
   .admin-body.admin-v2 .admin-foglalas-kartya,
@@ -4614,8 +4612,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
-    font-size: 14px;
-    font-size-adjust: none;
+font-size-adjust: none;
   }
 }
 
@@ -4875,6 +4872,10 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 0 var(--admin-ui-field-padding-x);
   border-radius: var(--admin-ui-control-radius);
   line-height: var(--admin-ui-control-line-height);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 {
