@@ -26,6 +26,7 @@ jobs:
       - name: Verify gallery source architecture
         run: |
           grep -q "grid-template-columns: repeat(3, var(--admin-ui-touch-target))" src/admin-styles/45-gallery-editor.css
+          grep -q "grid-column: 2 / span 2" src/admin-styles/45-gallery-editor.css
           ! grep -q '!important' src/admin-styles/45-gallery-editor.css
 
       - name: Install dependencies
