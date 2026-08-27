@@ -1079,10 +1079,10 @@
                 if (!panel || !heading) return;
 
                 const nav = document.createElement('nav');
-                nav.className = 'admin-v2-subnav';
+                nav.className = 'admin-v2-subnav admin-segmented';
                 nav.setAttribute('aria-label', 'Kapcsolódó adminnézetek');
                 nav.innerHTML = group.items.map(([target, label]) => `
-                    <button type="button" data-admin-v2-panel="${target}">${label}</button>
+                    <button type="button" class="admin-segmented-item" data-admin-v2-panel="${target}">${label}</button>
                 `).join('');
                 heading.after(nav);
             });

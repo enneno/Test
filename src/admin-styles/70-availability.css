@@ -89,6 +89,12 @@
   justify-content: start;
   gap: 10px;
 }
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+}
+.admin-body.admin-v2 #admin-naptar-kozos-lepes { text-align: center; }
 .admin-body.admin-v2 .admin-idosav-grid {
   display: grid;
   grid-template-columns: minmax(132px, 1.2fr) minmax(82px, .7fr) minmax(82px, .7fr) auto;
@@ -289,6 +295,7 @@
   .admin-body.admin-v2 #admin-idosav-naptar { padding: 11px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej { grid-template-columns: 1fr; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke { font-size: 10px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
     grid-column: 1 / -1;
     width: 100%;

@@ -231,7 +231,11 @@
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 
-.admin-body.admin-v2 :is(.admin-segmented-item.aktiv, .admin-segmented-item[aria-selected="true"]) {
+.admin-body.admin-v2 :is(
+  .admin-segmented-item.aktiv,
+  .admin-segmented-item.is-active,
+  .admin-segmented-item[aria-selected="true"]
+) {
   color: var(--admin-v2-brand-dark);
   background: var(--admin-v2-surface);
   box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
