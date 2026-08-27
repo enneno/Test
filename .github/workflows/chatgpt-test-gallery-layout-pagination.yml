@@ -1,0 +1,65 @@
+name: Build gallery layout and pagination
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-gallery-layout-pagination.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Verify gallery source architecture
+        run: |
+          grep -q "data-lumi-gallery-page-size" src/admin/45-gallery-workspace.js
+          grep -q "moveHomepageChoicesIntoControls" src/admin/45-gallery-workspace.js
+          grep -q "grid-template-areas: \"title pager add\"" src/admin-styles/45-gallery-editor.css
+          ! grep -q '!important' src/admin-styles/45-gallery-editor.css
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Update asset versions
+        run: npm run assets:version
+
+      - name: Run checks
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Test admin regressions
+        run: npm run test:admin
+
+      - name: Test gallery pagination regression
+        run: npx playwright test tests/admin-gallery-workspace-pagination.spec.js
+
+      - name: Remove temporary workflow and commit generated assets
+        run: |
+          rm -f .github/workflows/chatgpt-test-gallery-layout-pagination.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No generated changes to commit.'
+            exit 1
+          fi
+          git commit -m 'Build gallery layout and pagination'
+          git push origin HEAD:CHATGPT_TEST
