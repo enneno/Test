@@ -269,7 +269,10 @@
 /* Normal text-like inputs: one font-size owner for the entire admin.
    Native date/time/month controls keep their dedicated picker rule below. */
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]) {
+  font-family: inherit;
   font-size: var(--admin-ui-input-font-size);
+  font-weight: 400;
+  line-height: var(--admin-ui-control-line-height);
 }
 
 
