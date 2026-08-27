@@ -4,6 +4,8 @@
 .admin-body.admin-v2.lumi-admin-standalone {
   --pwa-admin-toolbar-height: 56px;
   --pwa-admin-toolbar-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  --admin-v2-shell-top-reserve: 0px;
+  --admin-v2-shell-bottom-reserve: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom));
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar {
@@ -66,14 +68,7 @@
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
   width: 100%;
-  min-height: 100vh;
   margin-left: 0;
-  padding: 16px 12px calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 30px);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .admin-live-panel,
-.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-layout {
-  min-height: 100vh;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-status {
@@ -267,14 +262,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (min-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
-    padding-right: 20px;
-    padding-left: 20px;
-  }
-
 }
 
 @media (max-width: 768px) {

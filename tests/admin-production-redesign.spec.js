@@ -365,8 +365,16 @@ async function installSupabaseBoundaryMock(page) {
     }, data);
 }
 
-async function openAdmin(page, viewport) {
+async function openAdmin(page, viewport, { standalone = false } = {}) {
     await page.setViewportSize(viewport);
+    if (standalone) {
+        await page.addInitScript(() => {
+            Object.defineProperty(window.navigator, 'standalone', {
+                configurable: true,
+                value: true
+            });
+        });
+    }
     const browserErrors = [];
     page.on('pageerror', error => browserErrors.push(error.message));
     page.on('console', message => {
@@ -381,6 +389,28 @@ async function openAdmin(page, viewport) {
     await expect(page.locator('#admin-v2-stat-today')).toHaveText('3');
 
     return browserErrors;
+}
+
+async function collectAdminHeadingTops(page) {
+    const groups = ['attekintes', 'foglalasok', 'vendegek', 'munkaido', 'weboldal', 'kommunikacio', 'beallitasok'];
+    return page.evaluate(async groupsToMeasure => {
+        const result = {};
+        for (const group of groupsToMeasure) {
+            const button = document.querySelector(`.admin-sidebar [data-admin-v2-nav="${group}"]`);
+            if (!button) throw new Error(`Missing admin navigation for ${group}`);
+            button.click();
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const heading = document.querySelector('.admin-db-panel.aktiv > .admin-v2-page-heading');
+            if (!heading) throw new Error(`Missing active page heading for ${group}`);
+            result[group] = heading.getBoundingClientRect().top;
+        }
+        return result;
+    }, groups);
+}
+
+function expectHeadingTopsAligned(tops) {
+    const values = Object.values(tops);
+    expect(Math.max(...values) - Math.min(...values)).toBeLessThanOrEqual(1);
 }
 
 test.describe('production admin redesign', () => {
@@ -899,4 +929,69 @@ test.describe('production admin redesign', () => {
         }
         expect(browserErrors).toEqual([]);
     });
+
+    test('mobile browser: every admin panel shares the same canonical top spacing', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+        const tops = await collectAdminHeadingTops(page);
+        expectHeadingTopsAligned(tops);
+
+        const metrics = await page.evaluate(() => {
+            const bodyStyle = getComputedStyle(document.body);
+            const main = document.querySelector('.admin-workspace-main');
+            const mainStyle = getComputedStyle(main);
+            const topbar = document.querySelector('.admin-v2-topbar');
+            const status = document.getElementById('admin-online-status');
+            return {
+                topbarDisplay: getComputedStyle(topbar).display,
+                topbarHeight: topbar.getBoundingClientRect().height,
+                workspaceTopGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-top-gap')),
+                workspaceBottomGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-bottom-gap')),
+                paddingTop: parseFloat(mainStyle.paddingTop),
+                paddingBottom: parseFloat(mainStyle.paddingBottom),
+                statusPosition: getComputedStyle(status).position,
+                pwaToolbarCount: document.querySelectorAll('#pwa-admin-tabbar').length
+            };
+        });
+
+        expect(metrics.topbarDisplay).not.toBe('none');
+        expect(metrics.statusPosition).toBe('fixed');
+        expect(metrics.pwaToolbarCount).toBe(0);
+        expect(Math.abs(metrics.paddingTop - (metrics.topbarHeight + metrics.workspaceTopGap))).toBeLessThanOrEqual(1);
+        expect(Math.abs(metrics.paddingBottom - metrics.workspaceBottomGap)).toBeLessThanOrEqual(1);
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('standalone app: every admin panel shares the same content spacing while the bottom toolbar owns only its shell reserve', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 }, { standalone: true });
+        await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
+        await expect(page.locator('#pwa-admin-tabbar')).toBeVisible();
+
+        const tops = await collectAdminHeadingTops(page);
+        expectHeadingTopsAligned(tops);
+
+        const metrics = await page.evaluate(() => {
+            const bodyStyle = getComputedStyle(document.body);
+            const main = document.querySelector('.admin-workspace-main');
+            const mainStyle = getComputedStyle(main);
+            const topbar = document.querySelector('.admin-v2-topbar');
+            const toolbar = document.getElementById('pwa-admin-tabbar');
+            const status = document.getElementById('admin-online-status');
+            return {
+                topbarDisplay: getComputedStyle(topbar).display,
+                workspaceTopGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-top-gap')),
+                workspaceBottomGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-bottom-gap')),
+                paddingTop: parseFloat(mainStyle.paddingTop),
+                paddingBottom: parseFloat(mainStyle.paddingBottom),
+                toolbarHeight: toolbar.getBoundingClientRect().height,
+                statusPosition: getComputedStyle(status).position
+            };
+        });
+
+        expect(metrics.topbarDisplay).toBe('none');
+        expect(metrics.statusPosition).toBe('fixed');
+        expect(Math.abs(metrics.paddingTop - metrics.workspaceTopGap)).toBeLessThanOrEqual(1);
+        expect(metrics.paddingBottom).toBeGreaterThanOrEqual(metrics.workspaceBottomGap + metrics.toolbarHeight);
+        expect(browserErrors).toEqual([]);
+    });
+
 });

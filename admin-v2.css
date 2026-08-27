@@ -232,6 +232,11 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 {
   --admin-v2-sidebar: 228px;
   --admin-v2-topbar: 64px;
+  --admin-v2-shell-top-reserve: var(--admin-v2-topbar);
+  --admin-v2-shell-bottom-reserve: 0px;
+  --admin-v2-workspace-top-gap: 28px;
+  --admin-v2-workspace-inline-gap: 42px;
+  --admin-v2-workspace-bottom-gap: 50px;
   --admin-v2-bg: #f7f4f1;
   --admin-v2-surface: #ffffff;
   --admin-v2-surface-soft: #fbf9f7;
@@ -322,7 +327,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-live-panel {
   width: 100%;
   max-width: none;
-  min-height: calc(100vh - var(--admin-v2-topbar));
+  min-height: calc(100vh - var(--admin-v2-shell-top-reserve));
   margin: 0;
   padding: 0;
   contain: none;
@@ -335,7 +340,7 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-workspace-layout {
   display: block;
   width: 100%;
-  min-height: calc(100vh - var(--admin-v2-topbar));
+  min-height: calc(100vh - var(--admin-v2-shell-top-reserve));
 }
 
 .admin-body.admin-v2 .admin-sidebar {
@@ -625,11 +630,14 @@ body.admin-body [hidden] {
   backdrop-filter: blur(14px);
 }
 .admin-body.admin-v2 .admin-workspace-status {
+  position: fixed;
+  z-index: 120;
   top: auto;
   right: 20px;
   bottom: 20px;
   left: auto;
   width: min(380px, calc(100vw - 40px));
+  margin: 0;
   padding: 11px 14px;
   border-radius: 11px;
   font-size: 11px;
@@ -824,9 +832,12 @@ body.admin-body [hidden] {
 .admin-body.admin-v2 .admin-workspace-main {
   width: calc(100% - var(--admin-v2-sidebar));
   max-width: none;
-  min-height: calc(100vh - var(--admin-v2-topbar));
+  min-height: calc(100vh - var(--admin-v2-shell-top-reserve));
   margin-left: var(--admin-v2-sidebar);
-  padding: calc(var(--admin-v2-topbar) + 28px) 42px 50px;
+  padding-top: calc(var(--admin-v2-shell-top-reserve) + var(--admin-v2-workspace-top-gap));
+  padding-right: var(--admin-v2-workspace-inline-gap);
+  padding-bottom: calc(var(--admin-v2-shell-bottom-reserve) + var(--admin-v2-workspace-bottom-gap));
+  padding-left: var(--admin-v2-workspace-inline-gap);
   overflow: visible;
 }
 
@@ -1657,6 +1668,9 @@ body.admin-body [hidden] {
 @media (max-width: 900px) {
   .admin-body.admin-v2 {
     --admin-v2-topbar: 58px;
+    --admin-v2-workspace-top-gap: 22px;
+    --admin-v2-workspace-inline-gap: 17px;
+    --admin-v2-workspace-bottom-gap: 42px;
   }
 
   .admin-body.admin-v2 .admin-workspace-status {
@@ -1765,7 +1779,6 @@ body.admin-body [hidden] {
   .admin-body.admin-v2 .admin-workspace-main {
     width: 100%;
     margin-left: 0;
-    padding: calc(var(--admin-v2-topbar) + 22px) 17px 42px;
   }
 
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-v2-button {
@@ -1784,13 +1797,15 @@ body.admin-body [hidden] {
 }
 
 @media (max-width: 640px) {
+  .admin-body.admin-v2 {
+    --admin-v2-workspace-top-gap: 18px;
+    --admin-v2-workspace-inline-gap: 12px;
+    --admin-v2-workspace-bottom-gap: 34px;
+  }
+
   .admin-body.admin-v2 .admin-v2-topbar-actions .admin-v2-button {
     padding-inline: 10px;
     font-size: 11px;
-  }
-
-  .admin-body.admin-v2 .admin-workspace-main {
-    padding: calc(var(--admin-v2-topbar) + 18px) 12px 34px;
   }
 
   .admin-body.admin-v2 .admin-v2-page-heading {
@@ -4447,6 +4462,8 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2.lumi-admin-standalone {
   --pwa-admin-toolbar-height: 56px;
   --pwa-admin-toolbar-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  --admin-v2-shell-top-reserve: 0px;
+  --admin-v2-shell-bottom-reserve: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom));
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar {
@@ -4509,14 +4526,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
   width: 100%;
-  min-height: 100vh;
   margin-left: 0;
-  padding: 16px 12px calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 30px);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .admin-live-panel,
-.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-layout {
-  min-height: 100vh;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-status {
@@ -4710,14 +4720,6 @@ body.admin-modal-nyitva { overflow: hidden; }
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (min-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
-    padding-right: 20px;
-    padding-left: 20px;
-  }
-
 }
 
 @media (max-width: 768px) {
