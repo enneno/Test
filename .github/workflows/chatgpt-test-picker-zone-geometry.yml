@@ -59,6 +59,6 @@ jobs:
           rm .github/workflows/chatgpt-test-picker-zone-geometry.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/admin-styles/10-components.css admin/admin-v2.css admin/index.html .github/workflows/chatgpt-test-picker-zone-geometry.yml
+          git add src/admin-styles/10-components.css admin-v2.css admin/index.html .github/workflows/chatgpt-test-picker-zone-geometry.yml
           git commit -m "Use exact shared picker icon zone geometry"
           git push origin CHATGPT_TEST
