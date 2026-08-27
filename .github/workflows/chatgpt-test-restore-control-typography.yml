@@ -1,0 +1,97 @@
+name: Restore CHATGPT_TEST control typography
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-restore-control-typography.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Restore verified picker and fix select ownership
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          path = Path('src/admin-styles/10-components.css')
+          current = path.read_text()
+          good = subprocess.check_output([
+              'git','show','a317d9ffafe162b4ad0ccaf3c844732d8923e6af:src/admin-styles/10-components.css'
+          ], text=True)
+
+          # Remove the browser-only typography enlargement introduced in the last pass.
+          browser_block = '''@media (display-mode: browser) and (max-width: 768px) {\n  .admin-body.admin-v2 {\n    --admin-ui-page-size-font-size: 14px;\n    --admin-ui-picker-font-size: 22px;\n  }\n}\n\n'''
+          assert browser_block in current
+          current = current.replace(browser_block, '', 1)
+
+          # Restore the exact picker block from the user-verified good commit.
+          start_marker = '/* Shared native date/time/month controls: one visual owner for the entire admin. */'
+          end_marker = '.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {'
+          cs = current.index(start_marker)
+          ce = current.index(end_marker, cs)
+          gs = good.index(start_marker)
+          ge = good.index(end_marker, gs)
+          current = current[:cs] + good[gs:ge] + current[ce:]
+
+          # The foundation has a stronger `body.admin-body select { font: inherit; }`.
+          # Remove font ownership from the weaker generic selector.
+          old = '''.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {\n  appearance: none;\n  -webkit-appearance: none;\n  font-size: var(--admin-ui-select-font-size);\n  font-size-adjust: none;\n  padding-right: 34px;'''
+          new = '''.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {\n  appearance: none;\n  -webkit-appearance: none;\n  padding-right: 34px;'''
+          assert old in current
+          current = current.replace(old, new, 1)
+
+          # One high-specificity font owner for every admin select/status select.
+          old = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,\n.admin-body.admin-v2 #admin-tartalom .admin-db-statusz {\n  height: var(--admin-ui-choice-height);'''
+          new = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,\n.admin-body.admin-v2 #admin-tartalom .admin-db-statusz {\n  font-size: 11px;\n  font-size-adjust: none;\n  height: var(--admin-ui-choice-height);'''
+          assert old in current
+          current = current.replace(old, new, 1)
+
+          # Remove the page-size-specific font owner so it inherits the common select rule.
+          old = '''  font-size: var(--admin-ui-page-size-font-size);\n  font-weight: 850;'''
+          new = '''  font-weight: 850;'''
+          assert old in current
+          current = current.replace(old, new, 1)
+
+          path.write_text(current)
+          PY
+      - run: npm ci
+      - run: npm run build
+      - run: npm run assets:version
+      - run: npm run admin:css:check
+      - name: Verify typography ownership
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          c = Path('src/admin-styles/10-components.css').read_text()
+          assert '@media (display-mode: browser)' not in c
+          assert 'font-size: 22px' not in c
+          assert 'font-size: var(--admin-ui-page-size-font-size)' not in c
+          assert c.count('font-size: 11px;\n  font-size-adjust: none;\n  height: var(--admin-ui-choice-height);') == 1
+          picker = c[c.index('/* Shared native date/time/month controls'):c.index('.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {')]
+          assert 'font-size: 20px;' in picker
+          assert 'font-family: inherit;\n  font-size: 20px;\n  font-weight: 720;' in picker
+          assert 'font-family: inherit;\n  font-size: 20px;\n  font-size-adjust: none;' not in picker
+          print('verified: picker restored and select has one effective 11px owner')
+          PY
+      - name: Commit verified result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-test-restore-control-typography.yml
+          git add src/admin-styles/10-components.css admin-v2.css admin/index.html
+          git add -u
+          git commit -m "Restore verified admin control typography"
+          git push origin HEAD:CHATGPT_TEST
