@@ -34,17 +34,12 @@ jobs:
 
           def normalize(raw: str) -> str:
               low = raw.lower()
-              if low == 'normal':
-                  return '400'
-              if low in {'bold', 'bolder'}:
-                  return '600'
-              if low == 'lighter':
-                  return '400'
+              if low == 'normal': return '400'
+              if low in {'bold', 'bolder'}: return '600'
+              if low == 'lighter': return '400'
               value = int(raw)
-              if value <= 450:
-                  return '400'
-              if value <= 550:
-                  return '500'
+              if value <= 450: return '400'
+              if value <= 550: return '500'
               return '600'
 
           changed = []
@@ -59,10 +54,7 @@ jobs:
               if new != text:
                   path.write_text(new, encoding='utf-8')
                   changed.append(str(path))
-
-          print('Changed files:')
-          for p in changed:
-              print(' -', p)
+          print('Changed files:', *changed, sep='\n - ')
           print('Normalized declarations:', counts)
           PY
 
@@ -71,7 +63,6 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import re, sys
-
           bad = []
           pattern = re.compile(r'font-weight\s*:\s*(normal|bold|bolder|lighter|\d+)', re.I)
           for path in sorted(Path('src/admin-styles').glob('*.css')):
@@ -103,13 +94,47 @@ jobs:
         run: npx playwright install --with-deps msedge
 
       - name: Test admin production redesign
-        run: npx playwright test tests/admin-production-redesign.spec.js
+        id: production_test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright test tests/admin-production-redesign.spec.js 2>&1 | tee production-test.log
 
       - name: Test booking CSS architecture
-        run: npx playwright test tests/admin-booking-css-architecture.spec.js
+        id: booking_css_test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright test tests/admin-booking-css-architecture.spec.js 2>&1 | tee booking-css-test.log
 
       - name: Test admin regressions
-        run: npx playwright test tests/admin-v2-regressions.spec.js
+        id: regression_test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright test tests/admin-v2-regressions.spec.js 2>&1 | tee regression-test.log
+
+      - name: Upload test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-font-weight-test-logs
+          path: |
+            production-test.log
+            booking-css-test.log
+            regression-test.log
+          if-no-files-found: warn
+
+      - name: Require all admin tests
+        if: steps.production_test.outcome != 'success' || steps.booking_css_test.outcome != 'success' || steps.regression_test.outcome != 'success'
+        run: |
+          echo "production=${{ steps.production_test.outcome }}"
+          echo "booking_css=${{ steps.booking_css_test.outcome }}"
+          echo "regressions=${{ steps.regression_test.outcome }}"
+          exit 1
 
       - name: Remove temporary workflow and commit result
         run: |
