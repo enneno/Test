@@ -1442,14 +1442,59 @@
   }
 
   .admin-body.admin-v2 .admin-sidebar {
-    width: min(280px, calc(100vw - 52px));
-    padding-top: max(18px, env(safe-area-inset-top));
+    width: min(244px, calc(100vw - 104px));
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+    padding: max(14px, env(safe-area-inset-top, 0px)) 12px max(14px, env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     transform: translateX(-105%);
     transition: transform 190ms ease;
   }
 
+  .admin-body.admin-v2.admin-v2-menu-open {
+    position: fixed;
+    top: var(--admin-v2-menu-scroll-offset, 0px);
+    right: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   .admin-body.admin-v2.admin-v2-menu-open .admin-sidebar {
     transform: translateX(0);
+    touch-action: pan-y;
+  }
+
+  .admin-body.admin-v2 .admin-v2-nav-item {
+    min-height: 44px;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .admin-body.admin-v2 .admin-v2-nav-item > span:not(.admin-v2-nav-count):not(.admin-v2-nav-alert) {
+    text-align: left;
+  }
+
+  .admin-body.admin-v2 .admin-v2-sidebar-bottom {
+    flex: 0 0 auto;
+    gap: 5px;
+    padding-top: 12px;
+  }
+
+  .admin-body.admin-v2 :is(.admin-v2-public-link, .admin-v2-profile, .admin-v2-logout) {
+    text-align: left;
+  }
+
+  .admin-body.admin-v2 .admin-v2-public-link {
+    justify-content: flex-start;
+  }
+
+  .admin-body.admin-v2 .admin-v2-logout {
+    padding-inline: 10px;
   }
 
   .admin-body.admin-v2 .admin-v2-nav-backdrop {

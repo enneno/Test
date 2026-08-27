@@ -535,6 +535,36 @@ test.describe('production admin redesign', () => {
             return (await page.locator('.admin-v2-sidebar').boundingBox()).x;
         }).toBeGreaterThanOrEqual(-1);
 
+        const drawerMetrics = await page.locator('.admin-v2-sidebar').evaluate(sidebar => {
+            const bodyStyle = getComputedStyle(document.body);
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const logoutRect = sidebar.querySelector('[data-admin-v2-logout]').getBoundingClientRect();
+            const navItem = sidebar.querySelector('.admin-v2-nav-item');
+            const navStyle = getComputedStyle(navItem);
+            const label = navItem.querySelector('span:not(.admin-v2-nav-count):not(.admin-v2-nav-alert)');
+            return {
+                width: sidebarRect.width,
+                height: sidebarRect.height,
+                logoutBottom: logoutRect.bottom,
+                viewportHeight: window.innerHeight,
+                bodyPosition: bodyStyle.position,
+                bodyOverflow: bodyStyle.overflow,
+                navDisplay: navStyle.display,
+                navJustify: navStyle.justifyContent,
+                navTextAlign: navStyle.textAlign,
+                labelTextAlign: getComputedStyle(label).textAlign
+            };
+        });
+        expect(drawerMetrics.width).toBeLessThanOrEqual(244);
+        expect(drawerMetrics.height).toBeLessThanOrEqual(drawerMetrics.viewportHeight + 1);
+        expect(drawerMetrics.logoutBottom).toBeLessThanOrEqual(drawerMetrics.viewportHeight + 1);
+        expect(drawerMetrics.bodyPosition).toBe('fixed');
+        expect(drawerMetrics.bodyOverflow).toBe('hidden');
+        expect(drawerMetrics.navDisplay).toBe('flex');
+        expect(drawerMetrics.navJustify).toBe('flex-start');
+        expect(drawerMetrics.navTextAlign).toBe('left');
+        expect(drawerMetrics.labelTextAlign).toBe('left');
+
         await page.locator('.admin-v2-sidebar [data-admin-v2-nav="foglalasok"]').click();
         await expect(page.locator('body')).not.toHaveClass(/admin-v2-menu-open/);
         await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);

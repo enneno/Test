@@ -1870,14 +1870,29 @@
         if (element) element.textContent = value;
     }
 
+    let adminV2MenuScrollY = 0;
+
     function adminV2MenuNyitasa() {
-        document.body.classList.add('admin-v2-menu-open');
+        const body = document.body;
+        if (body.classList.contains('admin-v2-menu-open')) return;
+
+        adminV2MenuScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        body.style.setProperty('--admin-v2-menu-scroll-offset', `-${adminV2MenuScrollY}px`);
+        body.classList.add('admin-v2-menu-open');
         document.querySelector('[data-admin-v2-menu]')?.setAttribute('aria-expanded', 'true');
     }
 
     function adminV2MenuBezarasa() {
-        document.body.classList.remove('admin-v2-menu-open');
+        const body = document.body;
+        const nyitvaVolt = body.classList.contains('admin-v2-menu-open');
+
+        body.classList.remove('admin-v2-menu-open');
+        body.style.removeProperty('--admin-v2-menu-scroll-offset');
         document.querySelector('[data-admin-v2-menu]')?.setAttribute('aria-expanded', 'false');
+
+        if (nyitvaVolt) {
+            window.scrollTo({ top: adminV2MenuScrollY, behavior: 'auto' });
+        }
     }
 
     function adminV2Ikon(name) {
