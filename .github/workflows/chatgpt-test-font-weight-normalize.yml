@@ -1,0 +1,111 @@
+name: Normalize admin font weights
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-font-weight-normalize.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Normalize canonical admin CSS font weights
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          roots = [Path('src/admin-styles')]
+          files = sorted(p for root in roots for p in root.glob('*.css'))
+          pattern = re.compile(r'(font-weight\s*:\s*)(normal|bold|bolder|lighter|[1-9]00|\d{3})(\s*;)', re.I)
+
+          def normalize(raw: str) -> str:
+              low = raw.lower()
+              if low == 'normal':
+                  return '400'
+              if low in {'bold', 'bolder'}:
+                  return '600'
+              if low == 'lighter':
+                  return '400'
+              value = int(raw)
+              if value <= 450:
+                  return '400'
+              if value <= 550:
+                  return '500'
+              return '600'
+
+          changed = []
+          counts = {'400': 0, '500': 0, '600': 0}
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              def repl(match):
+                  value = normalize(match.group(2))
+                  counts[value] += 1
+                  return f'{match.group(1)}{value}{match.group(3)}'
+              new = pattern.sub(repl, text)
+              if new != text:
+                  path.write_text(new, encoding='utf-8')
+                  changed.append(str(path))
+
+          print('Changed files:')
+          for p in changed:
+              print(' -', p)
+          print('Normalized declarations:', counts)
+          PY
+
+      - name: Verify only 400 500 600 remain in admin CSS
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, sys
+
+          bad = []
+          pattern = re.compile(r'font-weight\s*:\s*(normal|bold|bolder|lighter|\d+)', re.I)
+          for path in sorted(Path('src/admin-styles').glob('*.css')):
+              text = path.read_text(encoding='utf-8')
+              for m in pattern.finditer(text):
+                  raw = m.group(1).lower()
+                  if raw not in {'400','500','600'}:
+                      line = text.count('\n', 0, m.start()) + 1
+                      bad.append(f'{path}:{line}: {raw}')
+          if bad:
+              print('\n'.join(bad))
+              sys.exit('Unexpected admin font-weight values remain')
+          print('All explicit admin CSS font weights are 400, 500, or 600.')
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build admin assets
+        run: npm run build:admin
+
+      - name: Verify admin CSS
+        run: npm run check:admin-css
+
+      - name: Remove temporary workflow and commit result
+        run: |
+          rm .github/workflows/chatgpt-test-font-weight-normalize.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/admin-styles admin admin-styles.css .github/workflows/chatgpt-test-font-weight-normalize.yml 2>/dev/null || true
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Standardize admin font weights to 400 500 600'
+          git push origin HEAD:CHATGPT_TEST
