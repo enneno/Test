@@ -57,35 +57,36 @@ test('gallery workspace stacks controls, nests the homepage selector, paginates,
                 </div>
             </main>
             <script>
-                function cardHtml(index, isNew = false) {
+                function cardHtml(index, isNew) {
                     const image = isNew
                         ? '<span>Nincs kiválasztott kép</span>'
                         : '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23d9aaa7%22/%3E%3C/svg%3E" alt="Teszt kép">';
-                    return ` + "`" + `
-                        <article class="cms-gallery-item" ${isNew ? 'data-new-item="true"' : ''}>
-                            <h4>${index + 1}. kép</h4>
-                            <label class="cms-gallery-home-choice"><input type="checkbox"><span>Megjelenjen a főoldali galériaátvezetőben</span></label>
-                            <div class="cms-image-field admin-mezo admin-mezo-szeles">
-                                <span class="cms-field-label">Fotó</span>
-                                <div class="cms-image-preview" data-cms-preview="galeria.elemek.${index}.kep">${image}<span>Kép előnézet</span></div>
-                                <div class="cms-image-controls">
-                                    <label class="admin-hozzaadas cms-upload-button">Kép feltöltése<input type="file" data-cms-upload="galeria.elemek.${index}.kep"></label>
-                                    <button type="button" class="admin-kis-gomb" data-cms-remove-image="galeria.elemek.${index}.kep">Kép eltávolítása</button>
-                                </div>
-                                <input class="cms-image-url" value="/kepek/${index}.jpg">
-                            </div>
-                            <label class="admin-mezo"><span>Kép leírása</span><input data-cms-path="galeria.elemek.${index}.kepAlt" value="Teszt ${index + 1}"></label>
-                            <label class="admin-mezo"><input type="checkbox" data-cms-path="galeria.elemek.${index}.magas"><span>Magas kiemelt csempe</span></label>
-                            <div class="cms-gallery-actions">
-                                <button type="button" class="admin-kis-gomb" data-cms-gallery-move="up" data-index="${index}">↑ Feljebb</button>
-                                <button type="button" class="admin-kis-gomb" data-cms-gallery-move="down" data-index="${index}">↓ Lejjebb</button>
-                                <button type="button" class="admin-kis-gomb admin-veszely-gomb" data-cms-gallery-delete="${index}">Törlés</button>
-                            </div>
-                        </article>` + "`" + `;
+                    return [
+                        '<article class="cms-gallery-item" ' + (isNew ? 'data-new-item="true"' : '') + '>',
+                        '<h4>' + (index + 1) + '. kép</h4>',
+                        '<label class="cms-gallery-home-choice"><input type="checkbox"><span>Megjelenjen a főoldali galériaátvezetőben</span></label>',
+                        '<div class="cms-image-field admin-mezo admin-mezo-szeles">',
+                        '<span class="cms-field-label">Fotó</span>',
+                        '<div class="cms-image-preview" data-cms-preview="galeria.elemek.' + index + '.kep">' + image + '<span>Kép előnézet</span></div>',
+                        '<div class="cms-image-controls">',
+                        '<label class="admin-hozzaadas cms-upload-button">Kép feltöltése<input type="file" data-cms-upload="galeria.elemek.' + index + '.kep"></label>',
+                        '<button type="button" class="admin-kis-gomb" data-cms-remove-image="galeria.elemek.' + index + '.kep">Kép eltávolítása</button>',
+                        '</div>',
+                        '<input class="cms-image-url" value="/kepek/' + index + '.jpg">',
+                        '</div>',
+                        '<label class="admin-mezo"><span>Kép leírása</span><input data-cms-path="galeria.elemek.' + index + '.kepAlt" value="Teszt ' + (index + 1) + '"></label>',
+                        '<label class="admin-mezo"><input type="checkbox" data-cms-path="galeria.elemek.' + index + '.magas"><span>Magas kiemelt csempe</span></label>',
+                        '<div class="cms-gallery-actions">',
+                        '<button type="button" class="admin-kis-gomb" data-cms-gallery-move="up" data-index="' + index + '">↑ Feljebb</button>',
+                        '<button type="button" class="admin-kis-gomb" data-cms-gallery-move="down" data-index="' + index + '">↓ Lejjebb</button>',
+                        '<button type="button" class="admin-kis-gomb admin-veszely-gomb" data-cms-gallery-delete="' + index + '">Törlés</button>',
+                        '</div>',
+                        '</article>'
+                    ].join('');
                 }
 
                 const list = document.querySelector('.cms-gallery-list');
-                for (let index = 0; index < 12; index += 1) list.insertAdjacentHTML('beforeend', cardHtml(index));
+                for (let index = 0; index < 12; index += 1) list.insertAdjacentHTML('beforeend', cardHtml(index, false));
 
                 function renumber() {
                     Array.from(list.children).forEach((card, index) => {
