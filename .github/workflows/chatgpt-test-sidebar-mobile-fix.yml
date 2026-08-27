@@ -1,0 +1,71 @@
+name: Fix mobile admin sidebar
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - '.github/workflows/chatgpt-test-sidebar-mobile-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-sidebar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Apply mobile sidebar fix
+        run: python3 scripts/chatgpt-sidebar-mobile-fix.py
+
+      - name: Verify source changes
+        run: |
+          grep -q "width: min(244px, calc(100vw - 104px));" src/admin-styles/20-workspace.css
+          grep -q "height: 100dvh;" src/admin-styles/20-workspace.css
+          grep -q "--admin-v2-menu-scroll-offset" src/admin-styles/20-workspace.css
+          grep -q "adminV2MenuScrollY" src/admin/05-admin-workspace-v2.js
+          grep -q "drawerMetrics.width" tests/admin-production-redesign.spec.js
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Update asset versions
+        run: npm run assets:version
+
+      - name: Run source and CSS checks
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Test admin regressions
+        run: npm run test:admin
+
+      - name: Test PWA shell
+        run: npx playwright test tests/pwa.spec.js
+
+      - name: Remove temporary helper and workflow, then commit
+        run: |
+          rm -f scripts/chatgpt-sidebar-mobile-fix.py
+          rm -f .github/workflows/chatgpt-test-sidebar-mobile-fix.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 1
+          fi
+          git commit -m 'Fix mobile admin sidebar sizing and scroll lock'
+          git push origin HEAD:CHATGPT_TEST
