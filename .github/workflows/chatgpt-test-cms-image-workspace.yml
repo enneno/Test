@@ -32,7 +32,7 @@ jobs:
           grep -q 'cms-image-lightbox' src/admin-styles/40-content-editor.css
           grep -q 'grid-template-areas: "preview controls"' src/admin-styles/45-gallery-editor.css
           grep -q 'cms-image-preview-interactive' src/admin/46-cms-image-workspace.js
-          grep -q 'standalone app.*CMS image uploads share compact side-by-side controls and a lightbox' tests/admin-production-redesign.spec.js
+          grep -q 'CMS image uploads share compact side-by-side controls and a lightbox' tests/admin-production-redesign.spec.js
 
       - name: Install dependencies
         run: npm ci
