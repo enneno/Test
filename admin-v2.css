@@ -2272,13 +2272,10 @@ body.admin-body [hidden] {
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: "identity controls";
   align-items: end;
+  height: 78px;
   min-height: 78px;
   gap: 0 12px;
   padding: 6px 0;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
-  height: 78px;
-  min-height: 78px;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor { display: contents; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
@@ -2908,7 +2905,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 @media (max-width: 768px) {
   .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 142px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya { padding-right: 2px; padding-left: 8px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { min-height: 96px; gap: 4px 10px; padding: 8px 0; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { height: 78px; min-height: 78px; gap: 4px 10px; padding: 8px 0; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 14px; line-height: 1.2; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas { font-size: 10px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum { font-size: 11px; }
