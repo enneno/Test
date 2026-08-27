@@ -45,9 +45,26 @@ jobs:
 
       - name: Reject override hacks
         run: |
-          if grep -n "!important" src/admin-styles/10-components.css src/admin-styles/30-bookings.css src/admin-styles/40-content-editor.css src/admin-styles/42-cms-image-controls.css src/admin-styles/45-gallery-editor.css; then
-            exit 1
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          files = [
+              'src/admin-styles/10-components.css',
+              'src/admin-styles/30-bookings.css',
+              'src/admin-styles/40-content-editor.css',
+              'src/admin-styles/42-cms-image-controls.css',
+              'src/admin-styles/45-gallery-editor.css',
+          ]
+          offenders = []
+          for filename in files:
+              text = Path(filename).read_text(encoding='utf-8')
+              # Strip CSS comments so the architectural comment "no !important" is not a false positive.
+              import re
+              code = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
+              if '!important' in code:
+                  offenders.append(filename)
+          if offenders:
+              raise SystemExit('Actual !important declaration found in: ' + ', '.join(offenders))
+          PY
 
       - name: Install dependencies
         run: npm ci
