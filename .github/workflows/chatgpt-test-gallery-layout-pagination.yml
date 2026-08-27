@@ -63,3 +63,5 @@ jobs:
           fi
           git commit -m 'Build gallery layout and pagination'
           git push origin HEAD:CHATGPT_TEST
+
+# Retry after gallery pagination fixture tolerance adjustment.
