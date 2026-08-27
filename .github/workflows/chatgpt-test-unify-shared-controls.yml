@@ -48,7 +48,6 @@ jobs:
           python3 <<'PY'
           from pathlib import Path
 
-          # Shared component CSS must not point back into feature panel IDs.
           p = Path('src/admin-styles/10-components.css')
           s = p.read_text(encoding='utf-8')
           start = s.index('/* Shared segmented navigation:')
@@ -92,7 +91,6 @@ jobs:
           s = s.replace('.admin-body.admin-v2 #admin-tartalom .admin-control-icon-button', '.admin-body.admin-v2 .admin-control-icon-button')
           p.write_text(s, encoding='utf-8')
 
-          # Booking list/calendar is static markup, so give it the shared primitive explicitly.
           p = Path('admin/index.html')
           s = p.read_text(encoding='utf-8')
           s = s.replace('class="admin-foglalas-nezetvalto"', 'class="admin-foglalas-nezetvalto admin-segmented"', 1)
@@ -100,7 +98,6 @@ jobs:
           s = s.replace('class="admin-foglalas-nezet-gomb" data-foglalas-nezet="naptar"', 'class="admin-foglalas-nezet-gomb admin-segmented-item" data-foglalas-nezet="naptar"', 1)
           p.write_text(s, encoding='utf-8')
 
-          # CMS tabs are runtime-generated/managed. Apply the same shared primitive at the owner that enhances them.
           p = Path('src/admin/45-gallery-workspace.js')
           s = p.read_text(encoding='utf-8')
           needle = "        const tabs = root.querySelector('.cms-view-tabs');\n        if (!tabs) return;\n"
@@ -111,7 +108,6 @@ jobs:
           s = s.replace("galleryTab.className = 'cms-view-tab cms-view-tab-gallery';", "galleryTab.className = 'cms-view-tab cms-view-tab-gallery admin-segmented-item';", 1)
           p.write_text(s, encoding='utf-8')
 
-          # Keep the new regression aligned with the actual shared class contract.
           p = Path('tests/admin-shared-components.spec.js')
           s = p.read_text(encoding='utf-8')
           s = s.replace("expect(components).toContain('#admin-panel-szovegek .cms-view-tabs');", "expect(components).toContain('.admin-segmented');")
@@ -121,6 +117,37 @@ jobs:
           s = s.replace('class="cms-view-tabs"', 'class="cms-view-tabs admin-segmented"')
           s = s.replace('class="cms-view-tab" aria-selected="true"', 'class="cms-view-tab admin-segmented-item" aria-selected="true"')
           s = s.replace('class="cms-view-tab">Foglalás', 'class="cms-view-tab admin-segmented-item">Foglalás')
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Update intentional architecture tests
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          p = Path('tests/admin-booking-css-architecture.spec.js')
+          s = p.read_text(encoding='utf-8')
+          old = "expect(css).toContain('grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);');"
+          new = "expect(css).toContain('grid-template-columns: var(--booking-status-width) var(--admin-ui-icon-button-size) var(--admin-ui-icon-button-size);');\n  expect(css).not.toContain('--booking-action-size');"
+          if old not in s:
+              raise SystemExit('Old booking action-size expectation not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('tests/admin-shared-components.spec.js')
+          s = p.read_text(encoding='utf-8')
+          old = """    for (const css of [components, bookings, content, imageControls, gallery]) {
+        expect(css).not.toContain('!important');
+    }
+"""
+          new = """    for (const css of [components, bookings, content, imageControls, gallery]) {
+        const codeOnly = css.replace(/\\/\\*[\\s\\S]*?\\*\\//g, '');
+        expect(codeOnly).not.toContain('!important');
+    }
+"""
+          if old not in s:
+              raise SystemExit('Shared component !important assertion block not found')
+          s = s.replace(old, new, 1)
           p.write_text(s, encoding='utf-8')
           PY
 
