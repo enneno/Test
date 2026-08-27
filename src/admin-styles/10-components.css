@@ -17,7 +17,7 @@
   --admin-ui-control-line-height: 1.2;
   --admin-ui-action-font-size: 11px;
   --admin-ui-placeholder-font-size: 11px;
-  --admin-ui-input-font-size: 12px;
+  --admin-ui-input-font-size: 18px;
   --admin-ui-select-font-size: 11px;
   --admin-ui-page-size-font-size: 11px;
   --admin-ui-picker-font-size: 20px;
@@ -272,11 +272,6 @@
   font-size: var(--admin-ui-input-font-size);
 }
 
-@media (display-mode: browser) and (max-width: 768px) {
-  .admin-body.admin-v2 {
-    --admin-ui-input-font-size: 16px;
-  }
-}
 
 /* Shared native date/time/month controls: one visual owner for the entire admin. */
 .admin-body.admin-v2 {
