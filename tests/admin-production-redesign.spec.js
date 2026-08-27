@@ -994,4 +994,66 @@ test.describe('production admin redesign', () => {
         expect(browserErrors).toEqual([]);
     });
 
+
+    for (const mode of [
+        { name: 'mobile browser', standalone: false },
+        { name: 'standalone app', standalone: true }
+    ]) {
+        test(`${mode.name}: CMS image uploads share compact side-by-side controls and a lightbox`, async ({ page }) => {
+            const browserErrors = await openAdmin(page, { width: 390, height: 844 }, { standalone: mode.standalone });
+
+            await page.evaluate(() => document.querySelector('.admin-sidebar [data-admin-v2-nav="weboldal"]')?.click());
+            await expect(page.locator('#admin-panel-szovegek')).toHaveClass(/aktiv/);
+            await expect(page.locator('#admin-cms-root')).toBeVisible();
+
+            const galleryTab = page.locator('[data-lumi-cms-gallery-tab]');
+            await expect(galleryTab).toBeVisible();
+            await galleryTab.click();
+            await expect(page.locator('#admin-cms-root')).toHaveAttribute('data-lumi-cms-gallery-context', 'images');
+
+            if (await page.locator('.cms-gallery-item').count() === 0) {
+                await page.locator('[data-cms-gallery-add]').click();
+            }
+
+            const imageField = page.locator('.cms-gallery-item .cms-image-field').first();
+            const preview = imageField.locator('.cms-image-preview');
+            const controls = imageField.locator('.cms-image-controls');
+            await expect(imageField).toBeVisible();
+            await expect(preview).toBeVisible();
+            await expect(controls.locator('.cms-upload-button')).toBeVisible();
+            await expect(controls.locator('[data-cms-remove-image]')).toBeVisible();
+
+            const metrics = await imageField.evaluate(field => {
+                const fieldRect = field.getBoundingClientRect();
+                const previewRect = field.querySelector('.cms-image-preview').getBoundingClientRect();
+                const controlsRect = field.querySelector('.cms-image-controls').getBoundingClientRect();
+                return {
+                    fieldWidth: fieldRect.width,
+                    previewWidth: previewRect.width,
+                    previewRight: previewRect.right,
+                    controlsLeft: controlsRect.left,
+                    documentOverflow: document.documentElement.scrollWidth - window.innerWidth
+                };
+            });
+            expect(metrics.previewWidth).toBeLessThan(metrics.fieldWidth * 0.55);
+            expect(metrics.previewRight).toBeLessThanOrEqual(metrics.controlsLeft + 1);
+            expect(metrics.documentOverflow).toBeLessThanOrEqual(1);
+
+            await preview.evaluate(node => {
+                node.innerHTML = '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23d9aaa7%22/%3E%3C/svg%3E" alt="Teszt kép"><span>Kép előnézet</span>';
+            });
+            await expect(preview).toHaveAttribute('role', 'button');
+            await expect(preview).toHaveAttribute('aria-label', 'Kép nagyítása');
+
+            await preview.click();
+            const lightbox = page.locator('#cms-image-lightbox');
+            await expect(lightbox).toBeVisible();
+            await expect(lightbox.locator('[data-cms-image-lightbox-image]')).toHaveAttribute('alt', 'Teszt kép');
+            await page.keyboard.press('Escape');
+            await expect(lightbox).toBeHidden();
+
+            expect(browserErrors).toEqual([]);
+        });
+    }
+
 });
