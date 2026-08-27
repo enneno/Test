@@ -102,33 +102,16 @@
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls {
-  display: grid;
-  align-content: start;
-  gap: 7px;
+  align-self: start;
+  justify-content: flex-start;
 }
 
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls > :is(.cms-upload-button, button) {
-  width: 100%;
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
+  display: contents;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo {
   margin-top: 0;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 6px;
-  margin: 0;
-}
-
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions .admin-kis-gomb {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  padding-inline: 8px;
 }
 
 @media (max-width: 900px) {
@@ -143,12 +126,11 @@
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header {
-    align-items: stretch;
-    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header .admin-hozzaadas {
-    width: 100%;
+  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header > div {
+    min-width: 0;
   }
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item {
@@ -156,8 +138,7 @@
     grid-template-areas:
       "title home"
       "image image"
-      "description description"
-      "featured featured";
+      "description description";
     align-items: start;
     column-gap: 10px;
     row-gap: 8px;
@@ -182,11 +163,6 @@
 
   .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo:has([data-cms-path$=".kepAlt"]) {
     grid-area: description;
-    min-width: 0;
-  }
-
-  .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item > .admin-mezo:has([data-cms-path$=".magas"]) {
-    grid-area: featured;
     min-width: 0;
   }
 }
