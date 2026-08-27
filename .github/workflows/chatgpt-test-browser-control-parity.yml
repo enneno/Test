@@ -43,8 +43,8 @@ jobs:
           assert old in s
           s = s.replace(old, new, 1)
 
-          # Make the picker typography use one variable everywhere.
-          s = s.replace('font-size: 20px;', 'font-size: var(--admin-ui-picker-font-size);')
+          # Make only picker property declarations use the shared variable.
+          s = s.replace('\n  font-size: 20px;', '\n  font-size: var(--admin-ui-picker-font-size);')
 
           old = '''  font-family: inherit;\n  font-size: var(--admin-ui-picker-font-size);\n  font-weight: 720;'''
           new = '''  font-family: inherit;\n  font-size: var(--admin-ui-picker-font-size);\n  font-size-adjust: none;\n  font-weight: 720;'''
@@ -66,8 +66,6 @@ jobs:
           assert old in s
           s = s.replace(old, new, 1)
 
-          # Safari browser and standalone Web App render native control text differently.
-          # Keep one component rule; only the shared variables differ by display mode.
           marker = '/* Shared native date/time/month controls: one visual owner for the entire admin. */'
           browser_vars = '''@media (display-mode: browser) and (max-width: 768px) {\n  .admin-body.admin-v2 {\n    --admin-ui-page-size-font-size: 14px;\n    --admin-ui-picker-font-size: 22px;\n  }\n}\n\n'''
           assert marker in s
