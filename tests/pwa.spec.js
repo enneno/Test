@@ -93,7 +93,7 @@ test.describe('Lumi Nails PWA', () => {
     expect(count).toBe(0);
   });
 
-  test('standalone admin uses icon tabbar and quick-add action', async ({ page }) => {
+  test('standalone admin uses 21st-style toolbar dock and quick-add action', async ({ page }) => {
     await page.addInitScript(() => {
       Object.defineProperty(window.navigator, 'standalone', {
         configurable: true,
@@ -105,16 +105,17 @@ test.describe('Lumi Nails PWA', () => {
     await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
     await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
     await expect(page.locator('#pwa-admin-tabbar')).toHaveCount(1);
-    await expect(page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button')).toHaveCount(5);
+    await expect(page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button')).toHaveCount(6);
     await expect(page.locator('#pwa-admin-quick-add')).toHaveCount(1);
     await expect(page.locator('#pwa-admin-floating-save')).toHaveCount(0);
 
-    const buttons = page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button');
+    const buttons = page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button');
     await expect(buttons.nth(0)).toHaveAttribute('aria-label', 'Menü');
     await expect(buttons.nth(1)).toHaveAttribute('aria-label', 'Foglalások');
     await expect(buttons.nth(2)).toHaveAttribute('aria-label', /Mentés|menthető módosítás/);
     await expect(buttons.nth(3)).toHaveAttribute('aria-label', 'Munkaidő');
     await expect(buttons.nth(4)).toHaveAttribute('aria-label', 'Értesítések');
+    await expect(buttons.nth(5)).toHaveAttribute('aria-label', 'Áttekintés');
   });
 
   test('keeps VAPID private material out of client-side code', async ({ page }) => {

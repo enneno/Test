@@ -843,7 +843,7 @@ test.describe('production admin redesign', () => {
         const browserErrors = await openAdmin(page, { width: 390, height: 844 });
         await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
         await expect(page.locator('.admin-v2-topbar')).toBeHidden();
-        await expect(page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button')).toHaveCount(5);
+        await expect(page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button')).toHaveCount(6);
 
         const bell = page.locator('[data-pwa-admin-notifications]');
         await bell.click();

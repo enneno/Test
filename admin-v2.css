@@ -4400,8 +4400,8 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 .admin-body.admin-v2.lumi-admin-standalone {
-  --pwa-admin-tabbar-height: 58px;
-  --pwa-admin-tabbar-visual-bottom: 0px;
+  --pwa-admin-toolbar-height: 56px;
+  --pwa-admin-toolbar-bottom: max(10px, env(safe-area-inset-bottom, 0px));
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar {
@@ -4429,7 +4429,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   z-index: 110;
   top: auto;
   right: 10px;
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 12px);
   width: min(340px, calc(100vw - 20px));
   max-height: min(55vh, 420px);
   overflow-y: auto;
@@ -4466,7 +4466,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   width: 100%;
   min-height: 100vh;
   margin-left: 0;
-  padding: 16px 12px calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 30px);
+  padding: 16px 12px calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 30px);
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-live-panel,
@@ -4475,69 +4475,67 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-status {
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 12px);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dock {
   position: fixed;
   z-index: 75;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  left: 50%;
+  bottom: var(--pwa-admin-toolbar-bottom);
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: start;
-  min-height: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px));
-  padding: 6px 7px max(6px, env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid rgba(79, 59, 53, 0.12);
-  background: rgba(255, 252, 249, 0.94);
-  box-shadow: 0 -8px 28px rgba(54, 39, 34, 0.08);
-  backdrop-filter: blur(18px);
+  grid-template-columns: repeat(6, 44px);
+  align-items: center;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  min-height: var(--pwa-admin-toolbar-height);
+  padding: 6px;
+  gap: 3px;
+  border: 1px solid rgba(79, 59, 53, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 252, 249, 0.9);
+  box-shadow: 0 14px 36px rgba(54, 39, 34, 0.16);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  transform: translateX(-50%);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button {
   position: relative;
   display: grid;
-  width: 100%;
-  min-width: 0;
+  width: 44px;
+  min-width: 44px;
   height: 44px;
   min-height: 44px;
   padding: 0;
   place-items: center;
   border: 0;
-  border-radius: 0;
+  border-radius: 14px;
   color: var(--admin-v2-muted);
   background: transparent;
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button::before {
-  position: absolute;
-  width: 34px;
-  height: 34px;
-  border-radius: 11px;
-  background: transparent;
-  content: "";
-  transition: background-color 150ms ease, transform 150ms ease, opacity 150ms ease;
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open)::before {
-  background: var(--admin-v2-brand-soft);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open) {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button:is(.is-active, .is-open) {
   color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: inset 0 0 0 1px rgba(122, 77, 68, 0.05);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button svg,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button svg,
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add svg {
   position: relative;
   z-index: 1;
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -4545,38 +4543,32 @@ body.admin-modal-nyitva { overflow: hidden; }
   stroke-width: 1.8;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save {
   color: #fff;
-  transform: translateY(-8px);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save::before {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
   background: var(--admin-v2-brand-dark);
-  box-shadow: 0 8px 20px rgba(71, 47, 41, 0.24);
+  box-shadow: 0 7px 17px rgba(71, 47, 41, 0.22);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled {
-  color: rgba(255, 255, 255, 0.76);
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:is(:hover, :focus-visible) {
+  color: #fff;
+  background: var(--admin-v2-brand-dark);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:disabled {
+  opacity: 0.38;
+  box-shadow: none;
   cursor: default;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled::before {
-  opacity: 0.38;
-  box-shadow: none;
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count,
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot {
   position: absolute;
   z-index: 2;
-  top: 2px;
-  left: calc(50% + 4px);
+  top: 3px;
+  right: 3px;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count {
   display: grid;
   min-width: 16px;
   height: 16px;
@@ -4591,7 +4583,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   line-height: 1;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot {
   width: 9px;
   height: 9px;
   border: 2px solid rgba(255, 252, 249, 0.96);
@@ -4599,8 +4591,8 @@ body.admin-modal-nyitva { overflow: hidden; }
   background: var(--admin-v2-danger);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count[hidden],
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot[hidden] {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count[hidden],
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot[hidden] {
   display: none;
 }
 
@@ -4608,7 +4600,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   position: fixed;
   z-index: 75;
   right: 15px;
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 14px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 14px);
   display: grid;
   width: 44px;
   height: 44px;
@@ -4624,9 +4616,22 @@ body.admin-modal-nyitva { overflow: hidden; }
   -webkit-tap-highlight-color: transparent;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-tabbar,
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-dock,
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-quick-add {
   pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button:not(:disabled):hover {
+    color: var(--admin-v2-brand-dark);
+    background: rgba(240, 228, 223, 0.72);
+    transform: translateY(-3px) scale(1.06);
+  }
+
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:not(:disabled):hover {
+    color: #fff;
+    background: var(--admin-v2-brand-dark);
+  }
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-sr-only {
@@ -4646,13 +4651,6 @@ body.admin-modal-nyitva { overflow: hidden; }
     padding-left: 20px;
   }
 
-  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
-    right: max(0px, calc((100vw - 620px) / 2));
-    left: max(0px, calc((100vw - 620px) / 2));
-    border-right: 1px solid rgba(79, 59, 53, 0.1);
-    border-left: 1px solid rgba(79, 59, 53, 0.1);
-    border-radius: 18px 18px 0 0;
-  }
 }
 
 @media (max-width: 768px) {
