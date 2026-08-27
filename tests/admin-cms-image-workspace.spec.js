@@ -7,10 +7,24 @@ function source(relativePath) {
 }
 
 test('shared CMS image workspace keeps previews left, every control right, and gallery actions in the same control column', async ({ page }) => {
-    const foundationCss = source('src/admin-styles/00-foundation.css');
+    const adminCss = [
+        '00-foundation.css',
+        '05-panel-state.css',
+        '15-responsive-context.css',
+        '20-workspace.css',
+        '30-bookings.css',
+        '40-content-editor.css',
+        '45-gallery-editor.css',
+        '50-services.css',
+        '60-coupons.css',
+        '70-availability.css',
+        '80-communications.css',
+        '90-customers.css',
+        '95-pwa.css',
+        '10-components.css'
+    ].map(file => source(`src/admin-styles/${file}`)).join('\n');
     const contentCss = source('src/admin-styles/40-content-editor.css');
     const galleryCss = source('src/admin-styles/45-gallery-editor.css');
-    const componentsCss = source('src/admin-styles/10-components.css');
     const imageWorkspaceJs = source('src/admin/46-cms-image-workspace.js');
 
     expect(contentCss).not.toContain('!important');
@@ -20,11 +34,11 @@ test('shared CMS image workspace keeps previews left, every control right, and g
     await page.setContent(`<!doctype html>
         <html>
         <head>
-            <style>${foundationCss}\n${contentCss}\n${galleryCss}\n${componentsCss}</style>
+            <style>${adminCss}</style>
         </head>
         <body class="admin-body admin-v2">
             <main id="admin-tartalom">
-                <div id="admin-panel-szovegek">
+                <div id="admin-panel-szovegek" class="admin-panel aktiv">
                     <div id="admin-cms-root">
                         <div class="cms-image-field admin-mezo admin-mezo-szeles" data-test-general-image>
                             <span class="cms-field-label">Nyitókép</span>
