@@ -1,0 +1,145 @@
+name: Worktime mobile polish
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+    paths:
+      - .github/workflows/chatgpt-test-worktime-mobile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Apply worktime mobile polish
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new, label):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              count = s.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {count}')
+              p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          replace_once(
+              'admin/index.html',
+              '''                            <label class="admin-mezo">\n                                Hónap\n                                <input type="month" id="admin-naptar-honap">\n                            </label>''',
+              '''                            <label class="admin-mezo">\n                                <input type="month" id="admin-naptar-honap" aria-label="Hónap">\n                            </label>''',
+              'remove visible month label'
+          )
+
+          replace_once(
+              'admin/index.html',
+              '''                            <label class="admin-mezo">\n                                Időpontok sűrűsége\n                                <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">\n                            </label>''',
+              '''                            <label class="admin-mezo admin-naptar-lepes-mezo">\n                                <span class="admin-naptar-lepes-cimke">Időpontok sűrűsége</span>\n                                <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">\n                            </label>''',
+              'density label markup'
+          )
+
+          replace_once(
+              'src/admin/05-admin-workspace-v2.js',
+              "                nav.className = 'admin-v2-subnav';",
+              "                nav.className = 'admin-v2-subnav admin-segmented';",
+              'shared subnav container'
+          )
+
+          replace_once(
+              'src/admin/05-admin-workspace-v2.js',
+              '''                    <button type="button" data-admin-v2-panel="${target}">${label}</button>''',
+              '''                    <button type="button" class="admin-segmented-item" data-admin-v2-panel="${target}">${label}</button>''',
+              'shared subnav item'
+          )
+
+          replace_once(
+              'src/admin-styles/10-components.css',
+              '''.admin-body.admin-v2 :is(.admin-segmented-item.aktiv, .admin-segmented-item[aria-selected="true"]) {''',
+              '''.admin-body.admin-v2 :is(\n  .admin-segmented-item.aktiv,\n  .admin-segmented-item.is-active,\n  .admin-segmented-item[aria-selected="true"]\n) {''',
+              'shared segmented active state'
+          )
+
+          replace_once(
+              'src/admin-styles/20-workspace.css',
+              '''.admin-body.admin-v2 .admin-v2-subnav {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  margin: -3px 0 18px;\n  padding: 4px;\n  gap: 3px;\n  overflow: hidden;\n  border: 1px solid var(--admin-v2-border);\n  border-radius: 10px;\n  background: rgba(255, 255, 255, 0.62);\n  scrollbar-width: thin;\n}\n\n.admin-body.admin-v2 .admin-v2-subnav button {\n  flex: 1 1 0;\n  min-width: 0;\n  min-height: 44px;\n  padding: 7px 12px;\n  border: 0;\n  border-radius: 7px;\n  color: var(--admin-v2-muted);\n  background: transparent;\n  font: inherit;\n  font-size: 11px;\n  font-weight: 600;\n  white-space: nowrap;\n  cursor: pointer;\n  touch-action: manipulation;\n  text-align: center;\n}\n\n.admin-body.admin-v2 .admin-v2-subnav button.is-active {\n  color: var(--admin-v2-brand-dark);\n  background: var(--admin-v2-surface);\n  box-shadow: 0 2px 8px rgba(67, 42, 35, 0.08);\n}\n''',
+              '''.admin-body.admin-v2 .admin-v2-subnav {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  margin: -3px 0 18px;\n  overflow: hidden;\n}\n\n.admin-body.admin-v2 .admin-v2-subnav .admin-segmented-item {\n  flex: 1 1 0;\n  min-width: 0;\n  white-space: nowrap;\n  text-align: center;\n}\n''',
+              'subnav visual ownership'
+          )
+
+          replace_once(
+              'src/admin-styles/70-availability.css',
+              '''.admin-body.admin-v2 .admin-kozos-idosav-sor {\n  display: grid;\n  grid-template-columns: minmax(112px, 140px) minmax(112px, 140px) minmax(72px, 86px) auto;\n  align-items: end;\n  justify-content: start;\n  gap: 10px;\n}\n.admin-body.admin-v2 .admin-idosav-grid {''',
+              '''.admin-body.admin-v2 .admin-kozos-idosav-sor {\n  display: grid;\n  grid-template-columns: minmax(112px, 140px) minmax(112px, 140px) minmax(72px, 86px) auto;\n  align-items: end;\n  justify-content: start;\n  gap: 10px;\n}\n.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke {\n  display: block;\n  width: 100%;\n  white-space: nowrap;\n}\n.admin-body.admin-v2 #admin-naptar-kozos-lepes { text-align: center; }\n.admin-body.admin-v2 .admin-idosav-grid {''',
+              'density layout rules'
+          )
+
+          replace_once(
+              'src/admin-styles/70-availability.css',
+              '''  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }\n  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {''',
+              '''  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }\n  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke { font-size: 10px; }\n  .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {''',
+              'density mobile label size'
+          )
+
+          test_path = Path('tests/admin-availability-mobile.spec.js')
+          test_path.write_text('''const { test, expect } = require('playwright/test');\nconst fs = require('fs');\nconst path = require('path');\n\nfunction source(relativePath) {\n    return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');\n}\n\ntest('worktime mobile layout uses shared controls and keeps density compact', async ({ page }) => {\n    const html = source('admin/index.html');\n    const workspaceJs = source('src/admin/05-admin-workspace-v2.js');\n    const components = source('src/admin-styles/10-components.css');\n    const workspace = source('src/admin-styles/20-workspace.css');\n    const availability = source('src/admin-styles/70-availability.css');\n\n    expect(html).toContain('<input type="month" id="admin-naptar-honap" aria-label="Hónap">');\n    expect(html).not.toContain('Hónap\\n                                <input type="month" id="admin-naptar-honap">');\n    expect(html).toContain('class="admin-mezo admin-naptar-lepes-mezo"');\n    expect(html).toContain('class="admin-naptar-lepes-cimke">Időpontok sűrűsége</span>');\n    expect(workspaceJs).toContain("nav.className = 'admin-v2-subnav admin-segmented';");\n    expect(workspaceJs).toContain('class="admin-segmented-item" data-admin-v2-panel="${target}"');\n    expect(components).toContain('.admin-segmented-item.is-active');\n    expect(workspace).not.toMatch(/\\.admin-v2-subnav button\\.is-active/);\n    expect(workspace).not.toMatch(/\\.admin-v2-subnav button\\s*\\{/);\n    expect(availability).toContain('#admin-naptar-kozos-lepes { text-align: center; }');\n\n    const css = [\n        '00-foundation.css',\n        '10-components.css',\n        '20-workspace.css',\n        '70-availability.css'\n    ].map(file => source(`src/admin-styles/${file}`)).join('\\n');\n\n    await page.setViewportSize({ width: 390, height: 844 });\n    await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom">\n      <div style="container: admin-workspace / inline-size; width: 390px;">\n        <nav class="admin-v2-subnav admin-segmented"><button class="admin-segmented-item is-active" type="button">Foglalható napok</button><button class="admin-segmented-item" type="button">Kieső időszakok</button></nav>\n        <div id="admin-idosav-naptar" class="admin-naptar-blokk">\n          <div class="admin-naptar-fej"><label class="admin-mezo" data-month><input type="month" id="admin-naptar-honap" aria-label="Hónap"></label><div class="admin-naptar-akciok"><button class="admin-kis-gomb">Előző</button><button class="admin-kis-gomb">Következő</button></div></div>\n          <div class="admin-kozos-idosav-sor">\n            <label class="admin-mezo">Közös kezdés<input type="time" value="09:00"></label>\n            <label class="admin-mezo">Közös vége<input type="time" value="18:00"></label>\n            <label class="admin-mezo admin-naptar-lepes-mezo"><span class="admin-naptar-lepes-cimke" data-density-label>Időpontok sűrűsége</span><input type="number" id="admin-naptar-kozos-lepes" value="30" data-density-input></label>\n            <button class="admin-hozzaadas">Kijelöltekre beállítom</button>\n          </div>\n        </div>\n      </div>\n    </main></body></html>`);\n\n    const metrics = await page.evaluate(() => {\n        const label = document.querySelector('[data-density-label]');\n        const labelStyle = getComputedStyle(label);\n        const inputStyle = getComputedStyle(document.querySelector('[data-density-input]'));\n        const month = document.querySelector('[data-month]');\n        const active = getComputedStyle(document.querySelector('.admin-v2-subnav .is-active'));\n        return {\n            densityFontSize: labelStyle.fontSize,\n            densityWhiteSpace: labelStyle.whiteSpace,\n            densityFits: label.scrollWidth <= label.clientWidth + 0.5,\n            densityTextAlign: inputStyle.textAlign,\n            monthText: month.textContent.trim(),\n            monthAria: month.querySelector('input').getAttribute('aria-label'),\n            activeBackground: active.backgroundColor\n        };\n    });\n\n    expect(metrics.densityFontSize).toBe('10px');\n    expect(metrics.densityWhiteSpace).toBe('nowrap');\n    expect(metrics.densityFits).toBe(true);\n    expect(metrics.densityTextAlign).toBe('center');\n    expect(metrics.monthText).toBe('');\n    expect(metrics.monthAria).toBe('Hónap');\n    expect(metrics.activeBackground).not.toBe('rgba(0, 0, 0, 0)');\n});\n''', encoding='utf-8')
+          PY
+
+      - name: Reject override hacks
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          files = [
+              'src/admin-styles/10-components.css',
+              'src/admin-styles/20-workspace.css',
+              'src/admin-styles/70-availability.css',
+          ]
+          offenders = []
+          for filename in files:
+              code = re.sub(r'/\*.*?\*/', '', Path(filename).read_text(encoding='utf-8'), flags=re.S)
+              if '!important' in code:
+                  offenders.append(filename)
+          if offenders:
+              raise SystemExit('Actual !important declaration found in: ' + ', '.join(offenders))
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install Edge
+        run: npx playwright install --with-deps msedge
+
+      - name: Affected admin tests
+        run: npx playwright test tests/admin-availability-mobile.spec.js tests/admin-shared-components.spec.js tests/admin-v2-regressions.spec.js tests/admin-production-redesign.spec.js tests/css-architecture.spec.js
+
+      - name: Commit verified changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Polish worktime mobile controls"
+          git push origin HEAD:CHATGPT_TEST
