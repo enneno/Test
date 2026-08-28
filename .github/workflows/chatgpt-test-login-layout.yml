@@ -1,0 +1,208 @@
+name: Admin login layout verification
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Fix canonical login layout and add regression test
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          css_path = Path('src/admin-styles/20-workspace.css')
+          css = css_path.read_text(encoding='utf-8')
+          old = '''.admin-body.admin-v2 .admin-login-panel {
+            width: min(440px, calc(100% - 32px));
+            margin: clamp(64px, 12vh, 128px) auto;
+          }
+          '''
+          new = '''.admin-body.admin-v2 .admin-auth-panel {
+            width: min(420px, calc(100% - 32px));
+            margin: clamp(64px, 12vh, 112px) auto 48px;
+            padding: 28px;
+            border: 1px solid var(--admin-v2-border);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: var(--admin-v2-shadow);
+          }
+
+          .admin-body.admin-v2 .admin-auth-panel .admin-eyebrow {
+            margin: 0 0 8px;
+            color: var(--admin-v2-brand);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            line-height: 1.2;
+            text-transform: uppercase;
+          }
+
+          .admin-body.admin-v2 .admin-auth-panel .admin-cim {
+            margin: 0;
+            color: var(--admin-v2-ink);
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1;
+          }
+
+          .admin-body.admin-v2 .admin-auth-panel .admin-leiras {
+            margin: 14px 0 0;
+            color: var(--admin-v2-muted);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.55;
+          }
+
+          .admin-body.admin-v2 .admin-login-form {
+            display: grid;
+            gap: 12px;
+            margin-top: 24px;
+          }
+
+          .admin-body.admin-v2 .admin-login-form .admin-mezo-cimke {
+            display: grid;
+            gap: 6px;
+            color: var(--admin-v2-muted);
+            font-size: 12px;
+            font-weight: 500;
+          }
+
+          .admin-body.admin-v2 .admin-login-form .urlap-mezo {
+            height: 44px;
+            min-height: 44px;
+            padding-inline: 13px;
+            border-radius: 12px;
+            font-size: 16px;
+          }
+
+          .admin-body.admin-v2 .admin-login-form .admin-gomb {
+            width: 100%;
+            min-height: 44px;
+            margin: 2px 0 0;
+            border-radius: 12px;
+            font-size: 13px;
+            letter-spacing: 0;
+            text-transform: none;
+          }
+
+          .admin-body.admin-v2 .admin-auth-panel .admin-status {
+            min-height: 18px;
+            margin: 12px 0 0;
+            color: var(--admin-v2-muted);
+            font-size: 11px;
+            line-height: 1.4;
+          }
+
+          @media screen and (max-width: 600px) {
+            .admin-body.admin-v2 .admin-auth-panel {
+              width: calc(100% - 28px);
+              margin-top: max(56px, calc(env(safe-area-inset-top, 0px) + 24px));
+              margin-bottom: 32px;
+              padding: 24px 20px;
+              border-radius: 18px;
+            }
+
+            .admin-body.admin-v2 .admin-auth-panel .admin-cim {
+              font-size: 34px;
+            }
+          }
+          '''
+          if css.count(old) != 1:
+              raise SystemExit(f'Expected one dead login selector block, found {css.count(old)}')
+          css_path.write_text(css.replace(old, new, 1), encoding='utf-8')
+
+          Path('tests/admin-login-layout.spec.js').write_text(r'''const { test, expect } = require('@playwright/test');
+          const fs = require('fs');
+          const path = require('path');
+
+          const root = path.join(__dirname, '..');
+          const css = () => fs.readFileSync(path.join(root, 'admin-v2.css'), 'utf8');
+          const source = () => fs.readFileSync(path.join(root, 'src/admin-styles/20-workspace.css'), 'utf8');
+          const markup = () => fs.readFileSync(path.join(root, 'admin/index.html'), 'utf8');
+
+          test('login layout is owned by the canonical auth panel selector', async () => {
+            expect(markup()).toContain('class="admin-fejlec admin-auth-panel"');
+            expect(source()).toContain('.admin-body.admin-v2 .admin-auth-panel {');
+            expect(source()).not.toContain('.admin-body.admin-v2 .admin-login-panel {');
+            expect(source()).not.toContain('!important');
+          });
+
+          test('mobile login is a centered compact card with accessible controls', async ({ page }) => {
+            await page.setViewportSize({ width: 390, height: 844 });
+            await page.setContent(`<!doctype html><html><head><style>${css()}</style></head><body class="admin-body admin-v2"><main class="admin-oldal"><section id="admin-bejelentkezes-panel" class="admin-fejlec admin-auth-panel"><p class="admin-eyebrow">Lumi Nails admin</p><h1 class="admin-cim">Bejelentkezés</h1><p class="admin-leiras">Az online foglalások és idősávok kezeléséhez jelentkezz be.</p><form class="admin-login-form"><label class="admin-mezo-cimke"><span>Jelszó</span><input class="urlap-mezo" type="password"></label><button class="gomb admin-gomb" type="submit">Belépés</button></form><p class="admin-status"></p></section></main></body></html>`);
+
+            const panel = page.locator('#admin-bejelentkezes-panel');
+            const box = await panel.boundingBox();
+            expect(box).not.toBeNull();
+            expect(box.width).toBeLessThan(390);
+            expect(Math.abs((box.x * 2 + box.width) - 390)).toBeLessThanOrEqual(2);
+
+            const titleSize = parseFloat(await page.locator('.admin-cim').evaluate(el => getComputedStyle(el).fontSize));
+            expect(titleSize).toBeLessThanOrEqual(36);
+            expect(titleSize).toBeGreaterThanOrEqual(30);
+
+            const inputBox = await page.locator('.urlap-mezo').boundingBox();
+            const buttonBox = await page.locator('.admin-gomb').boundingBox();
+            expect(inputBox.height).toBeGreaterThanOrEqual(44);
+            expect(buttonBox.height).toBeGreaterThanOrEqual(44);
+            expect(Math.abs(inputBox.width - buttonBox.width)).toBeLessThanOrEqual(1);
+          });
+          ''', encoding='utf-8')
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Existing affected admin tests
+        run: npm run test:admin
+
+      - name: Login regression test
+        run: npx playwright test tests/admin-login-layout.spec.js
+
+      - name: Commit verified changes
+        shell: bash
+        run: |
+          rm .github/workflows/chatgpt-test-login-layout.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Fix admin login layout"
+          git push origin HEAD:CHATGPT_TEST
