@@ -1,0 +1,227 @@
+name: Booking calendar dark theme
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - .github/workflows/chatgpt-calendar-dark.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Apply calendar dark theme
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          css_path = Path('src/admin-styles/30-bookings.css')
+          css = css_path.read_text(encoding='utf-8')
+
+          token_anchor = '  --booking-status-width: 142px;\n'
+          light_tokens = '''  --booking-calendar-header-bg: #f4efeb;
+          --booking-calendar-cell-bg: #fff9f5;
+          --booking-calendar-empty-bg: #f7f3ef;
+          --booking-calendar-hover-bg: #faf6f2;
+          --booking-calendar-selected-bg: #f8ecef;
+          --booking-calendar-count-bg: #eee7e2;
+          --booking-calendar-event-bg: #f3eeea;
+          --booking-calendar-event-border: #a99488;
+          --booking-calendar-event-text: var(--admin-ink);
+          --booking-calendar-pending-border: #783e53;
+          --booking-calendar-pending-bg: #f4e4e9;
+          --booking-calendar-confirmed-border: #31566c;
+          --booking-calendar-confirmed-bg: #e4eef4;
+          --booking-calendar-done-border: #2f603f;
+          --booking-calendar-done-bg: #e2efe5;
+          --booking-calendar-cancelled-border: #2e2927;
+          --booking-calendar-cancelled-bg: #2e2927;
+          --booking-calendar-cancelled-customer-border: #62404c;
+          --booking-calendar-cancelled-customer-bg: #62404c;
+          --booking-calendar-day-row-bg: #fff9f5;
+          --booking-calendar-day-status-bg: rgba(255, 249, 245, .66);
+          '''
+          if '--booking-calendar-header-bg:' not in css:
+              if token_anchor not in css:
+                  raise SystemExit('booking token anchor not found')
+              css = css.replace(token_anchor, token_anchor + light_tokens, 1)
+
+          dark_anchor = '  margin-inline: auto;\n}\n\n/* Toolbar and search */'
+          dark_block = '''  margin-inline: auto;
+          }
+
+          html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
+            --booking-calendar-header-bg: #2a2421;
+            --booking-calendar-cell-bg: #211d1b;
+            --booking-calendar-empty-bg: #1c1917;
+            --booking-calendar-hover-bg: #2d2724;
+            --booking-calendar-selected-bg: #382729;
+            --booking-calendar-count-bg: #332b28;
+            --booking-calendar-event-bg: #2f2926;
+            --booking-calendar-event-border: #9a8177;
+            --booking-calendar-event-text: #eadeda;
+            --booking-calendar-pending-border: #c78397;
+            --booking-calendar-pending-bg: #3a252d;
+            --booking-calendar-confirmed-border: #79a7bd;
+            --booking-calendar-confirmed-bg: #22313a;
+            --booking-calendar-done-border: #7ba68a;
+            --booking-calendar-done-bg: #24362b;
+            --booking-calendar-cancelled-border: #7c716d;
+            --booking-calendar-cancelled-bg: #302a27;
+            --booking-calendar-cancelled-customer-border: #b07c8e;
+            --booking-calendar-cancelled-customer-bg: #3a2930;
+            --booking-calendar-day-row-bg: #24201e;
+            --booking-calendar-day-status-bg: #332c29;
+          }
+
+          /* Toolbar and search */'''
+          if 'html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {\n  --booking-calendar-header-bg:' not in css:
+              if dark_anchor not in css:
+                  raise SystemExit('dark calendar anchor not found')
+              css = css.replace(dark_anchor, dark_block, 1)
+
+          start = css.index('/* Booking calendar */')
+          end = css.index('@media (max-width: 768px)', start)
+          section = css[start:end]
+          replacements = {
+              'background: #f4efeb;': 'background: var(--booking-calendar-header-bg);',
+              'background: var(--ui-off-white);': 'background: var(--booking-calendar-cell-bg);',
+              'background: #f7f3ef;': 'background: var(--booking-calendar-empty-bg);',
+              'background: #faf6f2;': 'background: var(--booking-calendar-hover-bg);',
+              'background: #f8ecef;': 'background: var(--booking-calendar-selected-bg);',
+              'background: #eee7e2;': 'background: var(--booking-calendar-count-bg);',
+              'border-left: 3px solid #a99488;': 'border-left: 3px solid var(--booking-calendar-event-border);',
+              'color: var(--admin-ink);\n  background: #f3eeea;': 'color: var(--booking-calendar-event-text);\n  background: var(--booking-calendar-event-bg);',
+              '.admin-foglalas-naptar-statusz-pending { border-left-color: #783e53; background: #f4e4e9; }': '.admin-foglalas-naptar-statusz-pending { border-left-color: var(--booking-calendar-pending-border); background: var(--booking-calendar-pending-bg); }',
+              ':is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: #31566c; background: #e4eef4; }': ':is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: var(--booking-calendar-confirmed-border); background: var(--booking-calendar-confirmed-bg); }',
+              '.admin-foglalas-naptar-statusz-done { border-left-color: #2f603f; background: #e2efe5; }': '.admin-foglalas-naptar-statusz-done { border-left-color: var(--booking-calendar-done-border); background: var(--booking-calendar-done-bg); }',
+              '.admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: #2e2927; background: #2e2927; }': '.admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-border); background: var(--booking-calendar-cancelled-bg); }',
+              '.admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: #62404c; background: #62404c; }': '.admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-customer-border); background: var(--booking-calendar-cancelled-customer-bg); }',
+              'background: rgba(255, 249, 245, .66);': 'background: var(--booking-calendar-day-status-bg);'
+          }
+          for old, new in replacements.items():
+              if old in section:
+                  section = section.replace(old, new)
+
+          # The calendar section contains two light surface declarations: the month cell and the daily row.
+          # The first one was converted above to cell-bg; convert the remaining daily row surface separately.
+          daily_old = 'background: var(--booking-calendar-cell-bg);\n  text-align: left;\n  cursor: pointer;\n}\n.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-ido'
+          daily_new = 'background: var(--booking-calendar-day-row-bg);\n  text-align: left;\n  cursor: pointer;\n}\n.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-ido'
+          if daily_old in section:
+              section = section.replace(daily_old, daily_new, 1)
+
+          css = css[:start] + section + css[end:]
+          css_path.write_text(css, encoding='utf-8')
+
+          test_path = Path('tests/admin-dark-mode.spec.js')
+          test = test_path.read_text(encoding='utf-8')
+          marker = "test('booking calendar uses dark surfaces and dark status colors'"
+          if marker not in test:
+              test += r'''
+
+          test('booking calendar uses dark surfaces and dark status colors', async ({ page }) => {
+            const css = read('admin-v2.css');
+            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div class="admin-foglalas-naptar"><div class="admin-foglalas-naptar-hetfej"><span>H</span><span>K</span><span>SZE</span><span>CS</span><span>P</span><span>SZO</span><span>V</span></div><div class="admin-foglalas-naptar-racs"><div class="admin-foglalas-naptar-cella"><button class="admin-foglalas-naptar-nap kijelolt"><span class="admin-foglalas-naptar-napszam">28</span><span class="admin-foglalas-naptar-darab">2</span><span class="admin-foglalas-naptar-esemeny admin-foglalas-naptar-statusz-done"><time>10:00</time></span></button></div><div class="admin-foglalas-naptar-cella admin-foglalas-naptar-ures"></div></div><div class="admin-foglalas-napi-panel"><button class="admin-foglalas-napi-sor"><span class="admin-foglalas-napi-ido">10:00</span><span class="admin-foglalas-napi-adat"><strong>Teszt</strong></span><span class="admin-foglalas-napi-statusz">Kész</span></button></div></div></section></main></body></html>`);
+
+            const metrics = await page.evaluate(() => {
+              const bg = selector => getComputedStyle(document.querySelector(selector)).backgroundColor;
+              const color = selector => getComputedStyle(document.querySelector(selector)).color;
+              return {
+                header: bg('.admin-foglalas-naptar-hetfej'),
+                cell: bg('.admin-foglalas-naptar-cella:not(.admin-foglalas-naptar-ures)'),
+                empty: bg('.admin-foglalas-naptar-ures'),
+                selected: bg('.admin-foglalas-naptar-nap.kijelolt'),
+                count: bg('.admin-foglalas-naptar-darab'),
+                done: bg('.admin-foglalas-naptar-statusz-done'),
+                doneText: color('.admin-foglalas-naptar-statusz-done'),
+                dayRow: bg('.admin-foglalas-napi-sor'),
+                dayStatus: bg('.admin-foglalas-napi-statusz')
+              };
+            });
+
+            expect(metrics.header).toBe('rgb(42, 36, 33)');
+            expect(metrics.cell).toBe('rgb(33, 29, 27)');
+            expect(metrics.empty).toBe('rgb(28, 25, 23)');
+            expect(metrics.selected).toBe('rgb(56, 39, 41)');
+            expect(metrics.count).toBe('rgb(51, 43, 40)');
+            expect(metrics.done).toBe('rgb(36, 54, 43)');
+            expect(metrics.doneText).toBe('rgb(234, 222, 218)');
+            expect(metrics.dayRow).toBe('rgb(36, 32, 30)');
+            expect(metrics.dayStatus).toBe('rgb(51, 44, 41)');
+          });
+          '''
+              test_path.write_text(test, encoding='utf-8')
+          PY
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install Edge and WebKit
+        run: |
+          npx playwright install --with-deps msedge
+          npx playwright install --with-deps webkit
+
+      - name: Run dark mode and booking regressions
+        run: npx playwright test tests/admin-dark-mode.spec.js tests/admin-v2-regressions.spec.js tests/admin-booking-css-architecture.spec.js
+
+      - name: Verify dark calendar in WebKit mobile geometry
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const { webkit } = require('playwright');
+          (async () => {
+            const css = fs.readFileSync('admin-v2.css', 'utf8');
+            const browser = await webkit.launch();
+            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div class="admin-foglalas-naptar"><div class="admin-foglalas-naptar-hetfej"><span>H</span><span>K</span><span>SZE</span><span>CS</span><span>P</span><span>SZO</span><span>V</span></div><div class="admin-foglalas-naptar-racs"><div class="admin-foglalas-naptar-cella"><button class="admin-foglalas-naptar-nap kijelolt"><span class="admin-foglalas-naptar-napszam">28</span><span class="admin-foglalas-naptar-darab">2</span><span class="admin-foglalas-naptar-esemeny admin-foglalas-naptar-statusz-confirmed"><time>10:00</time></span></button></div><div class="admin-foglalas-naptar-cella admin-foglalas-naptar-ures"></div></div></div></section></main></body></html>`);
+            const metrics = await page.evaluate(() => {
+              const bg = s => getComputedStyle(document.querySelector(s)).backgroundColor;
+              return {
+                header: bg('.admin-foglalas-naptar-hetfej'),
+                cell: bg('.admin-foglalas-naptar-cella:not(.admin-foglalas-naptar-ures)'),
+                empty: bg('.admin-foglalas-naptar-ures'),
+                selected: bg('.admin-foglalas-naptar-nap.kijelolt'),
+                confirmed: bg('.admin-foglalas-naptar-statusz-confirmed')
+              };
+            });
+            console.log(metrics);
+            const lightSurfaces = new Set(['rgb(244, 239, 235)', 'rgb(255, 249, 245)', 'rgb(247, 243, 239)', 'rgb(248, 236, 239)', 'rgb(228, 238, 244)']);
+            for (const [name, value] of Object.entries(metrics)) {
+              if (lightSurfaces.has(value)) throw new Error(`${name} still uses a light calendar surface: ${value}`);
+            }
+            await browser.close();
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
+
+      - name: Commit verified calendar dark theme and cleanup workflow
+        run: |
+          rm -f .github/workflows/chatgpt-calendar-dark.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add dark booking calendar theme"
+          git push origin CHATGPT_TEST
