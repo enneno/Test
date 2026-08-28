@@ -19,34 +19,54 @@ jobs:
           ref: CHATGPT_TEST
           fetch-depth: 0
 
-      - name: Fix gallery icon ownership and regression coverage
+      - name: Keep shared icon SVGs from shrinking
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          js_path = Path('src/admin/46-cms-image-workspace.js')
-          js = js_path.read_text(encoding='utf-8')
-          old = """        button.innerHTML = ICONS[icon];\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
-          new = """        button.innerHTML = ICONS[icon];\n        if (button.matches('[data-cms-gallery-add], [data-cms-gallery-move]')) {\n            button.classList.remove('admin-hozzaadas', 'admin-kis-gomb', 'admin-veszely-gomb');\n        }\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
-          if js.count(old) != 1:
-              raise SystemExit(f'Button iconification marker count: {js.count(old)}')
-          js_path.write_text(js.replace(old, new, 1), encoding='utf-8')
+          css_path = Path('src/admin-styles/10-components.css')
+          css = css_path.read_text(encoding='utf-8')
+          old = '''.admin-body.admin-v2 .admin-control-icon-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+'''
+          new = '''.admin-body.admin-v2 .admin-control-icon-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+'''
+          if css.count(old) != 1:
+              raise SystemExit(f'Shared icon SVG marker count: {css.count(old)}')
+          css_path.write_text(css.replace(old, new, 1), encoding='utf-8')
 
           test_path = Path('tests/admin-cms-image-workspace.spec.js')
           test = test_path.read_text(encoding='utf-8')
-
-          add_marker = """    await expect(page.locator('[data-cms-gallery-add]')).toHaveAttribute('aria-label', 'Új galériakép');\n    await expect(page.locator('[data-cms-gallery-add] svg')).toHaveCount(1);\n    expect(await page.locator('[data-cms-gallery-add]').innerText()).toBe('');\n"""
-          add_extra = add_marker + """    await expect(page.locator('[data-cms-gallery-add]')).not.toHaveClass(/admin-hozzaadas|admin-kis-gomb/);\n"""
-          if add_marker not in test:
-              raise SystemExit('Gallery add assertion marker not found')
-          test = test.replace(add_marker, add_extra, 1)
-
-          move_marker = """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).toBeDisabled();\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).toBeEnabled();\n"""
-          move_extra = move_marker + """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n\n    const iconMetrics = await page.evaluate(() => {\n        const measure = selector => {\n            const button = document.querySelector(selector);\n            const svg = button?.querySelector('svg');\n            const buttonStyle = button ? getComputedStyle(button) : null;\n            const svgRect = svg?.getBoundingClientRect();\n            return {\n                svgWidth: svgRect?.width || 0,\n                svgHeight: svgRect?.height || 0,\n                paddingLeft: buttonStyle?.paddingLeft || '',\n                paddingRight: buttonStyle?.paddingRight || ''\n            };\n        };\n        return {\n            add: measure('[data-cms-gallery-add]'),\n            up: measure('[data-test-gallery-image] [data-cms-gallery-move=\"up\"]'),\n            down: measure('[data-test-gallery-image] [data-cms-gallery-move=\"down\"]')\n        };\n    });\n    for (const metric of Object.values(iconMetrics)) {\n        expect(metric.svgWidth).toBeGreaterThanOrEqual(15);\n        expect(metric.svgHeight).toBeGreaterThanOrEqual(15);\n        expect(metric.paddingLeft).toBe('0px');\n        expect(metric.paddingRight).toBe('0px');\n    }\n"""
-          if move_marker not in test:
+          marker = '''    await expect(galleryControls.locator('[data-cms-gallery-move="up"]')).toBeDisabled();
+    await expect(galleryControls.locator('[data-cms-gallery-move="down"]')).toBeEnabled();
+'''
+          addition = marker + '''
+    const galleryIconMetrics = await page.evaluate(() => {
+        const size = selector => {
+            const svg = document.querySelector(selector)?.querySelector('svg');
+            const rect = svg?.getBoundingClientRect();
+            return { width: rect?.width || 0, height: rect?.height || 0 };
+        };
+        return {
+            add: size('[data-cms-gallery-add]'),
+            up: size('[data-test-gallery-image] [data-cms-gallery-move="up"]'),
+            down: size('[data-test-gallery-image] [data-cms-gallery-move="down"]')
+        };
+    });
+    for (const metric of Object.values(galleryIconMetrics)) {
+        expect(metric.width).toBeGreaterThanOrEqual(15);
+        expect(metric.height).toBeGreaterThanOrEqual(15);
+    }
+'''
+          if marker not in test:
               raise SystemExit('Gallery move assertion marker not found')
-          test = test.replace(move_marker, move_extra, 1)
-          test_path.write_text(test, encoding='utf-8')
+          test_path.write_text(test.replace(marker, addition, 1), encoding='utf-8')
           PY
 
       - name: Setup Node
@@ -78,6 +98,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm .github/workflows/chatgpt-test-fix-cms-icons.yml
-          git add src/admin/46-cms-image-workspace.js tests/admin-cms-image-workspace.spec.js admin-v2.css admin/index.html
-          git commit -m "Fix CMS gallery icon controls"
+          git add src/admin-styles/10-components.css tests/admin-cms-image-workspace.spec.js admin-v2.css admin/index.html
+          git commit -m "Fix CMS gallery icon rendering"
           git push origin CHATGPT_TEST
