@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   refine-and-verify:
-    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout CHATGPT_TEST
@@ -20,8 +19,9 @@ jobs:
           fetch-depth: 0
 
       - name: Patch canonical admin sources
+        shell: bash
         run: |
-          python - <<'PY'
+          python3 <<'PY'
           from pathlib import Path
 
           def replace_once(path, old, new):
@@ -75,30 +75,15 @@ jobs:
 
           test_path = Path('tests/admin-communications-mobile.spec.js')
           test_path.write_text(r'''const { test, expect } = require('playwright/test');
+const fs = require('fs');
+const path = require('path');
+
+const root = path.join(__dirname, '..');
+const css = () => fs.readFileSync(path.join(root, 'admin-v2.css'), 'utf8');
 
 test('mobile communications keeps the summary compact and removes irrelevant PWA quick-add', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
-
-    await page.evaluate(() => {
-        document.body.className = 'admin-body admin-v2 lumi-admin-standalone';
-        document.body.dataset.adminV2Group = 'kommunikacio';
-        document.body.innerHTML = `
-            <main id="admin-tartalom">
-                <section class="admin-v2-communication-summary">
-                    <div><span>Mai email esemény</span><strong>0</strong></div>
-                    <div><span>Sikeres</span><strong>110</strong></div>
-                    <div><span>Nyitott hibák</span><strong>0</strong></div>
-                    <div><span>Legutóbbi hiba</span><strong>Nincs</strong></div>
-                    <div class="admin-v2-communication-action">
-                        <p>Nincs nyitott emailhiba.</p>
-                        <button type="button" class="admin-v2-button admin-v2-button-secondary" hidden>Emailhibák nyugtázása</button>
-                    </div>
-                </section>
-                <button type="button" class="pwa-admin-quick-add" aria-label="Kézzel felvett idő hozzáadása">+</button>
-            </main>
-        `;
-    });
+    await page.setContent(`<!doctype html><html><head><style>${css()}</style></head><body class="admin-body admin-v2 lumi-admin-standalone" data-admin-v2-group="kommunikacio"><main id="admin-tartalom"><section class="admin-v2-communication-summary"><div><span>Mai email esemény</span><strong>0</strong></div><div><span>Sikeres</span><strong>110</strong></div><div><span>Nyitott hibák</span><strong>0</strong></div><div><span>Legutóbbi hiba</span><strong>Nincs</strong></div><div class="admin-v2-communication-action"><p>Nincs nyitott emailhiba.</p><button type="button" class="admin-v2-button admin-v2-button-secondary" hidden>Emailhibák nyugtázása</button></div></section><button type="button" class="pwa-admin-quick-add" aria-label="Kézzel felvett idő hozzáadása">+</button></main></body></html>`);
 
     const metrics = await page.evaluate(() => {
         const summary = document.querySelector('.admin-v2-communication-summary');
@@ -149,15 +134,22 @@ test('mobile communications keeps the summary compact and removes irrelevant PWA
       - name: Install Edge for Playwright
         run: npx playwright install --with-deps msedge
 
-      - name: Run affected admin Playwright tests
-        run: npx playwright test tests/admin-communications-mobile.spec.js tests/admin-production-redesign.spec.js tests/admin-shared-components.spec.js
+      - name: Run existing affected admin tests
+        run: npm run test:admin
+
+      - name: Run shared and communications regressions
+        run: npx playwright test tests/admin-shared-components.spec.js tests/admin-communications-mobile.spec.js
 
       - name: Commit verified source and generated assets
+        shell: bash
         run: |
           rm .github/workflows/chatgpt-test-communications-mobile.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/admin-styles/20-workspace.css src/admin-styles/80-communications.css src/admin-styles/95-pwa.css tests/admin-communications-mobile.spec.js admin-v2.css admin/index.html .github/workflows/chatgpt-test-communications-mobile.yml
-          git add -u
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git commit -m "Refine communications mobile layout"
           git push origin HEAD:CHATGPT_TEST
