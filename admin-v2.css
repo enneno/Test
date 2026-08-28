@@ -1467,7 +1467,11 @@ body.admin-body [hidden] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  min-height: 44px;
+  padding: 8px 10px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  background: var(--admin-v2-surface-soft);
 }
 
 .admin-body.admin-v2 .admin-v2-communication-action p {
@@ -1479,10 +1483,6 @@ body.admin-body [hidden] {
 
 .admin-body.admin-v2 .admin-v2-communication-action .admin-v2-button {
   flex: 0 0 auto;
-}
-
-.admin-body.admin-v2 .admin-v2-communication-action .admin-v2-button[hidden] {
-  display: none;
 }
 
 .admin-body.admin-v2 .admin-v2-settings-panel.admin-db-panel.aktiv {
@@ -1935,16 +1935,12 @@ body.admin-body [hidden] {
   }
 
   .admin-body.admin-v2 .admin-v2-communication-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
-  .admin-body.admin-v2 .admin-v2-communication-summary > .admin-v2-communication-action {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .admin-body.admin-v2 .admin-v2-communication-action .admin-v2-button {
-    width: 100%;
+  .admin-body.admin-v2 .admin-v2-communication-summary > div {
+    padding: 10px 11px;
   }
 
   .admin-body.admin-v2 .admin-db-toolbar,
@@ -4385,8 +4381,14 @@ body.cms-image-lightbox-open { overflow: hidden; }
   }
 }
 
-.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin: 0 0 11px; }
-.admin-body.admin-v2 #admin-panel-esemenynaplo .admin-lapozo-felso { margin: 7px 0 9px; }
+.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin: 0 0 6px; }
+.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok .admin-panel-gombcsoport {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.admin-body.admin-v2 #admin-panel-esemenynaplo .admin-lapozo-felso { margin: 4px 0 7px; }
 .admin-body.admin-v2 #admin-esemenynaplo-lista {
   gap: 0;
   border-top: 1px solid var(--admin-line);
@@ -4547,6 +4549,8 @@ body.cms-image-lightbox-open { overflow: hidden; }
 }
 
 @container admin-workspace (max-width: 480px) {
+  .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin-bottom: 4px; }
+  .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok .admin-panel-gombcsoport { gap: 5px; }
   .admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya { padding: 11px 3px; }
   .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-db-kartya-fej > div {
     grid-template-columns: 1fr;
@@ -4881,6 +4885,10 @@ body.cms-image-lightbox-open { overflow: hidden; }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:active {
   transform: translateX(-100%) scale(0.94);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone[data-admin-v2-group="kommunikacio"] .pwa-admin-quick-add {
+  display: none;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-dock,
@@ -5465,6 +5473,10 @@ body.cms-image-lightbox-open { overflow: hidden; }
   font-size: var(--admin-ui-action-font-size);
   line-height: 1.15;
   overflow: visible;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
+  display: none;
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(

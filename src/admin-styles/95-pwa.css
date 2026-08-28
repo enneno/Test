@@ -229,6 +229,11 @@
   transform: translateX(-100%) scale(0.94);
 }
 
+/* The global quick-add creates a blocked time, so it only belongs to scheduling workflows. */
+.admin-body.admin-v2.lumi-admin-standalone[data-admin-v2-group="kommunikacio"] .pwa-admin-quick-add {
+  display: none;
+}
+
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-dock,
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-quick-add {
   pointer-events: none;

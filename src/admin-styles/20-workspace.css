@@ -1241,7 +1241,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  min-height: 44px;
+  padding: 8px 10px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  background: var(--admin-v2-surface-soft);
 }
 
 .admin-body.admin-v2 .admin-v2-communication-action p {
@@ -1255,9 +1259,6 @@
   flex: 0 0 auto;
 }
 
-.admin-body.admin-v2 .admin-v2-communication-action .admin-v2-button[hidden] {
-  display: none;
-}
 
 .admin-body.admin-v2 .admin-v2-settings-panel.admin-db-panel.aktiv {
   display: grid;
@@ -1712,16 +1713,12 @@
   }
 
   .admin-body.admin-v2 .admin-v2-communication-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
-  .admin-body.admin-v2 .admin-v2-communication-summary > .admin-v2-communication-action {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .admin-body.admin-v2 .admin-v2-communication-action .admin-v2-button {
-    width: 100%;
+  .admin-body.admin-v2 .admin-v2-communication-summary > div {
+    padding: 10px 11px;
   }
 
   .admin-body.admin-v2 .admin-db-toolbar,

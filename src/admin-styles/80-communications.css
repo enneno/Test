@@ -1,8 +1,14 @@
 /* Event log and e-mail test workspace. */
 
 /* Event log */
-.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin: 0 0 11px; }
-.admin-body.admin-v2 #admin-panel-esemenynaplo .admin-lapozo-felso { margin: 7px 0 9px; }
+.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin: 0 0 6px; }
+.admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok .admin-panel-gombcsoport {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.admin-body.admin-v2 #admin-panel-esemenynaplo .admin-lapozo-felso { margin: 4px 0 7px; }
 .admin-body.admin-v2 #admin-esemenynaplo-lista {
   gap: 0;
   border-top: 1px solid var(--admin-line);
@@ -164,6 +170,8 @@
 }
 
 @container admin-workspace (max-width: 480px) {
+  .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin-bottom: 4px; }
+  .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok .admin-panel-gombcsoport { gap: 5px; }
   .admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya { padding: 11px 3px; }
   .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-db-kartya-fej > div {
     grid-template-columns: 1fr;

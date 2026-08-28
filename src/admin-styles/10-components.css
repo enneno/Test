@@ -549,6 +549,11 @@
   overflow: visible;
 }
 
+/* Hidden state belongs to the shared control primitive, not to individual pages. */
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
+  display: none;
+}
+
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .gomb,
   .admin-gomb,
