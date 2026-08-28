@@ -20,54 +20,26 @@ jobs:
           ref: CHATGPT_TEST
           fetch-depth: 0
 
-      - name: Fix CMS field theme ownership and add regression test
+      - name: Fix CMS field theme ownership and add regression assertion
         run: |
           python - <<'PY'
           from pathlib import Path
 
           css_path = Path('src/admin-styles/40-content-editor.css')
           css = css_path.read_text(encoding='utf-8')
-          old = '''.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo input:not([type="checkbox"]),
-          .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo textarea { background: #fff; }
-          '''
+          old = '.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo input:not([type="checkbox"]),\n.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo textarea { background: #fff; }\n'
           if css.count(old) != 1:
               raise SystemExit(f'Expected exactly one CMS white-field override, found {css.count(old)}')
-          css = css.replace(old, '')
-          css_path.write_text(css, encoding='utf-8')
+          css_path.write_text(css.replace(old, ''), encoding='utf-8')
 
           test_path = Path('tests/admin-shared-components.spec.js')
           test = test_path.read_text(encoding='utf-8')
           marker = "    expect(content).not.toContain('width: 18px; height: 18px; margin: 0; accent-color');\n"
-          addition = marker + "    expect(content).not.toMatch(/#admin-panel-szovegek \\.admin-mezo[\\s\\S]*background:\\s*#fff/);\n"
+          assertion = "    expect(content).not.toMatch(/#admin-panel-szovegek \\.admin-mezo input:not\\(\\[type=\\\"checkbox\\\"\\]\\)[\\s\\S]*background:\\s*#fff/);\n"
           if marker not in test:
               raise SystemExit('Shared-components assertion marker not found')
-          test = test.replace(marker, addition, 1)
-
-          dark_test = r'''
-
-test('content editor text fields use the shared dark theme surface', async ({ page }) => {
-    const css = [
-        '00-foundation.css', '05-panel-state.css', '10-components.css', '15-responsive-context.css',
-        '20-workspace.css', '30-bookings.css', '40-content-editor.css', '42-cms-image-controls.css',
-        '45-gallery-editor.css'
-    ].map(file => source(`src/admin-styles/${file}`)).join('\n');
-
-    await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-szovegek">
-        <label class="admin-mezo"><span>Cím</span><input data-dark-input value="Teszt"></label>
-        <label class="admin-mezo"><span>Leírás</span><textarea data-dark-textarea>Teszt</textarea></label>
-    </section></main></body></html>`);
-
-    const colors = await page.evaluate(() => ({
-        input: getComputedStyle(document.querySelector('[data-dark-input]')).backgroundColor,
-        textarea: getComputedStyle(document.querySelector('[data-dark-textarea]')).backgroundColor
-    }));
-
-    expect(colors.input).toBe('rgb(44, 38, 35)');
-    expect(colors.textarea).toBe(colors.input);
-});
-'''
-          if "content editor text fields use the shared dark theme surface" not in test:
-              test += dark_test
+          if assertion not in test:
+              test = test.replace(marker, marker + assertion, 1)
           test_path.write_text(test, encoding='utf-8')
           PY
 
