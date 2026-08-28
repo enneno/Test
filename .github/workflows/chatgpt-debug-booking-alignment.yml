@@ -1,0 +1,59 @@
+name: Debug booking alignment
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - .github/workflows/chatgpt-debug-booking-alignment.yml
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Install WebKit
+        run: npx playwright install --with-deps webkit
+      - name: Measure card geometry in WebKit
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const { webkit } = require('playwright');
+          (async () => {
+            const css = fs.readFileSync('admin-v2.css', 'utf8');
+            const browser = await webkit.launch();
+            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div id="admin-foglalas-lista" class="admin-db-lista">
+              <article class="admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas admin-foglalas-statusz-done admin-tiltas-kesz" data-card="manual"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>Kézzel felvett idő</code></p><h3>Eszter-S töltés</h3><p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">25/08/26</span><span class="admin-foglalas-ido">12:00 – 15:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar">Naptárba</button><button class="admin-booking-icon-button admin-control-icon-button">Szerkesztés</button></div></div></article>
+              <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-done" data-card="online"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>LUMI-WFF3</code></p><h3>Sulyok Viktória</h3><p class="admin-foglalas-rovid-szolgaltatas">Töltés - S méret</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">16/08/26</span><span class="admin-foglalas-ido">16:30 – 19:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-details-trigger" style="display:none">Részletek</button><button class="admin-booking-icon-button admin-control-icon-button">Szerkesztés</button></div></div></article>
+            </div></section></main></body></html>`);
+            const metrics = await page.evaluate(() => {
+              const one = card => {
+                const root = document.querySelector(`[data-card="${card}"]`);
+                const rr = root.getBoundingClientRect();
+                const get = sel => {
+                  const el = root.querySelector(sel); const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);
+                  return { top:+(r.top-rr.top).toFixed(3), height:+r.height.toFixed(3), display:cs.display, alignSelf:cs.alignSelf, marginTop:cs.marginTop, marginBottom:cs.marginBottom, lineHeight:cs.lineHeight };
+                };
+                return { card:{height:+rr.height.toFixed(3)}, head:get('.admin-db-kartya-fej'), identity:get('.admin-foglalas-nev-blokk'), meta:get('.admin-foglalas-azonosito'), name:get('h3'), service:get('.admin-foglalas-rovid-szolgaltatas'), controls:get('.admin-foglalas-vezerlok'), status:get('.admin-db-statusz'), date:get('.admin-foglalas-idopont') };
+              };
+              return { manual:one('manual'), online:one('online') };
+            });
+            console.log('GEOMETRY=' + JSON.stringify(metrics, null, 2));
+            await browser.close();
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
