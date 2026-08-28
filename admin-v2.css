@@ -2495,13 +2495,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-kezi-ido-naptar { grid-column: 2; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
-  grid-column: 2;
-  width: var(--admin-ui-icon-button-size);
-  height: var(--admin-ui-icon-button-size);
-  content: "";
-  visibility: hidden;
-}
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger { display: none; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {

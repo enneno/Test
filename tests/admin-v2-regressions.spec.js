@@ -111,3 +111,15 @@ test('a foglalás szerkesztő dátuma és idői egy sorban maradnak, a pickereke
     expect(componentCss).toContain('background-image: var(--admin-ui-date-icon);');
     expect(componentCss).toContain('background-image: var(--admin-ui-time-icon);');
 });
+
+test('online and manual booking controls keep one grid row', async () => {
+    const css = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),
+        'utf8'
+    );
+
+    expect(css).toContain('.admin-foglalas-vezerlok > .admin-db-statusz');
+    expect(css).toContain('.admin-foglalas-vezerlok > .admin-kezi-ido-naptar { grid-column: 2; }');
+    expect(css).toContain('.admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }');
+    expect(css).not.toContain('.admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before');
+});
