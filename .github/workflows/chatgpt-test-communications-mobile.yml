@@ -32,12 +32,41 @@ jobs:
               text = text.replace(old, new, 1)
               p.write_text(text, encoding='utf-8')
 
+          components = 'src/admin-styles/10-components.css'
+          shared_buttons = '''.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+            .gomb,
+            .admin-gomb,
+            .admin-hozzaadas,
+            .admin-kis-gomb,
+            .admin-tab,
+            .admin-v2-button,
+            .admin-v2-subnav button,
+            .admin-v2-task-item > button,
+            .cms-upload-button
+          ) {
+            position: relative;
+            box-sizing: border-box;
+            display: inline-flex;
+            height: var(--admin-ui-button-height);
+            min-height: var(--admin-ui-button-height);
+            padding: 0 var(--admin-ui-button-padding-x);
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--admin-ui-control-radius);
+            font-size: var(--admin-ui-action-font-size);
+            line-height: 1.15;
+            overflow: visible;
+          }
+          '''
+          shared_buttons_with_hidden = shared_buttons + '''
+          /* Hidden state belongs to the shared control primitive, not to individual pages. */
+          .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
+            display: none;
+          }
+          '''
+          replace_once(components, shared_buttons, shared_buttons_with_hidden)
+
           workspace = 'src/admin-styles/20-workspace.css'
-          replace_once(
-              workspace,
-              ".admin-body.admin-v2 .admin-v2-button:hover {\n",
-              ".admin-body.admin-v2 .admin-v2-button[hidden] {\n  display: none;\n}\n\n.admin-body.admin-v2 .admin-v2-button:hover {\n"
-          )
           replace_once(
               workspace,
               ".admin-body.admin-v2 .admin-v2-communication-summary > .admin-v2-communication-action {\n  grid-column: 1 / -1;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n",
@@ -73,8 +102,7 @@ jobs:
               ".admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:active {\n  transform: translateX(-100%) scale(0.94);\n}\n\n/* The global quick-add creates a blocked time, so it only belongs to scheduling workflows. */\n.admin-body.admin-v2.lumi-admin-standalone[data-admin-v2-group=\"kommunikacio\"] .pwa-admin-quick-add {\n  display: none;\n}\n"
           )
 
-          test_path = Path('tests/admin-communications-mobile.spec.js')
-          test_path.write_text(r'''const { test, expect } = require('playwright/test');
+          Path('tests/admin-communications-mobile.spec.js').write_text(r'''const { test, expect } = require('playwright/test');
           const fs = require('fs');
           const path = require('path');
 
