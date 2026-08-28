@@ -3,6 +3,27 @@
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
   --booking-status-width: 142px;
+  --booking-calendar-header-bg: #f4efeb;
+--booking-calendar-cell-bg: #fff9f5;
+--booking-calendar-empty-bg: #f7f3ef;
+--booking-calendar-hover-bg: #faf6f2;
+--booking-calendar-selected-bg: #f8ecef;
+--booking-calendar-count-bg: #eee7e2;
+--booking-calendar-event-bg: #f3eeea;
+--booking-calendar-event-border: #a99488;
+--booking-calendar-event-text: var(--admin-ink);
+--booking-calendar-pending-border: #783e53;
+--booking-calendar-pending-bg: #f4e4e9;
+--booking-calendar-confirmed-border: #31566c;
+--booking-calendar-confirmed-bg: #e4eef4;
+--booking-calendar-done-border: #2f603f;
+--booking-calendar-done-bg: #e2efe5;
+--booking-calendar-cancelled-border: #2e2927;
+--booking-calendar-cancelled-bg: #2e2927;
+--booking-calendar-cancelled-customer-border: #62404c;
+--booking-calendar-cancelled-customer-bg: #62404c;
+--booking-calendar-day-row-bg: #fff9f5;
+--booking-calendar-day-status-bg: rgba(255, 249, 245, .66);
   --booking-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
   --booking-icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
   --booking-icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
@@ -10,6 +31,30 @@
   --booking-icon-list: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E");
   max-width: 980px;
   margin-inline: auto;
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
+  --booking-calendar-header-bg: #2a2421;
+  --booking-calendar-cell-bg: #211d1b;
+  --booking-calendar-empty-bg: #1c1917;
+  --booking-calendar-hover-bg: #2d2724;
+  --booking-calendar-selected-bg: #382729;
+  --booking-calendar-count-bg: #332b28;
+  --booking-calendar-event-bg: #2f2926;
+  --booking-calendar-event-border: #9a8177;
+  --booking-calendar-event-text: #eadeda;
+  --booking-calendar-pending-border: #c78397;
+  --booking-calendar-pending-bg: #3a252d;
+  --booking-calendar-confirmed-border: #79a7bd;
+  --booking-calendar-confirmed-bg: #22313a;
+  --booking-calendar-done-border: #7ba68a;
+  --booking-calendar-done-bg: #24362b;
+  --booking-calendar-cancelled-border: #7c716d;
+  --booking-calendar-cancelled-bg: #302a27;
+  --booking-calendar-cancelled-customer-border: #b07c8e;
+  --booking-calendar-cancelled-customer-bg: #3a2930;
+  --booking-calendar-day-row-bg: #24201e;
+  --booking-calendar-day-status-bg: #332c29;
 }
 
 /* Toolbar and search */
@@ -719,7 +764,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-hetfej {
   border: 1px solid var(--admin-line);
   border-bottom: 0;
-  background: #f4efeb;
+  background: var(--booking-calendar-header-bg);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-hetfej span {
   padding: 8px 4px;
@@ -741,9 +786,9 @@ body.admin-modal-nyitva { overflow: hidden; }
   min-height: 112px;
   border-bottom: 1px solid var(--admin-line);
   border-left: 1px solid var(--admin-line);
-  background: var(--ui-off-white);
+  background: var(--booking-calendar-cell-bg);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-ures { background: #f7f3ef; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-ures { background: var(--booking-calendar-empty-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap {
   position: relative;
   display: grid;
@@ -758,9 +803,9 @@ body.admin-modal-nyitva { overflow: hidden; }
   text-align: left;
   cursor: pointer;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap:hover { background: #faf6f2; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap:hover { background: var(--booking-calendar-hover-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap.kijelolt {
-  background: #f8ecef;
+  background: var(--booking-calendar-selected-bg);
   box-shadow: inset 0 0 0 2px var(--admin-rose-dark);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-napszam {
@@ -783,7 +828,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 2px 5px;
   border-radius: 999px;
   color: var(--admin-muted);
-  background: #eee7e2;
+  background: var(--booking-calendar-count-bg);
   font-size: var(--lumi-font-calendar);
   font-weight: 600;
   line-height: 16px;
@@ -800,10 +845,10 @@ body.admin-modal-nyitva { overflow: hidden; }
   min-height: 18px;
   align-items: center;
   padding: 2px 5px;
-  border-left: 3px solid #a99488;
+  border-left: 3px solid var(--booking-calendar-event-border);
   border-radius: 3px;
-  color: var(--admin-ink);
-  background: #f3eeea;
+  color: var(--booking-calendar-event-text);
+  background: var(--booking-calendar-event-bg);
   font-size: var(--lumi-font-calendar);
   line-height: 1;
 }
@@ -817,11 +862,11 @@ body.admin-modal-nyitva { overflow: hidden; }
   font-weight: 600;
   white-space: nowrap;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: #783e53; background: #f4e4e9; }
-.admin-body.admin-v2 #admin-panel-foglalasok :is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: #31566c; background: #e4eef4; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-done { border-left-color: #2f603f; background: #e2efe5; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: #2e2927; background: #2e2927; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: #62404c; background: #62404c; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: var(--booking-calendar-pending-border); background: var(--booking-calendar-pending-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok :is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: var(--booking-calendar-confirmed-border); background: var(--booking-calendar-confirmed-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-done { border-left-color: var(--booking-calendar-done-border); background: var(--booking-calendar-done-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-border); background: var(--booking-calendar-cancelled-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-customer-border); background: var(--booking-calendar-cancelled-customer-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-tovabbi {
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
@@ -864,7 +909,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-left-width: 4px;
   border-radius: 7px;
   color: var(--admin-ink);
-  background: var(--ui-off-white);
+  background: var(--booking-calendar-day-row-bg);
   text-align: left;
   cursor: pointer;
 }
@@ -885,7 +930,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-statusz {
   padding: 5px 8px;
   border-radius: 999px;
-  background: rgba(255, 249, 245, .66);
+  background: var(--booking-calendar-day-status-bg);
   font-size: var(--lumi-font-caption);
   font-weight: 600;
   white-space: nowrap;
