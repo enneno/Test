@@ -18,119 +18,29 @@ jobs:
         with:
           ref: CHATGPT_TEST
           fetch-depth: 0
-
-      - name: Remove implicit online control spacer and add regression test
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-
-          const cssPath = 'src/admin-styles/30-bookings.css';
-          let css = fs.readFileSync(cssPath, 'utf8');
-          const oldRule = `.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
-  grid-column: 2;
-  width: var(--admin-ui-icon-button-size);
-  height: var(--admin-ui-icon-button-size);
-  content: "";
-  visibility: hidden;
-}
-`;
-          if (!css.includes(oldRule)) throw new Error('Expected implicit spacer rule not found');
-          css = css.replace(oldRule, '');
-          fs.writeFileSync(cssPath, css);
-
-          const testPath = 'tests/admin-v2-regressions.spec.js';
-          let test = fs.readFileSync(testPath, 'utf8');
-          const marker = "test('az online és kézi foglaláskártya vezérlősora nem hoz létre implicit grid sort'";
-          if (!test.includes(marker)) {
-            test += `
-
-test('az online és kézi foglaláskártya vezérlősora nem hoz létre implicit grid sort', async () => {
-    const css = fs.readFileSync(
-        path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),
-        'utf8'
-    );
-
-    expect(css).toContain('.admin-foglalas-vezerlok > .admin-db-statusz');
-    expect(css).toContain('.admin-foglalas-vezerlok > .admin-kezi-ido-naptar { grid-column: 2; }');
-    expect(css).toContain('.admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }');
-    expect(css).not.toContain('.admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before');
-});
-`;
-            fs.writeFileSync(testPath, test);
-          }
-          NODE
-
+      - name: Apply canonical fix and regression test
+        run: echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpjc3NfcGF0aCA9IFBhdGgoInNyYy9hZG1pbi1zdHlsZXMvMzAtYm9va2luZ3MuY3NzIikKY3NzID0gY3NzX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCm9sZCA9ICIiIi5hZG1pbi1ib2R5LmFkbWluLXYyICNhZG1pbi1wYW5lbC1mb2dsYWxhc29rIC5hZG1pbi1mb2dsYWxhcy12ZXplcmxvazpub3QoOmhhcyguYWRtaW4ta2V6aS1pZG8tbmFwdGFyKSk6OmJlZm9yZSB7CiAgZ3JpZC1jb2x1bW46IDI7CiAgd2lkdGg6IHZhcigtLWFkbWluLXVpLWljb24tYnV0dG9uLXNpemUpOwogIGhlaWdodDogdmFyKC0tYWRtaW4tdWktaWNvbi1idXR0b24tc2l6ZSk7CiAgY29udGVudDogIiI7CiAgdmlzaWJpbGl0eTogaGlkZGVuOwp9CiIiIgppZiBvbGQgbm90IGluIGNzczoKICAgIHJhaXNlIFN5c3RlbUV4aXQoImltcGxpY2l0IHNwYWNlciBydWxlIG5vdCBmb3VuZCIpCmNzc19wYXRoLndyaXRlX3RleHQoY3NzLnJlcGxhY2Uob2xkLCAiIiwgMSksIGVuY29kaW5nPSJ1dGYtOCIpCgp0ZXN0X3BhdGggPSBQYXRoKCJ0ZXN0cy9hZG1pbi12Mi1yZWdyZXNzaW9ucy5zcGVjLmpzIikKdGVzdCA9IHRlc3RfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKbWFya2VyID0gIm9ubGluZSBhbmQgbWFudWFsIGJvb2tpbmcgY29udHJvbHMga2VlcCBvbmUgZ3JpZCByb3ciCmlmIG1hcmtlciBub3QgaW4gdGVzdDoKICAgIHRlc3QgKz0gIiIiCnRlc3QoJ29ubGluZSBhbmQgbWFudWFsIGJvb2tpbmcgY29udHJvbHMga2VlcCBvbmUgZ3JpZCByb3cnLCBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBjc3MgPSBmcy5yZWFkRmlsZVN5bmMoCiAgICAgICAgcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJy4uJywgJ3NyYycsICdhZG1pbi1zdHlsZXMnLCAnMzAtYm9va2luZ3MuY3NzJyksCiAgICAgICAgJ3V0ZjgnCiAgICApOwoKICAgIGV4cGVjdChjc3MpLnRvQ29udGFpbignLmFkbWluLWZvZ2xhbGFzLXZlemVybG9rID4gLmFkbWluLWRiLXN0YXR1c3onKTsKICAgIGV4cGVjdChjc3MpLnRvQ29udGFpbignLmFkbWluLWZvZ2xhbGFzLXZlemVybG9rID4gLmFkbWluLWtlemktaWRvLW5hcHRhciB7IGdyaWQtY29sdW1uOiAyOyB9Jyk7CiAgICBleHBlY3QoY3NzKS50b0NvbnRhaW4oJy5hZG1pbi1mb2dsYWxhcy12ZXplcmxvayA+IFtkYXRhLWZvZ2xhbGFzLXN6ZXJrZXN6dGVzXSB7IGdyaWQtY29sdW1uOiAzOyB9Jyk7CiAgICBleHBlY3QoY3NzKS5ub3QudG9Db250YWluKCcuYWRtaW4tZm9nbGFsYXMtdmV6ZXJsb2s6bm90KDpoYXMoLmFkbWluLWtlemktaWRvLW5hcHRhcikpOjpiZWZvcmUnKTsKfSk7CiIiIgogICAgdGVzdF9wYXRoLndyaXRlX3RleHQodGVzdCwgZW5jb2Rpbmc9InV0Zi04IikK' | base64 -d > /tmp/fix.py && python /tmp/fix.py
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: npm run build
-
       - name: Version assets
         run: npm run assets:version
-
       - name: Check
         run: npm run check
-
       - name: Install browsers
         run: |
           npx playwright install --with-deps msedge
           npx playwright install --with-deps webkit
-
       - name: Run affected admin tests
         run: npx playwright test tests/admin-v2-regressions.spec.js tests/admin-booking-css-architecture.spec.js tests/admin-production-redesign.spec.js tests/admin-shared-components.spec.js
-
       - name: Verify exact card alignment in WebKit
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const { webkit } = require('playwright');
-          (async () => {
-            const css = fs.readFileSync('admin-v2.css', 'utf8');
-            const browser = await webkit.launch();
-            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div id="admin-foglalas-lista" class="admin-db-lista">
-              <article class="admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas admin-foglalas-statusz-done admin-tiltas-kesz" data-card="manual"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>Kézzel felvett idő</code></p><h3>Eszter-S töltés</h3><p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">25/08/26</span><span class="admin-foglalas-ido">12:00 – 15:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar">Naptárba</button><button class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button></div></div></article>
-              <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-done" data-card="online"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>LUMI-WFF3</code></p><h3>Sulyok Viktória</h3><p class="admin-foglalas-rovid-szolgaltatas">Töltés - S méret</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">16/08/26</span><span class="admin-foglalas-ido">16:30 – 19:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-details-trigger">Részletek</button><button class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button></div></div></article>
-            </div></section></main></body></html>`);
-            const metrics = await page.evaluate(() => {
-              const metric = (card, sel) => {
-                const root = document.querySelector(`[data-card="${card}"]`);
-                const rr = root.getBoundingClientRect();
-                const r = root.querySelector(sel).getBoundingClientRect();
-                return { top: r.top - rr.top, height: r.height };
-              };
-              return {
-                manualIdentity: metric('manual', '.admin-foglalas-nev-blokk'),
-                onlineIdentity: metric('online', '.admin-foglalas-nev-blokk'),
-                manualControls: metric('manual', '.admin-foglalas-vezerlok'),
-                onlineControls: metric('online', '.admin-foglalas-vezerlok'),
-                manualStatus: metric('manual', '.admin-db-statusz'),
-                onlineStatus: metric('online', '.admin-db-statusz')
-              };
-            });
-            console.log(JSON.stringify(metrics, null, 2));
-            const pairs = [
-              ['identity top', metrics.manualIdentity.top, metrics.onlineIdentity.top],
-              ['identity height', metrics.manualIdentity.height, metrics.onlineIdentity.height],
-              ['controls top', metrics.manualControls.top, metrics.onlineControls.top],
-              ['controls height', metrics.manualControls.height, metrics.onlineControls.height],
-              ['status top', metrics.manualStatus.top, metrics.onlineStatus.top],
-              ['status height', metrics.manualStatus.height, metrics.onlineStatus.height]
-            ];
-            for (const [name, a, b] of pairs) {
-              if (Math.abs(a - b) > 0.1) throw new Error(`${name} mismatch: manual=${a}, online=${b}`);
-            }
-            await browser.close();
-          })().catch(err => { console.error(err); process.exit(1); });
-          NODE
-
+        run: echo 'CmNvbnN0IGZzID0gcmVxdWlyZSgnZnMnKTsKY29uc3QgeyB3ZWJraXQgfSA9IHJlcXVpcmUoJ3BsYXl3cmlnaHQnKTsKKGFzeW5jICgpID0+IHsKICBjb25zdCBjc3MgPSBmcy5yZWFkRmlsZVN5bmMoJ2FkbWluLXYyLmNzcycsICd1dGY4Jyk7CiAgY29uc3QgYnJvd3NlciA9IGF3YWl0IHdlYmtpdC5sYXVuY2goKTsKICBjb25zdCBwYWdlID0gYXdhaXQgYnJvd3Nlci5uZXdQYWdlKHsgdmlld3BvcnQ6IHsgd2lkdGg6IDM5MCwgaGVpZ2h0OiA4NDQgfSB9KTsKICBjb25zdCBodG1sID0gJzwhZG9jdHlwZSBodG1sPjxodG1sIGRhdGEtYWRtaW4tdGhlbWU9ImRhcmsiPjxoZWFkPjxzdHlsZT4nICsgY3NzICsgJzwvc3R5bGU+PC9oZWFkPjxib2R5IGNsYXNzPSJhZG1pbi1ib2R5IGFkbWluLXYyIj48bWFpbiBpZD0iYWRtaW4tdGFydGFsb20iPjxzZWN0aW9uIGlkPSJhZG1pbi1wYW5lbC1mb2dsYWxhc29rIj48ZGl2IGlkPSJhZG1pbi1mb2dsYWxhcy1saXN0YSIgY2xhc3M9ImFkbWluLWRiLWxpc3RhIj4nCiAgICArICc8YXJ0aWNsZSBjbGFzcz0iYWRtaW4tZGIta2FydHlhIGFkbWluLWZvZ2xhbGFzLWthcnR5YSBhZG1pbi1kYi1rYXJ0eWEtdGlsdGFzIGFkbWluLWZvZ2xhbGFzLXN0YXR1c3otZG9uZSBhZG1pbi10aWx0YXMta2VzeiIgZGF0YS1jYXJkPSJtYW51YWwiPjxkaXYgY2xhc3M9ImFkbWluLWRiLWthcnR5YS1mZWoiPjxkaXYgY2xhc3M9ImFkbWluLWZvZ2xhbGFzLWZvc29yIj48ZGl2IGNsYXNzPSJhZG1pbi1mb2dsYWxhcy1uZXYtYmxva2siPjxwIGNsYXNzPSJhZG1pbi1rYXJ0eWEtdGlwdXMgYWRtaW4tZm9nbGFsYXMtYXpvbm9zaXRvIj48Y29kZT5NYW51YWw8L2NvZGU+PC9wPjxoMz5NYW51YWwgZ3Vlc3Q8L2gzPjxwIGNsYXNzPSJhZG1pbi1mb2dsYWxhcy1yb3ZpZC1zem9sZ2FsdGF0YXMiIGFyaWEtaGlkZGVuPSJ0cnVlIj4mbmJzcDs8L3A+PC9kaXY+PHAgY2xhc3M9ImFkbWluLWZvZ2xhbGFzLWlkb3BvbnQiPjxzcGFuIGNsYXNzPSJhZG1pbi1mb2dsYWxhcy1kYXR1bSI+MjUvMDgvMjY8L3NwYW4+PHNwYW4gY2xhc3M9ImFkbWluLWZvZ2xhbGFzLWlkbyI+MTI6MDAgLSAxNTowMDwvc3Bhbj48L3A+PC9kaXY+PGRpdiBjbGFzcz0iYWRtaW4tZm9nbGFsYXMtdmV6ZXJsb2siPjxzZWxlY3QgY2xhc3M9ImFkbWluLWRiLXN0YXR1c3oiIGRpc2FibGVkPjxvcHRpb24gc2VsZWN0ZWQ+RG9uZTwvb3B0aW9uPjwvc2VsZWN0PjxidXR0b24gY2xhc3M9ImFkbWluLWJvb2tpbmctaWNvbi1idXR0b24gYWRtaW4tY29udHJvbC1pY29uLWJ1dHRvbiBhZG1pbi1rZXppLWlkby1uYXB0YXIiPkNhbGVuZGFyPC9idXR0b24+PGJ1dHRvbiBjbGFzcz0iYWRtaW4tYm9va2luZy1pY29uLWJ1dHRvbiBhZG1pbi1jb250cm9sLWljb24tYnV0dG9uIiBkYXRhLWZvZ2xhbGFzLXN6ZXJrZXN6dGVzPkVkaXQ8L2J1dHRvbj48L2Rpdj48L2Rpdj48L2FydGljbGU+JwogICAgKyAnPGFydGljbGUgY2xhc3M9ImFkbWluLWRiLWthcnR5YSBhZG1pbi1mb2dsYWxhcy1rYXJ0eWEgYWRtaW4tZm9nbGFsYXMtc3RhdHVzei1kb25lIiBkYXRhLWNhcmQ9Im9ubGluZSI+PGRpdiBjbGFzcz0iYWRtaW4tZGIta2FydHlhLWZlaiI+PGRpdiBjbGFzcz0iYWRtaW4tZm9nbGFsYXMtZm9zb3IiPjxkaXYgY2xhc3M9ImFkbWluLWZvZ2xhbGFzLW5ldi1ibG9rayI+PHAgY2xhc3M9ImFkbWluLWthcnR5YS10aXB1cyBhZG1pbi1mb2dsYWxhcy1hem9ub3NpdG8iPjxjb2RlPkxVTUktV0ZGMzwvY29kZT48L3A+PGgzPk9ubGluZSBndWVzdDwvaDM+PHAgY2xhc3M9ImFkbWluLWZvZ2xhbGFzLXJvdmlkLXN6b2xnYWx0YXRhcyI+U2VydmljZTwvcD48L2Rpdj48cCBjbGFzcz0iYWRtaW4tZm9nbGFsYXMtaWRvcG9udCI+PHNwYW4gY2xhc3M9ImFkbWluLWZvZ2xhbGFzLWRhdHVtIj4xNi8wOC8yNjwvc3Bhbj48c3BhbiBjbGFzcz0iYWRtaW4tZm9nbGFsYXMtaWRvIj4xNjozMCAtIDE5OjAwPC9zcGFuPjwvcD48L2Rpdj48ZGl2IGNsYXNzPSJhZG1pbi1mb2dsYWxhcy12ZXplcmxvayI+PHNlbGVjdCBjbGFzcz0iYWRtaW4tZGItc3RhdHVzeiIgZGlzYWJsZWQ+PG9wdGlvbiBzZWxlY3RlZD5Eb25lPC9vcHRpb24+PC9zZWxlY3Q+PGJ1dHRvbiBjbGFzcz0iYWRtaW4tYm9va2luZy1kZXRhaWxzLXRyaWdnZXIiPkRldGFpbHM8L2J1dHRvbj48YnV0dG9uIGNsYXNzPSJhZG1pbi1ib29raW5nLWljb24tYnV0dG9uIGFkbWluLWNvbnRyb2wtaWNvbi1idXR0b24iIGRhdGEtZm9nbGFsYXMtc3plcmtlc3p0ZXM+RWRpdDwvYnV0dG9uPjwvZGl2PjwvZGl2PjwvYXJ0aWNsZT4nCiAgICArICc8L2Rpdj48L3NlY3Rpb24+PC9tYWluPjwvYm9keT48L2h0bWw+JzsKICBhd2FpdCBwYWdlLnNldENvbnRlbnQoaHRtbCk7CiAgY29uc3QgbWV0cmljcyA9IGF3YWl0IHBhZ2UuZXZhbHVhdGUoKCkgPT4gewogICAgY29uc3QgbWV0cmljID0gKGNhcmQsIHNlbCkgPT4gewogICAgICBjb25zdCByb290ID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignW2RhdGEtY2FyZD0iJyArIGNhcmQgKyAnIl0nKTsKICAgICAgY29uc3QgcnIgPSByb290LmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICBjb25zdCByID0gcm9vdC5xdWVyeVNlbGVjdG9yKHNlbCkuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICAgIHJldHVybiB7IHRvcDogci50b3AgLSByci50b3AsIGhlaWdodDogci5oZWlnaHQgfTsKICAgIH07CiAgICByZXR1cm4gewogICAgICBtYW51YWxJZGVudGl0eTogbWV0cmljKCdtYW51YWwnLCAnLmFkbWluLWZvZ2xhbGFzLW5ldi1ibG9raycpLAogICAgICBvbmxpbmVJZGVudGl0eTogbWV0cmljKCdvbmxpbmUnLCAnLmFkbWluLWZvZ2xhbGFzLW5ldi1ibG9raycpLAogICAgICBtYW51YWxDb250cm9sczogbWV0cmljKCdtYW51YWwnLCAnLmFkbWluLWZvZ2xhbGFzLXZlemVybG9rJyksCiAgICAgIG9ubGluZUNvbnRyb2xzOiBtZXRyaWMoJ29ubGluZScsICcuYWRtaW4tZm9nbGFsYXMtdmV6ZXJsb2snKSwKICAgICAgbWFudWFsU3RhdHVzOiBtZXRyaWMoJ21hbnVhbCcsICcuYWRtaW4tZGItc3RhdHVzeicpLAogICAgICBvbmxpbmVTdGF0dXM6IG1ldHJpYygnb25saW5lJywgJy5hZG1pbi1kYi1zdGF0dXN6JykKICAgIH07CiAgfSk7CiAgY29uc29sZS5sb2coSlNPTi5zdHJpbmdpZnkobWV0cmljcywgbnVsbCwgMikpOwogIGNvbnN0IHBhaXJzID0gWwogICAgWydpZGVudGl0eSB0b3AnLCBtZXRyaWNzLm1hbnVhbElkZW50aXR5LnRvcCwgbWV0cmljcy5vbmxpbmVJZGVudGl0eS50b3BdLAogICAgWydpZGVudGl0eSBoZWlnaHQnLCBtZXRyaWNzLm1hbnVhbElkZW50aXR5LmhlaWdodCwgbWV0cmljcy5vbmxpbmVJZGVudGl0eS5oZWlnaHRdLAogICAgWydjb250cm9scyB0b3AnLCBtZXRyaWNzLm1hbnVhbENvbnRyb2xzLnRvcCwgbWV0cmljcy5vbmxpbmVDb250cm9scy50b3BdLAogICAgWydjb250cm9scyBoZWlnaHQnLCBtZXRyaWNzLm1hbnVhbENvbnRyb2xzLmhlaWdodCwgbWV0cmljcy5vbmxpbmVDb250cm9scy5oZWlnaHRdLAogICAgWydzdGF0dXMgdG9wJywgbWV0cmljcy5tYW51YWxTdGF0dXMudG9wLCBtZXRyaWNzLm9ubGluZVN0YXR1cy50b3BdLAogICAgWydzdGF0dXMgaGVpZ2h0JywgbWV0cmljcy5tYW51YWxTdGF0dXMuaGVpZ2h0LCBtZXRyaWNzLm9ubGluZVN0YXR1cy5oZWlnaHRdCiAgXTsKICBmb3IgKGNvbnN0IFtuYW1lLCBhLCBiXSBvZiBwYWlycykgewogICAgaWYgKE1hdGguYWJzKGEgLSBiKSA+IDAuMSkgdGhyb3cgbmV3IEVycm9yKG5hbWUgKyAnIG1pc21hdGNoOiBtYW51YWw9JyArIGEgKyAnLCBvbmxpbmU9JyArIGIpOwogIH0KICBhd2FpdCBicm93c2VyLmNsb3NlKCk7Cn0pKCkuY2F0Y2goZXJyID0+IHsgY29uc29sZS5lcnJvcihlcnIpOyBwcm9jZXNzLmV4aXQoMSk7IH0pOwo=' | base64 -d > /tmp/verify.js && node /tmp/verify.js
       - name: Commit verified fix and cleanup temporary workflows
         run: |
           rm -f .github/workflows/chatgpt-debug-booking-alignment.yml
