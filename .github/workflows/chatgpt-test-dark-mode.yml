@@ -1,0 +1,263 @@
+name: Admin dark mode refinement
+
+on:
+  push:
+    branches:
+      - CHATGPT_TEST
+
+permissions:
+  contents: write
+
+jobs:
+  refine-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Patch canonical admin sources
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if text.count(old) != 1:
+                  raise SystemExit(f'Expected exactly one source block in {path}, found {text.count(old)}: {old[:100]!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          def replace_count(path, old, new, count):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              actual = text.count(old)
+              if actual != count:
+                  raise SystemExit(f'Expected {count} source blocks in {path}, found {actual}: {old[:100]!r}')
+              p.write_text(text.replace(old, new), encoding='utf-8')
+
+          foundation = 'src/admin-styles/00-foundation.css'
+          replace_once(
+              foundation,
+              '\nhtml {\n',
+              '''\nhtml[data-admin-theme="dark"] {\n  --akcentus: #c7969f;\n  --akcentus-vilagos: #ddb1ad;\n  --tinta: #f2e9e5;\n  --barna: #d7c9c3;\n  --krem: #2d2724;\n  --kartya: #28221f;\n  --szoveg: #bfb1ab;\n  --rozsa-halvany: #493332;\n  --zsalyaszurke: #869680;\n\n  --ui-primary: #d4a49a;\n  --ui-on-primary: #211917;\n  --ui-accent: #4b3531;\n  --ui-on-accent: #f5ece8;\n  --ui-bg: #181514;\n  --ui-surface: #24201e;\n  --ui-soft: #302a27;\n  --ui-highlight: #2b2522;\n  --ui-warm: #3a2a27;\n  --ui-off-black: #f4ece8;\n  --ui-off-white: #fff9f5;\n  --ui-ink: #eee5e1;\n  --ui-muted: #b5a8a2;\n  --ui-rose: #4b3531;\n  --ui-rose-dark: #a96f78;\n  --ui-line: rgba(235, 220, 214, 0.14);\n  --ui-line-strong: rgba(235, 220, 214, 0.28);\n\n  --lumi-control-bg: #2c2623;\n  --lumi-control-border: rgba(212, 164, 154, 0.24);\n  --lumi-control-border-strong: rgba(212, 164, 154, 0.52);\n  --lumi-control-focus: 0 0 0 3px rgba(212, 164, 154, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);\n  --lumi-control-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);\n  --lumi-soft-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);\n  --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");\n\n  --admin-page-bg: #181514;\n  --admin-native-color-scheme: dark;\n}\n\nhtml {\n  --admin-page-bg: #f7f4f1;\n  --admin-native-color-scheme: light;\n  --lumi-control-inset: inset 0 1px 0 rgba(255, 255, 255, 0.75);\n'''
+          )
+          replace_count(foundation, '  background: #f7f4f1;\n', '  background: var(--admin-page-bg);\n', 2)
+          replace_once(foundation, '  text-size-adjust: 100%;\n}', '  text-size-adjust: 100%;\n  color-scheme: var(--admin-native-color-scheme);\n}')
+          replace_once(foundation, '  --admin-canvas: #f8f6f1;\n', '  --admin-canvas: var(--ui-bg);\n')
+          replace_once(foundation, '  border: 1px solid rgba(185, 133, 143, 0.28);\n', '  border: 1px solid var(--lumi-control-border);\n')
+          replace_once(foundation, '  background: #fffaf4;\n', '  background: var(--lumi-control-bg);\n')
+          replace_once(foundation, '  color-scheme: light;\n', '  color-scheme: var(--admin-native-color-scheme);\n')
+          replace_once(foundation, '  color: rgba(43, 37, 33, 0.52);\n', '  color: color-mix(in srgb, var(--tinta) 52%, transparent);\n')
+
+          components = 'src/admin-styles/10-components.css'
+          replace_once(components, '  background: rgba(255, 250, 244, 0.8);\n', '  background: color-mix(in srgb, var(--admin-v2-surface) 80%, transparent);\n')
+          replace_once(components, '  background: #f3eeea;\n', '  background: var(--admin-v2-surface-soft);\n')
+          replace_once(components, '  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);\n', '  box-shadow: var(--lumi-control-inset);\n')
+          replace_once(
+              components,
+              '.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {\n',
+              '''html[data-admin-theme="dark"] .admin-body.admin-v2 {\n  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");\n  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");\n}\n\n.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {\n'''
+          )
+
+          workspace = 'src/admin-styles/20-workspace.css'
+          replace_once(
+              workspace,
+              '  --admin-v2-shadow: 0 8px 26px rgba(67, 42, 35, 0.055);\n',
+              '''  --admin-v2-shadow: 0 8px 26px rgba(67, 42, 35, 0.055);\n  --admin-v2-glass: rgba(255, 255, 255, 0.93);\n  --admin-v2-auth-glass: rgba(255, 255, 255, 0.9);\n  --admin-v2-neutral-soft: #eeeae7;\n  --admin-v2-divider-soft: #f0eae6;\n  --admin-v2-switch-knob: #ffffff;\n'''
+          )
+          replace_once(
+              workspace,
+              '}\n\n.admin-body.admin-v2 *,\n',
+              '''}\n\nhtml[data-admin-theme="dark"] .admin-body.admin-v2 {\n  --admin-v2-bg: var(--admin-page-bg);\n  --admin-v2-surface: #24201e;\n  --admin-v2-surface-soft: #2c2724;\n  --admin-v2-border: #413936;\n  --admin-v2-border-strong: #5a4d48;\n  --admin-v2-ink: #f3eae6;\n  --admin-v2-muted: #b9aaa4;\n  --admin-v2-subtle: #93847f;\n  --admin-v2-brand: #cf9e92;\n  --admin-v2-brand-dark: #e1b4a9;\n  --admin-v2-brand-soft: #3a2b27;\n  --admin-v2-success: #8fb99c;\n  --admin-v2-success-soft: #24352a;\n  --admin-v2-warning: #d1a667;\n  --admin-v2-warning-soft: #3a3021;\n  --admin-v2-danger: #d4878c;\n  --admin-v2-danger-soft: #3d2729;\n  --admin-v2-info: #8eacc2;\n  --admin-v2-info-soft: #26333b;\n  --admin-v2-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);\n  --admin-v2-glass: rgba(36, 32, 30, 0.93);\n  --admin-v2-auth-glass: rgba(36, 32, 30, 0.94);\n  --admin-v2-neutral-soft: #312b28;\n  --admin-v2-divider-soft: #342e2b;\n  --admin-v2-switch-knob: #fff7f2;\n}\n\n.admin-body.admin-v2 *,\n'''
+          )
+          replace_once(workspace, '  background: rgba(255, 255, 255, 0.9);\n', '  background: var(--admin-v2-auth-glass);\n')
+          replace_once(workspace, '  background: rgba(255, 255, 255, 0.93);\n', '  background: var(--admin-v2-glass);\n')
+          replace_once(workspace, '  background: #fff;\n  box-shadow: 0 18px 48px rgba(52, 41, 37, 0.18);\n', '  background: var(--admin-v2-surface);\n  box-shadow: 0 18px 48px rgba(52, 41, 37, 0.18);\n')
+          replace_count(workspace, '  border-bottom: 1px solid #f0eae6;\n', '  border-bottom: 1px solid var(--admin-v2-divider-soft);\n', 2)
+          replace_once(workspace, '  background: #eeeae7;\n', '  background: var(--admin-v2-neutral-soft);\n')
+          replace_once(
+              workspace,
+              '''.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"] {\n  width: 38px;\n  height: 20px;\n  min-height: 20px;\n  flex: 0 0 auto;\n  accent-color: var(--admin-v2-brand);\n}\n''',
+              '''.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"] {\n  position: relative;\n  flex: 0 0 42px;\n  width: 42px;\n  min-width: 42px;\n  height: 24px;\n  min-height: 24px;\n  margin: 0;\n  padding: 0;\n  appearance: none;\n  -webkit-appearance: none;\n  border: 1px solid var(--admin-v2-border-strong);\n  border-radius: 999px;\n  background: var(--admin-v2-surface-soft);\n  box-shadow: none;\n  cursor: pointer;\n  transition: border-color 150ms ease, background-color 150ms ease;\n}\n\n.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]::after {\n  position: absolute;\n  top: 3px;\n  left: 3px;\n  width: 16px;\n  height: 16px;\n  border-radius: 50%;\n  background: var(--admin-v2-switch-knob);\n  box-shadow: 0 1px 4px rgba(34, 24, 21, 0.22);\n  content: "";\n  transition: transform 150ms ease;\n}\n\n.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:checked {\n  border-color: var(--admin-v2-brand);\n  background: var(--admin-v2-brand);\n}\n\n.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:checked::after {\n  transform: translateX(18px);\n}\n\n.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:focus-visible {\n  outline: 2px solid var(--admin-v2-brand);\n  outline-offset: 3px;\n}\n'''
+          )
+
+          bookings = 'src/admin-styles/30-bookings.css'
+          replace_once(bookings, '  color: #783e53;\n  background: #f4e4e9;\n', '  color: var(--admin-v2-danger);\n  background: var(--admin-v2-danger-soft);\n')
+          replace_once(bookings, '  border: 1px solid rgba(240, 215, 213, 0.86);\n', '  border: 1px solid color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border));\n')
+          replace_once(bookings, '  background: linear-gradient(135deg, #fff8fa, #fbf4ef);\n', '  background: linear-gradient(135deg, var(--admin-v2-danger-soft), var(--admin-v2-surface-soft));\n')
+          replace_once(bookings, ') { --booking-state-color: #8a621b; --booking-state-bg: #fbf2dc; --booking-state-border: #e4c98c; }\n', ') { --booking-state-color: var(--admin-v2-warning); --booking-state-bg: var(--admin-v2-warning-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-warning) 34%, var(--admin-v2-border)); }\n')
+          replace_once(bookings, ') { --booking-state-color: var(--admin-v2-info); --booking-state-bg: var(--admin-v2-info-soft); --booking-state-border: #c5d2dc; }\n', ') { --booking-state-color: var(--admin-v2-info); --booking-state-bg: var(--admin-v2-info-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-info) 34%, var(--admin-v2-border)); }\n')
+          replace_once(bookings, ') { --booking-state-color: var(--admin-v2-success); --booking-state-bg: var(--admin-v2-success-soft); --booking-state-border: #c2d9c9; }\n', ') { --booking-state-color: var(--admin-v2-success); --booking-state-bg: var(--admin-v2-success-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-success) 34%, var(--admin-v2-border)); }\n')
+          replace_once(bookings, ') { --booking-state-color: var(--admin-v2-brand); --booking-state-bg: var(--admin-v2-brand-soft); --booking-state-border: #d9c3bb; }\n', ') { --booking-state-color: var(--admin-v2-brand); --booking-state-bg: var(--admin-v2-brand-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-brand) 34%, var(--admin-v2-border)); }\n')
+          replace_once(bookings, ') { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: #e1bcc0; }\n', ') { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border)); }\n')
+          replace_once(bookings, ') { --booking-state-color: #9a4f68; --booking-state-bg: #f9eaf0; --booking-state-border: #e5c0cd; }\n', ') { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border)); }\n')
+          replace_count(bookings, '  background: #fffaf4;\n', '  background: var(--admin-v2-surface);\n', 2)
+
+          content = 'src/admin-styles/40-content-editor.css'
+          replace_count(content, '  background: rgba(255, 250, 244, .72);\n', '  background: var(--admin-v2-surface-soft);\n', 2)
+          replace_once(content, '  background: rgba(255, 255, 255, .58);\n', '  background: var(--admin-v2-surface);\n')
+
+          services = 'src/admin-styles/50-services.css'
+          replace_once(services, '  background: #fbfaf8;\n', '  background: var(--admin-v2-surface);\n')
+          replace_count(services, '  background: rgba(251, 250, 248, .96);\n', '  background: color-mix(in srgb, var(--admin-v2-surface) 96%, transparent);\n', 2)
+
+          coupons = 'src/admin-styles/60-coupons.css'
+          replace_once(coupons, '.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: #faf7f3; }\n', '.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }\n')
+          replace_once(coupons, '  background: var(--ui-off-white);\n', '  background: var(--admin-v2-surface-soft);\n')
+
+          availability = 'src/admin-styles/70-availability.css'
+          replace_once(availability, '  background: #fffdf8;\n', '  background: var(--admin-v2-surface);\n')
+          replace_once(availability, '  background: rgba(255, 250, 244, .78);\n', '  background: var(--admin-v2-surface);\n')
+          replace_count(availability, '  background: #f8f4f0;\n', '  background: var(--admin-v2-surface-soft);\n', 2)
+          replace_count(availability, 'background: #faf7f3;', 'background: var(--admin-v2-surface-soft);', 2)
+
+          communications = 'src/admin-styles/80-communications.css'
+          replace_once(communications, '.admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya:hover { background: #faf7f3; }\n', '.admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }\n')
+          replace_once(communications, '  background: rgba(255, 250, 244, .82);\n', '  background: var(--admin-v2-surface-soft);\n')
+
+          pwa = 'src/admin-styles/95-pwa.css'
+          replace_count(pwa, '  border: 1px solid rgba(79, 59, 53, 0.12);\n', '  border: 1px solid var(--admin-v2-border);\n', 2)
+          replace_count(pwa, '  background: rgba(255, 252, 249, 0.9);\n', '  background: color-mix(in srgb, var(--admin-v2-surface) 90%, transparent);\n', 2)
+          replace_once(pwa, '  background: rgba(235, 218, 211, 0.96);\n', '  background: var(--admin-v2-brand-soft);\n')
+          replace_count(pwa, '  border: 2px solid rgba(255, 252, 249, 0.96);\n', '  border: 2px solid var(--admin-v2-surface);\n', 2)
+          replace_once(pwa, '    background: rgba(240, 228, 223, 0.72);\n', '    background: color-mix(in srgb, var(--admin-v2-brand-soft) 72%, transparent);\n')
+          replace_once(pwa, '    background: rgba(240, 228, 223, 0.9);\n', '    background: color-mix(in srgb, var(--admin-v2-brand-soft) 90%, transparent);\n')
+
+          workspace_js = 'src/admin/05-admin-workspace-v2.js'
+          replace_once(
+              workspace_js,
+              "\n    document.addEventListener('DOMContentLoaded', () => {\n",
+              '''\n    const ADMIN_V2_THEME_STORAGE_KEY = 'lumi-admin-theme';\n\n    function adminV2TemaOlvasasa() {\n        const fallback = document.documentElement.dataset.adminTheme === 'dark' ? 'dark' : 'light';\n        try {\n            const saved = window.localStorage.getItem(ADMIN_V2_THEME_STORAGE_KEY);\n            if (saved === 'dark' || saved === 'light') return saved;\n        } catch (_) {\n            return fallback;\n        }\n        return fallback;\n    }\n\n    function adminV2TemaAlkalmazasa(theme, persist = false) {\n        const normalized = theme === 'dark' ? 'dark' : 'light';\n        document.documentElement.dataset.adminTheme = normalized;\n        const toggle = document.querySelector('[data-admin-v2-dark-mode]');\n        if (toggle) {\n            const dark = normalized === 'dark';\n            toggle.checked = dark;\n            toggle.setAttribute('aria-checked', String(dark));\n        }\n        if (persist) {\n            try {\n                window.localStorage.setItem(ADMIN_V2_THEME_STORAGE_KEY, normalized);\n            } catch (_) {\n                // The visual mode still works for this session when storage is unavailable.\n            }\n        }\n    }\n\n    document.addEventListener('DOMContentLoaded', () => {\n'''
+          )
+          replace_once(
+              workspace_js,
+              "        body.classList.add('admin-v2');\n        workspaceMain.id = workspaceMain.id || 'admin-v2-main';\n",
+              "        body.classList.add('admin-v2');\n        adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());\n        workspaceMain.id = workspaceMain.id || 'admin-v2-main';\n"
+          )
+          replace_once(
+              workspace_js,
+              '''        panel.innerHTML = `\n            <section class="admin-v2-settings-card">\n                <div class="admin-v2-settings-header">\n                    <h2>Weboldali elérhetőség</h2>\n''',
+              '''        panel.innerHTML = `\n            <section class="admin-v2-settings-card">\n                <div class="admin-v2-settings-header">\n                    <h2>Megjelenés</h2>\n                    <p>Az admin felület megjelenésének beállításai.</p>\n                </div>\n                <label class="admin-v2-setting-row" for="admin-sotet-mod">\n                    <span><strong>Sötét mód</strong><small>Sötét színvilág az admin minden nézetében.</small></span>\n                    <input type="checkbox" id="admin-sotet-mod" data-admin-v2-dark-mode role="switch" aria-label="Sötét mód">\n                </label>\n            </section>\n            <section class="admin-v2-settings-card">\n                <div class="admin-v2-settings-header">\n                    <h2>Weboldali elérhetőség</h2>\n'''
+          )
+          replace_once(
+              workspace_js,
+              '''        if (form) slot.append(form);\n        if (status) slot.append(status);\n    }\n''',
+              '''        if (form) slot.append(form);\n        if (status) slot.append(status);\n\n        const temaKapcsolo = panel.querySelector('[data-admin-v2-dark-mode]');\n        if (temaKapcsolo) {\n            adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());\n            temaKapcsolo.addEventListener('change', () => {\n                adminV2TemaAlkalmazasa(temaKapcsolo.checked ? 'dark' : 'light', true);\n            });\n        }\n    }\n'''
+          )
+
+          admin_index = 'admin/index.html'
+          replace_once(
+              admin_index,
+              '    <link rel="stylesheet" href="/admin-v2.css?v=2243ffbf7ba4">\n',
+              '''    <script>\n        (() => {\n            try {\n                const savedTheme = window.localStorage.getItem('lumi-admin-theme');\n                document.documentElement.dataset.adminTheme = savedTheme === 'dark' ? 'dark' : 'light';\n            } catch (_) {\n                document.documentElement.dataset.adminTheme = 'light';\n            }\n        })();\n    </script>\n    <link rel="stylesheet" href="/admin-v2.css?v=2243ffbf7ba4">\n'''
+          )
+
+          package = Path('package.json')
+          package_text = package.read_text(encoding='utf-8')
+          old_test = 'tests/admin-cms-image-workspace.spec.js"'
+          new_test = 'tests/admin-cms-image-workspace.spec.js tests/admin-dark-mode.spec.js"'
+          if package_text.count(old_test) != 1:
+              raise SystemExit('Could not extend test:admin with dark-mode regression')
+          package.write_text(package_text.replace(old_test, new_test, 1), encoding='utf-8')
+
+          Path('tests/admin-dark-mode.spec.js').write_text(r'''const { test, expect } = require('playwright/test');
+          const fs = require('fs');
+          const path = require('path');
+
+          const root = path.join(__dirname, '..');
+          const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
+
+          test('dark mode is a persisted admin setting applied before the stylesheet', async () => {
+            const index = read('admin/index.html');
+            const workspace = read('src/admin/05-admin-workspace-v2.js');
+            const foundation = read('src/admin-styles/00-foundation.css');
+            const components = read('src/admin-styles/10-components.css');
+            const shell = read('src/admin-styles/20-workspace.css');
+
+            expect(index).toContain("localStorage.getItem('lumi-admin-theme')");
+            expect(index.indexOf("localStorage.getItem('lumi-admin-theme')")).toBeLessThan(index.indexOf('admin-v2.css'));
+            expect(workspace).toContain("const ADMIN_V2_THEME_STORAGE_KEY = 'lumi-admin-theme'");
+            expect(workspace).toContain('data-admin-v2-dark-mode');
+            expect(workspace).toContain("window.localStorage.setItem(ADMIN_V2_THEME_STORAGE_KEY, normalized)");
+            expect(foundation).toContain('html[data-admin-theme="dark"]');
+            expect(components).toContain('html[data-admin-theme="dark"] .admin-body.admin-v2');
+            expect(shell).toContain('html[data-admin-theme="dark"] .admin-body.admin-v2');
+            expect([foundation, components, shell].join('\n')).not.toContain('!important');
+          });
+
+          test('dark theme changes the shared surfaces, controls, switch and PWA dock', async ({ page }) => {
+            const css = read('admin-v2.css');
+            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2 lumi-admin-standalone"><main id="admin-tartalom"><section class="admin-v2-settings-card"><label class="admin-v2-setting-row"><span><strong>Sötét mód</strong><small>Teszt</small></span><input type="checkbox" checked role="switch"></label></section><div class="admin-v2-segmented admin-segmented"><button class="admin-segmented-item is-active">Aktív</button></div><label class="admin-mezo"><input value="teszt"></label><div class="admin-v2-notification-panel"></div><div class="pwa-admin-toolbar-dock"></div></main></body></html>`);
+
+            const metrics = await page.evaluate(() => {
+              const body = getComputedStyle(document.body);
+              const card = getComputedStyle(document.querySelector('.admin-v2-settings-card'));
+              const input = getComputedStyle(document.querySelector('.admin-mezo input'));
+              const toggle = getComputedStyle(document.querySelector('.admin-v2-setting-row input'));
+              const dock = getComputedStyle(document.querySelector('.pwa-admin-toolbar-dock'));
+              const notification = getComputedStyle(document.querySelector('.admin-v2-notification-panel'));
+              return {
+                bodyBg: body.backgroundColor,
+                bodyColor: body.color,
+                cardBg: card.backgroundColor,
+                inputBg: input.backgroundColor,
+                inputColor: input.color,
+                colorScheme: getComputedStyle(document.documentElement).colorScheme,
+                toggleBg: toggle.backgroundColor,
+                dockBg: dock.backgroundColor,
+                notificationBg: notification.backgroundColor
+              };
+            });
+
+            expect(metrics.colorScheme).toBe('dark');
+            expect(metrics.bodyBg).not.toBe('rgb(247, 244, 241)');
+            expect(metrics.cardBg).not.toBe('rgb(255, 255, 255)');
+            expect(metrics.inputBg).not.toBe('rgb(255, 250, 244)');
+            expect(metrics.inputColor).not.toBe('rgb(43, 37, 33)');
+            expect(metrics.toggleBg).not.toBe('rgb(44, 39, 36)');
+            expect(metrics.dockBg).not.toBe('rgba(255, 252, 249, 0.9)');
+            expect(metrics.notificationBg).not.toBe('rgb(255, 255, 255)');
+          });
+          ''', encoding='utf-8')
+          PY
+
+          git diff --check
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Run affected admin tests
+        run: npm run test:admin
+
+      - name: Commit verified dark mode
+        shell: bash
+        run: |
+          rm .github/workflows/chatgpt-test-dark-mode.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add persistent admin dark mode"
+          git push origin HEAD:CHATGPT_TEST
