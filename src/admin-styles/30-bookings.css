@@ -2,8 +2,28 @@
    This is the only admin CSS owner for #admin-panel-foglalasok and .admin-foglalas-* rules. */
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
-  --booking-status-width: 154px;
-  --booking-action-size: var(--admin-ui-icon-button-size);
+  --booking-status-width: 142px;
+  --booking-calendar-header-bg: #f4efeb;
+--booking-calendar-cell-bg: #fff9f5;
+--booking-calendar-empty-bg: #f7f3ef;
+--booking-calendar-hover-bg: #faf6f2;
+--booking-calendar-selected-bg: #f8ecef;
+--booking-calendar-count-bg: #eee7e2;
+--booking-calendar-event-bg: #f3eeea;
+--booking-calendar-event-border: #a99488;
+--booking-calendar-event-text: var(--admin-ink);
+--booking-calendar-pending-border: #783e53;
+--booking-calendar-pending-bg: #f4e4e9;
+--booking-calendar-confirmed-border: #31566c;
+--booking-calendar-confirmed-bg: #e4eef4;
+--booking-calendar-done-border: #2f603f;
+--booking-calendar-done-bg: #e2efe5;
+--booking-calendar-cancelled-border: #2e2927;
+--booking-calendar-cancelled-bg: #2e2927;
+--booking-calendar-cancelled-customer-border: #62404c;
+--booking-calendar-cancelled-customer-bg: #62404c;
+--booking-calendar-day-row-bg: #fff9f5;
+--booking-calendar-day-status-bg: rgba(255, 249, 245, .66);
   --booking-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
   --booking-icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
   --booking-icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
@@ -11,6 +31,30 @@
   --booking-icon-list: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E");
   max-width: 980px;
   margin-inline: auto;
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
+  --booking-calendar-header-bg: #2a2421;
+  --booking-calendar-cell-bg: #211d1b;
+  --booking-calendar-empty-bg: #1c1917;
+  --booking-calendar-hover-bg: #2d2724;
+  --booking-calendar-selected-bg: #382729;
+  --booking-calendar-count-bg: #332b28;
+  --booking-calendar-event-bg: #2f2926;
+  --booking-calendar-event-border: #9a8177;
+  --booking-calendar-event-text: #eadeda;
+  --booking-calendar-pending-border: #c78397;
+  --booking-calendar-pending-bg: #3a252d;
+  --booking-calendar-confirmed-border: #79a7bd;
+  --booking-calendar-confirmed-bg: #22313a;
+  --booking-calendar-done-border: #7ba68a;
+  --booking-calendar-done-bg: #24362b;
+  --booking-calendar-cancelled-border: #7c716d;
+  --booking-calendar-cancelled-bg: #302a27;
+  --booking-calendar-cancelled-customer-border: #b07c8e;
+  --booking-calendar-cancelled-customer-bg: #3a2930;
+  --booking-calendar-day-row-bg: #24201e;
+  --booking-calendar-day-status-bg: #332c29;
 }
 
 /* Toolbar and search */
@@ -99,8 +143,8 @@
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-torles:hover {
-  color: #783e53;
-  background: #f4e4e9;
+  color: var(--admin-v2-danger);
+  background: var(--admin-v2-danger-soft);
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-torles[hidden] { display: none; }
@@ -121,10 +165,10 @@
   gap: 22px;
   margin: 14px 0 12px;
   padding: 16px 18px;
-  border: 1px solid rgba(240, 215, 213, 0.86);
+  border: 1px solid color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border));
   border-left: 4px solid var(--admin-rose-dark);
   border-radius: 10px;
-  background: linear-gradient(135deg, #fff8fa, #fbf4ef);
+  background: linear-gradient(135deg, var(--admin-v2-danger-soft), var(--admin-v2-surface-soft));
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-vendeg-lemondas-jelzes[hidden] { display: none; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-vendeg-lemondas-szoveg { min-width: 0; }
@@ -133,7 +177,7 @@
   margin-bottom: 4px;
   color: var(--admin-rose-dark);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -149,7 +193,7 @@
 }
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-vendeg-lemondas-darab {
   color: var(--admin-rose-dark);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-vendeg-lemondas-akciok {
   display: flex;
@@ -176,32 +220,9 @@
   display: inline-grid;
   width: 168px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: #f1ece8;
-  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb {
-  display: inline-flex;
-  height: 34px;
-  min-height: 34px;
-  padding: 0 12px;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 760;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
-}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb { gap: 7px; }
+
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
   width: 14px;
   height: 14px;
@@ -223,16 +244,11 @@
   -webkit-mask-image: var(--booking-icon-calendar);
   mask-image: var(--booking-icon-calendar);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb.aktiv {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
-}
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-osszefoglalo {
   margin: 0;
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   text-align: right;
 }
@@ -243,93 +259,7 @@
   min-height: 44px;
   gap: 8px 12px;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: var(--admin-v2-surface-soft);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button {
-  display: inline-flex;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 10px;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 740;
-  line-height: 1;
-  cursor: pointer;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:not(:disabled):hover {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button:disabled {
-  cursor: default;
-  opacity: .34;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-page {
-  display: grid;
-  min-width: 46px;
-  height: 36px;
-  padding: 0 8px;
-  place-items: center;
-  border-radius: 9px;
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
-  font-size: 11px;
-  font-weight: 820;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-jobb {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: auto;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--admin-v2-subtle);
-  font-size: 9px;
-  font-weight: 760;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-size .admin-oldalmeret-select {
-  width: 62px;
-  min-width: 62px;
-  height: 38px;
-  min-height: 38px;
-  padding-left: 10px;
-  border-color: var(--admin-v2-border);
-  border-radius: 11px;
-  background-color: var(--admin-v2-surface);
-  font-size: 11px;
-  font-weight: 780;
-}
+
 
 /* Canonical card list */
 .admin-body.admin-v2 #admin-panel-foglalasok #admin-foglalas-lista {
@@ -353,27 +283,27 @@
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-pending,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="pending"]:checked)
-) { --booking-state-color: #8a621b; --booking-state-bg: #fbf2dc; --booking-state-border: #e4c98c; }
+) { --booking-state-color: var(--admin-v2-warning); --booking-state-bg: var(--admin-v2-warning-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-warning) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-confirmed,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="confirmed"]:checked)
-) { --booking-state-color: var(--admin-v2-info); --booking-state-bg: var(--admin-v2-info-soft); --booking-state-border: #c5d2dc; }
+) { --booking-state-color: var(--admin-v2-info); --booking-state-bg: var(--admin-v2-info-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-info) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-done,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="done"]:checked)
-) { --booking-state-color: var(--admin-v2-success); --booking-state-bg: var(--admin-v2-success-soft); --booking-state-border: #c2d9c9; }
+) { --booking-state-color: var(--admin-v2-success); --booking-state-bg: var(--admin-v2-success-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-success) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-blocked,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="blocked"]:checked)
-) { --booking-state-color: var(--admin-v2-brand); --booking-state-bg: var(--admin-v2-brand-soft); --booking-state-border: #d9c3bb; }
+) { --booking-state-color: var(--admin-v2-brand); --booking-state-bg: var(--admin-v2-brand-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-brand) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-cancelled,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="cancelled"]:checked)
-) { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: #e1bcc0; }
+) { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok :is(
   .admin-foglalas-statusz-cancelled_by_customer,
   .admin-foglalas-kartya:has(.admin-db-statusz option[value="cancelled_by_customer"]:checked)
-) { --booking-state-color: #9a4f68; --booking-state-bg: #f9eaf0; --booking-state-border: #e5c0cd; }
+) { --booking-state-color: var(--admin-v2-danger); --booking-state-bg: var(--admin-v2-danger-soft); --booking-state-border: color-mix(in srgb, var(--admin-v2-danger) 34%, var(--admin-v2-border)); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya::before {
   position: absolute;
   top: 12px;
@@ -398,18 +328,15 @@
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: "identity controls";
   align-items: end;
-  min-height: 96px;
+  height: 78px;
+  min-height: 78px;
   gap: 0 12px;
-  padding: 8px 0;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.admin-foglalas-kartya-nyitott):not(.szerkeszt) .admin-db-kartya-fej {
-  height: 96px;
-  min-height: 96px;
+  padding: 6px 0;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-fosor { display: contents; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-idopont {
   position: absolute;
-  top: 8px;
+  top: 6px;
   right: 0;
   display: grid;
   min-width: 0;
@@ -424,7 +351,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum {
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum::after {
@@ -434,7 +361,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido {
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 680;
+  font-weight: 600;
   line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk {
@@ -457,7 +384,7 @@
   color: var(--admin-v2-subtle);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 9px;
-  font-weight: 680;
+  font-weight: 600;
   letter-spacing: .025em;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -470,7 +397,7 @@
   color: var(--admin-v2-ink);
   font-family: "Manrope", sans-serif;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -482,7 +409,7 @@
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -491,13 +418,13 @@
   grid-area: controls;
   align-self: end;
   display: grid;
-  grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);
-  grid-template-rows: var(--booking-action-size);
+  grid-template-columns: var(--booking-status-width) var(--admin-ui-icon-button-size) var(--admin-ui-icon-button-size);
+  grid-template-rows: var(--admin-ui-icon-button-size);
   align-items: center;
   justify-content: end;
   gap: 5px;
-  width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
-  min-width: calc(var(--booking-status-width) + (2 * var(--booking-action-size)) + 10px);
+  width: calc(var(--booking-status-width) + (2 * var(--admin-ui-icon-button-size)) + 10px);
+  min-width: calc(var(--booking-status-width) + (2 * var(--admin-ui-icon-button-size)) + 10px);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-db-statusz {
   grid-column: 1;
@@ -507,19 +434,12 @@
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > .admin-kezi-ido-naptar { grid-column: 2; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
-  grid-column: 2;
-  width: var(--booking-action-size);
-  height: var(--booking-action-size);
-  content: "";
-  visibility: hidden;
-}
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger { display: none; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
-  height: 32px;
-  min-height: 32px;
-  padding: 0 10px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 28px;
   appearance: none;
   -webkit-appearance: none;
   border-color: var(--booking-state-border);
@@ -528,48 +448,27 @@
   background-color: var(--booking-state-bg);
   background-repeat: no-repeat;
   -webkit-text-fill-color: currentColor;
-  font-size: 11px;
-  font-size-adjust: none;
-  font-weight: 780;
+  font-weight: 600;
   letter-spacing: -.01em;
-  line-height: 1;
+  line-height: 1.25;
   text-align: center;
   text-align-last: center;
   opacity: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-  padding-inline: 10px;
   background-image: none;
   cursor: default;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  padding: 0 28px 0 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
   background-position: right 9px center;
   background-size: 14px 14px;
   cursor: pointer;
 }
 
-/* Lucide action icons */
-.admin-body.admin-v2 #admin-panel-foglalasok :is([data-foglalas-szerkesztes], .admin-kezi-ido-naptar) {
-  position: relative;
-  display: inline-grid;
-  flex: 0 0 var(--booking-action-size);
-  width: var(--booking-action-size);
-  min-width: var(--booking-action-size);
-  height: var(--booking-action-size);
-  min-height: var(--booking-action-size);
-  padding: 0;
-  place-items: center;
-  overflow: visible;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: var(--admin-ui-icon-radius);
+/* Lucide action icons: shared button chrome comes from 10-components.css. */
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-icon-button {
   color: var(--booking-state-color);
-  background: var(--admin-v2-surface);
-  font-size: 0;
-  cursor: pointer;
-  touch-action: manipulation;
-  line-height: 1;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::before,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
@@ -601,12 +500,6 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::before {
   -webkit-mask-image: var(--booking-icon-calendar);
   mask-image: var(--booking-icon-calendar);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-szerkesztes]::after,
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-kezi-ido-naptar::after {
-  position: absolute;
-  inset: calc((var(--admin-ui-touch-target) - var(--booking-action-size)) / -2);
-  content: "";
 }
 
 /* Details and edit state */
@@ -640,7 +533,7 @@
   margin: 0;
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .08em;
   line-height: 1.15;
   text-transform: uppercase;
@@ -649,14 +542,14 @@
   min-width: 0;
   color: var(--admin-v2-ink);
   font-size: 11px;
-  font-weight: 670;
+  font-weight: 600;
   line-height: 1.28;
   overflow-wrap: anywhere;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor {
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
-  align-items: start;
+  align-items: baseline;
   gap: 10px;
   margin: 7px 0 0;
   padding: 7px 0 0;
@@ -669,7 +562,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-reszlet-sor > strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   line-height: 1.25;
   text-transform: uppercase;
@@ -694,7 +587,7 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-lemondasi-megjegyzes strong {
   color: var(--admin-v2-subtle);
   font-size: 8.5px;
-  font-weight: 820;
+  font-weight: 600;
   letter-spacing: .06em;
   text-transform: uppercase;
 }
@@ -703,8 +596,8 @@
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya-nyitott,
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr) minmax(0, .65fr);
+  gap: 6px;
   margin-top: 8px;
   padding: 9px 0 0;
   border: 0;
@@ -721,75 +614,11 @@
   overflow: hidden;
   color: var(--admin-v2-muted);
   font-size: 9px;
-  font-weight: 760;
+  font-weight: 600;
   line-height: 1.15;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo:has([data-idopont-mezo="date"]),
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
   grid-column: 1 / -1;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"],
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
-  position: relative;
-  display: block;
-  box-sizing: border-box;
-  inline-size: 100%;
-  width: 100%;
-  max-inline-size: 100%;
-  max-width: 100%;
-  min-inline-size: 0;
-  min-width: 0;
-  height: 42px;
-  min-height: 42px;
-  padding: 0 32px 0 10px;
-  overflow: hidden;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  color: var(--admin-v2-ink);
-  background-color: var(--admin-v2-surface);
-  background-position: right 10px center;
-  background-repeat: no-repeat;
-  background-size: 15px 15px;
-  box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 720;
-  line-height: 1;
-  text-align: left;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-date-and-time-value {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  text-align: left;
-  white-space: nowrap;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit,
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-datetime-edit-fields-wrapper {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="date"] {
-  background-image: var(--booking-icon-calendar);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto input[type="time"] {
-  background-image: var(--booking-icon-clock);
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"]):focus {
-  border-color: color-mix(in srgb, var(--admin-v2-brand) 58%, var(--admin-v2-border));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-v2-brand-soft) 78%, transparent);
-  outline: 0;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto :is(input[type="date"], input[type="time"])::-webkit-calendar-picker-indicator {
-  width: 24px;
-  height: 100%;
-  margin: 0 -4px 0 0;
-  opacity: 0;
-  cursor: pointer;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo textarea {
   height: 56px;
@@ -800,8 +629,12 @@
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok {
   margin-top: 7px;
-  padding-top: 7px;
+  padding: 7px 0 12px;
+  align-items: center;
   border-top: 1px solid rgba(73, 58, 52, .09);
+}
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-akciok [data-foglalas-torles] {
+  padding-inline: 10px;
 }
 
 /* Inspiration controls and modal */
@@ -823,7 +656,7 @@
   background: rgba(185, 133, 143, .08);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-button-compact);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 .admin-inspiracio-modal {
@@ -846,7 +679,7 @@
   overflow: hidden;
   border: 1px solid rgba(185, 133, 143, .28);
   border-radius: 26px;
-  background: #fffaf4;
+  background: var(--admin-v2-surface);
   box-shadow: 0 22px 60px rgba(0, 0, 0, .24);
 }
 .admin-inspiracio-modal-fejlec {
@@ -857,7 +690,7 @@
   gap: 16px;
   padding: clamp(18px, 3vw, 28px);
   border-bottom: 1px solid rgba(185, 133, 143, .16);
-  background: #fffaf4;
+  background: var(--admin-v2-surface);
 }
 .admin-inspiracio-modal-doboz h3 {
   margin: 0;
@@ -900,7 +733,7 @@
   margin-top: 7px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 body.admin-modal-nyitva { overflow: hidden; }
@@ -931,14 +764,14 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-hetfej {
   border: 1px solid var(--admin-line);
   border-bottom: 0;
-  background: #f4efeb;
+  background: var(--booking-calendar-header-bg);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-hetfej span {
   padding: 8px 4px;
   border-left: 1px solid var(--admin-line);
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
@@ -953,9 +786,9 @@ body.admin-modal-nyitva { overflow: hidden; }
   min-height: 112px;
   border-bottom: 1px solid var(--admin-line);
   border-left: 1px solid var(--admin-line);
-  background: var(--ui-off-white);
+  background: var(--booking-calendar-cell-bg);
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-ures { background: #f7f3ef; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-ures { background: var(--booking-calendar-empty-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap {
   position: relative;
   display: grid;
@@ -970,15 +803,15 @@ body.admin-modal-nyitva { overflow: hidden; }
   text-align: left;
   cursor: pointer;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap:hover { background: #faf6f2; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap:hover { background: var(--booking-calendar-hover-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-nap.kijelolt {
-  background: #f8ecef;
+  background: var(--booking-calendar-selected-bg);
   box-shadow: inset 0 0 0 2px var(--admin-rose-dark);
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-napszam {
   width: 24px;
   font-size: var(--lumi-font-caption);
-  font-weight: 850;
+  font-weight: 600;
   line-height: 24px;
   text-align: center;
 }
@@ -995,9 +828,9 @@ body.admin-modal-nyitva { overflow: hidden; }
   padding: 2px 5px;
   border-radius: 999px;
   color: var(--admin-muted);
-  background: #eee7e2;
+  background: var(--booking-calendar-count-bg);
   font-size: var(--lumi-font-calendar);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 16px;
   text-align: center;
 }
@@ -1012,10 +845,10 @@ body.admin-modal-nyitva { overflow: hidden; }
   min-height: 18px;
   align-items: center;
   padding: 2px 5px;
-  border-left: 3px solid #a99488;
+  border-left: 3px solid var(--booking-calendar-event-border);
   border-radius: 3px;
-  color: var(--admin-ink);
-  background: #f3eeea;
+  color: var(--booking-calendar-event-text);
+  background: var(--booking-calendar-event-bg);
   font-size: var(--lumi-font-calendar);
   line-height: 1;
 }
@@ -1026,18 +859,18 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-esemeny time {
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: #783e53; background: #f4e4e9; }
-.admin-body.admin-v2 #admin-panel-foglalasok :is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: #31566c; background: #e4eef4; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-done { border-left-color: #2f603f; background: #e2efe5; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: #2e2927; background: #2e2927; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: #62404c; background: #62404c; }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-pending { border-left-color: var(--booking-calendar-pending-border); background: var(--booking-calendar-pending-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok :is(.admin-foglalas-naptar-statusz-confirmed, .admin-foglalas-naptar-statusz-blocked) { border-left-color: var(--booking-calendar-confirmed-border); background: var(--booking-calendar-confirmed-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-done { border-left-color: var(--booking-calendar-done-border); background: var(--booking-calendar-done-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-border); background: var(--booking-calendar-cancelled-bg); }
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-statusz-cancelled_by_customer { color: var(--ui-off-white); border-left-color: var(--booking-calendar-cancelled-customer-border); background: var(--booking-calendar-cancelled-customer-bg); }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-naptar-tovabbi {
   color: var(--admin-muted);
   font-size: var(--lumi-font-calendar);
-  font-weight: 750;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-panel {
   margin-top: 14px;
@@ -1054,14 +887,14 @@ body.admin-modal-nyitva { overflow: hidden; }
   margin: 0;
   font-family: "Cormorant Garamond", serif;
   font-size: 24px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.1;
   text-transform: capitalize;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-fej > span {
   color: var(--admin-muted);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-lista { display: grid; gap: 5px; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-sor {
@@ -1076,7 +909,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   border-left-width: 4px;
   border-radius: 7px;
   color: var(--admin-ink);
-  background: var(--ui-off-white);
+  background: var(--booking-calendar-day-row-bg);
   text-align: left;
   cursor: pointer;
 }
@@ -1085,7 +918,7 @@ body.admin-modal-nyitva { overflow: hidden; }
   gap: 3px;
   font-size: var(--lumi-font-label);
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-adat {
   display: grid;
@@ -1097,22 +930,21 @@ body.admin-modal-nyitva { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-napi-statusz {
   padding: 5px 8px;
   border-radius: 999px;
-  background: rgba(255, 249, 245, .66);
+  background: var(--booking-calendar-day-status-bg);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 154px; }
+  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 142px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya { padding-right: 2px; padding-left: 8px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { min-height: 96px; gap: 4px 10px; padding: 8px 0; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 17px; line-height: 1.2; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { height: 78px; min-height: 78px; gap: 4px 10px; padding: 8px 0; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 14px; line-height: 1.2; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas { font-size: 10px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum { font-size: 11px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido { font-size: 10px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled { font-size: 12px; font-size-adjust: none; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz { font-size: 11px; font-size-adjust: none; }
+  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz { font-size: 11px; font-size-adjust: none; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid { gap: 8px 14px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid :is(span, a) { font-size: 10.5px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid strong { font-size: 8.5px; }
@@ -1124,23 +956,40 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-inspiracio-modal-racs { grid-template-columns: 1fr; }
 }
 
-@container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button span { display: none; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-pagination-button { width: 36px; padding: 0; }
-
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
-    align-items: center;
-    flex-flow: row wrap;
-    gap: 8px;
-    padding-block: 8px 10px;
-  }
+@media (max-width: 480px) {
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo > label,
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo > span { display: none; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-kereses-mezo {
+      grid-template-rows: var(--admin-ui-field-height);
+      gap: 0;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo {
+      grid-template-rows: var(--admin-ui-choice-height);
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-attekintes {
+      align-items: center;
+      flex-flow: row wrap;
+      min-height: 40px;
+      gap: 6px;
+      padding-block: 5px 6px;
+    }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezetvalto { width: 138px; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb { gap: 5px; }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nezet-gomb::before {
+      width: 12px;
+      height: 12px;
+      flex-basis: 12px;
+      -webkit-mask-size: 12px 12px;
+      mask-size: 12px 12px;
+    }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-osszefoglalo { flex: 1 1 150px; text-align: right; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
-    grid-template-columns: minmax(0, 1fr) 112px;
-    grid-template-areas: "search status";
-    gap: 9px;
-    padding-bottom: 12px;
-  }
+    .admin-body.admin-v2 #admin-panel-foglalasok .admin-panel-akciok-keresessel {
+      grid-template-columns: minmax(0, 1fr) 112px;
+      grid-template-areas: "search status";
+      gap: 9px;
+      margin-bottom: 5px;
+      padding-bottom: 8px;
+    }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-statusz-szuro-mezo { width: 112px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-lapozo-jobb .admin-oldalmeret > span {
     display: none;

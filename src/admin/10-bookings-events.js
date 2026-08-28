@@ -457,16 +457,10 @@
 
     function foglalasLapozoRenderelese() {
         const elemek = adminElemek();
-        const frissitesGomb = elemek.foglalasFrissites;
         const htmlTartalom = foglalasLapozoHtml();
         [elemek.foglalasLapozoFelso, elemek.foglalasLapozo].filter(Boolean).forEach(lapozo => {
             lapozo.innerHTML = htmlTartalom;
         });
-
-        const felsoJobbOldal = elemek.foglalasLapozoFelso?.querySelector('.admin-lapozo-jobb');
-        if (felsoJobbOldal && frissitesGomb) {
-            felsoJobbOldal.append(frissitesGomb);
-        }
     }
 
     function foglalasLapozoKattintas(event) {
@@ -596,14 +590,25 @@
     function esemenynaploLapozoHtml() {
         const osszes = esemenynaploOsszesOldal();
         const vanElem = allapot.esemenynaploElemek.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0';
         return `
-            <div class="admin-oldalmeret" role="group" aria-label="Esem\u00e9nynapl\u00f3 oldalank\u00e9nt">
-                <span>Oldalank\u00e9nt</span>
-                ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+            <div class="admin-lapozo-nav" role="group" aria-label="Eseménynapló lapozása">
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
             </div>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="elozo" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
-            <span>${vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0'}</span>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="kovetkezo" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+            <div class="admin-lapozo-jobb">
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+                </label>
+            </div>
         `;
     }
 
@@ -709,7 +714,7 @@
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
                     <button type="button" class="admin-booking-details-trigger" data-foglalas-reszletek aria-expanded="false">Részletek</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             ${lemondasiMegjegyzes ? `
@@ -949,9 +954,9 @@
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <div class="admin-foglalas-nev-blokk">
-                        <span class="admin-kartya-tipus">Kézzel felvett idő</span>
+                        <p class="admin-kartya-tipus admin-foglalas-azonosito" aria-label="Kézzel felvett idő"><code>Kézzel felvett idő</code></p>
                         <h3>${html(megjegyzes)}</h3>
-                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true"></p>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p>
                     </div>
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
@@ -961,8 +966,8 @@
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
                     </select>
-                    <button type="button" class="admin-booking-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             <div class="admin-idopont-szerkeszto">

@@ -35,7 +35,7 @@
   margin-bottom: 8px;
   color: var(--barna);
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
   text-transform: uppercase;
 }
@@ -44,10 +44,10 @@
   border: 1px solid rgba(185, 133, 143, .18);
   border-radius: 12px;
   color: var(--tinta);
-  background: #fffdf8;
+  background: var(--admin-v2-surface);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   user-select: none;
 }
@@ -74,13 +74,15 @@
   padding: 9px 10px;
   border: 1px solid rgba(185, 133, 143, .16);
   border-radius: 12px;
-  background: rgba(255, 250, 244, .78);
+  background: var(--admin-v2-surface);
 }
 .admin-body.admin-v2 .admin-naptar-datum {
+  min-width: 0;
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
+  white-space: nowrap;
 }
 .admin-body.admin-v2 .admin-kozos-idosav-sor {
   display: grid;
@@ -89,6 +91,12 @@
   justify-content: start;
   gap: 10px;
 }
+.admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+}
+.admin-body.admin-v2 #admin-naptar-kozos-lepes { text-align: center; }
 .admin-body.admin-v2 .admin-idosav-grid {
   display: grid;
   grid-template-columns: minmax(132px, 1.2fr) minmax(82px, .7fr) minmax(82px, .7fr) auto;
@@ -110,7 +118,7 @@
   gap: 8px 18px;
   margin: 0 0 12px;
   padding: 14px;
-  background: #f8f4f0;
+  background: var(--admin-v2-surface-soft);
 }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej {
   grid-area: month;
@@ -164,12 +172,15 @@
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej {
   grid-area: selected-title;
   align-items: center;
+  justify-content: space-between;
   margin: 0;
   padding-top: 3px;
 }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lista-fej h3 {
   margin: 0;
-  font-size: 22px;
+  color: var(--tinta);
+  font-size: 18px;
+  font-weight: 600;
 }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-kijelolt-lista {
   grid-area: selected-list;
@@ -201,7 +212,7 @@
   background: transparent;
   box-shadow: none;
 }
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
   grid-template-columns: minmax(160px, 1.2fr) minmax(100px, .65fr) minmax(100px, .65fr) 36px;
   align-items: center;
@@ -220,7 +231,7 @@
   margin: 0 0 12px;
   padding: 12px;
   border-radius: 12px;
-  background: #f8f4f0;
+  background: var(--admin-v2-surface-soft);
 }
 .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor {
   display: grid;
@@ -248,18 +259,12 @@
   background: transparent;
   box-shadow: none;
 }
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
 }
-.admin-body.admin-v2 #admin-tiltas-lista .admin-kartya-tipus { margin-bottom: 3px; }
-.admin-body.admin-v2 #admin-tiltas-lista h3 { font-size: 21px; }
-.admin-body.admin-v2 #admin-tiltas-lista p {
-  margin-top: 3px;
-  color: var(--admin-muted);
-  font-size: var(--lumi-font-body-small);
-}
+/* Blocked-time card typography is owned by the shared .admin-db-kartya primitives. */
 
 @container admin-workspace (max-width: 700px) {
   .admin-body.admin-v2 #admin-idosav-naptar {
@@ -278,8 +283,9 @@
     padding-top: 11px;
     border-top: 1px solid var(--admin-line);
   }
-  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor { grid-template-columns: 1fr 1fr; }
-  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo:first-child,
+  .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor {
+    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, .75fr));
+  }
   .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor > .admin-mezo-szeles { grid-column: 1 / -1; }
 }
 
@@ -289,6 +295,7 @@
   .admin-body.admin-v2 #admin-idosav-naptar { padding: 11px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej { grid-template-columns: 1fr; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-lepes-cimke { font-size: 10px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor .admin-hozzaadas {
     grid-column: 1 / -1;
     width: 100%;
@@ -299,13 +306,22 @@
   }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-kijelolt-lista { max-height: 300px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor {
-    grid-template-columns: minmax(0, 1fr) 34px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
       "date delete"
       "start end";
     align-items: end;
     gap: 7px 8px;
     padding: 8px;
+  }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-mezo {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-mezo > input {
+    width: 100%;
+    min-width: 0;
   }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor > .admin-naptar-datum {
     grid-area: date;
@@ -318,10 +334,6 @@
     grid-area: delete;
     align-self: center;
     justify-self: end;
-  }
-  .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-sor input[type="time"] {
-    width: 100%;
-    min-width: 0;
   }
   .admin-body.admin-v2 #admin-panel-idosavok .admin-idosav-lista-akciok {
     display: grid;

@@ -25,6 +25,9 @@
         esemenynaploOldalMeret: 10,
         esemenynaploElemek: [],
         naptarKijelolesek: new Map(),
+        tiltasOldal: 1,
+        tiltasOldalMeret: 10,
+        tiltasElemek: [],
         tiltasStatuszTamogatott: true
     };
 
@@ -111,6 +114,8 @@
         elemek.idosavOsszesTorles?.addEventListener('click', idosavokOsszesTorlese);
         elemek.idosavLepesOsszes?.addEventListener('click', idosavLepesOsszesAlkalmazasa);
         elemek.tiltasLista?.addEventListener('click', tiltasListaKattintas);
+        elemek.tiltasLapozo?.addEventListener('click', tiltasLapozoKattintas);
+        elemek.tiltasLapozo?.addEventListener('change', tiltasLapozoKattintas);
 
         allapot.kliens.auth.onAuthStateChange((_event, session) => {
             sessionAllapot(session, elemek);
@@ -186,6 +191,7 @@
             tiltasKezdes: document.getElementById('admin-tiltas-kezdes'),
             tiltasVege: document.getElementById('admin-tiltas-vege'),
             tiltasOk: document.getElementById('admin-tiltas-ok'),
+            tiltasLapozo: document.getElementById('admin-tiltas-lapozo'),
             tiltasLista: document.getElementById('admin-tiltas-lista'),
             telefonLathato: document.getElementById('admin-telefon-lathato')
         };

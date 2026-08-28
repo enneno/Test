@@ -217,7 +217,6 @@
     }
 
     async function tiltasokBetoltese() {
-        const elemek = adminElemek();
         let { data, error } = await allapot.kliens
             .from('blocked_times')
             .select('id,starts_at,ends_at,reason,status')
@@ -240,17 +239,95 @@
             return;
         }
 
+        allapot.tiltasElemek = (data || []).map(tiltas => ({
+            ...tiltas,
+            status: tiltasStatuszErtek(tiltas.status)
+        }));
+
+        if (allapot.tiltasOldal > tiltasOsszesOldal()) {
+            allapot.tiltasOldal = tiltasOsszesOldal();
+        }
+
+        tiltasListaRenderelese();
+    }
+
+    function tiltasOsszesOldal() {
+        if (allapot.tiltasOldalMeret === 'all') return 1;
+        return Math.max(1, Math.ceil(allapot.tiltasElemek.length / listaOldalMeret(allapot.tiltasOldalMeret, allapot.tiltasElemek.length)));
+    }
+
+    function tiltasLapozoHtml() {
+        const osszes = tiltasOsszesOldal();
+        const vanElem = allapot.tiltasElemek.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.tiltasOldal} / ${osszes}` : '0 / 0';
+        return `
+            <div class="admin-lapozo-nav" role="group" aria-label="Kieső időszakok lapozása">
+                <button type="button" class="admin-pagination-button" data-tiltas-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.tiltasOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-tiltas-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.tiltasOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+            </div>
+            <div class="admin-lapozo-jobb">
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    ${oldalmeretGombok(allapot.tiltasOldalMeret, 'tiltas-oldalmeret')}
+                </label>
+            </div>
+        `;
+    }
+
+    function tiltasLapozoRenderelese() {
+        const elemek = adminElemek();
+        if (elemek.tiltasLapozo) {
+            elemek.tiltasLapozo.innerHTML = tiltasLapozoHtml();
+        }
+    }
+
+    function tiltasListaRenderelese() {
+        const elemek = adminElemek();
+        if (!elemek.tiltasLista) return;
+
+        const meret = listaOldalMeret(allapot.tiltasOldalMeret, allapot.tiltasElemek.length);
+        const kezd = allapot.tiltasOldalMeret === 'all' ? 0 : (allapot.tiltasOldal - 1) * meret;
+        const oldalElemek = allapot.tiltasOldalMeret === 'all'
+            ? allapot.tiltasElemek
+            : allapot.tiltasElemek.slice(kezd, kezd + meret);
+
         elemek.tiltasLista.innerHTML = '';
 
-        if (!data.length) {
+        if (!oldalElemek.length) {
             elemek.tiltasLista.innerHTML = '<p class="admin-ures">Nincs külön felvett foglalt idő.</p>';
+            tiltasLapozoRenderelese();
             return;
         }
 
-        data.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya({
-            ...tiltas,
-            status: tiltasStatuszErtek(tiltas.status)
-        })));
+        oldalElemek.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya(tiltas)));
+        tiltasLapozoRenderelese();
+    }
+
+    function tiltasLapozoKattintas(event) {
+        const meretValaszto = event.target.closest('[data-tiltas-oldalmeret]');
+        if (meretValaszto) {
+            if (event.type === 'click' && meretValaszto.tagName === 'SELECT') return;
+            allapot.tiltasOldalMeret = meretValaszto.value || 10;
+            allapot.tiltasOldal = 1;
+            tiltasListaRenderelese();
+            return;
+        }
+
+        const gomb = event.target.closest('[data-tiltas-oldal]');
+        if (!gomb || gomb.disabled) return;
+
+        const osszes = tiltasOsszesOldal();
+        allapot.tiltasOldal = gomb.dataset.tiltasOldal === 'elozo'
+            ? Math.max(1, allapot.tiltasOldal - 1)
+            : Math.min(osszes, allapot.tiltasOldal + 1);
+        tiltasListaRenderelese();
     }
 
     function tiltasKartya(tiltas) {
@@ -323,6 +400,7 @@
         elemek.tiltasForm.reset();
         idosavAlapertelmezes(adminElemek());
         onlineStatusz('A kézi foglalt idő mentve. A státuszát a Foglalások nézetben módosíthatod.');
+        allapot.tiltasOldal = 1;
         tiltasokBetoltese();
         foglalasokBetoltese();
     }

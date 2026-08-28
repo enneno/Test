@@ -17,6 +17,10 @@
   --admin-ui-control-line-height: 1.2;
   --admin-ui-action-font-size: 11px;
   --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-input-font-size: 18px;
+  --admin-ui-select-font-size: 11px;
+  --admin-ui-page-size-font-size: 11px;
+  --admin-ui-picker-font-size: 20px;
   --admin-ui-ios-field-optical-ratio: 0.32;
   --admin-ui-ios-choice-optical-ratio: 0.32;
 }
@@ -28,7 +32,7 @@
   gap: 5px;
   color: var(--barna);
   font-size: var(--lumi-font-label);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .admin-body .admin-mezo span {
@@ -53,7 +57,8 @@
 
 .admin-body .admin-mezo input[type="checkbox"],
 .admin-body .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"] {
+.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"],
+.admin-body .cms-gallery-home-choice input[type="checkbox"] {
   flex: 0 0 18px;
   width: 18px;
   height: 18px;
@@ -147,7 +152,7 @@
   margin: 0 0 4px;
   color: var(--admin-v2-subtle);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
@@ -159,9 +164,9 @@
 .admin-body .admin-kis-gomb {
   border: 1px solid rgba(185, 133, 143, 0.24);
   color: var(--tinta);
-  background: rgba(255, 250, 244, 0.8);
+  background: color-mix(in srgb, var(--admin-v2-surface) 80%, transparent);
   font-family: var(--lumi-button-font);
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
   cursor: pointer;
   touch-action: manipulation;
@@ -198,6 +203,106 @@
   opacity: 0.45;
 }
 
+/* Shared segmented navigation: visual treatment belongs here; feature files own only layout. */
+.admin-body.admin-v2 .admin-segmented {
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
+}
+
+.admin-body.admin-v2 .admin-segmented-item {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-body.admin-v2 :is(
+  .admin-segmented-item.aktiv,
+  .admin-segmented-item.is-active,
+  .admin-segmented-item[aria-selected="true"]
+) {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
+}
+
+/* Shared compact icon button. Visual size stays compact; the pseudo element keeps a 44px touch target. */
+.admin-body.admin-v2 .admin-control-icon-button {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-icon-button-size);
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
+  place-items: center;
+  overflow: visible;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: var(--admin-ui-icon-radius);
+  color: var(--admin-v2-brand);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button::after {
+  position: absolute;
+  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
+  content: "";
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:not(:disabled):hover {
+  border-color: rgba(163, 93, 117, .34);
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: 0 3px 10px rgba(67, 42, 35, .075);
+  transform: translateY(-1px);
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:focus-visible {
+  outline: 2px solid var(--admin-v2-brand);
+  outline-offset: 2px;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:disabled {
+  cursor: default;
+  opacity: .34;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 /* Fields: visual treatment and geometry are centralized. */
 .admin-body :is(
   .admin-mezo input,
@@ -217,7 +322,7 @@
   color: var(--tinta);
   background-color: var(--lumi-control-bg);
   font-family: inherit;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  box-shadow: var(--lumi-control-inset);
 }
 
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
@@ -262,6 +367,140 @@
   line-height: var(--admin-ui-control-line-height);
 }
 
+/* Normal text-like inputs: one font-size owner for the entire admin.
+   Native date/time/month controls keep their dedicated picker rule below. */
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]), textarea) {
+  font-family: inherit;
+  font-size: var(--admin-ui-input-font-size);
+  font-weight: 400;
+  line-height: var(--admin-ui-control-line-height);
+}
+
+
+/* Shared native date/time/month controls: one visual owner for the entire admin. */
+.admin-body.admin-v2 {
+  --admin-ui-picker-icon-size: 13px;
+  --admin-ui-picker-icon-gap: 4px;
+  --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));
+  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 {
+  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  width: 100%;
+  max-inline-size: 100%;
+  max-width: 100%;
+  min-inline-size: 0;
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  color: var(--admin-v2-ink);
+  background-color: var(--admin-v2-surface);
+  background-position: right var(--admin-ui-picker-icon-gap) center;
+  background-repeat: no-repeat;
+  background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);
+  box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="month"]) {
+  background-image: var(--admin-ui-date-icon);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input[type="time"] {
+  background-image: var(--admin-ui-time-icon);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-date-and-time-value {
+  box-sizing: border-box;
+  width: calc(100% - var(--admin-ui-picker-icon-zone));
+  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  font-size: 20px;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit,
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit-fields-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="month"]::-webkit-datetime-edit-year-field,
+  input[type="month"]::-webkit-datetime-edit-month-field,
+  input[type="month"]::-webkit-datetime-edit-text,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field,
+  input[type="time"]::-webkit-datetime-edit-ampm-field,
+  input[type="time"]::-webkit-datetime-edit-text
+) {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]):focus {
+  border-color: color-mix(in srgb, var(--admin-v2-brand) 58%, var(--admin-v2-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-v2-brand-soft) 78%, transparent);
+  outline: 0;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--admin-ui-picker-icon-zone);
+  max-width: var(--admin-ui-picker-icon-zone);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
   width: 100%;
   min-width: 0;
@@ -279,6 +518,8 @@
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
 .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
+  font-size: 11px;
+  font-size-adjust: none;
   height: var(--admin-ui-choice-height);
   min-height: var(--admin-ui-choice-height);
   padding-top: 0;
@@ -295,10 +536,6 @@
   .admin-hozzaadas,
   .admin-kis-gomb,
   .admin-tab,
-  .admin-v2-nav-item,
-  .admin-v2-public-link,
-  .admin-v2-profile,
-  .admin-v2-logout,
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
@@ -318,16 +555,17 @@
   overflow: visible;
 }
 
+/* Hidden state belongs to the shared control primitive, not to individual pages. */
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
+  display: none;
+}
+
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
   .gomb,
   .admin-gomb,
   .admin-hozzaadas,
   .admin-kis-gomb,
   .admin-tab,
-  .admin-v2-nav-item,
-  .admin-v2-public-link,
-  .admin-v2-profile,
-  .admin-v2-logout,
   .admin-v2-button,
   .admin-v2-subnav button,
   .admin-v2-task-item > button,
@@ -412,7 +650,8 @@
   inset: 0;
 }
 
-/* Pagination is shared by bookings and event log. */
+
+/* Shared pagination: bookings, event log and gallery all use this visual primitive. */
 .admin-body .admin-lapozo {
   position: relative;
   z-index: 1;
@@ -424,7 +663,7 @@
   margin-top: 18px;
   padding-bottom: 0;
   color: var(--barna);
-  font-weight: 800;
+  font-weight: 600;
   overflow: visible;
 }
 
@@ -433,43 +672,133 @@
   margin-bottom: 12px;
 }
 
-.admin-body .admin-oldalmeret {
+.admin-body .admin-lapozo-nav {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--barna);
-  font-size: var(--lumi-font-label);
-  font-weight: 800;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body .admin-pagination-button {
+  display: inline-flex;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-body .admin-pagination-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-body .admin-pagination-button:not(:disabled):hover {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
+}
+
+.admin-body .admin-pagination-button:disabled {
+  cursor: default;
+  opacity: .34;
+}
+
+.admin-body .admin-pagination-page {
+  display: grid;
+  min-width: 46px;
+  height: 36px;
+  padding: 0 8px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.admin-body .admin-oldalmeret-select {
-  width: 64px;
-  min-width: 64px;
-  min-height: 34px;
+.admin-body .admin-lapozo-jobb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.admin-body .admin-oldalmeret,
+.admin-body .admin-pagination-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-body .admin-oldalmeret-select,
+.admin-body .admin-pagination-size .admin-oldalmeret-select {
+  width: 62px;
+  min-width: 62px;
+  height: 38px;
+  min-height: 38px;
   padding: 0 24px 0 10px;
+  border-color: var(--admin-v2-border);
+  border-radius: var(--admin-ui-control-radius);
+  background-color: var(--admin-v2-surface);
   background-position: right 8px center;
   background-size: 13px 13px;
-  font-size: var(--lumi-font-control);
-  font-weight: 850;
+  font-weight: 600;
 }
 
-.admin-body .admin-lapozo > span {
-  flex: 0 0 auto;
-  min-width: 36px;
-  font-size: var(--lumi-font-label);
-  text-align: center;
-}
-
-.admin-body .admin-lapozo .admin-kis-gomb[data-foglalas-oldal],
-.admin-body .admin-lapozo .admin-kis-gomb[data-esemenynaplo-oldal] {
-  flex: 0 0 auto;
-  width: auto;
-  min-width: 68px;
-}
-
-.admin-body .admin-lapozo .admin-oldalmeret {
-  margin-left: auto;
+@media (max-width: 480px) {
+  .admin-body .admin-pagination-button span { display: none; }
+  .admin-body .admin-pagination-button {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+  }
+  .admin-body .admin-pagination-page {
+    min-width: 40px;
+    height: 30px;
+    padding-inline: 6px;
+  }
+  .admin-body .admin-lapozo-nav { padding: 2px; }
+  .admin-body .admin-lapozo {
+    min-height: 36px;
+    gap: 6px 8px;
+  }
+  .admin-body .admin-lapozo-felso { margin: 6px 0; }
+  .admin-body .admin-pagination-size .admin-oldalmeret-select,
+  .admin-body .admin-oldalmeret .admin-oldalmeret-select {
+    width: 96px;
+    min-width: 96px;
+    height: 34px;
+    min-height: 34px;
+  }
 }
 
 /* Reusable compact editable rows. */
@@ -518,7 +847,7 @@
   color: #56715e;
   background: #e8f0e9;
   font-size: var(--lumi-font-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.05em;
   white-space: nowrap;
   text-transform: uppercase;

@@ -12,7 +12,17 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/kepek/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/kepek/favicon-192.png">
     <link rel="apple-touch-icon" href="/kepek/apple-touch-icon.png">
-    <link rel="stylesheet" href="/admin-v2.css?v=fb83a3685ffb">
+    <script>
+        (() => {
+            try {
+                const savedTheme = window.localStorage.getItem('lumi-admin-theme');
+                document.documentElement.dataset.adminTheme = savedTheme === 'dark' ? 'dark' : 'light';
+            } catch (_) {
+                document.documentElement.dataset.adminTheme = 'light';
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="/admin-v2.css?v=9c8e4e0c85d6">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -146,9 +156,9 @@
                         </div>
                     </div>
                     <div class="admin-foglalas-attekintes">
-                        <div class="admin-foglalas-nezetvalto" role="group" aria-label="Foglalások megjelenítése">
-                            <button type="button" class="admin-foglalas-nezet-gomb aktiv" data-foglalas-nezet="lista" aria-pressed="true">Lista</button>
-                            <button type="button" class="admin-foglalas-nezet-gomb" data-foglalas-nezet="naptar" aria-pressed="false">Naptár</button>
+                        <div class="admin-foglalas-nezetvalto admin-segmented" role="group" aria-label="Foglalások megjelenítése">
+                            <button type="button" class="admin-foglalas-nezet-gomb admin-segmented-item aktiv" data-foglalas-nezet="lista" aria-pressed="true">Lista</button>
+                            <button type="button" class="admin-foglalas-nezet-gomb admin-segmented-item" data-foglalas-nezet="naptar" aria-pressed="false">Naptár</button>
                         </div>
                         <p id="admin-foglalas-osszefoglalo" class="admin-foglalas-osszefoglalo" aria-live="polite"></p>
                     </div>
@@ -198,8 +208,7 @@
                     <div id="admin-idosav-naptar" class="admin-naptar-blokk">
                         <div class="admin-naptar-fej">
                             <label class="admin-mezo">
-                                Hónap
-                                <input type="month" id="admin-naptar-honap">
+                                <input type="month" id="admin-naptar-honap" aria-label="Hónap">
                             </label>
                             <div class="admin-naptar-akciok">
                                 <button type="button" id="admin-naptar-elozo" class="admin-kis-gomb">Előző</button>
@@ -227,8 +236,8 @@
                                 Közös vége
                                 <input type="time" id="admin-naptar-kozos-vege" value="18:00">
                             </label>
-                            <label class="admin-mezo">
-                                Időpontok sűrűsége
+                            <label class="admin-mezo admin-naptar-lepes-mezo">
+                                <span class="admin-naptar-lepes-cimke">Időpontok sűrűsége</span>
                                 <input type="number" id="admin-naptar-kozos-lepes" min="5" step="5" value="30">
                             </label>
                             <button type="button" id="admin-naptar-kozos-alkalmazas" class="admin-hozzaadas">Kijelöltekre beállítom</button>
@@ -238,7 +247,7 @@
                             <h3>Kijelölt napok</h3>
                             <button type="button" id="admin-naptar-kijeloles-torles" class="admin-kis-gomb admin-veszely-gomb">Kijelölés törlése</button>
                         </div>
-                        <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista"></div>
+                        <div id="admin-naptar-kijelolt-lista" class="admin-naptar-kijelolt-lista" aria-label="Kijelölt napok"></div>
                         <p id="admin-naptar-status" class="admin-status" aria-live="polite"></p>
                     </div>
                     <div class="admin-panel-akciok admin-idosav-lista-akciok">
@@ -270,6 +279,7 @@
 
                         </div>
                     </form>
+                    <div id="admin-tiltas-lapozo" class="admin-lapozo admin-lapozo-felso"></div>
                     <div id="admin-tiltas-lista" class="admin-db-lista"></div>
                 </div>
 
@@ -335,7 +345,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=84d7307ff175"></script>
     <script src="/script.js?v=8aba5f50ba23"></script>
-    <script src="/admin-supabase.js?v=8cfcedad72a0"></script>
+    <script src="/admin-supabase.js?v=578633d1243f"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
     <script src="/admin-content.js?v=4dcbd5fdbbb6"></script>
 </body>

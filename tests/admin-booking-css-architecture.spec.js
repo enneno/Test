@@ -26,8 +26,9 @@ test('a foglaláskártyák egyetlen kanonikus feature CSS-ből épülnek', () =>
   expect(css).toContain('option[value="done"]:checked');
   expect(css).toContain('option[value="cancelled_by_customer"]:checked');
   expect(css).toContain('.admin-foglalas-meta-grid');
-  expect(css).toContain('grid-template-columns: var(--booking-status-width) var(--booking-action-size) var(--booking-action-size);');
-  expect(css).toContain('font-size: 12px;');
+  expect(css).toContain('grid-template-columns: var(--booking-status-width) var(--admin-ui-icon-button-size) var(--admin-ui-icon-button-size);');
+  expect(css).not.toContain('--booking-action-size');
+  expect(css).toContain('font-size: 11px;');
   expect(css).toContain('--booking-icon-pencil');
   expect(css).toContain('--booking-icon-calendar');
 });

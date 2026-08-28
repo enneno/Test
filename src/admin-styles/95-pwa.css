@@ -2,8 +2,10 @@
    Browser/desktop admin keeps the normal topbar and sidebar. */
 
 .admin-body.admin-v2.lumi-admin-standalone {
-  --pwa-admin-tabbar-height: 58px;
-  --pwa-admin-tabbar-visual-bottom: 0px;
+  --pwa-admin-toolbar-height: 56px;
+  --pwa-admin-toolbar-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  --admin-v2-shell-top-reserve: 0px;
+  --admin-v2-shell-bottom-reserve: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom));
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-v2-topbar {
@@ -31,7 +33,7 @@
   z-index: 110;
   top: auto;
   right: 10px;
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 12px);
   width: min(340px, calc(100vw - 20px));
   max-height: min(55vh, 420px);
   overflow-y: auto;
@@ -66,80 +68,79 @@
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
   width: 100%;
-  min-height: 100vh;
   margin-left: 0;
-  padding: 16px 12px calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 30px);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .admin-live-panel,
-.admin-body.admin-v2.lumi-admin-standalone .admin-workspace-layout {
-  min-height: 100vh;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-status {
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 12px);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dock {
   position: fixed;
   z-index: 75;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  left: 50%;
+  bottom: var(--pwa-admin-toolbar-bottom);
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: start;
-  min-height: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px));
-  padding: 6px 7px max(6px, env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid rgba(79, 59, 53, 0.12);
-  background: rgba(255, 252, 249, 0.94);
-  box-shadow: 0 -8px 28px rgba(54, 39, 34, 0.08);
-  backdrop-filter: blur(18px);
+  grid-template-columns: repeat(6, 44px);
+  align-items: center;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  min-height: var(--pwa-admin-toolbar-height);
+  padding: 6px;
+  gap: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--admin-v2-surface) 90%, transparent);
+  box-shadow: 0 14px 36px rgba(54, 39, 34, 0.16);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  transform: translateX(-50%);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button {
   position: relative;
   display: grid;
-  width: 100%;
-  min-width: 0;
+  width: 44px;
+  min-width: 44px;
   height: 44px;
   min-height: 44px;
   padding: 0;
   place-items: center;
   border: 0;
-  border-radius: 0;
+  border-radius: 14px;
   color: var(--admin-v2-muted);
   background: transparent;
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button::before {
-  position: absolute;
-  width: 34px;
-  height: 34px;
-  border-radius: 11px;
-  background: transparent;
-  content: "";
-  transition: background-color 150ms ease, transform 150ms ease, opacity 150ms ease;
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open)::before {
-  background: var(--admin-v2-brand-soft);
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button:is(.is-active, .is-open) {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button.is-open {
   color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: inset 0 0 0 1px rgba(122, 77, 68, 0.08);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-button svg,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button.is-active {
+  z-index: 2;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: 0 8px 18px rgba(71, 47, 41, 0.15), inset 0 0 0 1px rgba(122, 77, 68, 0.11);
+  transform: translateY(-4px) scale(1.12);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button svg,
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add svg {
   position: relative;
   z-index: 1;
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -147,88 +148,114 @@
   stroke-width: 1.8;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save {
-  color: #fff;
-  transform: translateY(-8px);
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save {
+  color: var(--admin-v2-brand-dark);
+  background: rgba(122, 77, 68, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(122, 77, 68, 0.2);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save::before {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: var(--admin-v2-brand-dark);
-  box-shadow: 0 8px 20px rgba(71, 47, 41, 0.24);
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:is(:hover, :focus-visible) {
+  color: var(--admin-v2-brand-dark);
+  background: rgba(122, 77, 68, 0.13);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled {
-  color: rgba(255, 255, 255, 0.76);
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:disabled {
+  opacity: 0.42;
+  box-shadow: inset 0 0 0 1px rgba(122, 77, 68, 0.12);
   cursor: default;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-save:disabled::before {
-  opacity: 0.38;
-  box-shadow: none;
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count,
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot {
   position: absolute;
   z-index: 2;
-  top: 2px;
-  left: calc(50% + 4px);
+  top: 3px;
+  right: 3px;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count {
   display: grid;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
   place-items: center;
-  border: 2px solid rgba(255, 252, 249, 0.96);
+  border: 2px solid var(--admin-v2-surface);
   border-radius: 999px;
   color: #fff;
   background: var(--admin-v2-danger);
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot {
   width: 9px;
   height: 9px;
-  border: 2px solid rgba(255, 252, 249, 0.96);
+  border: 2px solid var(--admin-v2-surface);
   border-radius: 999px;
   background: var(--admin-v2-danger);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-count[hidden],
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar-dot[hidden] {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-count[hidden],
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dot[hidden] {
   display: none;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add {
   position: fixed;
   z-index: 75;
-  right: 15px;
-  bottom: calc(var(--pwa-admin-tabbar-height) + env(safe-area-inset-bottom, 0px) + 14px);
+  left: calc(50% + 145px);
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 14px);
   display: grid;
   width: 44px;
   height: 44px;
   padding: 0;
   place-items: center;
-  border: 0;
-  border-radius: 50%;
-  color: #fff;
-  background: var(--admin-v2-brand-dark);
-  box-shadow: 0 9px 24px rgba(71, 47, 41, 0.25);
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 14px;
+  color: var(--admin-v2-brand-dark);
+  background: color-mix(in srgb, var(--admin-v2-surface) 90%, transparent);
+  box-shadow: 0 10px 24px rgba(54, 39, 34, 0.14);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transform: translateX(-100%);
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-tabbar,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:active {
+  transform: translateX(-100%) scale(0.94);
+}
+
+/* The global quick-add creates a blocked time, so it only belongs to scheduling workflows. */
+.admin-body.admin-v2.lumi-admin-standalone[data-admin-v2-group="kommunikacio"] .pwa-admin-quick-add {
+  display: none;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-dock,
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-quick-add {
   pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button:not(.is-active):not(.is-open):not(:disabled):hover {
+    color: var(--admin-v2-brand-dark);
+    background: color-mix(in srgb, var(--admin-v2-brand-soft) 72%, transparent);
+    transform: translateY(-3px) scale(1.06);
+  }
+
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:not(:disabled):hover {
+    color: var(--admin-v2-brand-dark);
+    background: rgba(122, 77, 68, 0.13);
+  }
+
+  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:hover {
+    background: color-mix(in srgb, var(--admin-v2-brand-soft) 90%, transparent);
+    box-shadow: 0 12px 28px rgba(54, 39, 34, 0.17);
+    transform: translateX(-100%) translateY(-2px) scale(1.04);
+  }
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-sr-only {
@@ -242,27 +269,12 @@
   border: 0;
 }
 
-@media (min-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone .admin-workspace-main {
-    padding-right: 20px;
-    padding-left: 20px;
-  }
-
-  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-tabbar {
-    right: max(0px, calc((100vw - 620px) / 2));
-    left: max(0px, calc((100vw - 620px) / 2));
-    border-right: 1px solid rgba(79, 59, 53, 0.1);
-    border-left: 1px solid rgba(79, 59, 53, 0.1);
-    border-radius: 18px 18px 0 0;
-  }
-}
-
 @media (max-width: 768px) {
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom textarea,
   .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom select,
-  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz {
-    font-size: 14px;
-    font-size-adjust: none;
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-db-statusz,
+  .admin-body.admin-v2.lumi-admin-standalone #admin-tartalom .admin-oldalmeret-select {
+    font-size: 18px;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
   }
 }

@@ -365,8 +365,16 @@ async function installSupabaseBoundaryMock(page) {
     }, data);
 }
 
-async function openAdmin(page, viewport) {
+async function openAdmin(page, viewport, { standalone = false } = {}) {
     await page.setViewportSize(viewport);
+    if (standalone) {
+        await page.addInitScript(() => {
+            Object.defineProperty(window.navigator, 'standalone', {
+                configurable: true,
+                value: true
+            });
+        });
+    }
     const browserErrors = [];
     page.on('pageerror', error => browserErrors.push(error.message));
     page.on('console', message => {
@@ -381,6 +389,28 @@ async function openAdmin(page, viewport) {
     await expect(page.locator('#admin-v2-stat-today')).toHaveText('3');
 
     return browserErrors;
+}
+
+async function collectAdminHeadingTops(page) {
+    const groups = ['attekintes', 'foglalasok', 'vendegek', 'munkaido', 'weboldal', 'kommunikacio', 'beallitasok'];
+    return page.evaluate(async groupsToMeasure => {
+        const result = {};
+        for (const group of groupsToMeasure) {
+            const button = document.querySelector(`.admin-sidebar [data-admin-v2-nav="${group}"]`);
+            if (!button) throw new Error(`Missing admin navigation for ${group}`);
+            button.click();
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const heading = document.querySelector('.admin-db-panel.aktiv > .admin-v2-page-heading');
+            if (!heading) throw new Error(`Missing active page heading for ${group}`);
+            result[group] = heading.getBoundingClientRect().top;
+        }
+        return result;
+    }, groups);
+}
+
+function expectHeadingTopsAligned(tops) {
+    const values = Object.values(tops);
+    expect(Math.max(...values) - Math.min(...values)).toBeLessThanOrEqual(1);
 }
 
 test.describe('production admin redesign', () => {
@@ -535,6 +565,36 @@ test.describe('production admin redesign', () => {
             return (await page.locator('.admin-v2-sidebar').boundingBox()).x;
         }).toBeGreaterThanOrEqual(-1);
 
+        const drawerMetrics = await page.locator('.admin-v2-sidebar').evaluate(sidebar => {
+            const bodyStyle = getComputedStyle(document.body);
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const logoutRect = sidebar.querySelector('[data-admin-v2-logout]').getBoundingClientRect();
+            const navItem = sidebar.querySelector('.admin-v2-nav-item');
+            const navStyle = getComputedStyle(navItem);
+            const label = navItem.querySelector('span:not(.admin-v2-nav-count):not(.admin-v2-nav-alert)');
+            return {
+                width: sidebarRect.width,
+                height: sidebarRect.height,
+                logoutBottom: logoutRect.bottom,
+                viewportHeight: window.innerHeight,
+                bodyPosition: bodyStyle.position,
+                bodyOverflow: bodyStyle.overflow,
+                navDisplay: navStyle.display,
+                navJustify: navStyle.justifyContent,
+                navTextAlign: navStyle.textAlign,
+                labelTextAlign: getComputedStyle(label).textAlign
+            };
+        });
+        expect(drawerMetrics.width).toBeLessThanOrEqual(244);
+        expect(drawerMetrics.height).toBeLessThanOrEqual(drawerMetrics.viewportHeight + 1);
+        expect(drawerMetrics.logoutBottom).toBeLessThanOrEqual(drawerMetrics.viewportHeight + 1);
+        expect(drawerMetrics.bodyPosition).toBe('fixed');
+        expect(drawerMetrics.bodyOverflow).toBe('hidden');
+        expect(drawerMetrics.navDisplay).toBe('flex');
+        expect(drawerMetrics.navJustify).toBe('flex-start');
+        expect(drawerMetrics.navTextAlign).toBe('left');
+        expect(drawerMetrics.labelTextAlign).toBe('left');
+
         await page.locator('.admin-v2-sidebar [data-admin-v2-nav="foglalasok"]').click();
         await expect(page.locator('body')).not.toHaveClass(/admin-v2-menu-open/);
         await expect(page.locator('#admin-panel-foglalasok')).toHaveClass(/aktiv/);
@@ -594,7 +654,7 @@ test.describe('production admin redesign', () => {
         });
 
         expect(mobileMetrics.headingFont).toBeLessThanOrEqual(24);
-        expect(mobileMetrics.cardTitleFont).toBe(17);
+        expect(mobileMetrics.cardTitleFont).toBe(14);
         expect(Math.max(...mobileMetrics.controlHeights)).toBeLessThanOrEqual(36);
         expect(mobileMetrics.viewSwitchWidth).toBeLessThanOrEqual(180);
         expect(mobileMetrics.viewButtonHeight).toBeLessThanOrEqual(36);
@@ -636,7 +696,7 @@ test.describe('production admin redesign', () => {
         await expect(refreshButton).toHaveAttribute('title', 'Foglalások frissítése');
         await expect(searchInput).toHaveAttribute('placeholder', 'Név, e-mail vagy telefon');
         expect((await refreshButton.textContent()).trim()).toBe('');
-        expect(await refreshButton.evaluate(button => button.parentElement?.classList.contains('admin-lapozo-jobb'))).toBe(true);
+        expect(await refreshButton.evaluate(button => button.parentElement?.classList.contains('admin-v2-page-actions'))).toBe(true);
 
         const manualCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Adminisztracio' });
         const onlineCard = panel.locator('.admin-foglalas-kartya').filter({ hasText: 'Nagy Anna' });
@@ -691,8 +751,8 @@ test.describe('production admin redesign', () => {
                         || Number.parseFloat(getComputedStyle(search).fontSize) >= 16,
                     refreshWidth: refreshBounds.width,
                     refreshHeight: refreshBounds.height,
-                    refreshRightOfPageSize: refreshBounds.left >= pageSizeBounds.right - 1,
-                    sharedActionBlock: actionButtons.length === 2
+                    refreshInPageActions: refresh.parentElement === actions,
+                    sharedActionBlock: actionButtons.length === 3
                         && actionButtons.every(button => button.parentElement === actions)
                 };
             }, 430);
@@ -704,9 +764,9 @@ test.describe('production admin redesign', () => {
             expect(metrics.pagerOverflow, `${viewport.width}px pager overflow`).toBeLessThanOrEqual(1);
             expect(metrics.actionsInside, `${viewport.width}px page actions`).toBe(true);
             expect(metrics.mobileFontLargeEnough, `${viewport.width}px search font ${metrics.searchFont}px`).toBe(true);
-            expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(44);
-            expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(44);
-            expect(metrics.refreshRightOfPageSize, `${viewport.width}px refresh placement`).toBe(true);
+            expect(metrics.refreshWidth, `${viewport.width}px refresh width`).toBeGreaterThanOrEqual(34);
+            expect(metrics.refreshHeight, `${viewport.width}px refresh height`).toBeGreaterThanOrEqual(34);
+            expect(metrics.refreshInPageActions, `${viewport.width}px refresh placement`).toBe(true);
             expect(metrics.sharedActionBlock, `${viewport.width}px shared page actions`).toBe(true);
         }
 
@@ -843,7 +903,7 @@ test.describe('production admin redesign', () => {
         const browserErrors = await openAdmin(page, { width: 390, height: 844 });
         await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
         await expect(page.locator('.admin-v2-topbar')).toBeHidden();
-        await expect(page.locator('#pwa-admin-tabbar .pwa-admin-tabbar-button')).toHaveCount(5);
+        await expect(page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button')).toHaveCount(6);
 
         const bell = page.locator('[data-pwa-admin-notifications]');
         await bell.click();
@@ -869,4 +929,131 @@ test.describe('production admin redesign', () => {
         }
         expect(browserErrors).toEqual([]);
     });
+
+    test('mobile browser: every admin panel shares the same canonical top spacing', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+        const tops = await collectAdminHeadingTops(page);
+        expectHeadingTopsAligned(tops);
+
+        const metrics = await page.evaluate(() => {
+            const bodyStyle = getComputedStyle(document.body);
+            const main = document.querySelector('.admin-workspace-main');
+            const mainStyle = getComputedStyle(main);
+            const topbar = document.querySelector('.admin-v2-topbar');
+            const status = document.getElementById('admin-online-status');
+            return {
+                topbarDisplay: getComputedStyle(topbar).display,
+                topbarHeight: topbar.getBoundingClientRect().height,
+                workspaceTopGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-top-gap')),
+                workspaceBottomGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-bottom-gap')),
+                paddingTop: parseFloat(mainStyle.paddingTop),
+                paddingBottom: parseFloat(mainStyle.paddingBottom),
+                statusPosition: getComputedStyle(status).position,
+                pwaToolbarCount: document.querySelectorAll('#pwa-admin-tabbar').length
+            };
+        });
+
+        expect(metrics.topbarDisplay).not.toBe('none');
+        expect(metrics.statusPosition).toBe('fixed');
+        expect(metrics.pwaToolbarCount).toBe(0);
+        expect(Math.abs(metrics.paddingTop - (metrics.topbarHeight + metrics.workspaceTopGap))).toBeLessThanOrEqual(1);
+        expect(Math.abs(metrics.paddingBottom - metrics.workspaceBottomGap)).toBeLessThanOrEqual(1);
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('standalone app: every admin panel shares the same content spacing while the bottom toolbar owns only its shell reserve', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 }, { standalone: true });
+        await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
+        await expect(page.locator('#pwa-admin-tabbar')).toBeVisible();
+
+        const tops = await collectAdminHeadingTops(page);
+        expectHeadingTopsAligned(tops);
+
+        const metrics = await page.evaluate(() => {
+            const bodyStyle = getComputedStyle(document.body);
+            const main = document.querySelector('.admin-workspace-main');
+            const mainStyle = getComputedStyle(main);
+            const topbar = document.querySelector('.admin-v2-topbar');
+            const toolbar = document.getElementById('pwa-admin-tabbar');
+            const status = document.getElementById('admin-online-status');
+            return {
+                topbarDisplay: getComputedStyle(topbar).display,
+                workspaceTopGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-top-gap')),
+                workspaceBottomGap: parseFloat(bodyStyle.getPropertyValue('--admin-v2-workspace-bottom-gap')),
+                paddingTop: parseFloat(mainStyle.paddingTop),
+                paddingBottom: parseFloat(mainStyle.paddingBottom),
+                toolbarHeight: toolbar.getBoundingClientRect().height,
+                statusPosition: getComputedStyle(status).position
+            };
+        });
+
+        expect(metrics.topbarDisplay).toBe('none');
+        expect(metrics.statusPosition).toBe('fixed');
+        expect(Math.abs(metrics.paddingTop - metrics.workspaceTopGap)).toBeLessThanOrEqual(1);
+        expect(metrics.paddingBottom).toBeGreaterThanOrEqual(metrics.workspaceBottomGap + metrics.toolbarHeight);
+        expect(browserErrors).toEqual([]);
+    });
+
+
+    for (const mode of [
+        { name: 'mobile browser', standalone: false },
+        { name: 'standalone app', standalone: true }
+    ]) {
+        test(`${mode.name}: CMS image uploads share compact side-by-side controls and a lightbox`, async ({ page }) => {
+            const browserErrors = await openAdmin(page, { width: 390, height: 844 }, { standalone: mode.standalone });
+
+            await page.evaluate(() => document.querySelector('.admin-sidebar [data-admin-v2-nav="weboldal"]')?.click());
+            await expect(page.locator('#admin-panel-szovegek')).toHaveClass(/aktiv/);
+            await expect(page.locator('#admin-cms-root')).toBeVisible();
+
+            const galleryTab = page.locator('[data-lumi-cms-gallery-tab]');
+            await expect(galleryTab).toBeVisible();
+            await galleryTab.click();
+            await expect(page.locator('#admin-cms-root')).toHaveAttribute('data-lumi-cms-gallery-context', 'images');
+
+            if (await page.locator('.cms-gallery-item').count() === 0) {
+                await page.locator('[data-cms-gallery-add]').click();
+            }
+
+            const imageField = page.locator('.cms-gallery-item .cms-image-field').first();
+            const preview = imageField.locator('.cms-image-preview');
+            const controls = imageField.locator('.cms-image-controls');
+            await expect(imageField).toBeVisible();
+            await expect(preview).toBeVisible();
+            await expect(controls.locator('.cms-upload-button')).toBeVisible();
+            await expect(controls.locator('[data-cms-remove-image]')).toBeVisible();
+
+            const metrics = await imageField.evaluate(field => {
+                const fieldRect = field.getBoundingClientRect();
+                const previewRect = field.querySelector('.cms-image-preview').getBoundingClientRect();
+                const controlsRect = field.querySelector('.cms-image-controls').getBoundingClientRect();
+                return {
+                    fieldWidth: fieldRect.width,
+                    previewWidth: previewRect.width,
+                    previewRight: previewRect.right,
+                    controlsLeft: controlsRect.left,
+                    documentOverflow: document.documentElement.scrollWidth - window.innerWidth
+                };
+            });
+            expect(metrics.previewWidth).toBeLessThan(metrics.fieldWidth * 0.55);
+            expect(metrics.previewRight).toBeLessThanOrEqual(metrics.controlsLeft + 1);
+            expect(metrics.documentOverflow).toBeLessThanOrEqual(1);
+
+            await preview.evaluate(node => {
+                node.innerHTML = '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22800%22%3E%3Crect width=%22600%22 height=%22800%22 fill=%22%23d9aaa7%22/%3E%3C/svg%3E" alt="Teszt kép"><span>Kép előnézet</span>';
+            });
+            await expect(preview).toHaveAttribute('role', 'button');
+            await expect(preview).toHaveAttribute('aria-label', 'Kép nagyítása');
+
+            await preview.click();
+            const lightbox = page.locator('#cms-image-lightbox');
+            await expect(lightbox).toBeVisible();
+            await expect(lightbox.locator('[data-cms-image-lightbox-image]')).toHaveAttribute('alt', 'Teszt kép');
+            await page.keyboard.press('Escape');
+            await expect(lightbox).toBeHidden();
+
+            expect(browserErrors).toEqual([]);
+        });
+    }
+
 });

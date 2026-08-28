@@ -14,7 +14,7 @@
   background: transparent;
   box-shadow: none;
 }
-.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 
 .admin-body.admin-v2 #admin-panel-kuponok .admin-db-grid-kupon {
   display: grid;
@@ -44,7 +44,7 @@
   min-height: 38px;
   padding: 4px 6px;
   border-radius: 7px;
-  background: var(--ui-off-white);
+  background: var(--admin-v2-surface-soft);
   font-size: var(--lumi-font-label);
 }
 .admin-body.admin-v2 #admin-panel-kuponok .admin-kupon-akciok {

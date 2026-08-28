@@ -32,14 +32,15 @@
 
     const tabbar = document.createElement('nav');
     tabbar.id = 'pwa-admin-tabbar';
-    tabbar.className = 'pwa-admin-tabbar';
+    tabbar.className = 'pwa-admin-toolbar-dock';
     tabbar.setAttribute('aria-label', 'Admin alkalmazás navigáció');
     tabbar.innerHTML = `
       ${appButton('menu', 'Menü', 'data-pwa-admin-menu')}
-      ${appButton('calendar', 'Foglalások', 'data-admin-v2-nav="foglalasok"', '<span class="pwa-admin-tabbar-count" data-admin-v2-pending-count hidden>0</span>')}
-      ${appButton('save', 'Mentés', 'data-pwa-admin-save', '', 'pwa-admin-tabbar-save')}
+      ${appButton('calendar', 'Foglalások', 'data-admin-v2-nav="foglalasok"', '<span class="pwa-admin-toolbar-count" data-admin-v2-pending-count hidden>0</span>')}
+      ${appButton('overview', 'Áttekintés', 'data-admin-v2-nav="attekintes"')}
       ${appButton('clock', 'Munkaidő', 'data-admin-v2-nav="munkaido"')}
-      ${appButton('bell', 'Értesítések', 'data-pwa-admin-notifications aria-expanded="false" aria-controls="admin-v2-notification-panel"', '<span class="pwa-admin-tabbar-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>')}
+      ${appButton('bell', 'Értesítések', 'data-pwa-admin-notifications aria-expanded="false" aria-controls="admin-v2-notification-panel"', '<span class="pwa-admin-toolbar-dot" data-admin-v2-email-alert data-admin-v2-notification-alert hidden></span>')}
+      ${appButton('save', 'Mentés', 'data-pwa-admin-save', '', 'pwa-admin-toolbar-save')}
     `;
 
     const quickAdd = document.createElement('button');
@@ -168,7 +169,7 @@
 
   function appButton(icon, label, attributes, suffix = '', extraClass = '') {
     return `
-      <button type="button" class="pwa-admin-tabbar-button ${extraClass}" ${attributes} aria-label="${label}" title="${label}">
+      <button type="button" class="pwa-admin-toolbar-button ${extraClass}" ${attributes} aria-label="${label}" title="${label}">
         ${appIcon(icon)}${suffix}<span class="pwa-admin-sr-only">${label}</span>
       </button>
     `;
@@ -181,7 +182,8 @@
       save: '<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"></path>',
       clock: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path>',
       bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path>',
-      plus: '<path d="M12 5v14M5 12h14"></path>'
+      plus: '<path d="M12 5v14M5 12h14"></path>',
+      overview: '<rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect>'
     };
     return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.menu}</svg>`;
   }

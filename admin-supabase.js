@@ -27,6 +27,9 @@
         esemenynaploOldalMeret: 10,
         esemenynaploElemek: [],
         naptarKijelolesek: new Map(),
+        tiltasOldal: 1,
+        tiltasOldalMeret: 10,
+        tiltasElemek: [],
         tiltasStatuszTamogatott: true
     };
 
@@ -113,6 +116,8 @@
         elemek.idosavOsszesTorles?.addEventListener('click', idosavokOsszesTorlese);
         elemek.idosavLepesOsszes?.addEventListener('click', idosavLepesOsszesAlkalmazasa);
         elemek.tiltasLista?.addEventListener('click', tiltasListaKattintas);
+        elemek.tiltasLapozo?.addEventListener('click', tiltasLapozoKattintas);
+        elemek.tiltasLapozo?.addEventListener('change', tiltasLapozoKattintas);
 
         allapot.kliens.auth.onAuthStateChange((_event, session) => {
             sessionAllapot(session, elemek);
@@ -188,6 +193,7 @@
             tiltasKezdes: document.getElementById('admin-tiltas-kezdes'),
             tiltasVege: document.getElementById('admin-tiltas-vege'),
             tiltasOk: document.getElementById('admin-tiltas-ok'),
+            tiltasLapozo: document.getElementById('admin-tiltas-lapozo'),
             tiltasLista: document.getElementById('admin-tiltas-lista'),
             telefonLathato: document.getElementById('admin-telefon-lathato')
         };
@@ -723,6 +729,37 @@
         }
     });
 
+    const ADMIN_V2_THEME_STORAGE_KEY = 'lumi-admin-theme';
+
+    function adminV2TemaOlvasasa() {
+        const fallback = document.documentElement.dataset.adminTheme === 'dark' ? 'dark' : 'light';
+        try {
+            const saved = window.localStorage.getItem(ADMIN_V2_THEME_STORAGE_KEY);
+            if (saved === 'dark' || saved === 'light') return saved;
+        } catch (_) {
+            return fallback;
+        }
+        return fallback;
+    }
+
+    function adminV2TemaAlkalmazasa(theme, persist = false) {
+        const normalized = theme === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.adminTheme = normalized;
+        const toggle = document.querySelector('[data-admin-v2-dark-mode]');
+        if (toggle) {
+            const dark = normalized === 'dark';
+            toggle.checked = dark;
+            toggle.setAttribute('aria-checked', String(dark));
+        }
+        if (persist) {
+            try {
+                window.localStorage.setItem(ADMIN_V2_THEME_STORAGE_KEY, normalized);
+            } catch (_) {
+                // The visual mode still works for this session when storage is unavailable.
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         adminV2Inicializalasa();
     });
@@ -739,6 +776,7 @@
 
         body.dataset.adminV2Ready = 'true';
         body.classList.add('admin-v2');
+        adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());
         workspaceMain.id = workspaceMain.id || 'admin-v2-main';
         workspaceMain.tabIndex = -1;
 
@@ -962,6 +1000,16 @@
         panel.innerHTML = `
             <section class="admin-v2-settings-card">
                 <div class="admin-v2-settings-header">
+                    <h2>Megjelenés</h2>
+                    <p>Az admin felület megjelenésének beállításai.</p>
+                </div>
+                <label class="admin-v2-setting-row" for="admin-sotet-mod">
+                    <span><strong>Sötét mód</strong><small>Sötét színvilág az admin minden nézetében.</small></span>
+                    <input type="checkbox" id="admin-sotet-mod" data-admin-v2-dark-mode role="switch" aria-label="Sötét mód">
+                </label>
+            </section>
+            <section class="admin-v2-settings-card">
+                <div class="admin-v2-settings-header">
                     <h2>Weboldali elérhetőség</h2>
                     <p>A publikus oldalon megjelenő kapcsolati beállítások.</p>
                 </div>
@@ -989,6 +1037,14 @@
         const status = document.getElementById('admin-jelszo-status');
         if (form) slot.append(form);
         if (status) slot.append(status);
+
+        const temaKapcsolo = panel.querySelector('[data-admin-v2-dark-mode]');
+        if (temaKapcsolo) {
+            adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());
+            temaKapcsolo.addEventListener('change', () => {
+                adminV2TemaAlkalmazasa(temaKapcsolo.checked ? 'dark' : 'light', true);
+            });
+        }
     }
 
     function adminV2PanelFejlecekLetrehozasa() {
@@ -1012,10 +1068,19 @@
             const exportGomb = tab === 'foglalasok'
                 ? document.getElementById('admin-foglalas-export')
                 : null;
+            const frissitesGomb = tab === 'foglalasok'
+                ? document.getElementById('admin-foglalas-frissites')
+                : null;
             if (pageActions && exportGomb) {
                 exportGomb.classList.remove('admin-kis-gomb');
                 exportGomb.classList.add('admin-v2-button', 'admin-v2-button-secondary');
                 pageActions.append(exportGomb);
+            }
+            if (pageActions && frissitesGomb) {
+                const regiMuveletTarolo = frissitesGomb.closest('.admin-foglalas-muvelet-tarolo');
+                frissitesGomb.className = 'admin-v2-button admin-v2-button-secondary admin-v2-refresh-action';
+                pageActions.append(frissitesGomb);
+                if (regiMuveletTarolo && !regiMuveletTarolo.children.length) regiMuveletTarolo.remove();
             }
 
             const kapcsolodoMuvelet = {
@@ -1070,10 +1135,10 @@
                 if (!panel || !heading) return;
 
                 const nav = document.createElement('nav');
-                nav.className = 'admin-v2-subnav';
+                nav.className = 'admin-v2-subnav admin-segmented';
                 nav.setAttribute('aria-label', 'Kapcsolódó adminnézetek');
                 nav.innerHTML = group.items.map(([target, label]) => `
-                    <button type="button" data-admin-v2-panel="${target}">${label}</button>
+                    <button type="button" class="admin-segmented-item" data-admin-v2-panel="${target}">${label}</button>
                 `).join('');
                 heading.after(nav);
             });
@@ -1861,14 +1926,29 @@
         if (element) element.textContent = value;
     }
 
+    let adminV2MenuScrollY = 0;
+
     function adminV2MenuNyitasa() {
-        document.body.classList.add('admin-v2-menu-open');
+        const body = document.body;
+        if (body.classList.contains('admin-v2-menu-open')) return;
+
+        adminV2MenuScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        body.style.setProperty('--admin-v2-menu-scroll-offset', `-${adminV2MenuScrollY}px`);
+        body.classList.add('admin-v2-menu-open');
         document.querySelector('[data-admin-v2-menu]')?.setAttribute('aria-expanded', 'true');
     }
 
     function adminV2MenuBezarasa() {
-        document.body.classList.remove('admin-v2-menu-open');
+        const body = document.body;
+        const nyitvaVolt = body.classList.contains('admin-v2-menu-open');
+
+        body.classList.remove('admin-v2-menu-open');
+        body.style.removeProperty('--admin-v2-menu-scroll-offset');
         document.querySelector('[data-admin-v2-menu]')?.setAttribute('aria-expanded', 'false');
+
+        if (nyitvaVolt) {
+            window.scrollTo({ top: adminV2MenuScrollY, behavior: 'auto' });
+        }
     }
 
     function adminV2Ikon(name) {
@@ -2373,16 +2453,10 @@ function arlistaFeliratokFrissitese() {
 
     function foglalasLapozoRenderelese() {
         const elemek = adminElemek();
-        const frissitesGomb = elemek.foglalasFrissites;
         const htmlTartalom = foglalasLapozoHtml();
         [elemek.foglalasLapozoFelso, elemek.foglalasLapozo].filter(Boolean).forEach(lapozo => {
             lapozo.innerHTML = htmlTartalom;
         });
-
-        const felsoJobbOldal = elemek.foglalasLapozoFelso?.querySelector('.admin-lapozo-jobb');
-        if (felsoJobbOldal && frissitesGomb) {
-            felsoJobbOldal.append(frissitesGomb);
-        }
     }
 
     function foglalasLapozoKattintas(event) {
@@ -2512,14 +2586,25 @@ function arlistaFeliratokFrissitese() {
     function esemenynaploLapozoHtml() {
         const osszes = esemenynaploOsszesOldal();
         const vanElem = allapot.esemenynaploElemek.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0';
         return `
-            <div class="admin-oldalmeret" role="group" aria-label="Esem\u00e9nynapl\u00f3 oldalank\u00e9nt">
-                <span>Oldalank\u00e9nt</span>
-                ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+            <div class="admin-lapozo-nav" role="group" aria-label="Eseménynapló lapozása">
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-esemenynaplo-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
             </div>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="elozo" ${allapot.esemenynaploOldal <= 1 || !vanElem ? 'disabled' : ''}>El\u0151z\u0151</button>
-            <span>${vanElem ? `${allapot.esemenynaploOldal} / ${osszes}` : '0 / 0'}</span>
-            <button type="button" class="admin-kis-gomb" data-esemenynaplo-oldal="kovetkezo" ${allapot.esemenynaploOldal >= osszes || !vanElem ? 'disabled' : ''}>K\u00f6vetkez\u0151</button>
+            <div class="admin-lapozo-jobb">
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    ${oldalmeretGombok(allapot.esemenynaploOldalMeret, 'esemenynaplo-oldalmeret')}
+                </label>
+            </div>
         `;
     }
 
@@ -2625,7 +2710,7 @@ function arlistaFeliratokFrissitese() {
                         ${statuszOption('cancelled_by_customer', 'Vendég mondta le', foglalas.status)}
                     </select>
                     <button type="button" class="admin-booking-details-trigger" data-foglalas-reszletek aria-expanded="false">Részletek</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             ${lemondasiMegjegyzes ? `
@@ -2865,9 +2950,9 @@ function arlistaFeliratokFrissitese() {
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <div class="admin-foglalas-nev-blokk">
-                        <span class="admin-kartya-tipus">Kézzel felvett idő</span>
+                        <p class="admin-kartya-tipus admin-foglalas-azonosito" aria-label="Kézzel felvett idő"><code>Kézzel felvett idő</code></p>
                         <h3>${html(megjegyzes)}</h3>
-                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true"></p>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p>
                     </div>
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
@@ -2877,8 +2962,8 @@ function arlistaFeliratokFrissitese() {
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
                     </select>
-                    <button type="button" class="admin-booking-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
-                    <button type="button" class="admin-booking-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar" data-kezi-ido-naptar>Naptárba</button>
+                    <button type="button" class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button>
                 </div>
             </div>
             <div class="admin-idopont-szerkeszto">
@@ -4623,7 +4708,6 @@ function arlistaFeliratokFrissitese() {
     }
 
     async function tiltasokBetoltese() {
-        const elemek = adminElemek();
         let { data, error } = await allapot.kliens
             .from('blocked_times')
             .select('id,starts_at,ends_at,reason,status')
@@ -4646,17 +4730,95 @@ function arlistaFeliratokFrissitese() {
             return;
         }
 
+        allapot.tiltasElemek = (data || []).map(tiltas => ({
+            ...tiltas,
+            status: tiltasStatuszErtek(tiltas.status)
+        }));
+
+        if (allapot.tiltasOldal > tiltasOsszesOldal()) {
+            allapot.tiltasOldal = tiltasOsszesOldal();
+        }
+
+        tiltasListaRenderelese();
+    }
+
+    function tiltasOsszesOldal() {
+        if (allapot.tiltasOldalMeret === 'all') return 1;
+        return Math.max(1, Math.ceil(allapot.tiltasElemek.length / listaOldalMeret(allapot.tiltasOldalMeret, allapot.tiltasElemek.length)));
+    }
+
+    function tiltasLapozoHtml() {
+        const osszes = tiltasOsszesOldal();
+        const vanElem = allapot.tiltasElemek.length > 0;
+        const oldalSzoveg = vanElem ? `${allapot.tiltasOldal} / ${osszes}` : '0 / 0';
+        return `
+            <div class="admin-lapozo-nav" role="group" aria-label="Kieső időszakok lapozása">
+                <button type="button" class="admin-pagination-button" data-tiltas-oldal="elozo" aria-label="Előző oldal" title="Előző oldal" ${allapot.tiltasOldal <= 1 || !vanElem ? 'disabled' : ''}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>Előző</span>
+                </button>
+                <span class="admin-pagination-page" aria-label="${html(oldalSzoveg)}">${html(oldalSzoveg)}</span>
+                <button type="button" class="admin-pagination-button" data-tiltas-oldal="kovetkezo" aria-label="Következő oldal" title="Következő oldal" ${allapot.tiltasOldal >= osszes || !vanElem ? 'disabled' : ''}>
+                    <span>Következő</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+            </div>
+            <div class="admin-lapozo-jobb">
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    ${oldalmeretGombok(allapot.tiltasOldalMeret, 'tiltas-oldalmeret')}
+                </label>
+            </div>
+        `;
+    }
+
+    function tiltasLapozoRenderelese() {
+        const elemek = adminElemek();
+        if (elemek.tiltasLapozo) {
+            elemek.tiltasLapozo.innerHTML = tiltasLapozoHtml();
+        }
+    }
+
+    function tiltasListaRenderelese() {
+        const elemek = adminElemek();
+        if (!elemek.tiltasLista) return;
+
+        const meret = listaOldalMeret(allapot.tiltasOldalMeret, allapot.tiltasElemek.length);
+        const kezd = allapot.tiltasOldalMeret === 'all' ? 0 : (allapot.tiltasOldal - 1) * meret;
+        const oldalElemek = allapot.tiltasOldalMeret === 'all'
+            ? allapot.tiltasElemek
+            : allapot.tiltasElemek.slice(kezd, kezd + meret);
+
         elemek.tiltasLista.innerHTML = '';
 
-        if (!data.length) {
+        if (!oldalElemek.length) {
             elemek.tiltasLista.innerHTML = '<p class="admin-ures">Nincs külön felvett foglalt idő.</p>';
+            tiltasLapozoRenderelese();
             return;
         }
 
-        data.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya({
-            ...tiltas,
-            status: tiltasStatuszErtek(tiltas.status)
-        })));
+        oldalElemek.forEach(tiltas => elemek.tiltasLista.appendChild(tiltasKartya(tiltas)));
+        tiltasLapozoRenderelese();
+    }
+
+    function tiltasLapozoKattintas(event) {
+        const meretValaszto = event.target.closest('[data-tiltas-oldalmeret]');
+        if (meretValaszto) {
+            if (event.type === 'click' && meretValaszto.tagName === 'SELECT') return;
+            allapot.tiltasOldalMeret = meretValaszto.value || 10;
+            allapot.tiltasOldal = 1;
+            tiltasListaRenderelese();
+            return;
+        }
+
+        const gomb = event.target.closest('[data-tiltas-oldal]');
+        if (!gomb || gomb.disabled) return;
+
+        const osszes = tiltasOsszesOldal();
+        allapot.tiltasOldal = gomb.dataset.tiltasOldal === 'elozo'
+            ? Math.max(1, allapot.tiltasOldal - 1)
+            : Math.min(osszes, allapot.tiltasOldal + 1);
+        tiltasListaRenderelese();
     }
 
     function tiltasKartya(tiltas) {
@@ -4729,6 +4891,7 @@ function arlistaFeliratokFrissitese() {
         elemek.tiltasForm.reset();
         idosavAlapertelmezes(adminElemek());
         onlineStatusz('A kézi foglalt idő mentve. A státuszát a Foglalások nézetben módosíthatod.');
+        allapot.tiltasOldal = 1;
         tiltasokBetoltese();
         foglalasokBetoltese();
     }
@@ -5157,9 +5320,12 @@ function arlistaFeliratokFrissitese() {
 
 (() => {
     const GALLERY_GROUP = '7';
+    const GALLERY_PAGE_SIZES = [10, 20, 'all'];
     let galleryMode = false;
     let internalSwitch = false;
     let refreshQueued = false;
+    let galleryPage = 1;
+    let galleryPageSize = 10;
 
     document.addEventListener('DOMContentLoaded', () => {
         const root = document.getElementById('admin-cms-root');
@@ -5173,16 +5339,47 @@ function arlistaFeliratokFrissitese() {
                 return;
             }
 
+            const pageButton = event.target.closest('[data-lumi-gallery-page]');
+            if (pageButton) {
+                event.preventDefault();
+                const direction = pageButton.dataset.lumiGalleryPage;
+                galleryPage += direction === 'prev' ? -1 : 1;
+                queueRefresh(root);
+                return;
+            }
+
+            const addButton = event.target.closest('[data-cms-gallery-add]');
+            if (addButton) {
+                const previousCount = root.querySelectorAll('.cms-gallery-item').length;
+                galleryPage = 1;
+                setTimeout(() => promoteNewestGalleryItem(root, previousCount), 0);
+                return;
+            }
+
             if (!internalSwitch && event.target.closest('[data-cms-view]')) {
                 galleryMode = false;
+                galleryPage = 1;
                 queueRefresh(root);
             }
         }, true);
 
         root.addEventListener('change', event => {
+            const pageSizeSelect = event.target.closest('[data-lumi-gallery-page-size]');
+            if (pageSizeSelect) {
+                const value = pageSizeSelect.value;
+                galleryPageSize = value === 'all' ? 'all' : Number.parseInt(value, 10);
+                if (!GALLERY_PAGE_SIZES.some(size => String(size) === String(galleryPageSize))) {
+                    galleryPageSize = 10;
+                }
+                galleryPage = 1;
+                queueRefresh(root);
+                return;
+            }
+
             const sectionSelect = event.target.closest('[data-cms-section-select]');
             if (!sectionSelect || internalSwitch) return;
             if (galleryMode && sectionSelect.value !== GALLERY_GROUP) galleryMode = false;
+            galleryPage = 1;
             queueRefresh(root);
         }, true);
 
@@ -5193,6 +5390,7 @@ function arlistaFeliratokFrissitese() {
 
     function openGallery(root) {
         galleryMode = true;
+        galleryPage = 1;
         const oldalakTab = root.querySelector('[data-cms-view="oldalak"]');
         if (!oldalakTab) return;
 
@@ -5224,11 +5422,14 @@ function arlistaFeliratokFrissitese() {
         const tabs = root.querySelector('.cms-view-tabs');
         if (!tabs) return;
 
+        tabs.classList.add('admin-segmented');
+        tabs.querySelectorAll('.cms-view-tab').forEach(button => button.classList.add('admin-segmented-item'));
+
         let galleryTab = tabs.querySelector('[data-lumi-cms-gallery-tab]');
         if (!galleryTab) {
             galleryTab = document.createElement('button');
             galleryTab.type = 'button';
-            galleryTab.className = 'cms-view-tab cms-view-tab-gallery';
+            galleryTab.className = 'cms-view-tab cms-view-tab-gallery admin-segmented-item';
             galleryTab.dataset.lumiCmsGalleryTab = 'true';
             galleryTab.setAttribute('role', 'tab');
             galleryTab.setAttribute('aria-selected', 'false');
@@ -5260,7 +5461,398 @@ function arlistaFeliratokFrissitese() {
 
             const title = root.querySelector('.cms-editor-card-header h3');
             if (title) title.textContent = 'Galéria képek';
+
+            moveHomepageChoicesIntoControls(root);
+            renderGalleryPagination(root);
+            return;
         }
+
+        root.querySelector('[data-lumi-gallery-pagination]')?.remove();
+        root.querySelectorAll('.cms-gallery-item[hidden]').forEach(item => {
+            item.hidden = false;
+        });
+    }
+
+    function moveHomepageChoicesIntoControls(root) {
+        root.querySelectorAll('.cms-gallery-item').forEach(item => {
+            const controls = item.querySelector('.cms-image-controls');
+            const choice = Array.from(item.children)
+                .find(child => child.classList?.contains('cms-gallery-home-choice'));
+            if (!controls || !choice) return;
+
+            const label = choice.querySelector('span');
+            if (label) label.textContent = 'Megjelenjen a főoldalon';
+            controls.prepend(choice);
+        });
+    }
+
+    function renderGalleryPagination(root) {
+        const header = root.querySelector('.cms-gallery-header');
+        const list = root.querySelector('.cms-gallery-list');
+        if (!header || !list) return;
+
+        let pagination = header.querySelector('[data-lumi-gallery-pagination]');
+        if (!pagination) {
+            pagination = document.createElement('div');
+            pagination.className = 'cms-gallery-pagination';
+            pagination.dataset.lumiGalleryPagination = 'true';
+            pagination.innerHTML = `
+                <div class="admin-lapozo-nav" aria-label="Galéria oldalak">
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="prev" aria-label="Előző galériaoldal" title="Előző oldal">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg>
+                    </button>
+                    <span class="admin-pagination-page" data-lumi-gallery-page-label>1 / 1</span>
+                    <button type="button" class="admin-pagination-button" data-lumi-gallery-page="next" aria-label="Következő galériaoldal" title="Következő oldal">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg>
+                    </button>
+                </div>
+                <label class="admin-oldalmeret admin-pagination-size">
+                    <span>Oldalanként</span>
+                    <select class="admin-oldalmeret-select" data-lumi-gallery-page-size aria-label="Oldalanként">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="all">Összes</option>
+                    </select>
+                </label>
+            `;
+
+            const addButton = header.querySelector('[data-cms-gallery-add]');
+            if (addButton) header.insertBefore(pagination, addButton);
+            else header.appendChild(pagination);
+        }
+
+        const items = Array.from(list.querySelectorAll(':scope > .cms-gallery-item'));
+        const total = items.length;
+        const size = galleryPageSize === 'all'
+            ? Math.max(1, total)
+            : Math.max(1, Number.parseInt(galleryPageSize, 10) || 10);
+        const totalPages = total ? Math.max(1, Math.ceil(total / size)) : 1;
+        galleryPage = Math.min(Math.max(1, galleryPage), totalPages);
+        const start = galleryPageSize === 'all' ? 0 : (galleryPage - 1) * size;
+        const end = galleryPageSize === 'all' ? total : start + size;
+
+        items.forEach((item, index) => {
+            item.hidden = index < start || index >= end;
+        });
+
+        const select = pagination.querySelector('[data-lumi-gallery-page-size]');
+        if (select) select.value = String(galleryPageSize);
+
+        const label = pagination.querySelector('[data-lumi-gallery-page-label]');
+        if (label) label.textContent = total ? `${galleryPage} / ${totalPages}` : '0 / 0';
+
+        const previous = pagination.querySelector('[data-lumi-gallery-page="prev"]');
+        const next = pagination.querySelector('[data-lumi-gallery-page="next"]');
+        if (previous) previous.disabled = !total || galleryPage <= 1;
+        if (next) next.disabled = !total || galleryPage >= totalPages;
+    }
+
+    function promoteNewestGalleryItem(root, previousCount) {
+        const items = Array.from(root.querySelectorAll('.cms-gallery-item'));
+        if (items.length !== previousCount + 1) {
+            queueRefresh(root);
+            return;
+        }
+
+        for (let index = items.length - 1; index > 0; index -= 1) {
+            const moveUp = root.querySelector(`[data-cms-gallery-move="up"][data-index="${index}"]`);
+            if (!moveUp) break;
+            moveUp.click();
+        }
+
+        galleryPage = 1;
+        queueRefresh(root);
+    }
+})();
+
+(() => {
+    let returnFocus = null;
+
+    const ICONS = {
+        imageUp: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7.3"></path>
+                <circle cx="9" cy="9" r="2"></circle>
+                <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"></path>
+                <path d="M19 22v-6"></path>
+                <path d="m22 19-3-3-3 3"></path>
+            </svg>`,
+        plus: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+            </svg>`,
+        trash: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="m19 6-1 14H6L5 6"></path>
+                <path d="M10 11v5"></path>
+                <path d="M14 11v5"></path>
+            </svg>`,
+        up: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 19V5"></path>
+                <path d="m5 12 7-7 7 7"></path>
+            </svg>`,
+        down: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 5v14"></path>
+                <path d="m19 12-7 7-7-7"></path>
+            </svg>`,
+        close: `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 6l12 12"></path>
+                <path d="M18 6 6 18"></path>
+            </svg>`
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const root = document.getElementById('admin-cms-root');
+        if (!root) return;
+
+        root.addEventListener('click', event => {
+            const galleryDeleteProxy = event.target.closest('[data-cms-gallery-delete-proxy]');
+            if (galleryDeleteProxy) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                galleryDeleteProxy.closest('.cms-gallery-item')
+                    ?.querySelector('[data-cms-gallery-delete].cms-gallery-delete-source')
+                    ?.click();
+                return;
+            }
+
+            const preview = event.target.closest('.cms-image-preview[data-cms-preview]');
+            if (!preview) return;
+
+            if (preview.querySelector('img')) {
+                event.preventDefault();
+                openLightbox(preview);
+                return;
+            }
+
+            const upload = galleryUploadInput(preview);
+            if (upload) {
+                event.preventDefault();
+                upload.click();
+            }
+        });
+
+        root.addEventListener('keydown', event => {
+            const preview = event.target.closest('.cms-image-preview[data-cms-preview]');
+            if (!preview || (event.key !== 'Enter' && event.key !== ' ')) return;
+
+            if (preview.querySelector('img')) {
+                event.preventDefault();
+                openLightbox(preview);
+                return;
+            }
+
+            const upload = galleryUploadInput(preview);
+            if (upload) {
+                event.preventDefault();
+                upload.click();
+            }
+        });
+
+        const observer = new MutationObserver(enhanceImageWorkspaces);
+        observer.observe(root, { childList: true, subtree: true });
+        enhanceImageWorkspaces();
+
+        function enhanceImageWorkspaces() {
+            placeGalleryActionsInImageControls();
+            removeLegacyTallTileControls();
+            enhanceImageControls();
+            enhancePreviews();
+        }
+
+        function placeGalleryActionsInImageControls() {
+            root.querySelectorAll('.cms-gallery-item').forEach(item => {
+                const imageControls = item.querySelector('.cms-image-field .cms-image-controls');
+                if (!imageControls) return;
+
+                const actions = Array.from(item.children)
+                    .find(child => child.classList?.contains('cms-gallery-actions'));
+                if (actions) imageControls.appendChild(actions);
+            });
+        }
+
+        function removeLegacyTallTileControls() {
+            root.querySelectorAll('.cms-gallery-item').forEach(item => {
+                Array.from(item.children).forEach(child => {
+                    if (child.querySelector?.('[data-cms-path$=".magas"]')) child.remove();
+                });
+            });
+        }
+
+        function enhanceImageControls() {
+            root.querySelectorAll('.cms-image-field').forEach(field => {
+                const galleryItem = field.closest('.cms-gallery-item');
+                const controls = field.querySelector('.cms-image-controls');
+                if (!controls) return;
+
+                const upload = controls.querySelector('.cms-upload-button');
+                const remove = controls.querySelector('[data-cms-remove-image]');
+
+                if (galleryItem) {
+                    if (upload) {
+                        removeTextNodes(upload);
+                        upload.classList.remove('cms-icon-button', 'admin-control-icon-button');
+                        upload.classList.add('cms-gallery-upload-proxy');
+                        upload.setAttribute('aria-hidden', 'true');
+                        upload.removeAttribute('title');
+                    }
+
+                    if (remove) {
+                        remove.dataset.cmsGalleryDeleteProxy = 'true';
+                        iconifyButton(remove, 'trash', 'Galériakép törlése', true);
+                    }
+
+                    const actions = controls.querySelector('.cms-gallery-actions');
+                    const up = actions?.querySelector('[data-cms-gallery-move="up"]');
+                    const down = actions?.querySelector('[data-cms-gallery-move="down"]');
+                    const deletion = actions?.querySelector('[data-cms-gallery-delete]');
+                    const items = Array.from(root.querySelectorAll('.cms-gallery-item'));
+                    const index = items.indexOf(galleryItem);
+
+                    if (up) {
+                        iconifyButton(up, 'up', 'Feljebb');
+                        up.disabled = index <= 0;
+                    }
+                    if (down) {
+                        iconifyButton(down, 'down', 'Lejjebb');
+                        down.disabled = index < 0 || index >= items.length - 1;
+                    }
+                    if (deletion) {
+                        deletion.classList.add('cms-gallery-delete-source');
+                        deletion.setAttribute('aria-hidden', 'true');
+                        deletion.tabIndex = -1;
+                    }
+                    return;
+                }
+
+                if (upload) iconifyUploadLabel(upload, 'imageUp', 'Kép feltöltése');
+                if (remove) iconifyButton(remove, 'trash', 'Kép eltávolítása', true);
+            });
+
+            const add = root.querySelector('[data-cms-gallery-add]');
+            if (add) iconifyButton(add, 'plus', 'Új galériakép');
+        }
+
+        function enhancePreviews() {
+            root.querySelectorAll('.cms-image-preview[data-cms-preview]').forEach(preview => {
+                const hasImage = Boolean(preview.querySelector('img'));
+                const canUpload = Boolean(galleryUploadInput(preview));
+                preview.classList.toggle('cms-image-preview-interactive', hasImage);
+                preview.dataset.cmsUploadTarget = String(!hasImage && canUpload);
+
+                if (hasImage) {
+                    preview.setAttribute('role', 'button');
+                    preview.tabIndex = 0;
+                    preview.setAttribute('aria-label', 'Kép nagyítása');
+                    preview.title = 'Kép nagyítása';
+                } else if (canUpload) {
+                    preview.setAttribute('role', 'button');
+                    preview.tabIndex = 0;
+                    preview.setAttribute('aria-label', 'Kép feltöltése');
+                    preview.title = 'Kép feltöltése';
+                } else {
+                    preview.removeAttribute('role');
+                    preview.removeAttribute('tabindex');
+                    preview.removeAttribute('aria-label');
+                    preview.removeAttribute('title');
+                }
+            });
+        }
+    });
+
+    function galleryUploadInput(preview) {
+        return preview.closest('.cms-gallery-item')
+            ?.querySelector('.cms-upload-button input[data-cms-upload]') || null;
+    }
+
+    function removeTextNodes(element) {
+        Array.from(element.childNodes)
+            .filter(node => node.nodeType === Node.TEXT_NODE)
+            .forEach(node => node.remove());
+    }
+
+    function iconifyUploadLabel(label, icon, accessibleLabel) {
+        const marker = `${icon}:${accessibleLabel}`;
+        if (label.dataset.cmsIconified === marker) return;
+        removeTextNodes(label);
+        label.querySelector('svg')?.remove();
+        label.insertAdjacentHTML('afterbegin', ICONS[icon]);
+        label.classList.add('cms-icon-button', 'admin-control-icon-button');
+        label.setAttribute('aria-label', accessibleLabel);
+        label.title = accessibleLabel;
+        label.dataset.cmsIconified = marker;
+    }
+
+    function iconifyButton(button, icon, accessibleLabel, danger = false) {
+        const marker = `${icon}:${accessibleLabel}:${danger}`;
+        if (button.dataset.cmsIconified === marker) return;
+        button.innerHTML = ICONS[icon];
+        button.classList.add('cms-icon-button', 'admin-control-icon-button');
+        button.classList.toggle('cms-icon-button-danger', danger);
+        button.setAttribute('aria-label', accessibleLabel);
+        button.title = accessibleLabel;
+        button.dataset.cmsIconified = marker;
+    }
+
+    function ensureLightbox() {
+        let lightbox = document.getElementById('cms-image-lightbox');
+        if (lightbox) return lightbox;
+
+        lightbox = document.createElement('div');
+        lightbox.id = 'cms-image-lightbox';
+        lightbox.className = 'cms-image-lightbox';
+        lightbox.hidden = true;
+        lightbox.setAttribute('role', 'dialog');
+        lightbox.setAttribute('aria-modal', 'true');
+        lightbox.setAttribute('aria-label', 'Kép nagyított megtekintése');
+        lightbox.innerHTML = `
+            <button type="button" class="cms-image-lightbox-close" data-cms-image-lightbox-close aria-label="Nagyított kép bezárása" title="Bezárás">${ICONS.close}</button>
+            <div class="cms-image-lightbox-stage">
+                <img class="cms-image-lightbox-image" data-cms-image-lightbox-image alt="">
+            </div>
+        `;
+
+        lightbox.addEventListener('click', event => {
+            if (event.target === lightbox || event.target.closest('[data-cms-image-lightbox-close]')) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
+        });
+
+        document.body.appendChild(lightbox);
+        return lightbox;
+    }
+
+    function openLightbox(preview) {
+        const source = preview.querySelector('img');
+        if (!source) return;
+
+        const lightbox = ensureLightbox();
+        const image = lightbox.querySelector('[data-cms-image-lightbox-image]');
+        image.src = source.currentSrc || source.src;
+        image.alt = source.alt || 'Nagyított kép';
+        returnFocus = preview;
+        lightbox.hidden = false;
+        document.body.classList.add('cms-image-lightbox-open');
+        requestAnimationFrame(() => lightbox.querySelector('[data-cms-image-lightbox-close]')?.focus({ preventScroll: true }));
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('cms-image-lightbox');
+        if (!lightbox || lightbox.hidden) return;
+        lightbox.hidden = true;
+        document.body.classList.remove('cms-image-lightbox-open');
+        returnFocus?.focus?.({ preventScroll: true });
+        returnFocus = null;
     }
 })();
 
