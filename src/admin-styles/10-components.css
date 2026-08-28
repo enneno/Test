@@ -294,6 +294,7 @@
 .admin-body.admin-v2 .admin-control-icon-button svg {
   width: 16px;
   height: 16px;
+  flex: 0 0 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;

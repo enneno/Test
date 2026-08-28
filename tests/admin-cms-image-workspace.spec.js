@@ -146,6 +146,23 @@ test('shared CMS image workspace uses icon controls, removes legacy tall tile UI
     await expect(galleryControls.locator('[data-cms-gallery-move="up"]')).toBeDisabled();
     await expect(galleryControls.locator('[data-cms-gallery-move="down"]')).toBeEnabled();
 
+    const galleryIconMetrics = await page.evaluate(() => {
+        const size = selector => {
+            const svg = document.querySelector(selector)?.querySelector('svg');
+            const rect = svg?.getBoundingClientRect();
+            return { width: rect?.width || 0, height: rect?.height || 0 };
+        };
+        return {
+            add: size('[data-cms-gallery-add]'),
+            up: size('[data-test-gallery-image] [data-cms-gallery-move="up"]'),
+            down: size('[data-test-gallery-image] [data-cms-gallery-move="down"]')
+        };
+    });
+    for (const metric of Object.values(galleryIconMetrics)) {
+        expect(metric.width).toBeGreaterThanOrEqual(15);
+        expect(metric.height).toBeGreaterThanOrEqual(15);
+    }
+
     const galleryMetrics = await galleryItem.evaluate(item => {
         const preview = item.querySelector('.cms-image-preview').getBoundingClientRect();
         const controls = item.querySelector('.cms-image-controls').getBoundingClientRect();
