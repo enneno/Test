@@ -27,6 +27,7 @@ test('shared admin controls have one visual owner and equal mobile pagination ge
     expect(gallery).not.toContain('.cms-gallery-page-label');
     expect(imageControls).not.toMatch(/\.cms-icon-button\s*\{[^}]*width:/s);
     expect(content).not.toContain('width: 18px; height: 18px; margin: 0; accent-color');
+    expect(content).not.toContain('.admin-mezo textarea { background: #fff; }');
     expect(galleryJs).toContain('class="admin-lapozo-nav"');
     expect(galleryJs).toContain('class="admin-pagination-button"');
     expect(galleryJs).toContain('class="admin-pagination-page"');

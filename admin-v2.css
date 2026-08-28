@@ -3477,8 +3477,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) { padding-top: 16px; }
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 600; }
-.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo input:not([type="checkbox"]),
-.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo textarea { background: #fff; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-image-field {
   display: grid;
   grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
