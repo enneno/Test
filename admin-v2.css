@@ -314,9 +314,92 @@ body.admin-body [hidden] {
   padding: 0;
 }
 
-.admin-body.admin-v2 .admin-login-panel {
-  width: min(440px, calc(100% - 32px));
-  margin: clamp(64px, 12vh, 128px) auto;
+.admin-body.admin-v2 .admin-auth-panel {
+  --admin-ui-field-height: 44px;
+  --admin-ui-button-height: 44px;
+  --admin-ui-field-padding-x: 13px;
+  --admin-ui-input-font-size: 16px;
+  --admin-ui-control-radius: 12px;
+  width: min(420px, calc(100% - 32px));
+  margin: clamp(64px, 12vh, 112px) auto 48px;
+  padding: 28px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--admin-v2-shadow);
+}
+
+.admin-body.admin-v2 .admin-auth-panel .admin-eyebrow {
+  margin: 0 0 8px;
+  color: var(--admin-v2-brand);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.admin-body.admin-v2 .admin-auth-panel .admin-cim {
+  margin: 0;
+  color: var(--admin-v2-ink);
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.admin-body.admin-v2 .admin-auth-panel .admin-leiras {
+  margin: 14px 0 0;
+  color: var(--admin-v2-muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.admin-body.admin-v2 .admin-login-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.admin-body.admin-v2 .admin-login-form .admin-mezo-cimke {
+  display: grid;
+  gap: 6px;
+  color: var(--admin-v2-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.admin-body.admin-v2 .admin-login-form .admin-gomb {
+  width: 100%;
+  margin: 2px 0 0;
+  border-radius: 12px;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-body.admin-v2 .admin-auth-panel .admin-status {
+  min-height: 18px;
+  margin: 12px 0 0;
+  color: var(--admin-v2-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@media screen and (max-width: 768px) {
+  .admin-body.admin-v2 .admin-auth-panel {
+    width: calc(100% - 28px);
+    margin-top: max(56px, calc(env(safe-area-inset-top, 0px) + 24px));
+    margin-bottom: 32px;
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+
+  .admin-body.admin-v2 .admin-auth-panel .admin-cim {
+    font-size: 34px;
+  }
 }
 
 .admin-body.admin-v2 .admin-vedett {
