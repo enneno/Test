@@ -2950,9 +2950,9 @@ function arlistaFeliratokFrissitese() {
             <div class="admin-db-kartya-fej">
                 <div class="admin-foglalas-fosor">
                     <div class="admin-foglalas-nev-blokk">
-                        <span class="admin-kartya-tipus">Kézzel felvett idő</span>
+                        <p class="admin-kartya-tipus admin-foglalas-azonosito" aria-label="Kézzel felvett idő"><code>Kézzel felvett idő</code></p>
                         <h3>${html(megjegyzes)}</h3>
-                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true"></p>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p>
                     </div>
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
