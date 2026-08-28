@@ -39,6 +39,7 @@ jobs:
           '''
           new = '''.admin-body.admin-v2 .admin-auth-panel {
             --admin-ui-field-height: 44px;
+            --admin-ui-button-height: 44px;
             --admin-ui-field-padding-x: 13px;
             --admin-ui-input-font-size: 16px;
             --admin-ui-control-radius: 12px;
@@ -95,7 +96,6 @@ jobs:
 
           .admin-body.admin-v2 .admin-login-form .admin-gomb {
             width: 100%;
-            min-height: 44px;
             margin: 2px 0 0;
             border-radius: 12px;
             font-size: 13px;
@@ -143,6 +143,7 @@ jobs:
             expect(source()).toContain('.admin-body.admin-v2 .admin-auth-panel {');
             expect(source()).not.toContain('.admin-body.admin-v2 .admin-login-panel {');
             expect(source()).toContain('--admin-ui-field-height: 44px');
+            expect(source()).toContain('--admin-ui-button-height: 44px');
             expect(source()).not.toContain('!important');
           });
 
