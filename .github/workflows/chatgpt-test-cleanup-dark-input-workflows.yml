@@ -1,0 +1,30 @@
+name: Cleanup temporary dark input workflows
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - .github/workflows/chatgpt-test-cleanup-dark-input-workflows.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Remove temporary workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/chatgpt-test-fix-dark-cms-inputs.yml
+          git rm -f .github/workflows/chatgpt-test-fix-dark-cms-inputs-v2.yml
+          git rm -f .github/workflows/chatgpt-test-cleanup-dark-input-workflows.yml
+          git commit -m "Remove temporary dark input workflows"
+          git push origin CHATGPT_TEST
