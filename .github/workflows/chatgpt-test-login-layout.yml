@@ -133,7 +133,7 @@ jobs:
               raise SystemExit(f'Expected one dead login selector block, found {css.count(old)}')
           css_path.write_text(css.replace(old, new, 1), encoding='utf-8')
 
-          Path('tests/admin-login-layout.spec.js').write_text(r'''const { test, expect } = require('@playwright/test');
+          Path('tests/admin-login-layout.spec.js').write_text(r'''const { test, expect } = require('playwright/test');
           const fs = require('fs');
           const path = require('path');
 
