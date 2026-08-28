@@ -115,7 +115,7 @@ jobs:
             line-height: 1.4;
           }
 
-          @media screen and (max-width: 600px) {
+          @media screen and (max-width: 768px) {
             .admin-body.admin-v2 .admin-auth-panel {
               width: calc(100% - 28px);
               margin-top: max(56px, calc(env(safe-area-inset-top, 0px) + 24px));
