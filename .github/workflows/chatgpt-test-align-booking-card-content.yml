@@ -1,0 +1,132 @@
+name: Align booking card content
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - .github/workflows/chatgpt-test-align-booking-card-content.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Normalize manual and online booking card identity rows
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js_path = Path('src/admin/10-bookings-events.js')
+          js = js_path.read_text(encoding='utf-8')
+          old = '''                        <span class="admin-kartya-tipus">Kézzel felvett idő</span>
+                        <h3>${html(megjegyzes)}</h3>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true"></p>
+'''
+          new = '''                        <p class="admin-kartya-tipus admin-foglalas-azonosito" aria-label="Kézzel felvett idő"><code>Kézzel felvett idő</code></p>
+                        <h3>${html(megjegzes)}</h3>
+                        <p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p>
+'''
+          if js.count(old) != 1:
+              raise SystemExit(f'Expected exactly one manual card identity block, found {js.count(old)}')
+          js_path.write_text(js.replace(old, new, 1), encoding='utf-8')
+
+          test_path = Path('tests/admin-v2-regressions.spec.js')
+          test = test_path.read_text(encoding='utf-8')
+          marker = "test('a kézi és online foglaláskártya azonos identitássor-geometriát használ mobilon'"
+          if marker not in test:
+              test += r'''
+
+test('a kézi és online foglaláskártya azonos identitássor-geometriát használ mobilon', async ({ page }) => {
+    const source = relativePath => fs.readFileSync(path.resolve(__dirname, '..', relativePath), 'utf8');
+    const bookingJs = source('src/admin/10-bookings-events.js');
+    const css = [
+        'src/admin-styles/00-foundation.css',
+        'src/admin-styles/05-panel-state.css',
+        'src/admin-styles/10-components.css',
+        'src/admin-styles/15-responsive-context.css',
+        'src/admin-styles/20-workspace.css',
+        'src/admin-styles/30-bookings.css'
+    ].map(source).join('\n');
+
+    expect(bookingJs).toContain('<p class="admin-kartya-tipus admin-foglalas-azonosito" aria-label="Kézzel felvett idő"><code>Kézzel felvett idő</code></p>');
+    expect(bookingJs).toContain('<p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p>');
+    expect(bookingJs).not.toContain('<span class="admin-kartya-tipus">Kézzel felvett idő</span>');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div id="admin-foglalas-lista" class="admin-db-lista">
+        <article class="admin-db-kartya admin-foglalas-kartya"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk" data-card="online"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>LUMI-TEST</code></p><h3>Online vendég</h3><p class="admin-foglalas-rovid-szolgaltatas">Töltés - S méret</p></div></div></div></article>
+        <article class="admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk" data-card="manual"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>Kézzel felvett idő</code></p><h3>Kézi vendég</h3><p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p></div></div></div></article>
+    </div></section></main></body></html>`);
+
+    const metrics = await page.evaluate(() => {
+        const box = (card, selector) => {
+            const root = document.querySelector(`[data-card="${card}"]`);
+            const r = root.querySelector(selector).getBoundingClientRect();
+            const rr = root.getBoundingClientRect();
+            return { top: r.top - rr.top, height: r.height };
+        };
+        return {
+            onlineMeta: box('online', '.admin-foglalas-azonosito'),
+            manualMeta: box('manual', '.admin-foglalas-azonosito'),
+            onlineName: box('online', 'h3'),
+            manualName: box('manual', 'h3'),
+            onlineService: box('online', '.admin-foglalas-rovid-szolgaltatas'),
+            manualService: box('manual', '.admin-foglalas-rovid-szolgaltatas')
+        };
+    });
+
+    expect(metrics.manualMeta.top).toBeCloseTo(metrics.onlineMeta.top, 2);
+    expect(metrics.manualMeta.height).toBeCloseTo(metrics.onlineMeta.height, 2);
+    expect(metrics.manualName.top).toBeCloseTo(metrics.onlineName.top, 2);
+    expect(metrics.manualName.height).toBeCloseTo(metrics.onlineName.height, 2);
+    expect(metrics.manualService.top).toBeCloseTo(metrics.onlineService.top, 2);
+    expect(metrics.manualService.height).toBeCloseTo(metrics.onlineService.height, 2);
+});
+'''
+          test_path.write_text(test, encoding='utf-8')
+          PY
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install Edge for Playwright
+        run: npx playwright install --with-deps msedge
+
+      - name: Run affected admin tests
+        run: npx playwright test tests/admin-v2-regressions.spec.js tests/admin-booking-css-architecture.spec.js tests/admin-production-redesign.spec.js
+
+      - name: Commit verified fix and remove temporary workflow
+        run: |
+          rm -f .github/workflows/chatgpt-test-align-booking-card-content.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Align online and manual booking cards"
+          git push origin CHATGPT_TEST
