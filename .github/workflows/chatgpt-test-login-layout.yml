@@ -38,6 +38,10 @@ jobs:
           }
           '''
           new = '''.admin-body.admin-v2 .admin-auth-panel {
+            --admin-ui-field-height: 44px;
+            --admin-ui-field-padding-x: 13px;
+            --admin-ui-input-font-size: 16px;
+            --admin-ui-control-radius: 12px;
             width: min(420px, calc(100% - 32px));
             margin: clamp(64px, 12vh, 112px) auto 48px;
             padding: 28px;
@@ -89,14 +93,6 @@ jobs:
             font-weight: 500;
           }
 
-          .admin-body.admin-v2 .admin-login-form .urlap-mezo {
-            height: 44px;
-            min-height: 44px;
-            padding-inline: 13px;
-            border-radius: 12px;
-            font-size: 16px;
-          }
-
           .admin-body.admin-v2 .admin-login-form .admin-gomb {
             width: 100%;
             min-height: 44px;
@@ -146,6 +142,7 @@ jobs:
             expect(markup()).toContain('class="admin-fejlec admin-auth-panel"');
             expect(source()).toContain('.admin-body.admin-v2 .admin-auth-panel {');
             expect(source()).not.toContain('.admin-body.admin-v2 .admin-login-panel {');
+            expect(source()).toContain('--admin-ui-field-height: 44px');
             expect(source()).not.toContain('!important');
           });
 
