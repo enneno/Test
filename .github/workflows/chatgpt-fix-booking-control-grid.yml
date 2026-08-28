@@ -1,0 +1,142 @@
+name: Fix booking control grid
+
+on:
+  push:
+    branches: [CHATGPT_TEST]
+    paths:
+      - .github/workflows/chatgpt-fix-booking-control-grid.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CHATGPT_TEST
+        uses: actions/checkout@v4
+        with:
+          ref: CHATGPT_TEST
+          fetch-depth: 0
+
+      - name: Remove implicit online control spacer and add regression test
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const cssPath = 'src/admin-styles/30-bookings.css';
+          let css = fs.readFileSync(cssPath, 'utf8');
+          const oldRule = `.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before {
+  grid-column: 2;
+  width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  content: "";
+  visibility: hidden;
+}
+`;
+          if (!css.includes(oldRule)) throw new Error('Expected implicit spacer rule not found');
+          css = css.replace(oldRule, '');
+          fs.writeFileSync(cssPath, css);
+
+          const testPath = 'tests/admin-v2-regressions.spec.js';
+          let test = fs.readFileSync(testPath, 'utf8');
+          const marker = "test('az online és kézi foglaláskártya vezérlősora nem hoz létre implicit grid sort'";
+          if (!test.includes(marker)) {
+            test += `
+
+test('az online és kézi foglaláskártya vezérlősora nem hoz létre implicit grid sort', async () => {
+    const css = fs.readFileSync(
+        path.resolve(__dirname, '..', 'src', 'admin-styles', '30-bookings.css'),
+        'utf8'
+    );
+
+    expect(css).toContain('.admin-foglalas-vezerlok > .admin-db-statusz');
+    expect(css).toContain('.admin-foglalas-vezerlok > .admin-kezi-ido-naptar { grid-column: 2; }');
+    expect(css).toContain('.admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }');
+    expect(css).not.toContain('.admin-foglalas-vezerlok:not(:has(.admin-kezi-ido-naptar))::before');
+});
+`;
+            fs.writeFileSync(testPath, test);
+          }
+          NODE
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Version assets
+        run: npm run assets:version
+
+      - name: Check
+        run: npm run check
+
+      - name: Install browsers
+        run: |
+          npx playwright install --with-deps msedge
+          npx playwright install --with-deps webkit
+
+      - name: Run affected admin tests
+        run: npx playwright test tests/admin-v2-regressions.spec.js tests/admin-booking-css-architecture.spec.js tests/admin-production-redesign.spec.js tests/admin-shared-components.spec.js
+
+      - name: Verify exact card alignment in WebKit
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const { webkit } = require('playwright');
+          (async () => {
+            const css = fs.readFileSync('admin-v2.css', 'utf8');
+            const browser = await webkit.launch();
+            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            await page.setContent(`<!doctype html><html data-admin-theme="dark"><head><style>${css}</style></head><body class="admin-body admin-v2"><main id="admin-tartalom"><section id="admin-panel-foglalasok"><div id="admin-foglalas-lista" class="admin-db-lista">
+              <article class="admin-db-kartya admin-foglalas-kartya admin-db-kartya-tiltas admin-foglalas-statusz-done admin-tiltas-kesz" data-card="manual"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>Kézzel felvett idő</code></p><h3>Eszter-S töltés</h3><p class="admin-foglalas-rovid-szolgaltatas" aria-hidden="true">&nbsp;</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">25/08/26</span><span class="admin-foglalas-ido">12:00 – 15:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-icon-button admin-control-icon-button admin-kezi-ido-naptar">Naptárba</button><button class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button></div></div></article>
+              <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-done" data-card="online"><div class="admin-db-kartya-fej"><div class="admin-foglalas-fosor"><div class="admin-foglalas-nev-blokk"><p class="admin-kartya-tipus admin-foglalas-azonosito"><code>LUMI-WFF3</code></p><h3>Sulyok Viktória</h3><p class="admin-foglalas-rovid-szolgaltatas">Töltés - S méret</p></div><p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">16/08/26</span><span class="admin-foglalas-ido">16:30 – 19:00</span></p></div><div class="admin-foglalas-vezerlok"><select class="admin-db-statusz" disabled><option selected>Kész</option></select><button class="admin-booking-details-trigger">Részletek</button><button class="admin-booking-icon-button admin-control-icon-button" data-foglalas-szerkesztes>Szerkesztés</button></div></div></article>
+            </div></section></main></body></html>`);
+            const metrics = await page.evaluate(() => {
+              const metric = (card, sel) => {
+                const root = document.querySelector(`[data-card="${card}"]`);
+                const rr = root.getBoundingClientRect();
+                const r = root.querySelector(sel).getBoundingClientRect();
+                return { top: r.top - rr.top, height: r.height };
+              };
+              return {
+                manualIdentity: metric('manual', '.admin-foglalas-nev-blokk'),
+                onlineIdentity: metric('online', '.admin-foglalas-nev-blokk'),
+                manualControls: metric('manual', '.admin-foglalas-vezerlok'),
+                onlineControls: metric('online', '.admin-foglalas-vezerlok'),
+                manualStatus: metric('manual', '.admin-db-statusz'),
+                onlineStatus: metric('online', '.admin-db-statusz')
+              };
+            });
+            console.log(JSON.stringify(metrics, null, 2));
+            const pairs = [
+              ['identity top', metrics.manualIdentity.top, metrics.onlineIdentity.top],
+              ['identity height', metrics.manualIdentity.height, metrics.onlineIdentity.height],
+              ['controls top', metrics.manualControls.top, metrics.onlineControls.top],
+              ['controls height', metrics.manualControls.height, metrics.onlineControls.height],
+              ['status top', metrics.manualStatus.top, metrics.onlineStatus.top],
+              ['status height', metrics.manualStatus.height, metrics.onlineStatus.height]
+            ];
+            for (const [name, a, b] of pairs) {
+              if (Math.abs(a - b) > 0.1) throw new Error(`${name} mismatch: manual=${a}, online=${b}`);
+            }
+            await browser.close();
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
+
+      - name: Commit verified fix and cleanup temporary workflows
+        run: |
+          rm -f .github/workflows/chatgpt-debug-booking-alignment.yml
+          rm -f .github/workflows/chatgpt-fix-booking-control-grid.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix booking card vertical alignment"
+          git push origin CHATGPT_TEST
