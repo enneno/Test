@@ -19,48 +19,33 @@ jobs:
           ref: CHATGPT_TEST
           fetch-depth: 0
 
-      - name: Fix icon control ownership and regression coverage
+      - name: Fix gallery icon ownership and regression coverage
         run: |
           python - <<'PY'
           from pathlib import Path
 
           js_path = Path('src/admin/46-cms-image-workspace.js')
           js = js_path.read_text(encoding='utf-8')
-
-          upload_old = """        removeTextNodes(label);\n        label.querySelector('svg')?.remove();\n        label.insertAdjacentHTML('afterbegin', ICONS[icon]);\n        label.classList.add('cms-icon-button', 'admin-control-icon-button');\n"""
-          upload_new = """        removeTextNodes(label);\n        label.querySelector('svg')?.remove();\n        label.classList.remove('admin-hozzaadas', 'admin-kis-gomb', 'admin-veszely-gomb');\n        label.insertAdjacentHTML('afterbegin', ICONS[icon]);\n        label.classList.add('cms-icon-button', 'admin-control-icon-button');\n"""
-          if js.count(upload_old) != 1:
-              raise SystemExit(f'Upload iconification marker count: {js.count(upload_old)}')
-          js = js.replace(upload_old, upload_new, 1)
-
-          button_old = """        button.innerHTML = ICONS[icon];\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
-          button_new = """        button.innerHTML = ICONS[icon];\n        button.classList.remove('admin-hozzaadas', 'admin-kis-gomb', 'admin-veszely-gomb');\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
-          if js.count(button_old) != 1:
-              raise SystemExit(f'Button iconification marker count: {js.count(button_old)}')
-          js = js.replace(button_old, button_new, 1)
-          js_path.write_text(js, encoding='utf-8')
+          old = """        button.innerHTML = ICONS[icon];\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
+          new = """        button.innerHTML = ICONS[icon];\n        if (button.matches('[data-cms-gallery-add], [data-cms-gallery-move]')) {\n            button.classList.remove('admin-hozzaadas', 'admin-kis-gomb', 'admin-veszely-gomb');\n        }\n        button.classList.add('cms-icon-button', 'admin-control-icon-button');\n        button.classList.toggle('cms-icon-button-danger', danger);\n"""
+          if js.count(old) != 1:
+              raise SystemExit(f'Button iconification marker count: {js.count(old)}')
+          js_path.write_text(js.replace(old, new, 1), encoding='utf-8')
 
           test_path = Path('tests/admin-cms-image-workspace.spec.js')
           test = test_path.read_text(encoding='utf-8')
 
-          marker = """    await expect(page.locator('[data-cms-gallery-add]')).toHaveAttribute('aria-label', 'Új galériakép');\n    await expect(page.locator('[data-cms-gallery-add] svg')).toHaveCount(1);\n    expect(await page.locator('[data-cms-gallery-add]').innerText()).toBe('');\n"""
-          addition = marker + """    await expect(page.locator('[data-cms-gallery-add]')).not.toHaveClass(/admin-hozzaadas|admin-kis-gomb/);\n"""
-          if marker not in test:
+          add_marker = """    await expect(page.locator('[data-cms-gallery-add]')).toHaveAttribute('aria-label', 'Új galériakép');\n    await expect(page.locator('[data-cms-gallery-add] svg')).toHaveCount(1);\n    expect(await page.locator('[data-cms-gallery-add]').innerText()).toBe('');\n"""
+          add_extra = add_marker + """    await expect(page.locator('[data-cms-gallery-add]')).not.toHaveClass(/admin-hozzaadas|admin-kis-gomb/);\n"""
+          if add_marker not in test:
               raise SystemExit('Gallery add assertion marker not found')
-          test = test.replace(marker, addition, 1)
+          test = test.replace(add_marker, add_extra, 1)
 
-          marker2 = """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).toBeDisabled();\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).toBeEnabled();\n"""
-          addition2 = marker2 + """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n\n    const iconMetrics = await page.evaluate(() => {\n        const measure = selector => {\n            const button = document.querySelector(selector);\n            const svg = button?.querySelector('svg');\n            const buttonStyle = button ? getComputedStyle(button) : null;\n            const svgRect = svg?.getBoundingClientRect();\n            return {\n                svgWidth: svgRect?.width || 0,\n                svgHeight: svgRect?.height || 0,\n                paddingLeft: buttonStyle?.paddingLeft || '',\n                paddingRight: buttonStyle?.paddingRight || ''\n            };\n        };\n        return {\n            add: measure('[data-cms-gallery-add]'),\n            up: measure('[data-test-gallery-image] [data-cms-gallery-move=\"up\"]'),\n            down: measure('[data-test-gallery-image] [data-cms-gallery-move=\"down\"]'),\n            remove: measure('[data-test-gallery-image] [data-cms-remove-image]')\n        };\n    });\n    for (const metric of Object.values(iconMetrics)) {\n        expect(metric.svgWidth).toBeGreaterThanOrEqual(15);\n        expect(metric.svgHeight).toBeGreaterThanOrEqual(15);\n        expect(metric.paddingLeft).toBe('0px');\n        expect(metric.paddingRight).toBe('0px');\n    }\n"""
-          if marker2 not in test:
+          move_marker = """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).toBeDisabled();\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).toBeEnabled();\n"""
+          move_extra = move_marker + """    await expect(galleryControls.locator('[data-cms-gallery-move=\"up\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n    await expect(galleryControls.locator('[data-cms-gallery-move=\"down\"]')).not.toHaveClass(/admin-kis-gomb|admin-hozzaadas/);\n\n    const iconMetrics = await page.evaluate(() => {\n        const measure = selector => {\n            const button = document.querySelector(selector);\n            const svg = button?.querySelector('svg');\n            const buttonStyle = button ? getComputedStyle(button) : null;\n            const svgRect = svg?.getBoundingClientRect();\n            return {\n                svgWidth: svgRect?.width || 0,\n                svgHeight: svgRect?.height || 0,\n                paddingLeft: buttonStyle?.paddingLeft || '',\n                paddingRight: buttonStyle?.paddingRight || ''\n            };\n        };\n        return {\n            add: measure('[data-cms-gallery-add]'),\n            up: measure('[data-test-gallery-image] [data-cms-gallery-move=\"up\"]'),\n            down: measure('[data-test-gallery-image] [data-cms-gallery-move=\"down\"]')\n        };\n    });\n    for (const metric of Object.values(iconMetrics)) {\n        expect(metric.svgWidth).toBeGreaterThanOrEqual(15);\n        expect(metric.svgHeight).toBeGreaterThanOrEqual(15);\n        expect(metric.paddingLeft).toBe('0px');\n        expect(metric.paddingRight).toBe('0px');\n    }\n"""
+          if move_marker not in test:
               raise SystemExit('Gallery move assertion marker not found')
-          test = test.replace(marker2, addition2, 1)
-
-          general_marker = """    await expect(generalField.locator('.cms-icon-button svg')).toHaveCount(2);\n    expect(await generalField.locator('.cms-image-controls').innerText()).toBe('');\n"""
-          general_addition = general_marker + """    await expect(generalField.locator('.cms-upload-button')).not.toHaveClass(/admin-hozzaadas|admin-kis-gomb/);\n    await expect(generalField.locator('[data-cms-remove-image]')).not.toHaveClass(/admin-hozzaadas|admin-kis-gomb|admin-veszely-gomb/);\n"""
-          if general_marker not in test:
-              raise SystemExit('General icon assertion marker not found')
-          test = test.replace(general_marker, general_addition, 1)
-
+          test = test.replace(move_marker, move_extra, 1)
           test_path.write_text(test, encoding='utf-8')
           PY
 
