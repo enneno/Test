@@ -23,47 +23,18 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-
           css_path = Path('src/admin-styles/10-components.css')
           css = css_path.read_text(encoding='utf-8')
-          old = '''.admin-body.admin-v2 .admin-control-icon-button svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-'''
-          new = '''.admin-body.admin-v2 .admin-control-icon-button svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 16px;
-  fill: none;
-'''
+          old = '.admin-body.admin-v2 .admin-control-icon-button svg {\n  width: 16px;\n  height: 16px;\n  fill: none;\n'
+          new = '.admin-body.admin-v2 .admin-control-icon-button svg {\n  width: 16px;\n  height: 16px;\n  flex: 0 0 16px;\n  fill: none;\n'
           if css.count(old) != 1:
               raise SystemExit(f'Shared icon SVG marker count: {css.count(old)}')
           css_path.write_text(css.replace(old, new, 1), encoding='utf-8')
 
           test_path = Path('tests/admin-cms-image-workspace.spec.js')
           test = test_path.read_text(encoding='utf-8')
-          marker = '''    await expect(galleryControls.locator('[data-cms-gallery-move="up"]')).toBeDisabled();
-    await expect(galleryControls.locator('[data-cms-gallery-move="down"]')).toBeEnabled();
-'''
-          addition = marker + '''
-    const galleryIconMetrics = await page.evaluate(() => {
-        const size = selector => {
-            const svg = document.querySelector(selector)?.querySelector('svg');
-            const rect = svg?.getBoundingClientRect();
-            return { width: rect?.width || 0, height: rect?.height || 0 };
-        };
-        return {
-            add: size('[data-cms-gallery-add]'),
-            up: size('[data-test-gallery-image] [data-cms-gallery-move="up"]'),
-            down: size('[data-test-gallery-image] [data-cms-gallery-move="down"]')
-        };
-    });
-    for (const metric of Object.values(galleryIconMetrics)) {
-        expect(metric.width).toBeGreaterThanOrEqual(15);
-        expect(metric.height).toBeGreaterThanOrEqual(15);
-    }
-'''
+          marker = '    await expect(galleryControls.locator(\'[data-cms-gallery-move="up"]\')).toBeDisabled();\n    await expect(galleryControls.locator(\'[data-cms-gallery-move="down"]\')).toBeEnabled();\n'
+          addition = marker + '\n    const galleryIconMetrics = await page.evaluate(() => {\n        const size = selector => {\n            const svg = document.querySelector(selector)?.querySelector(\'svg\');\n            const rect = svg?.getBoundingClientRect();\n            return { width: rect?.width || 0, height: rect?.height || 0 };\n        };\n        return {\n            add: size(\'[data-cms-gallery-add]\'),\n            up: size(\'[data-test-gallery-image] [data-cms-gallery-move="up"]\'),\n            down: size(\'[data-test-gallery-image] [data-cms-gallery-move="down"]\')\n        };\n    });\n    for (const metric of Object.values(galleryIconMetrics)) {\n        expect(metric.width).toBeGreaterThanOrEqual(15);\n        expect(metric.height).toBeGreaterThanOrEqual(15);\n    }\n'
           if marker not in test:
               raise SystemExit('Gallery move assertion marker not found')
           test_path.write_text(test.replace(marker, addition, 1), encoding='utf-8')
