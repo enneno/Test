@@ -29,6 +29,11 @@
   --admin-v2-info: #4e667b;
   --admin-v2-info-soft: #e9eff4;
   --admin-v2-shadow: 0 8px 26px rgba(67, 42, 35, 0.055);
+  --admin-v2-glass: rgba(255, 255, 255, 0.93);
+  --admin-v2-auth-glass: rgba(255, 255, 255, 0.9);
+  --admin-v2-neutral-soft: #eeeae7;
+  --admin-v2-divider-soft: #f0eae6;
+  --admin-v2-switch-knob: #ffffff;
   --lumi-font-body: 14px;
   --lumi-font-body-small: 13px;
   --lumi-font-control: 14px;
@@ -41,6 +46,34 @@
   background: var(--admin-v2-bg);
   font-size: 14px;
   line-height: 1.5;
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 {
+  --admin-v2-bg: var(--admin-page-bg);
+  --admin-v2-surface: #24201e;
+  --admin-v2-surface-soft: #2c2724;
+  --admin-v2-border: #413936;
+  --admin-v2-border-strong: #5a4d48;
+  --admin-v2-ink: #f3eae6;
+  --admin-v2-muted: #b9aaa4;
+  --admin-v2-subtle: #93847f;
+  --admin-v2-brand: #cf9e92;
+  --admin-v2-brand-dark: #e1b4a9;
+  --admin-v2-brand-soft: #3a2b27;
+  --admin-v2-success: #8fb99c;
+  --admin-v2-success-soft: #24352a;
+  --admin-v2-warning: #d1a667;
+  --admin-v2-warning-soft: #3a3021;
+  --admin-v2-danger: #d4878c;
+  --admin-v2-danger-soft: #3d2729;
+  --admin-v2-info: #8eacc2;
+  --admin-v2-info-soft: #26333b;
+  --admin-v2-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+  --admin-v2-glass: rgba(36, 32, 30, 0.93);
+  --admin-v2-auth-glass: rgba(36, 32, 30, 0.94);
+  --admin-v2-neutral-soft: #312b28;
+  --admin-v2-divider-soft: #342e2b;
+  --admin-v2-switch-knob: #fff7f2;
 }
 
 .admin-body.admin-v2 *,
@@ -97,7 +130,7 @@
   padding: 28px;
   border: 1px solid var(--admin-v2-border);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--admin-v2-auth-glass);
   box-shadow: var(--admin-v2-shadow);
 }
 
@@ -482,7 +515,7 @@
   padding: 0 42px;
   gap: 16px;
   border-bottom: 1px solid var(--admin-v2-border);
-  background: rgba(255, 255, 255, 0.93);
+  background: var(--admin-v2-glass);
   backdrop-filter: blur(14px);
 }
 .admin-body.admin-v2 .admin-workspace-status {
@@ -582,7 +615,7 @@
   overflow-y: auto;
   border: 1px solid var(--admin-v2-border);
   border-radius: 13px;
-  background: #fff;
+  background: var(--admin-v2-surface);
   box-shadow: 0 18px 48px rgba(52, 41, 37, 0.18);
 }
 
@@ -986,7 +1019,7 @@
   min-height: 58px;
   padding: 9px 15px;
   gap: 11px;
-  border-bottom: 1px solid #f0eae6;
+  border-bottom: 1px solid var(--admin-v2-divider-soft);
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-item:last-child {
@@ -1090,12 +1123,12 @@
 
 .admin-body.admin-v2 .admin-v2-status-chip.admin-v2-tone-muted {
   color: var(--admin-v2-muted);
-  background: #eeeae7;
+  background: var(--admin-v2-neutral-soft);
 }
 
 .admin-body.admin-v2 .admin-v2-upcoming-list li,
 .admin-body.admin-v2 .admin-v2-task-item {
-  border-bottom: 1px solid #f0eae6;
+  border-bottom: 1px solid var(--admin-v2-divider-soft);
 }
 
 .admin-body.admin-v2 .admin-v2-upcoming-list li:last-child,
@@ -1329,11 +1362,49 @@
 }
 
 .admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"] {
-  width: 38px;
-  height: 20px;
-  min-height: 20px;
-  flex: 0 0 auto;
-  accent-color: var(--admin-v2-brand);
+  position: relative;
+  flex: 0 0 42px;
+  width: 42px;
+  min-width: 42px;
+  height: 24px;
+  min-height: 24px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--admin-v2-border-strong);
+  border-radius: 999px;
+  background: var(--admin-v2-surface-soft);
+  box-shadow: none;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]::after {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--admin-v2-switch-knob);
+  box-shadow: 0 1px 4px rgba(34, 24, 21, 0.22);
+  content: "";
+  transition: transform 150ms ease;
+}
+
+.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:checked {
+  border-color: var(--admin-v2-brand);
+  background: var(--admin-v2-brand);
+}
+
+.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:checked::after {
+  transform: translateX(18px);
+}
+
+.admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--admin-v2-brand);
+  outline-offset: 3px;
 }
 
 .admin-body.admin-v2 .admin-v2-account-actions {

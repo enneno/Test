@@ -99,7 +99,7 @@
   border: 0;
   border-left: 1px solid var(--admin-v2-border);
   border-radius: 0;
-  background: #fbfaf8;
+  background: var(--admin-v2-surface);
   box-shadow: -18px 0 48px rgba(46, 36, 33, .18), 0 0 0 100vmax rgba(46, 36, 33, .34);
   overscroll-behavior: contain;
 }
@@ -110,7 +110,7 @@
   min-height: 68px;
   padding: 14px 0 12px;
   border-bottom: 1px solid var(--admin-v2-border);
-  background: rgba(251, 250, 248, .96);
+  background: color-mix(in srgb, var(--admin-v2-surface) 96%, transparent);
   backdrop-filter: blur(14px);
 }
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szolgaltatas-kartya.szerkeszt .admin-kompakt-kartya-osszefoglalo h3 {
@@ -181,7 +181,7 @@
   padding: 13px 20px calc(13px + env(safe-area-inset-bottom, 0px));
   gap: 10px;
   border-top: 1px solid var(--admin-v2-border);
-  background: rgba(251, 250, 248, .96);
+  background: color-mix(in srgb, var(--admin-v2-surface) 96%, transparent);
   backdrop-filter: blur(14px);
 }
 

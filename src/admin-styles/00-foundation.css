@@ -58,13 +58,58 @@
   --szin-kiemeles: var(--ui-primary);
 }
 
+html[data-admin-theme="dark"] {
+  --akcentus: #c7969f;
+  --akcentus-vilagos: #ddb1ad;
+  --tinta: #f2e9e5;
+  --barna: #d7c9c3;
+  --krem: #2d2724;
+  --kartya: #28221f;
+  --szoveg: #bfb1ab;
+  --rozsa-halvany: #493332;
+  --zsalyaszurke: #869680;
+
+  --ui-primary: #d4a49a;
+  --ui-on-primary: #211917;
+  --ui-accent: #4b3531;
+  --ui-on-accent: #f5ece8;
+  --ui-bg: #181514;
+  --ui-surface: #24201e;
+  --ui-soft: #302a27;
+  --ui-highlight: #2b2522;
+  --ui-warm: #3a2a27;
+  --ui-off-black: #f4ece8;
+  --ui-off-white: #fff9f5;
+  --ui-ink: #eee5e1;
+  --ui-muted: #b5a8a2;
+  --ui-rose: #4b3531;
+  --ui-rose-dark: #a96f78;
+  --ui-line: rgba(235, 220, 214, 0.14);
+  --ui-line-strong: rgba(235, 220, 214, 0.28);
+
+  --lumi-control-bg: #2c2623;
+  --lumi-control-border: rgba(212, 164, 154, 0.24);
+  --lumi-control-border-strong: rgba(212, 164, 154, 0.52);
+  --lumi-control-focus: 0 0 0 3px rgba(212, 164, 154, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --lumi-control-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --lumi-soft-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  --admin-page-bg: #181514;
+  --admin-native-color-scheme: dark;
+}
+
 html {
+  --admin-page-bg: #f7f4f1;
+  --admin-native-color-scheme: light;
+  --lumi-control-inset: inset 0 1px 0 rgba(255, 255, 255, 0.75);
   min-width: 100%;
   min-height: 100%;
   margin: 0;
-  background: #f7f4f1;
+  background: var(--admin-page-bg);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  color-scheme: var(--admin-native-color-scheme);
 }
 
 body.admin-body {
@@ -73,7 +118,7 @@ body.admin-body {
   --admin-ink: var(--ui-primary);
   --admin-muted: var(--ui-muted);
   --admin-surface: var(--ui-surface);
-  --admin-canvas: #f8f6f1;
+  --admin-canvas: var(--ui-bg);
   --admin-soft: var(--ui-soft);
   --admin-line: var(--ui-line);
   --admin-rose: var(--ui-accent);
@@ -83,7 +128,7 @@ body.admin-body {
   margin: 0;
   overflow-x: hidden;
   color: var(--tinta);
-  background: #f7f4f1;
+  background: var(--admin-page-bg);
   font-family: 'Manrope', sans-serif;
   font-size: 14px;
   line-height: 1.5;
@@ -181,17 +226,17 @@ body.admin-body [hidden] {
   width: 100%;
   min-width: 0;
   padding: 15px;
-  border: 1px solid rgba(185, 133, 143, 0.28);
+  border: 1px solid var(--lumi-control-border);
   border-radius: var(--lumi-radius-control);
   color: var(--tinta);
-  background: #fffaf4;
+  background: var(--lumi-control-bg);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-control);
-  color-scheme: light;
+  color-scheme: var(--admin-native-color-scheme);
 }
 
 .urlap-mezo::placeholder {
-  color: rgba(43, 37, 33, 0.52);
+  color: color-mix(in srgb, var(--tinta) 52%, transparent);
   opacity: 1;
 }
 

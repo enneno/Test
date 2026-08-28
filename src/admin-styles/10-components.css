@@ -164,7 +164,7 @@
 .admin-body .admin-kis-gomb {
   border: 1px solid rgba(185, 133, 143, 0.24);
   color: var(--tinta);
-  background: rgba(255, 250, 244, 0.8);
+  background: color-mix(in srgb, var(--admin-v2-surface) 80%, transparent);
   font-family: var(--lumi-button-font);
   font-weight: 600;
   text-align: center;
@@ -209,7 +209,7 @@
   padding: 3px;
   border: 1px solid var(--admin-v2-border);
   border-radius: 12px;
-  background: #f3eeea;
+  background: var(--admin-v2-surface-soft);
   box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
 }
 
@@ -321,7 +321,7 @@
   color: var(--tinta);
   background-color: var(--lumi-control-bg);
   font-family: inherit;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  box-shadow: var(--lumi-control-inset);
 }
 
 .admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
@@ -383,6 +383,11 @@
   --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));
   --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
   --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 {
+  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
 }
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {

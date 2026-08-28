@@ -79,7 +79,7 @@
   padding: 16px;
   border: 1px solid rgba(185, 133, 143, .28);
   border-radius: 18px;
-  background: rgba(255, 250, 244, .72);
+  background: var(--admin-v2-surface-soft);
 }
 .cms-image-field > .cms-field-label { grid-area: label; }
 .cms-image-preview {
@@ -202,7 +202,7 @@ body.cms-image-lightbox-open { overflow: hidden; }
   padding: 18px;
   border: 1px solid rgba(185, 133, 143, .28);
   border-radius: 20px;
-  background: rgba(255, 250, 244, .72);
+  background: var(--admin-v2-surface-soft);
 }
 .cms-gallery-item[data-home-selected="true"] {
   border-color: rgba(163, 93, 117, .62);
@@ -218,7 +218,7 @@ body.cms-image-lightbox-open { overflow: hidden; }
   border: 1px solid rgba(185, 133, 143, .24);
   border-radius: 12px;
   color: var(--tinta);
-  background: rgba(255, 255, 255, .58);
+  background: var(--admin-v2-surface);
   font-size: var(--lumi-font-label);
   font-weight: 600;
   line-height: 1.35;
@@ -390,7 +390,7 @@ body.cms-image-lightbox-open { overflow: hidden; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > summary small {
   color: var(--admin-v2-brand-dark);
   border-color: rgba(163, 93, 117, .22);
-  background: rgba(255, 255, 255, .58);
+  background: var(--admin-v2-surface);
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-fieldset[open] > .cms-fieldset-grid {
   border-top: 1px solid var(--admin-v2-border);

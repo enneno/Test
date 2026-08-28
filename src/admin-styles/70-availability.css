@@ -44,7 +44,7 @@
   border: 1px solid rgba(185, 133, 143, .18);
   border-radius: 12px;
   color: var(--tinta);
-  background: #fffdf8;
+  background: var(--admin-v2-surface);
   font-family: 'Manrope', sans-serif;
   font-size: var(--lumi-font-label);
   font-weight: 600;
@@ -74,7 +74,7 @@
   padding: 9px 10px;
   border: 1px solid rgba(185, 133, 143, .16);
   border-radius: 12px;
-  background: rgba(255, 250, 244, .78);
+  background: var(--admin-v2-surface);
 }
 .admin-body.admin-v2 .admin-naptar-datum {
   min-width: 0;
@@ -118,7 +118,7 @@
   gap: 8px 18px;
   margin: 0 0 12px;
   padding: 14px;
-  background: #f8f4f0;
+  background: var(--admin-v2-surface-soft);
 }
 .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej {
   grid-area: month;
@@ -212,7 +212,7 @@
   background: transparent;
   box-shadow: none;
 }
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
   grid-template-columns: minmax(160px, 1.2fr) minmax(100px, .65fr) minmax(100px, .65fr) 36px;
   align-items: center;
@@ -231,7 +231,7 @@
   margin: 0 0 12px;
   padding: 12px;
   border-radius: 12px;
-  background: #f8f4f0;
+  background: var(--admin-v2-surface-soft);
 }
 .admin-body.admin-v2 #admin-tiltas-form .admin-tiltas-sor {
   display: grid;
@@ -259,7 +259,7 @@
   background: transparent;
   box-shadow: none;
 }
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: #faf7f3; }
+.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;

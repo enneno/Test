@@ -729,6 +729,37 @@
         }
     });
 
+    const ADMIN_V2_THEME_STORAGE_KEY = 'lumi-admin-theme';
+
+    function adminV2TemaOlvasasa() {
+        const fallback = document.documentElement.dataset.adminTheme === 'dark' ? 'dark' : 'light';
+        try {
+            const saved = window.localStorage.getItem(ADMIN_V2_THEME_STORAGE_KEY);
+            if (saved === 'dark' || saved === 'light') return saved;
+        } catch (_) {
+            return fallback;
+        }
+        return fallback;
+    }
+
+    function adminV2TemaAlkalmazasa(theme, persist = false) {
+        const normalized = theme === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.adminTheme = normalized;
+        const toggle = document.querySelector('[data-admin-v2-dark-mode]');
+        if (toggle) {
+            const dark = normalized === 'dark';
+            toggle.checked = dark;
+            toggle.setAttribute('aria-checked', String(dark));
+        }
+        if (persist) {
+            try {
+                window.localStorage.setItem(ADMIN_V2_THEME_STORAGE_KEY, normalized);
+            } catch (_) {
+                // The visual mode still works for this session when storage is unavailable.
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         adminV2Inicializalasa();
     });
@@ -745,6 +776,7 @@
 
         body.dataset.adminV2Ready = 'true';
         body.classList.add('admin-v2');
+        adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());
         workspaceMain.id = workspaceMain.id || 'admin-v2-main';
         workspaceMain.tabIndex = -1;
 
@@ -968,6 +1000,16 @@
         panel.innerHTML = `
             <section class="admin-v2-settings-card">
                 <div class="admin-v2-settings-header">
+                    <h2>Megjelenés</h2>
+                    <p>Az admin felület megjelenésének beállításai.</p>
+                </div>
+                <label class="admin-v2-setting-row" for="admin-sotet-mod">
+                    <span><strong>Sötét mód</strong><small>Sötét színvilág az admin minden nézetében.</small></span>
+                    <input type="checkbox" id="admin-sotet-mod" data-admin-v2-dark-mode role="switch" aria-label="Sötét mód">
+                </label>
+            </section>
+            <section class="admin-v2-settings-card">
+                <div class="admin-v2-settings-header">
                     <h2>Weboldali elérhetőség</h2>
                     <p>A publikus oldalon megjelenő kapcsolati beállítások.</p>
                 </div>
@@ -995,6 +1037,14 @@
         const status = document.getElementById('admin-jelszo-status');
         if (form) slot.append(form);
         if (status) slot.append(status);
+
+        const temaKapcsolo = panel.querySelector('[data-admin-v2-dark-mode]');
+        if (temaKapcsolo) {
+            adminV2TemaAlkalmazasa(adminV2TemaOlvasasa());
+            temaKapcsolo.addEventListener('change', () => {
+                adminV2TemaAlkalmazasa(temaKapcsolo.checked ? 'dark' : 'light', true);
+            });
+        }
     }
 
     function adminV2PanelFejlecekLetrehozasa() {
