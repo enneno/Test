@@ -1,0 +1,185 @@
+name: Promote tested site to luminails.hu
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_ref:
+        description: "Teszt ág vagy commit (alapértelmezés: main)"
+        required: true
+        default: main
+        type: string
+      confirmation:
+        description: "Írd be: ELESITES"
+        required: true
+        type: string
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    outputs:
+      source_sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - name: Confirm live promotion
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          if [[ "$CONFIRMATION" != "ELESITES" ]]; then
+            echo "::error::A megerősítés nem egyezik."
+            exit 1
+          fi
+
+      - name: Checkout live repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          fetch-depth: 0
+
+      - name: Checkout tested repository
+        uses: actions/checkout@v4
+        with:
+          repository: enneno/enneno.github.io
+          ref: ${{ inputs.test_ref }}
+          path: tested
+          persist-credentials: false
+
+      - name: Record tested commit
+        id: source
+        shell: bash
+        run: echo "sha=$(git -C tested rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Reject production domain in test repository
+        shell: bash
+        run: |
+          if [[ -e tested/CNAME ]]; then
+            echo "::error::A teszt tároló nem tartalmazhat CNAME fájlt."
+            exit 1
+          fi
+
+      - name: Replace live application with tested content
+        shell: bash
+        run: |
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='CNAME' \
+            --exclude='node_modules/' \
+            --exclude='playwright-report/' \
+            --exclude='test-results/' \
+            tested/ live/
+          grep -qx 'luminails.hu' live/CNAME
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: live/package-lock.json
+
+      - name: Install dependencies
+        working-directory: live
+        run: npm ci
+
+      - name: Install Edge for Playwright
+        working-directory: live
+        run: npx playwright install --with-deps msedge
+
+      - name: Verify admin release candidate
+        working-directory: live
+        run: npm run verify:admin
+
+      - name: Verify complete promotion candidate
+        working-directory: live
+        run: npm run check && npm test
+
+      - name: Prepare verified promotion artifact
+        shell: bash
+        run: |
+          artifact_dir="${RUNNER_TEMP}/verified-promotion"
+          mkdir -p "$artifact_dir"
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='playwright-report/' \
+            --exclude='test-results/' \
+            live/ "$artifact_dir/"
+
+      - name: Store verified promotion artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-promotion
+          path: ${{ runner.temp }}/verified-promotion
+          include-hidden-files: true
+          retention-days: 7
+
+  promote:
+    needs: verify
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout live repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          fetch-depth: 0
+
+      - name: Download verified promotion artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: verified-promotion
+          path: candidate
+
+      - name: Update live main from verified candidate
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ needs.verify.outputs.source_sha }}
+        run: |
+          grep -qx 'luminails.hu' candidate/CNAME
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            candidate/ live/
+          git -C live config user.name "github-actions[bot]"
+          git -C live config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C live add -A
+          if git -C live diff --cached --quiet; then
+            echo "Az éles tároló már ezt a verziót tartalmazza."
+          else
+            git -C live commit -m "release: promote tested site ${SOURCE_SHA:0:12}"
+            git -C live push origin HEAD:main
+          fi
+          echo "Promoted test commit: ${SOURCE_SHA}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload verified static files
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: candidate
+          include-hidden-files: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Smoke test luminails.hu
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/foglalas/

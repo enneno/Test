@@ -1,9 +1,21 @@
 # Helyi fejlesztés
 
-## Egyetlen forrásmappa
+## Fejlesztési forrás és éles példány
 
-A projekt elsődleges helyi példánya: `D:\Asztal\Luminails`.
-A módosításokat és az ellenőrzéseket mindig ebben a mappában kell futtatni. A régi, C: meghajtón maradt másolat nem forrás.
+A projekt elsődleges fejlesztési példánya: `D:\Asztal\LumiNails_Test`.
+Minden fejlesztést és hibajavítást ebben a mappában kell elvégezni, ellenőrizni és a tesztoldalra feltölteni.
+
+A `D:\Asztal\Luminails` mappa az éles `luminails.hu` tároló helyi példánya. Ebben normál fejlesztést nem végzünk; az éles tartalmat az ellenőrzött promóciós folyamat frissíti.
+
+## Tesztelés és élesítés
+
+1. A módosítás a `LumiNails_Test` mappában készül el.
+2. A `main` ágra kerülő commit teljes ellenőrzés után automatikusan a tesztoldalra települ.
+3. A tesztoldalon manuálisan is ellenőrizzük a fontos működéseket.
+4. Élesítéshez az `enneno/Test` tárolóban kézzel kell elindítani a `Promote tested site to luminails.hu` workflow-t.
+5. A workflow újra ellenőrzi a kiválasztott teszt commitot, megőrzi az éles `CNAME` és `.github` fájlokat, majd ugyanazt az ellenőrzött csomagot menti és telepíti a `luminails.hu` oldalra.
+
+Normál fejlesztés közben semmi nem kerül automatikusan az éles oldalra. Visszaállításhoz az utolsó promóciós commit visszavonható, majd a `Redeploy current luminails.hu site` workflow kézzel újraindítható.
 
 ## Szerkeszthető források
 

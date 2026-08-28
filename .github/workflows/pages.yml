@@ -1,29 +1,39 @@
-name: Deploy static site to Pages
+name: Redeploy current luminails.hu site
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    inputs:
+      confirmation:
+        description: "Írd be: UJRATELEPITES"
+        required: true
+        type: string
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  verify:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Confirm recovery redeploy
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          if [[ "$CONFIRMATION" != "UJRATELEPITES" ]]; then
+            echo "::error::A megerősítés nem egyezik."
+            exit 1
+          fi
+
+      - name: Checkout live repository
         uses: actions/checkout@v4
+
+      - name: Validate live domain
+        shell: bash
+        run: grep -qx 'luminails.hu' CNAME
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -40,15 +50,62 @@ jobs:
       - name: Verify admin release
         run: npm run verify:admin
 
+      - name: Verify committed live candidate
+        run: npm run check && npm test
+
+      - name: Prepare verified Pages artifact
+        shell: bash
+        run: |
+          artifact_dir="${RUNNER_TEMP}/verified-live-site"
+          mkdir -p "$artifact_dir"
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='playwright-report/' \
+            --exclude='test-results/' \
+            ./ "$artifact_dir/"
+
+      - name: Store verified live artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-live-site
+          path: ${{ runner.temp }}/verified-live-site
+          include-hidden-files: true
+          retention-days: 3
+
+  deploy:
+    needs: verify
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download verified live artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: verified-live-site
+          path: site
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload static files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: site
           include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Smoke test luminails.hu
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/foglalas/
