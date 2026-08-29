@@ -12,6 +12,11 @@ on:
         description: "Írd be: ELESITES"
         required: true
         type: string
+  push:
+    branches:
+      - main
+    paths:
+      - .github/live-release-request.txt
 
 concurrency:
   group: pages
@@ -28,7 +33,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Confirm live promotion
+      - name: Confirm manual live promotion
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         env:
           CONFIRMATION: ${{ inputs.confirmation }}
@@ -45,11 +51,28 @@ jobs:
           path: live
           fetch-depth: 0
 
+      - name: Resolve TEST ref
+        id: request
+        shell: bash
+        env:
+          MANUAL_REF: ${{ inputs.test_ref }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            test_ref="$MANUAL_REF"
+          else
+            test_ref="$(tr -d '\r\n ' < live/.github/live-release-request.txt)"
+          fi
+          if [[ -z "$test_ref" ]]; then
+            echo "::error::Hiányzik a TEST commit vagy ág."
+            exit 1
+          fi
+          echo "ref=$test_ref" >> "$GITHUB_OUTPUT"
+
       - name: Checkout tested repository
         uses: actions/checkout@v4
         with:
           repository: enneno/enneno.github.io
-          ref: ${{ inputs.test_ref }}
+          ref: ${{ steps.request.outputs.ref }}
           path: tested
           persist-credentials: false
 
