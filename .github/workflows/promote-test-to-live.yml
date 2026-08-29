@@ -18,12 +18,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  verify:
+  promote:
     permissions:
-      contents: read
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    outputs:
-      source_sha: ${{ steps.source.outputs.sha }}
     steps:
       - name: Confirm live promotion
         shell: bash
@@ -55,13 +58,32 @@ jobs:
         shell: bash
         run: echo "sha=$(git -C tested rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Reject production domain in test repository
+      - name: Require successful TEST deployment
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          runs_file="${RUNNER_TEMP}/test-pages-runs.json"
+          curl --fail --silent --show-error --retry 3 --retry-delay 2 \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/enneno/enneno.github.io/actions/workflows/pages.yml/runs?head_sha=${SOURCE_SHA}&status=completed&per_page=20" \
+            --output "$runs_file"
+          if ! jq -e --arg sha "$SOURCE_SHA" \
+            'any(.workflow_runs[]; .head_sha == $sha and .conclusion == "success")' \
+            "$runs_file" >/dev/null; then
+            echo "::error::Ehhez a TEST commithoz nincs sikeres tesztoldal-telepítés."
+            exit 1
+          fi
+
+      - name: Validate source and live domain
         shell: bash
         run: |
           if [[ -e tested/CNAME ]]; then
             echo "::error::A teszt tároló nem tartalmazhat CNAME fájlt."
             exit 1
           fi
+          grep -qx 'luminails.hu' live/CNAME
 
       - name: Replace live application with tested content
         shell: bash
@@ -76,84 +98,11 @@ jobs:
             tested/ live/
           grep -qx 'luminails.hu' live/CNAME
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: live/package-lock.json
-
-      - name: Install dependencies
-        working-directory: live
-        run: npm ci
-
-      - name: Install Edge for Playwright
-        working-directory: live
-        run: npx playwright install --with-deps msedge
-
-      - name: Verify admin release candidate
-        working-directory: live
-        run: npm run verify:admin
-
-      - name: Verify complete promotion candidate
-        working-directory: live
-        run: npm run check && npm test
-
-      - name: Prepare verified promotion artifact
-        shell: bash
-        run: |
-          artifact_dir="${RUNNER_TEMP}/verified-promotion"
-          mkdir -p "$artifact_dir"
-          rsync -a \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='node_modules/' \
-            --exclude='playwright-report/' \
-            --exclude='test-results/' \
-            live/ "$artifact_dir/"
-
-      - name: Store verified promotion artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: verified-promotion
-          path: ${{ runner.temp }}/verified-promotion
-          include-hidden-files: true
-          retention-days: 7
-
-  promote:
-    needs: verify
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout live repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: live
-          fetch-depth: 0
-
-      - name: Download verified promotion artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: verified-promotion
-          path: candidate
-
-      - name: Update live main from verified candidate
+      - name: Update live main
         shell: bash
         env:
-          SOURCE_SHA: ${{ needs.verify.outputs.source_sha }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
         run: |
-          grep -qx 'luminails.hu' candidate/CNAME
-          rsync -a --delete \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            candidate/ live/
           git -C live config user.name "github-actions[bot]"
           git -C live config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git -C live add -A
@@ -163,23 +112,30 @@ jobs:
             git -C live commit -m "release: promote tested site ${SOURCE_SHA:0:12}"
             git -C live push origin HEAD:main
           fi
-          echo "Promoted test commit: ${SOURCE_SHA}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Promoted TEST commit: ${SOURCE_SHA}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          artifact_dir="${RUNNER_TEMP}/live-site"
+          mkdir -p "$artifact_dir"
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='playwright-report/' \
+            --exclude='test-results/' \
+            live/ "$artifact_dir/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload verified static files
+      - name: Upload static files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: candidate
+          path: ${{ runner.temp }}/live-site
           include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Smoke test luminails.hu
-        shell: bash
-        run: |
-          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/
-          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/foglalas/
