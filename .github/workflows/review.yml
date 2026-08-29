@@ -1,9 +1,6 @@
 name: Verify review branch
 
 on:
-  push:
-    branches:
-      - pwa-app-copy
   pull_request:
     branches:
       - main
