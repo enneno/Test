@@ -14,6 +14,7 @@ const ADMIN_STYLE_FILES = [
     '42-cms-image-controls.css',
     '45-gallery-editor.css',
     '50-services.css',
+    '52-price-calculator.css',
     '60-coupons.css',
     '70-availability.css',
     '80-communications.css',

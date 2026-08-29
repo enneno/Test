@@ -40,6 +40,10 @@
   pointer-events: auto;
 }
 
+.admin-body.admin-v2.lumi-admin-standalone.pwa-admin-more-open .admin-v2-notification-panel {
+  bottom: calc((var(--pwa-admin-toolbar-height) * 2) + var(--pwa-admin-toolbar-bottom) + 20px);
+}
+
 .admin-body.admin-v2.lumi-admin-standalone .admin-sidebar {
   z-index: 90;
   transform: translateX(calc(-100% - 24px));
@@ -75,7 +79,8 @@
   bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 12px);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dock {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-dock,
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-more {
   position: fixed;
   z-index: 75;
   left: 50%;
@@ -95,6 +100,15 @@
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   transform: translateX(-50%);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-more {
+  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 8px);
+  grid-template-columns: repeat(5, 44px);
+}
+
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-more[hidden] {
+  display: none;
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button {
@@ -135,8 +149,7 @@
   transform: scale(0.94);
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button svg,
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add svg {
+.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-button svg {
   position: relative;
   z-index: 1;
   width: 19px;
@@ -146,6 +159,14 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.8;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone [data-pwa-admin-more] svg {
+  transition: transform 180ms ease;
+}
+
+.admin-body.admin-v2.lumi-admin-standalone [data-pwa-admin-more][aria-expanded="true"] svg {
+  transform: rotate(180deg);
 }
 
 .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save {
@@ -201,41 +222,8 @@
   display: none;
 }
 
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add {
-  position: fixed;
-  z-index: 75;
-  left: calc(50% + 145px);
-  bottom: calc(var(--pwa-admin-toolbar-height) + var(--pwa-admin-toolbar-bottom) + 14px);
-  display: grid;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  place-items: center;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 14px;
-  color: var(--admin-v2-brand-dark);
-  background: color-mix(in srgb, var(--admin-v2-surface) 90%, transparent);
-  box-shadow: 0 10px 24px rgba(54, 39, 34, 0.14);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transform: translateX(-100%);
-  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:active {
-  transform: translateX(-100%) scale(0.94);
-}
-
-/* The global quick-add creates a blocked time, so it only belongs to scheduling workflows. */
-.admin-body.admin-v2.lumi-admin-standalone[data-admin-v2-group="kommunikacio"] .pwa-admin-quick-add {
-  display: none;
-}
-
 .admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-dock,
-.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-quick-add {
+.admin-body.admin-v2.lumi-admin-standalone.admin-v2-menu-open .pwa-admin-toolbar-more {
   pointer-events: none;
 }
 
@@ -249,12 +237,6 @@
   .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-toolbar-save:not(:disabled):hover {
     color: var(--admin-v2-brand-dark);
     background: rgba(122, 77, 68, 0.13);
-  }
-
-  .admin-body.admin-v2.lumi-admin-standalone .pwa-admin-quick-add:hover {
-    background: color-mix(in srgb, var(--admin-v2-brand-soft) 90%, transparent);
-    box-shadow: 0 12px 28px rgba(54, 39, 34, 0.17);
-    transform: translateX(-100%) translateY(-2px) scale(1.04);
   }
 }
 

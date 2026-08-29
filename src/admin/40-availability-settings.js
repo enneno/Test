@@ -468,7 +468,7 @@
         if (mentes) {
             mentes.textContent = mentesFeliratok[aktivTab] || 'Mentés';
             mentes.setAttribute('aria-label', mentes.textContent);
-            mentes.hidden = aktivTab === 'emailteszt' || !allapot.session;
+            mentes.hidden = ['emailteszt', 'arkalkulator'].includes(aktivTab) || !allapot.session;
         }
     }
     async function emailTesztekKuldese() {

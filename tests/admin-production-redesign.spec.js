@@ -173,6 +173,28 @@ function fixtures() {
                 duration_minutes: 120,
                 active: true,
                 sort_order: 2
+            },
+            {
+                id: 'service-3',
+                name: 'Díszítés - Francia',
+                description: 'Francia',
+                price_text: '1 000 Ft / db',
+                price_amount: 1000,
+                price_unit: 'Ft / db',
+                duration_minutes: 15,
+                active: true,
+                sort_order: 3
+            },
+            {
+                id: 'service-4',
+                name: 'Díszítés - Kövek',
+                description: 'Kövek',
+                price_text: '500-800 Ft / db',
+                price_amount: null,
+                price_unit: 'Ft / db',
+                duration_minutes: 15,
+                active: true,
+                sort_order: 4
             }
         ],
         coupons: [
@@ -392,7 +414,7 @@ async function openAdmin(page, viewport, { standalone = false } = {}) {
 }
 
 async function collectAdminHeadingTops(page) {
-    const groups = ['attekintes', 'foglalasok', 'vendegek', 'munkaido', 'weboldal', 'kommunikacio', 'beallitasok'];
+    const groups = ['attekintes', 'foglalasok', 'arkalkulator', 'vendegek', 'munkaido', 'weboldal', 'kommunikacio', 'beallitasok'];
     return page.evaluate(async groupsToMeasure => {
         const result = {};
         for (const group of groupsToMeasure) {
@@ -498,6 +520,64 @@ test.describe('production admin redesign', () => {
         if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
             await page.screenshot({ path: 'test-results/admin-redesign-desktop.png', fullPage: true });
         }
+        expect(browserErrors).toEqual([]);
+    });
+
+    test('the price calculator uses decoration items, range prices and quantities without overflow', async ({ page }) => {
+        const browserErrors = await openAdmin(page, { width: 390, height: 844 });
+
+        await page.getByRole('button', { name: 'Navigáció megnyitása' }).click();
+        const quickButton = page.locator('.admin-v2-sidebar [data-admin-v2-nav="arkalkulator"]');
+        await expect(quickButton).toBeVisible();
+        await quickButton.click();
+
+        const panel = page.locator('#admin-panel-arkalkulator');
+        await expect(panel).toHaveClass(/aktiv/);
+        await expect(panel.locator('.admin-v2-page-heading h1')).toHaveText('Árkalkulátor');
+        await expect(panel.locator('#admin-arkalkulator-szolgaltatas option')).toHaveCount(2);
+        const franciaJelolo = panel.getByRole('checkbox', { name: 'Francia' });
+        const kovekJelolo = panel.getByRole('checkbox', { name: 'Kövek' });
+        await expect(franciaJelolo).toBeVisible();
+        await expect(kovekJelolo).toBeVisible();
+        await expect(franciaJelolo).not.toBeChecked();
+        await expect(panel.locator('#admin-arkalkulator-vegosszeg')).toHaveText('6 500 Ft');
+
+        await franciaJelolo.check();
+        const francia = panel.locator('[data-ar-kalkulator-extra="service-3"]');
+        await expect(francia).toContainText('Francia');
+        await expect(francia.locator('small')).toHaveCount(0);
+        await expect(francia.getByText('1 000 Ft', { exact: true })).toHaveCount(1);
+        await expect(francia.locator('output')).toHaveText('1 db');
+        await expect(panel.locator('#admin-arkalkulator-vegosszeg')).toHaveText('7 500 Ft');
+
+        await francia.getByRole('button', { name: 'Francia darabszámának növelése' }).click();
+        await expect(francia.locator('output')).toHaveText('2 db');
+        await expect(panel.locator('#admin-arkalkulator-vegosszeg')).toHaveText('8 500 Ft');
+
+        await kovekJelolo.check();
+        const kovek = panel.locator('[data-ar-kalkulator-extra="service-4"]');
+        await expect(kovek).toContainText('Kövek');
+        await expect(kovek.locator('[data-ar-kalkulator-extra-price] option')).toHaveText(['500 Ft', '550 Ft', '600 Ft', '650 Ft', '700 Ft', '750 Ft', '800 Ft']);
+        await kovek.locator('[data-ar-kalkulator-extra-price]').selectOption('800');
+        await expect(panel.locator('#admin-arkalkulator-vegosszeg')).toHaveText('9 300 Ft');
+
+        const metrics = await panel.evaluate(element => ({
+            overflow: document.documentElement.scrollWidth - window.innerWidth,
+            right: element.getBoundingClientRect().right,
+            viewport: window.innerWidth
+        }));
+        expect(metrics.overflow).toBeLessThanOrEqual(1);
+        expect(metrics.right).toBeLessThanOrEqual(metrics.viewport + 1);
+
+        if (process.env.LUMI_CAPTURE_ADMIN_REDESIGN === '1') {
+            await page.screenshot({ path: 'test-results/admin-price-calculator-mobile.png', fullPage: true });
+        }
+
+        await panel.getByRole('button', { name: 'Új számolás' }).click();
+        await expect(panel.locator('.admin-arkalkulator-extra-sor')).toHaveCount(0);
+        await expect(franciaJelolo).not.toBeChecked();
+        await expect(kovekJelolo).not.toBeChecked();
+        await expect(panel.locator('#admin-arkalkulator-vegosszeg')).toHaveText('6 500 Ft');
         expect(browserErrors).toEqual([]);
     });
 
@@ -830,7 +910,7 @@ test.describe('production admin redesign', () => {
         await page.locator('#admin-panel-szovegek [data-admin-v2-panel="szolgaltatasok"]').click();
         const pricePanel = page.locator('#admin-panel-szolgaltatasok');
         await expect(pricePanel).toHaveClass(/aktiv/);
-        await expect(pricePanel.locator('.admin-db-kartya')).toHaveCount(2);
+        await expect(pricePanel.locator('.admin-db-kartya')).toHaveCount(4);
 
         const firstCard = pricePanel.locator('.admin-db-kartya').first();
         await firstCard.locator('[data-admin-kartya-toggle]').click();
@@ -905,6 +985,9 @@ test.describe('production admin redesign', () => {
         await expect(page.locator('.admin-v2-topbar')).toBeHidden();
         await expect(page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button')).toHaveCount(6);
 
+        const moreButton = page.locator('[data-pwa-admin-more]');
+        await moreButton.click();
+        await expect(page.locator('#pwa-admin-more-menu')).toBeVisible();
         const bell = page.locator('[data-pwa-admin-notifications]');
         await bell.click();
 

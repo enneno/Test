@@ -22,7 +22,7 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="/admin-v2.css?v=1a81f49a4660">
+    <link rel="stylesheet" href="/admin-v2.css?v=1fa06da49091">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -90,10 +90,11 @@
                     <aside class="admin-sidebar" aria-label="Admin navigáció">
                         <div class="admin-sidebar-fej">
                             <span>Kezelés</span>
-                            <small>8 terület</small>
+                            <small>9 terület</small>
                         </div>
                         <div class="admin-tabs" role="tablist" aria-label="Online admin nézetek">
                     <button type="button" class="admin-tab aktiv" data-admin-tab="foglalasok">Foglalások</button>
+                    <button type="button" class="admin-tab" data-admin-tab="arkalkulator">Árkalkulátor</button>
                     <button type="button" class="admin-tab" data-admin-tab="szolgaltatasok">Árlista</button>
                     <button type="button" class="admin-tab" data-admin-tab="kuponok">Kuponok</button>
                     <button type="button" class="admin-tab" data-admin-tab="idosavok">Foglalható dátumok</button>
@@ -195,6 +196,47 @@
                         <button type="button" id="admin-szolgaltatas-hozzaadas" class="admin-hozzaadas" title="Új árlista tétel">Új tétel</button>
                     </div>
                     <div id="admin-szolgaltatas-lista" class="admin-db-lista"></div>
+                </div>
+
+                <div id="admin-panel-arkalkulator" class="admin-db-panel">
+                    <div class="admin-arkalkulator-layout">
+                        <section class="admin-arkalkulator-card" aria-labelledby="admin-arkalkulator-bevitel-cim">
+                            <div class="admin-arkalkulator-card-fej">
+                                <div>
+                                    <h2 id="admin-arkalkulator-bevitel-cim">Gyors számolás</h2>
+                                    <p>Válassz szolgáltatást, majd add hozzá a kért díszítéseket.</p>
+                                </div>
+                                <button type="button" class="admin-v2-button admin-v2-button-secondary" id="admin-arkalkulator-ujra">Új számolás</button>
+                            </div>
+
+                            <div class="admin-arkalkulator-alap">
+                                <label class="admin-mezo" for="admin-arkalkulator-szolgaltatas">
+                                    Szolgáltatás
+                                    <select id="admin-arkalkulator-szolgaltatas"></select>
+                                </label>
+                                <label class="admin-mezo" id="admin-arkalkulator-alapar-mezo" for="admin-arkalkulator-alapar" hidden>
+                                    Alapár
+                                    <select id="admin-arkalkulator-alapar"></select>
+                                </label>
+                                <div class="admin-arkalkulator-fix-ar" id="admin-arkalkulator-fix-ar" aria-live="polite"></div>
+                            </div>
+
+                            <fieldset class="admin-arkalkulator-extra-valaszto">
+                                <legend>Díszítések</legend>
+                                <p>Jelöld be, amit hozzá szeretnél adni.</p>
+                                <div id="admin-arkalkulator-extra" class="admin-arkalkulator-extra-opciok"></div>
+                            </fieldset>
+
+                            <div id="admin-arkalkulator-extra-lista" class="admin-arkalkulator-extra-lista" aria-live="polite"></div>
+                        </section>
+
+                        <aside class="admin-arkalkulator-osszegzes" aria-labelledby="admin-arkalkulator-osszegzes-cim">
+                            <p class="admin-arkalkulator-kicker">Fizetendő</p>
+                            <h2 id="admin-arkalkulator-osszegzes-cim">Végösszeg</h2>
+                            <output id="admin-arkalkulator-vegosszeg" aria-live="polite">0 Ft</output>
+                            <div id="admin-arkalkulator-bontas" class="admin-arkalkulator-bontas"></div>
+                        </aside>
+                    </div>
                 </div>
 
                 <div id="admin-panel-kuponok" class="admin-db-panel">
@@ -343,9 +385,9 @@
     <div id="lablec-helye"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
-    <script src="/supabase-config.js?v=84d7307ff175"></script>
+    <script src="/supabase-config.js?v=f79f95d9a8e1"></script>
     <script src="/script.js?v=8aba5f50ba23"></script>
-    <script src="/admin-supabase.js?v=debd904bb27f"></script>
+    <script src="/admin-supabase.js?v=36c07d0dbacc"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
     <script src="/admin-content.js?v=4dcbd5fdbbb6"></script>
 </body>

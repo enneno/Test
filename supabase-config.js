@@ -123,7 +123,7 @@ window.lumiSupabaseClient = (() => {
     if (!isAdminPath || document.querySelector('script[data-lumi-pwa-admin-shell]')) return;
 
     const script = document.createElement('script');
-    script.src = '/pwa-admin-shell.js?v=2';
+    script.src = '/pwa-admin-shell.js?v=3';
     script.defer = true;
     script.dataset.lumiPwaAdminShell = 'true';
     document.head.appendChild(script);

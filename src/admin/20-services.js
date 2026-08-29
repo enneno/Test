@@ -20,6 +20,7 @@
         allapot.szolgaltatasok = (data || []).map(szolgaltatasArNormalizalasa);
         elemek.szolgaltatasLista.innerHTML = '';
         allapot.szolgaltatasok.forEach(szolgaltatas => elemek.szolgaltatasLista.appendChild(szolgaltatasKartya(szolgaltatas)));
+        arKalkulatorFrissitese();
     }
 
     function szolgaltatasArNormalizalasa(szolgaltatas) {

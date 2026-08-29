@@ -1,6 +1,7 @@
     const ADMIN_V2_TAB_GROUPS = Object.freeze({
         attekintes: 'attekintes',
         foglalasok: 'foglalasok',
+        arkalkulator: 'arkalkulator',
         vendegek: 'vendegek',
         idosavok: 'munkaido',
         tiltasok: 'munkaido',
@@ -17,6 +18,10 @@
             kicker: 'Foglalások és kieső idők',
             title: 'Időpontok',
             save: 'Módosítások mentése'
+        },
+        arkalkulator: {
+            kicker: 'Gyors árazás',
+            title: 'Árkalkulátor'
         },
         vendegek: {
             kicker: 'Vendégfiókok',
@@ -163,6 +168,7 @@
             <p class="admin-v2-nav-label">Munkaterület</p>
             ${adminV2NavGomb('attekintes', 'Áttekintés', adminV2Ikon('overview'))}
             ${adminV2NavGomb('foglalasok', 'Időpontok', adminV2Ikon('calendar'), '<span class="admin-v2-nav-count" data-admin-v2-pending-count>0</span>')}
+            ${adminV2NavGomb('arkalkulator', 'Árkalkulátor', adminV2Ikon('calculator'))}
             ${adminV2NavGomb('vendegek', 'Regisztrált tagok', adminV2Ikon('users'))}
             ${adminV2NavGomb('munkaido', 'Munkaidő', adminV2Ikon('clock'))}
             ${adminV2NavGomb('weboldal', 'Weboldal', adminV2Ikon('website'))}
@@ -302,6 +308,7 @@
                         <div class="admin-v2-card-header"><div><h2>Gyors műveletek</h2><p>A leggyakoribb feladatok</p></div></div>
                         <div class="admin-v2-card-body admin-v2-quick-actions">
                             <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-panel="tiltasok">${adminV2Ikon('clock')} Kieső idő</button>
+                            <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-panel="arkalkulator">${adminV2Ikon('calculator')} Árkalkulátor</button>
                             <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-panel="idosavok">${adminV2Ikon('calendar')} Munkaidő</button>
                             <button type="button" class="admin-v2-button admin-v2-button-secondary" data-admin-v2-panel="szovegek">${adminV2Ikon('edit')} Tartalom</button>
                         </div>
@@ -790,6 +797,7 @@
         const defaultTabs = {
             attekintes: 'attekintes',
             foglalasok: 'foglalasok',
+            arkalkulator: 'arkalkulator',
             vendegek: 'vendegek',
             munkaido: 'idosavok',
             weboldal: 'szovegek',
@@ -825,6 +833,7 @@
         const groupLabels = {
             attekintes: 'Áttekintés',
             foglalasok: 'Időpontok',
+            arkalkulator: 'Árkalkulátor',
             vendegek: 'Regisztrált tagok',
             munkaido: 'Munkaidő',
             weboldal: 'Weboldal',
@@ -1288,6 +1297,7 @@
         const paths = {
             overview: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path>',
             calendar: '<path d="M6 3v3M18 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1z"></path>',
+            calculator: '<rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18h2M14 18h2"></path>',
             users: '<circle cx="9" cy="9" r="3"></circle><circle cx="17" cy="10" r="2.5"></circle><path d="M3.5 20v-2a4.5 4.5 0 0 1 9 0v2M14 15.5a4 4 0 0 1 6.5 3.1V20"></path>',
             clock: '<circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path>',
             website: '<path d="M4 5h16v14H4zM4 9h16M8 5v4"></path>',

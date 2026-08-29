@@ -113,7 +113,7 @@ test.describe('Lumi Nails PWA', () => {
     await expect(viewport).toHaveAttribute('content', /user-scalable=no/);
   });
 
-  test('standalone admin uses 21st-style toolbar dock and quick-add action', async ({ page }) => {
+  test('standalone admin uses a 21st-style toolbar dock with an expandable action row', async ({ page }) => {
     await page.addInitScript(() => {
       Object.defineProperty(window.navigator, 'standalone', {
         configurable: true,
@@ -123,19 +123,45 @@ test.describe('Lumi Nails PWA', () => {
 
     await page.goto('/admin/');
     await expect.poll(async () => page.evaluate(() => Boolean(window.LumiPWA))).toBe(true);
+    await expect(page.locator('script[data-lumi-pwa-admin-shell]')).toHaveAttribute('src', '/pwa-admin-shell.js?v=3');
     await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
     await expect(page.locator('#pwa-admin-tabbar')).toHaveCount(1);
     await expect(page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button')).toHaveCount(6);
-    await expect(page.locator('#pwa-admin-quick-add')).toHaveCount(1);
+    await expect(page.locator('#pwa-admin-quick-add')).toHaveCount(0);
+    await expect(page.locator('#pwa-admin-more-menu')).toBeHidden();
     await expect(page.locator('#pwa-admin-floating-save')).toHaveCount(0);
+    await page.locator('#admin-tartalom').evaluate(element => { element.hidden = false; });
 
     const buttons = page.locator('#pwa-admin-tabbar .pwa-admin-toolbar-button');
     await expect(buttons.nth(0)).toHaveAttribute('aria-label', 'Menü');
     await expect(buttons.nth(1)).toHaveAttribute('aria-label', 'Foglalások');
     await expect(buttons.nth(2)).toHaveAttribute('aria-label', 'Áttekintés');
-    await expect(buttons.nth(3)).toHaveAttribute('aria-label', 'Munkaidő');
-    await expect(buttons.nth(4)).toHaveAttribute('aria-label', 'Értesítések');
+    await expect(buttons.nth(3)).toHaveAttribute('aria-label', 'Árkalkulátor');
+    await expect(buttons.nth(3)).toHaveAttribute('data-admin-v2-nav', 'arkalkulator');
+    await expect(buttons.nth(4)).toHaveAttribute('aria-label', 'További menük');
+    await expect(buttons.nth(4)).toHaveAttribute('aria-expanded', 'false');
     await expect(buttons.nth(5)).toHaveAttribute('aria-label', /Mentés|menthető módosítás/);
+
+    await buttons.nth(3).click();
+    await expect(page.locator('#admin-panel-arkalkulator')).toHaveClass(/aktiv/);
+    await expect(buttons.nth(3)).toHaveClass(/is-active/);
+
+    await buttons.nth(4).click();
+    const moreMenu = page.locator('#pwa-admin-more-menu');
+    await expect(moreMenu).toBeVisible();
+    await expect(buttons.nth(4)).toHaveAttribute('aria-expanded', 'true');
+    const moreButtons = moreMenu.locator('.pwa-admin-toolbar-button');
+    await expect(moreButtons).toHaveCount(5);
+    await expect(moreButtons.nth(0)).toHaveAttribute('aria-label', 'Kézi idő');
+    await expect(moreButtons.nth(1)).toHaveAttribute('aria-label', 'Munkaidő');
+    await expect(moreButtons.nth(2)).toHaveAttribute('aria-label', 'Weboldal');
+    await expect(moreButtons.nth(3)).toHaveAttribute('aria-label', 'Vendégek');
+    await expect(moreButtons.nth(4)).toHaveAttribute('aria-label', 'Értesítések');
+
+    await moreButtons.nth(0).click();
+    await expect(page.locator('#admin-panel-tiltasok')).toHaveClass(/aktiv/);
+    await expect(moreMenu).toBeHidden();
+    await expect(buttons.nth(4)).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('keeps VAPID private material out of client-side code', async ({ page }) => {

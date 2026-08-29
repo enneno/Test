@@ -18,6 +18,7 @@ const expectedFiles = [
   '42-cms-image-controls.css',
   '45-gallery-editor.css',
   '50-services.css',
+  '52-price-calculator.css',
   '60-coupons.css',
   '70-availability.css',
   '80-communications.css',
@@ -106,6 +107,7 @@ for (const variant of requiredVariants) {
 const ownership = [
   { pattern: '#admin-panel-foglalasok', owners: ['10-components.css', '20-workspace.css', '30-bookings.css'] },
   { pattern: '#admin-panel-szolgaltatasok', owners: ['10-components.css', '50-services.css'] },
+  { pattern: '#admin-panel-arkalkulator', owners: ['52-price-calculator.css'] },
   { pattern: '#admin-panel-kuponok', owners: ['60-coupons.css'] },
   { pattern: '#admin-panel-idosavok', owners: ['70-availability.css'] },
   { pattern: '#admin-idosav-', owners: ['70-availability.css'] },
