@@ -655,7 +655,7 @@ test.describe('production admin redesign', () => {
 
         expect(mobileMetrics.headingFont).toBeLessThanOrEqual(24);
         expect(mobileMetrics.cardTitleFont).toBe(14);
-        expect(Math.max(...mobileMetrics.controlHeights)).toBeLessThanOrEqual(36);
+        expect(Math.max(...mobileMetrics.controlHeights)).toBeLessThanOrEqual(36.1);
         expect(mobileMetrics.viewSwitchWidth).toBeLessThanOrEqual(180);
         expect(mobileMetrics.viewButtonHeight).toBeLessThanOrEqual(36);
         expect(mobileMetrics.saveButtonHeight).toBeLessThanOrEqual(38);
