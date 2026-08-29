@@ -57,8 +57,8 @@
                     <p>${html(arOsszeg)} · ${html(idoFelirat)}</p>
                 </div>
                 <div class="admin-kompakt-kartya-vezerlok">
-                    <span class="admin-allapot-jelzo${szolgaltatas.active ? '' : ' inaktiv'}">${szolgaltatas.active ? 'Látható' : 'Rejtett'}</span>
-                    <span class="admin-allapot-jelzo${szolgaltatas.booking_enabled ? '' : ' inaktiv'}">${szolgaltatas.booking_enabled ? 'Foglalható' : 'Nem foglalható'}</span>
+                    <span class="admin-allapot-jelzo admin-allapot-jelzo--kompakt${szolgaltatas.active ? '' : ' inaktiv'}">${szolgaltatas.active ? 'Látható' : 'Rejtett'}</span>
+                    <span class="admin-allapot-jelzo admin-allapot-jelzo--kompakt${szolgaltatas.booking_enabled ? '' : ' inaktiv'}">${szolgaltatas.booking_enabled ? 'Foglalható' : 'Nem foglalható'}</span>
                     <button type="button" class="admin-kis-gomb admin-ikonos-gomb" data-admin-kartya-toggle aria-expanded="${String(ujTetel)}">${adminV2Ikon(ujTetel ? 'close' : 'edit')}<span>${ujTetel ? 'Bezárás' : 'Szerkesztés'}</span></button>
                 </div>
             </div>

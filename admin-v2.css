@@ -269,6 +269,1033 @@ body.admin-body [hidden] {
   max-width: 100%;
 }
 
+.admin-body.admin-v2 {
+  --admin-ui-field-height: 32px;
+  --admin-ui-choice-height: 32px;
+  --admin-ui-button-height: 34px;
+  --admin-ui-icon-button-size: 30px;
+  --admin-ui-touch-target: 44px;
+  --admin-ui-control-radius: 11px;
+  --admin-ui-icon-radius: 10px;
+  --admin-ui-field-padding-x: 9px;
+  --admin-ui-choice-padding-x: 9px;
+  --admin-ui-button-padding-x: 13px;
+  --admin-ui-textarea-min-height: 72px;
+  --admin-ui-control-line-height: 1.2;
+  --admin-ui-action-font-size: 11px;
+  --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-input-font-size: 18px;
+  --admin-ui-select-font-size: 11px;
+  --admin-ui-page-size-font-size: 11px;
+  --admin-ui-picker-font-size: 20px;
+  --admin-ui-ios-field-optical-ratio: 0.32;
+  --admin-ui-ios-choice-optical-ratio: 0.32;
+}
+
+.admin-body .admin-mezo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+  color: var(--barna);
+  font-size: var(--lumi-font-label);
+  font-weight: 600;
+}
+
+.admin-body .admin-mezo span {
+  color: rgba(93, 77, 70, 0.62);
+  font-size: var(--lumi-font-caption);
+  font-weight: 600;
+}
+
+.admin-body .admin-mezo-szeles {
+  grid-column: 1 / -1;
+}
+
+.admin-body .admin-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 38px;
+  gap: 10px;
+  line-height: 1.35;
+}
+
+.admin-body .admin-mezo input[type="checkbox"],
+.admin-body .admin-mezo.admin-checkbox input[type="checkbox"],
+.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"],
+.admin-body .cms-gallery-home-choice input[type="checkbox"] {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  margin: 0;
+  padding: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  accent-color: var(--akcentus);
+  cursor: pointer;
+}
+
+.admin-body .admin-db-grid,
+.admin-body .admin-db-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-body .admin-db-lista {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-body .admin-db-kartya {
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 9px;
+  padding: 12px 13px;
+  color: var(--szoveg);
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 11px;
+  background: var(--admin-v2-surface);
+  box-shadow: 0 2px 10px rgba(67, 42, 35, 0.035);
+}
+
+.admin-body .admin-db-kartya h3 {
+  margin: 0 0 4px;
+  overflow-wrap: anywhere;
+  color: var(--barna);
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.admin-body .admin-db-kartya p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.admin-body.admin-v2 .admin-db-kartya span {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.admin-body .admin-db-kartya a {
+  color: var(--tinta);
+}
+
+.admin-body .admin-db-kartya-fej {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-body .admin-db-akciok {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.admin-body .admin-db-kartya.szerkeszt .admin-db-akciok,
+.admin-body .admin-szerkesztheto-kartya.szerkeszt .admin-db-akciok {
+  display: flex;
+}
+
+.admin-body .admin-ures {
+  margin: 0;
+  color: var(--szoveg);
+}
+
+.admin-body .admin-statusz,
+.admin-body .admin-pill,
+.admin-body .admin-allapot-jelzes,
+.admin-body .admin-db-statusz-fix {
+  font-size: var(--admin-ui-action-font-size);
+  line-height: 1.2;
+}
+
+.admin-body .admin-kartya-tipus {
+  margin: 0 0 4px;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.admin-body .admin-gomb,
+.admin-body .admin-hozzaadas,
+.admin-body .admin-kis-gomb {
+  border: 1px solid rgba(185, 133, 143, 0.24);
+  color: var(--tinta);
+  background: color-mix(in srgb, var(--admin-v2-surface) 80%, transparent);
+  font-family: var(--lumi-button-font);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.admin-body .admin-gomb {
+  color: #fffaf4;
+  background: var(--akcentus);
+}
+
+.admin-body .admin-hozzaadas:hover,
+.admin-body .admin-kis-gomb:hover {
+  border-color: transparent;
+  color: #fffaf4;
+  background: var(--akcentus);
+}
+
+.admin-body .admin-veszely-gomb {
+  border-color: rgba(143, 60, 72, 0.3);
+  color: #8f3c48;
+  background: rgba(143, 60, 72, 0.08);
+}
+
+.admin-body .admin-veszely-gomb:hover {
+  border-color: #9b4e5c;
+  color: #fffaf4;
+  background: #9b4e5c;
+}
+
+.admin-body .admin-kis-gomb:disabled,
+.admin-body .admin-hozzaadas:disabled,
+.admin-body .admin-gomb:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.admin-body.admin-v2 .admin-segmented {
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
+}
+
+.admin-body.admin-v2 .admin-segmented-item {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-body.admin-v2 :is(
+  .admin-segmented-item.aktiv,
+  .admin-segmented-item.is-active,
+  .admin-segmented-item[aria-selected="true"]
+) {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
+}
+
+.admin-body.admin-v2 .admin-control-icon-button {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-icon-button-size);
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
+  place-items: center;
+  overflow: visible;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: var(--admin-ui-icon-radius);
+  color: var(--admin-v2-brand);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button::after {
+  position: absolute;
+  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
+  content: "";
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:not(:disabled):hover {
+  border-color: rgba(163, 93, 117, .34);
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-brand-soft);
+  box-shadow: 0 3px 10px rgba(67, 42, 35, .075);
+  transform: translateY(-1px);
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:focus-visible {
+  outline: 2px solid var(--admin-v2-brand);
+  outline-offset: 2px;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button:disabled {
+  cursor: default;
+  opacity: .34;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2 .admin-control-icon-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.admin-body :is(
+  .admin-mezo input,
+  .admin-mezo select,
+  .admin-mezo textarea,
+  .admin-db-grid input,
+  .admin-db-grid select,
+  .admin-db-grid textarea,
+  .admin-db-form input,
+  .admin-db-statusz,
+  .admin-kereses-mezo input,
+  .admin-kereses-mezo select,
+  .admin-oldalmeret-select
+) {
+  box-sizing: border-box;
+  border: 1px solid var(--lumi-control-border);
+  color: var(--tinta);
+  background-color: var(--lumi-control-bg);
+  font-family: inherit;
+  box-shadow: var(--lumi-control-inset);
+}
+
+.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 34px;
+  background-image: var(--lumi-select-arrow);
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px 14px;
+}
+
+.admin-body select::-ms-expand,
+.admin-body .admin-oldalmeret-select::-ms-expand {
+  display: none;
+}
+
+.admin-body :is(
+  .admin-mezo input:focus,
+  .admin-mezo select:focus,
+  .admin-mezo textarea:focus,
+  .admin-db-grid input:focus,
+  .admin-db-grid select:focus,
+  .admin-db-grid textarea:focus,
+  .admin-db-statusz:focus,
+  .admin-kereses-mezo input:focus,
+  .admin-kereses-mezo select:focus,
+  .admin-oldalmeret-select:focus
+) {
+  border-color: var(--lumi-control-border-strong);
+  outline: none;
+  box-shadow: var(--lumi-control-focus);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]) {
+  width: 100%;
+  min-width: 0;
+  height: var(--admin-ui-field-height);
+  min-height: var(--admin-ui-field-height);
+  padding: 0 var(--admin-ui-field-padding-x);
+  border-radius: var(--admin-ui-control-radius);
+  line-height: var(--admin-ui-control-line-height);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]), textarea) {
+  font-family: inherit;
+  font-size: var(--admin-ui-input-font-size);
+  font-weight: 400;
+  line-height: var(--admin-ui-control-line-height);
+}
+
+.admin-body.admin-v2 {
+  --admin-ui-picker-icon-size: 13px;
+  --admin-ui-picker-icon-gap: 4px;
+  --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));
+  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+
+html[data-admin-theme="dark"] .admin-body.admin-v2 {
+  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  width: 100%;
+  max-inline-size: 100%;
+  max-width: 100%;
+  min-inline-size: 0;
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  color: var(--admin-v2-ink);
+  background-color: var(--admin-v2-surface);
+  background-position: right var(--admin-ui-picker-icon-gap) center;
+  background-repeat: no-repeat;
+  background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);
+  box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="month"]) {
+  background-image: var(--admin-ui-date-icon);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input[type="time"] {
+  background-image: var(--admin-ui-time-icon);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-date-and-time-value {
+  box-sizing: border-box;
+  width: calc(100% - var(--admin-ui-picker-icon-zone));
+  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  font-size: 20px;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit,
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit-fields-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="month"]::-webkit-datetime-edit-year-field,
+  input[type="month"]::-webkit-datetime-edit-month-field,
+  input[type="month"]::-webkit-datetime-edit-text,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field,
+  input[type="time"]::-webkit-datetime-edit-ampm-field,
+  input[type="time"]::-webkit-datetime-edit-text
+) {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]):focus {
+  border-color: color-mix(in srgb, var(--admin-v2-brand) 58%, var(--admin-v2-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-v2-brand-soft) 78%, transparent);
+  outline: 0;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--admin-ui-picker-icon-zone);
+  max-width: var(--admin-ui-picker-icon-zone);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--admin-ui-textarea-min-height);
+  padding: 8px var(--admin-ui-field-padding-x);
+  border-radius: var(--admin-ui-control-radius);
+  line-height: 1.4;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
+  font-size: var(--admin-ui-placeholder-font-size);
+  font-size-adjust: none;
+  line-height: var(--admin-ui-control-line-height);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
+.admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
+  font-size: 11px;
+  font-size-adjust: none;
+  height: var(--admin-ui-choice-height);
+  min-height: var(--admin-ui-choice-height);
+  padding-top: 0;
+  padding-right: var(--admin-ui-choice-padding-x);
+  padding-bottom: 0;
+  padding-left: var(--admin-ui-choice-padding-x);
+  border-radius: var(--admin-ui-control-radius);
+  line-height: var(--admin-ui-control-line-height);
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  .gomb,
+  .admin-gomb,
+  .admin-hozzaadas,
+  .admin-kis-gomb,
+  .admin-tab,
+  .admin-v2-button,
+  .admin-v2-subnav button,
+  .admin-v2-task-item > button,
+  .cms-upload-button
+) {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  height: var(--admin-ui-button-height);
+  min-height: var(--admin-ui-button-height);
+  padding: 0 var(--admin-ui-button-padding-x);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--admin-ui-control-radius);
+  font-size: var(--admin-ui-action-font-size);
+  line-height: 1.15;
+  overflow: visible;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
+  display: none;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  .gomb,
+  .admin-gomb,
+  .admin-hozzaadas,
+  .admin-kis-gomb,
+  .admin-tab,
+  .admin-v2-button,
+  .admin-v2-subnav button,
+  .admin-v2-task-item > button,
+  .cms-upload-button
+)::after {
+  position: absolute;
+  top: calc((var(--admin-ui-touch-target) - var(--admin-ui-button-height)) / -2);
+  right: 0;
+  bottom: calc((var(--admin-ui-touch-target) - var(--admin-ui-button-height)) / -2);
+  left: 0;
+  content: "";
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  .admin-v2-icon-button,
+  .admin-kis-gomb.admin-naptar-torles-x,
+  .admin-kis-gomb.admin-idosav-torles-x
+) {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-icon-button-size);
+  width: var(--admin-ui-icon-button-size);
+  min-width: var(--admin-ui-icon-button-size);
+  height: var(--admin-ui-icon-button-size);
+  min-height: var(--admin-ui-icon-button-size);
+  padding: 0;
+  place-items: center;
+  border-radius: var(--admin-ui-icon-radius);
+  font-size: var(--admin-ui-action-font-size);
+  line-height: 1;
+  overflow: visible;
+}
+
+.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
+  .admin-v2-icon-button,
+  .admin-kis-gomb.admin-naptar-torles-x,
+  .admin-kis-gomb.admin-idosav-torles-x
+)::after {
+  position: absolute;
+  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
+  content: "";
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button {
+  flex-basis: var(--admin-ui-touch-target);
+  width: var(--admin-ui-touch-target);
+  min-width: var(--admin-ui-touch-target);
+  height: var(--admin-ui-touch-target);
+  min-height: var(--admin-ui-touch-target);
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button::after {
+  inset: 0;
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--admin-ui-touch-target);
+  width: var(--admin-ui-touch-target);
+  min-width: var(--admin-ui-touch-target);
+  height: var(--admin-ui-touch-target);
+  min-height: var(--admin-ui-touch-target);
+  padding: 0;
+  place-items: center;
+  border-radius: var(--admin-ui-icon-radius);
+  line-height: 1;
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb {
+  height: auto;
+  min-height: var(--admin-ui-touch-target);
+}
+
+.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb::after {
+  inset: 0;
+}
+
+.admin-body .admin-lapozo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 7px;
+  margin-top: 18px;
+  padding-bottom: 0;
+  color: var(--barna);
+  font-weight: 600;
+  overflow: visible;
+}
+
+.admin-body .admin-lapozo-felso {
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.admin-body .admin-lapozo-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 12px;
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body .admin-pagination-button {
+  display: inline-flex;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--admin-v2-muted);
+  background: transparent;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-body .admin-pagination-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-body .admin-pagination-button:not(:disabled):hover {
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
+}
+
+.admin-body .admin-pagination-button:disabled {
+  cursor: default;
+  opacity: .34;
+}
+
+.admin-body .admin-pagination-page {
+  display: grid;
+  min-width: 46px;
+  height: 36px;
+  padding: 0 8px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--admin-v2-brand-dark);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-body .admin-lapozo-jobb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.admin-body .admin-oldalmeret,
+.admin-body .admin-pagination-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--admin-v2-subtle);
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-body .admin-oldalmeret-select,
+.admin-body .admin-pagination-size .admin-oldalmeret-select {
+  width: 62px;
+  min-width: 62px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 24px 0 10px;
+  border-color: var(--admin-v2-border);
+  border-radius: var(--admin-ui-control-radius);
+  background-color: var(--admin-v2-surface);
+  background-position: right 8px center;
+  background-size: 13px 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .admin-body .admin-pagination-button span { display: none; }
+  .admin-body .admin-pagination-button {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+  }
+  .admin-body .admin-pagination-page {
+    min-width: 40px;
+    height: 30px;
+    padding-inline: 6px;
+  }
+  .admin-body .admin-lapozo-nav { padding: 2px; }
+  .admin-body .admin-lapozo {
+    min-height: 36px;
+    gap: 6px 8px;
+  }
+  .admin-body .admin-lapozo-felso { margin: 6px 0; }
+  .admin-body .admin-pagination-size .admin-oldalmeret-select,
+  .admin-body .admin-oldalmeret .admin-oldalmeret-select {
+    width: 96px;
+    min-width: 96px;
+    height: 34px;
+    min-height: 34px;
+  }
+}
+
+.admin-body .admin-kompakt-kartya-fej {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo {
+  min-width: 0;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo h3 {
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  font-size: clamp(21px, 2vw, 26px);
+  line-height: 1.04;
+  -webkit-line-clamp: unset;
+}
+
+.admin-body .admin-kompakt-kartya-osszefoglalo p {
+  margin: 4px 0 0;
+  color: var(--admin-muted);
+  font-size: var(--lumi-font-body-small);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-body .admin-kompakt-kartya-vezerlok {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.admin-body .admin-allapot-jelzo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 8px;
+  border-radius: 7px;
+  color: #56715e;
+  background: #e8f0e9;
+  font-size: var(--lumi-font-caption);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.admin-body .admin-allapot-jelzo.inaktiv {
+  color: var(--admin-muted);
+  background: #efedeb;
+}
+
+.admin-body .admin-ikonos-gomb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--admin-ui-touch-target);
+  gap: 7px;
+}
+
+.admin-body .admin-ikonos-gomb svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.admin-body .admin-kompakt-szerkeszto {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(240, 215, 213, 0.68);
+}
+
+.admin-body .admin-szerkesztheto-kartya.szerkeszt {
+  background: #fbf6f2;
+}
+
+.admin-body .admin-szerkesztheto-kartya.szerkeszt .admin-kompakt-szerkeszto {
+  display: block;
+}
+
+.admin-body .admin-szerkesztheto-kartya .admin-db-akciok {
+  justify-content: flex-end;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(73, 58, 52, 0.09);
+}
+
+@media screen and (max-width: 768px) {
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
+    font-size: max(22px, 1em);
+    font-size-adjust: var(--admin-ui-ios-field-optical-ratio);
+  }
+
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
+  .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
+    font-size: max(22px, 1em);
+    font-size-adjust: var(--admin-ui-ios-choice-optical-ratio);
+  }
+
+  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
+    font-size: var(--admin-ui-placeholder-font-size);
+    font-size-adjust: none;
+  }
+
+  .admin-body .admin-db-grid,
+  .admin-body .admin-db-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb {
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--admin-v2-border);
+  border-radius: 11px;
+  color: var(--admin-v2-brand);
+  background: var(--admin-v2-surface);
+  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
+}
+.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-body.admin-v2 .admin-db-lista--sorok > .admin-db-kartya {
+  padding: 12px 7px;
+  border: 0;
+  border-bottom: 1px solid var(--admin-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-body.admin-v2 .admin-db-lista--sorok > .admin-db-kartya:hover {
+  background: var(--admin-v2-surface-soft);
+}
+
+.admin-body.admin-v2 .admin-db-lista--sorok.admin-db-lista--surubb > .admin-db-kartya {
+  padding-block: 9px;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz--foglalas {
+  height: 34px;
+  min-height: 34px;
+  padding: 0 28px;
+  appearance: none;
+  -webkit-appearance: none;
+  border-color: var(--booking-state-border);
+  border-radius: 999px;
+  color: var(--booking-state-color);
+  background-color: var(--booking-state-bg);
+  background-repeat: no-repeat;
+  -webkit-text-fill-color: currentColor;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+  text-align: center;
+  text-align-last: center;
+  opacity: 1;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz--foglalas:disabled {
+  background-image: none;
+  cursor: default;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz--foglalas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-position: right 9px center;
+  background-size: 14px 14px;
+  cursor: pointer;
+}
+
+.admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
+  color: var(--admin-v2-muted);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo {
+  color: var(--admin-v2-muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.admin-body .admin-allapot-jelzo--kompakt {
+  min-height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 22px;
+  white-space: nowrap;
+}
+
+@container admin-workspace (max-width: 480px) {
+  .admin-body.admin-v2 .admin-db-lista--sorok > .admin-db-kartya {
+    padding: 11px 3px;
+  }
+
+  .admin-body.admin-v2 .admin-db-lista--sorok.admin-db-lista--surubb > .admin-db-kartya {
+    padding-block: 9px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .admin-body .admin-allapot-jelzo--kompakt {
+    padding-inline: 6px;
+    font-size: 7px;
+  }
+}
+
 .admin-body.admin-v2 .admin-workspace-main {
   container: admin-workspace / inline-size;
   min-width: 0;
@@ -1740,46 +2767,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   min-height: 36px;
 }
 
-.admin-body.admin-v2 .admin-db-kartya,
-.admin-body.admin-v2 .admin-foglalas-kartya,
-.admin-body.admin-v2 .admin-idopont-kartya,
-.admin-body.admin-v2 .admin-blokk-kartya,
-.admin-body.admin-v2 .admin-kupon-kartya,
-.admin-body.admin-v2 .admin-szolgaltatas-kartya,
-.admin-body.admin-v2 .admin-esemeny-kartya {
-  margin-bottom: 9px;
-  padding: 12px 13px;
-  border-color: var(--admin-v2-border);
-  border-radius: 11px;
-  background: var(--admin-v2-surface);
-  box-shadow: 0 2px 10px rgba(67, 42, 35, 0.035);
-}
-
-.admin-body.admin-v2 .admin-db-kartya h3,
-.admin-body.admin-v2 .admin-foglalas-kartya h3,
-.admin-body.admin-v2 .admin-idopont-kartya h3,
-.admin-body.admin-v2 .admin-blokk-kartya h3,
-.admin-body.admin-v2 .admin-kupon-kartya h3,
-.admin-body.admin-v2 .admin-szolgaltatas-kartya h3,
-.admin-body.admin-v2 .admin-esemeny-kartya h3 {
-  margin-bottom: 4px;
-  font-size: 14px;
-  line-height: 1.25;
-}
-
-.admin-body.admin-v2 .admin-db-kartya p,
-.admin-body.admin-v2 .admin-foglalas-kartya p,
-.admin-body.admin-v2 .admin-idopont-kartya p,
-.admin-body.admin-v2 .admin-blokk-kartya p,
-.admin-body.admin-v2 .admin-kupon-kartya p,
-.admin-body.admin-v2 .admin-szolgaltatas-kartya p,
-.admin-body.admin-v2 .admin-esemeny-kartya p,
-.admin-body.admin-v2 .admin-db-kartya span,
-.admin-body.admin-v2 .admin-foglalas-kartya span {
-  font-size: 11px;
-  line-height: 1.45;
-}
-
 .admin-body.admin-v2 .admin-foglalas-fej,
 .admin-body.admin-v2 .admin-foglalas-muveletek {
   gap: 9px;
@@ -2542,35 +3529,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger { display: none; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
-  height: 34px;
-  min-height: 34px;
-  padding: 0 28px;
-  appearance: none;
-  -webkit-appearance: none;
-  border-color: var(--booking-state-border);
-  border-radius: 999px;
-  color: var(--booking-state-color);
-  background-color: var(--booking-state-bg);
-  background-repeat: no-repeat;
-  -webkit-text-fill-color: currentColor;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  line-height: 1.25;
-  text-align: center;
-  text-align-last: center;
-  opacity: 1;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-  background-image: none;
-  cursor: default;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
-  background-position: right 9px center;
-  background-size: 14px 14px;
-  cursor: pointer;
-}
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-icon-button {
   color: var(--booking-state-color);
@@ -2716,10 +3674,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
   min-width: 0;
   gap: 5px;
   overflow: hidden;
-  color: var(--admin-v2-muted);
-  font-size: 9px;
-  font-weight: 600;
-  line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
   grid-column: 1 / -1;
@@ -3046,7 +4000,6 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas { font-size: 10px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum { font-size: 11px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido { font-size: 10px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz { font-size: 11px; font-size-adjust: none; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid { gap: 8px 14px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid :is(span, a) { font-size: 10.5px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid strong { font-size: 8.5px; }
@@ -3514,7 +4467,7 @@ body.cms-image-lightbox-open { overflow: hidden; }
   padding: 14px;
 }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-field-grid:not(.cms-fieldset-grid) { padding-top: 16px; }
-.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; color: var(--admin-v2-muted); font-size: 10px; font-weight: 600; }
+.admin-body.admin-v2 #admin-panel-szovegek .admin-mezo { gap: 5px; }
 .admin-body.admin-v2 #admin-panel-szovegek .cms-image-field {
   display: grid;
   grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
@@ -3912,15 +4865,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   justify-content: flex-end;
   gap: 5px;
 }
-.admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-allapot-jelzo {
-  min-height: 22px;
-  padding: 0 7px;
-  border-radius: 999px;
-  font-size: 8px;
-  font-weight: 600;
-  line-height: 22px;
-  white-space: nowrap;
-}
 .admin-body.admin-v2 #admin-panel-szolgaltatasok [data-admin-kartya-toggle] {
   position: relative;
   width: var(--admin-ui-icon-button-size);
@@ -4046,7 +4990,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok { max-width: none; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-fej { min-height: 58px; padding-block: 8px; gap: 8px; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-vezerlok { gap: 4px; }
-  .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-allapot-jelzo { padding-inline: 6px; font-size: 7px; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szolgaltatas-kartya.szerkeszt {
     top: auto;
     right: 0;
@@ -4087,16 +5030,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya {
-  padding: 12px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
-
 .admin-body.admin-v2 #admin-panel-kuponok .admin-db-grid-kupon {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -4165,7 +5098,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
 }
 
 @container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya { padding: 11px 3px; }
   .admin-body.admin-v2 #admin-panel-kuponok .admin-db-grid-kupon { gap: 8px; }
   .admin-body.admin-v2 #admin-panel-kuponok .admin-kupon-kod,
   .admin-body.admin-v2 #admin-panel-kuponok .admin-kupon-sorrend { grid-column: auto; }
@@ -4384,15 +5316,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya {
-  padding: 9px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
   grid-template-columns: minmax(160px, 1.2fr) minmax(100px, .65fr) minmax(100px, .65fr) 36px;
   align-items: center;
@@ -4430,15 +5353,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya {
-  padding: 12px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -4468,8 +5382,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
 }
 
 @container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya,
-  .admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya { padding-inline: 3px; }
   .admin-body.admin-v2 #admin-idosav-naptar { padding: 11px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej { grid-template-columns: 1fr; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -4545,15 +5457,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya {
-  padding: 12px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-kartya { border-left: 3px solid var(--admin-accent); }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-success { border-left-color: #6f9f7a; }
 .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-esemeny-warning { border-left-color: #c99a52; }
@@ -4703,7 +5606,6 @@ body.cms-image-lightbox-open { overflow: hidden; }
 @container admin-workspace (max-width: 480px) {
   .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok { margin-bottom: 4px; }
   .admin-body.admin-v2 #admin-panel-esemenynaplo > .admin-panel-akciok .admin-panel-gombcsoport { gap: 5px; }
-  .admin-body.admin-v2 #admin-esemenynaplo-lista > .admin-db-kartya { padding: 11px 3px; }
   .admin-body.admin-v2 #admin-esemenynaplo-lista .admin-db-kartya-fej > div {
     grid-template-columns: 1fr;
     gap: 2px;
@@ -5086,936 +5988,4 @@ body.cms-image-lightbox-open { overflow: hidden; }
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
   }
-}
-
-.admin-body.admin-v2 {
-  --admin-ui-field-height: 32px;
-  --admin-ui-choice-height: 32px;
-  --admin-ui-button-height: 34px;
-  --admin-ui-icon-button-size: 30px;
-  --admin-ui-touch-target: 44px;
-  --admin-ui-control-radius: 11px;
-  --admin-ui-icon-radius: 10px;
-  --admin-ui-field-padding-x: 9px;
-  --admin-ui-choice-padding-x: 9px;
-  --admin-ui-button-padding-x: 13px;
-  --admin-ui-textarea-min-height: 72px;
-  --admin-ui-control-line-height: 1.2;
-  --admin-ui-action-font-size: 11px;
-  --admin-ui-placeholder-font-size: 11px;
-  --admin-ui-input-font-size: 18px;
-  --admin-ui-select-font-size: 11px;
-  --admin-ui-page-size-font-size: 11px;
-  --admin-ui-picker-font-size: 20px;
-  --admin-ui-ios-field-optical-ratio: 0.32;
-  --admin-ui-ios-choice-optical-ratio: 0.32;
-}
-
-.admin-body .admin-mezo {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: 5px;
-  color: var(--barna);
-  font-size: var(--lumi-font-label);
-  font-weight: 600;
-}
-
-.admin-body .admin-mezo span {
-  color: rgba(93, 77, 70, 0.62);
-  font-size: var(--lumi-font-caption);
-  font-weight: 600;
-}
-
-.admin-body .admin-mezo-szeles {
-  grid-column: 1 / -1;
-}
-
-.admin-body .admin-checkbox {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 38px;
-  gap: 10px;
-  line-height: 1.35;
-}
-
-.admin-body .admin-mezo input[type="checkbox"],
-.admin-body .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-body .cms-gallery-home-choice input[type="checkbox"] {
-  flex: 0 0 18px;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  min-height: 18px;
-  max-width: 18px;
-  max-height: 18px;
-  margin: 0;
-  padding: 0;
-  border-radius: 4px;
-  box-shadow: none;
-  accent-color: var(--akcentus);
-  cursor: pointer;
-}
-
-.admin-body .admin-db-grid,
-.admin-body .admin-db-form {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.admin-body .admin-db-lista {
-  display: grid;
-  gap: 14px;
-}
-
-.admin-body .admin-db-kartya {
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 12px 13px;
-  color: var(--szoveg);
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 11px;
-  background: var(--admin-v2-surface);
-  box-shadow: 0 2px 10px rgba(67, 42, 35, 0.035);
-}
-
-.admin-body .admin-db-kartya h3 {
-  margin: 0 0 4px;
-  overflow-wrap: anywhere;
-  color: var(--barna);
-  font-family: "Manrope", sans-serif;
-  font-size: 14px;
-  line-height: 1.25;
-}
-
-.admin-body .admin-db-kartya p {
-  margin: 6px 0 0;
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.admin-body .admin-db-kartya a {
-  color: var(--tinta);
-}
-
-.admin-body .admin-db-kartya-fej {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-}
-
-.admin-body .admin-db-akciok {
-  display: none;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.admin-body .admin-db-kartya.szerkeszt .admin-db-akciok,
-.admin-body .admin-szerkesztheto-kartya.szerkeszt .admin-db-akciok {
-  display: flex;
-}
-
-.admin-body .admin-ures {
-  margin: 0;
-  color: var(--szoveg);
-}
-
-.admin-body .admin-statusz,
-.admin-body .admin-pill,
-.admin-body .admin-allapot-jelzes,
-.admin-body .admin-db-statusz-fix {
-  font-size: var(--admin-ui-action-font-size);
-  line-height: 1.2;
-}
-
-.admin-body .admin-kartya-tipus {
-  margin: 0 0 4px;
-  color: var(--admin-v2-subtle);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.admin-body .admin-gomb,
-.admin-body .admin-hozzaadas,
-.admin-body .admin-kis-gomb {
-  border: 1px solid rgba(185, 133, 143, 0.24);
-  color: var(--tinta);
-  background: color-mix(in srgb, var(--admin-v2-surface) 80%, transparent);
-  font-family: var(--lumi-button-font);
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.admin-body .admin-gomb {
-  color: #fffaf4;
-  background: var(--akcentus);
-}
-
-.admin-body .admin-hozzaadas:hover,
-.admin-body .admin-kis-gomb:hover {
-  border-color: transparent;
-  color: #fffaf4;
-  background: var(--akcentus);
-}
-
-.admin-body .admin-veszely-gomb {
-  border-color: rgba(143, 60, 72, 0.3);
-  color: #8f3c48;
-  background: rgba(143, 60, 72, 0.08);
-}
-
-.admin-body .admin-veszely-gomb:hover {
-  border-color: #9b4e5c;
-  color: #fffaf4;
-  background: #9b4e5c;
-}
-
-.admin-body .admin-kis-gomb:disabled,
-.admin-body .admin-hozzaadas:disabled,
-.admin-body .admin-gomb:disabled {
-  cursor: default;
-  opacity: 0.45;
-}
-
-.admin-body.admin-v2 .admin-segmented {
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: var(--admin-v2-surface-soft);
-  box-shadow: inset 0 1px 2px rgba(67, 42, 35, .035);
-}
-
-.admin-body.admin-v2 .admin-segmented-item {
-  display: inline-flex;
-  min-height: 34px;
-  padding: 0 12px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
-}
-
-.admin-body.admin-v2 :is(
-  .admin-segmented-item.aktiv,
-  .admin-segmented-item.is-active,
-  .admin-segmented-item[aria-selected="true"]
-) {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 4px rgba(67, 42, 35, .12);
-}
-
-.admin-body.admin-v2 .admin-control-icon-button {
-  position: relative;
-  display: inline-grid;
-  flex: 0 0 var(--admin-ui-icon-button-size);
-  width: var(--admin-ui-icon-button-size);
-  min-width: var(--admin-ui-icon-button-size);
-  height: var(--admin-ui-icon-button-size);
-  min-height: var(--admin-ui-icon-button-size);
-  padding: 0;
-  place-items: center;
-  overflow: visible;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: var(--admin-ui-icon-radius);
-  color: var(--admin-v2-brand);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
-  font-size: 0;
-  line-height: 1;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-}
-
-.admin-body.admin-v2 .admin-control-icon-button::after {
-  position: absolute;
-  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
-  content: "";
-}
-
-.admin-body.admin-v2 .admin-control-icon-button:not(:disabled):hover {
-  border-color: rgba(163, 93, 117, .34);
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-brand-soft);
-  box-shadow: 0 3px 10px rgba(67, 42, 35, .075);
-  transform: translateY(-1px);
-}
-
-.admin-body.admin-v2 .admin-control-icon-button:focus-visible {
-  outline: 2px solid var(--admin-v2-brand);
-  outline-offset: 2px;
-}
-
-.admin-body.admin-v2 .admin-control-icon-button:disabled {
-  cursor: default;
-  opacity: .34;
-  transform: none;
-  box-shadow: none;
-}
-
-.admin-body.admin-v2 .admin-control-icon-button svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
-
-.admin-body :is(
-  .admin-mezo input,
-  .admin-mezo select,
-  .admin-mezo textarea,
-  .admin-db-grid input,
-  .admin-db-grid select,
-  .admin-db-grid textarea,
-  .admin-db-form input,
-  .admin-db-statusz,
-  .admin-kereses-mezo input,
-  .admin-kereses-mezo select,
-  .admin-oldalmeret-select
-) {
-  box-sizing: border-box;
-  border: 1px solid var(--lumi-control-border);
-  color: var(--tinta);
-  background-color: var(--lumi-control-bg);
-  font-family: inherit;
-  box-shadow: var(--lumi-control-inset);
-}
-
-.admin-body :is(select, .admin-db-statusz, .admin-kereses-mezo select, .admin-oldalmeret-select) {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 34px;
-  background-image: var(--lumi-select-arrow);
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 14px 14px;
-}
-
-.admin-body select::-ms-expand,
-.admin-body .admin-oldalmeret-select::-ms-expand {
-  display: none;
-}
-
-.admin-body :is(
-  .admin-mezo input:focus,
-  .admin-mezo select:focus,
-  .admin-mezo textarea:focus,
-  .admin-db-grid input:focus,
-  .admin-db-grid select:focus,
-  .admin-db-grid textarea:focus,
-  .admin-db-statusz:focus,
-  .admin-kereses-mezo input:focus,
-  .admin-kereses-mezo select:focus,
-  .admin-oldalmeret-select:focus
-) {
-  border-color: var(--lumi-control-border-strong);
-  outline: none;
-  box-shadow: var(--lumi-control-focus);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]) {
-  width: 100%;
-  min-width: 0;
-  height: var(--admin-ui-field-height);
-  min-height: var(--admin-ui-field-height);
-  padding: 0 var(--admin-ui-field-padding-x);
-  border-radius: var(--admin-ui-control-radius);
-  line-height: var(--admin-ui-control-line-height);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="date"]):not([type="time"]):not([type="month"]), textarea) {
-  font-family: inherit;
-  font-size: var(--admin-ui-input-font-size);
-  font-weight: 400;
-  line-height: var(--admin-ui-control-line-height);
-}
-
-.admin-body.admin-v2 {
-  --admin-ui-picker-icon-size: 13px;
-  --admin-ui-picker-icon-gap: 4px;
-  --admin-ui-picker-icon-zone: calc(var(--admin-ui-picker-icon-size) + (2 * var(--admin-ui-picker-icon-gap)));
-  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
-  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
-}
-
-html[data-admin-theme="dark"] .admin-body.admin-v2 {
-  --admin-ui-date-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
-  --admin-ui-time-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8cac4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]) {
-  position: relative;
-  display: block;
-  box-sizing: border-box;
-  inline-size: 100%;
-  width: 100%;
-  max-inline-size: 100%;
-  max-width: 100%;
-  min-inline-size: 0;
-  min-width: 0;
-  height: 34px;
-  min-height: 34px;
-  padding: 0;
-  overflow: hidden;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  color: var(--admin-v2-ink);
-  background-color: var(--admin-v2-surface);
-  background-position: right var(--admin-ui-picker-icon-gap) center;
-  background-repeat: no-repeat;
-  background-size: var(--admin-ui-picker-icon-size) var(--admin-ui-picker-icon-size);
-  box-shadow: 0 1px 2px rgba(67, 42, 35, .04);
-  font-family: inherit;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="month"]) {
-  background-image: var(--admin-ui-date-icon);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input[type="time"] {
-  background-image: var(--admin-ui-time-icon);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-date-and-time-value {
-  box-sizing: border-box;
-  width: calc(100% - var(--admin-ui-picker-icon-zone));
-  max-width: calc(100% - var(--admin-ui-picker-icon-zone));
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  overflow: hidden;
-  font-size: 20px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit,
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-datetime-edit-fields-wrapper {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-size: 20px;
-  line-height: 1.1;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
-  input[type="date"]::-webkit-datetime-edit-year-field,
-  input[type="date"]::-webkit-datetime-edit-month-field,
-  input[type="date"]::-webkit-datetime-edit-day-field,
-  input[type="date"]::-webkit-datetime-edit-text,
-  input[type="month"]::-webkit-datetime-edit-year-field,
-  input[type="month"]::-webkit-datetime-edit-month-field,
-  input[type="month"]::-webkit-datetime-edit-text,
-  input[type="time"]::-webkit-datetime-edit-hour-field,
-  input[type="time"]::-webkit-datetime-edit-minute-field,
-  input[type="time"]::-webkit-datetime-edit-ampm-field,
-  input[type="time"]::-webkit-datetime-edit-text
-) {
-  font-size: 20px;
-  line-height: 1.1;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"]):focus {
-  border-color: color-mix(in srgb, var(--admin-v2-brand) 58%, var(--admin-v2-border));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-v2-brand-soft) 78%, transparent);
-  outline: 0;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input[type="date"], input[type="time"], input[type="month"])::-webkit-calendar-picker-indicator {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: var(--admin-ui-picker-icon-zone);
-  max-width: var(--admin-ui-picker-icon-zone);
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
-  width: 100%;
-  min-width: 0;
-  min-height: var(--admin-ui-textarea-min-height);
-  padding: 8px var(--admin-ui-field-padding-x);
-  border-radius: var(--admin-ui-control-radius);
-  line-height: 1.4;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
-  font-size: var(--admin-ui-placeholder-font-size);
-  font-size-adjust: none;
-  line-height: var(--admin-ui-control-line-height);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
-.admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
-  font-size: 11px;
-  font-size-adjust: none;
-  height: var(--admin-ui-choice-height);
-  min-height: var(--admin-ui-choice-height);
-  padding-top: 0;
-  padding-right: var(--admin-ui-choice-padding-x);
-  padding-bottom: 0;
-  padding-left: var(--admin-ui-choice-padding-x);
-  border-radius: var(--admin-ui-control-radius);
-  line-height: var(--admin-ui-control-line-height);
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
-  .gomb,
-  .admin-gomb,
-  .admin-hozzaadas,
-  .admin-kis-gomb,
-  .admin-tab,
-  .admin-v2-button,
-  .admin-v2-subnav button,
-  .admin-v2-task-item > button,
-  .cms-upload-button
-) {
-  position: relative;
-  box-sizing: border-box;
-  display: inline-flex;
-  height: var(--admin-ui-button-height);
-  min-height: var(--admin-ui-button-height);
-  padding: 0 var(--admin-ui-button-padding-x);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--admin-ui-control-radius);
-  font-size: var(--admin-ui-action-font-size);
-  line-height: 1.15;
-  overflow: visible;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) .admin-v2-button[hidden] {
-  display: none;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
-  .gomb,
-  .admin-gomb,
-  .admin-hozzaadas,
-  .admin-kis-gomb,
-  .admin-tab,
-  .admin-v2-button,
-  .admin-v2-subnav button,
-  .admin-v2-task-item > button,
-  .cms-upload-button
-)::after {
-  position: absolute;
-  top: calc((var(--admin-ui-touch-target) - var(--admin-ui-button-height)) / -2);
-  right: 0;
-  bottom: calc((var(--admin-ui-touch-target) - var(--admin-ui-button-height)) / -2);
-  left: 0;
-  content: "";
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
-  .admin-v2-icon-button,
-  .admin-kis-gomb.admin-naptar-torles-x,
-  .admin-kis-gomb.admin-idosav-torles-x
-) {
-  position: relative;
-  display: inline-grid;
-  flex: 0 0 var(--admin-ui-icon-button-size);
-  width: var(--admin-ui-icon-button-size);
-  min-width: var(--admin-ui-icon-button-size);
-  height: var(--admin-ui-icon-button-size);
-  min-height: var(--admin-ui-icon-button-size);
-  padding: 0;
-  place-items: center;
-  border-radius: var(--admin-ui-icon-radius);
-  font-size: var(--admin-ui-action-font-size);
-  line-height: 1;
-  overflow: visible;
-}
-
-.admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(
-  .admin-v2-icon-button,
-  .admin-kis-gomb.admin-naptar-torles-x,
-  .admin-kis-gomb.admin-idosav-torles-x
-)::after {
-  position: absolute;
-  inset: calc((var(--admin-ui-touch-target) - var(--admin-ui-icon-button-size)) / -2);
-  content: "";
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button {
-  flex-basis: var(--admin-ui-touch-target);
-  width: var(--admin-ui-touch-target);
-  min-width: var(--admin-ui-touch-target);
-  height: var(--admin-ui-touch-target);
-  min-height: var(--admin-ui-touch-target);
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-v2-topbar .admin-v2-icon-button::after {
-  inset: 0;
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb {
-  position: relative;
-  display: inline-grid;
-  flex: 0 0 var(--admin-ui-touch-target);
-  width: var(--admin-ui-touch-target);
-  min-width: var(--admin-ui-touch-target);
-  height: var(--admin-ui-touch-target);
-  min-height: var(--admin-ui-touch-target);
-  padding: 0;
-  place-items: center;
-  border-radius: var(--admin-ui-icon-radius);
-  line-height: 1;
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-frissites-ikon-gomb::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb {
-  height: auto;
-  min-height: var(--admin-ui-touch-target);
-}
-
-.admin-body.admin-v2 #admin-tartalom .admin-kis-gomb.admin-ikonos-gomb::after {
-  inset: 0;
-}
-
-.admin-body .admin-lapozo {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  gap: 7px;
-  margin-top: 18px;
-  padding-bottom: 0;
-  color: var(--barna);
-  font-weight: 600;
-  overflow: visible;
-}
-
-.admin-body .admin-lapozo-felso {
-  margin-top: 10px;
-  margin-bottom: 12px;
-}
-
-.admin-body .admin-lapozo-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 12px;
-  background: var(--admin-v2-surface-soft);
-}
-
-.admin-body .admin-pagination-button {
-  display: inline-flex;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 10px;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--admin-v2-muted);
-  background: transparent;
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.admin-body .admin-pagination-button svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.admin-body .admin-pagination-button:not(:disabled):hover {
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .09);
-}
-
-.admin-body .admin-pagination-button:disabled {
-  cursor: default;
-  opacity: .34;
-}
-
-.admin-body .admin-pagination-page {
-  display: grid;
-  min-width: 46px;
-  height: 36px;
-  padding: 0 8px;
-  place-items: center;
-  border-radius: 9px;
-  color: var(--admin-v2-brand-dark);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
-  font-size: 11px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.admin-body .admin-lapozo-jobb {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: auto;
-}
-
-.admin-body .admin-oldalmeret,
-.admin-body .admin-pagination-size {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--admin-v2-subtle);
-  font-size: 9px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.admin-body .admin-oldalmeret-select,
-.admin-body .admin-pagination-size .admin-oldalmeret-select {
-  width: 62px;
-  min-width: 62px;
-  height: 38px;
-  min-height: 38px;
-  padding: 0 24px 0 10px;
-  border-color: var(--admin-v2-border);
-  border-radius: var(--admin-ui-control-radius);
-  background-color: var(--admin-v2-surface);
-  background-position: right 8px center;
-  background-size: 13px 13px;
-  font-weight: 600;
-}
-
-@media (max-width: 480px) {
-  .admin-body .admin-pagination-button span { display: none; }
-  .admin-body .admin-pagination-button {
-    width: 30px;
-    min-width: 30px;
-    height: 30px;
-    min-height: 30px;
-    padding: 0;
-  }
-  .admin-body .admin-pagination-page {
-    min-width: 40px;
-    height: 30px;
-    padding-inline: 6px;
-  }
-  .admin-body .admin-lapozo-nav { padding: 2px; }
-  .admin-body .admin-lapozo {
-    min-height: 36px;
-    gap: 6px 8px;
-  }
-  .admin-body .admin-lapozo-felso { margin: 6px 0; }
-  .admin-body .admin-pagination-size .admin-oldalmeret-select,
-  .admin-body .admin-oldalmeret .admin-oldalmeret-select {
-    width: 96px;
-    min-width: 96px;
-    height: 34px;
-    min-height: 34px;
-  }
-}
-
-.admin-body .admin-kompakt-kartya-fej {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 18px;
-}
-
-.admin-body .admin-kompakt-kartya-osszefoglalo {
-  min-width: 0;
-}
-
-.admin-body .admin-kompakt-kartya-osszefoglalo h3 {
-  display: block;
-  margin: 0;
-  padding: 0;
-  overflow: visible;
-  font-size: clamp(21px, 2vw, 26px);
-  line-height: 1.04;
-  -webkit-line-clamp: unset;
-}
-
-.admin-body .admin-kompakt-kartya-osszefoglalo p {
-  margin: 4px 0 0;
-  color: var(--admin-muted);
-  font-size: var(--lumi-font-body-small);
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.admin-body .admin-kompakt-kartya-vezerlok {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.admin-body .admin-allapot-jelzo {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 8px;
-  border-radius: 7px;
-  color: #56715e;
-  background: #e8f0e9;
-  font-size: var(--lumi-font-caption);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-.admin-body .admin-allapot-jelzo.inaktiv {
-  color: var(--admin-muted);
-  background: #efedeb;
-}
-
-.admin-body .admin-ikonos-gomb {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--admin-ui-touch-target);
-  gap: 7px;
-}
-
-.admin-body .admin-ikonos-gomb svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
-
-.admin-body .admin-kompakt-szerkeszto {
-  display: none;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(240, 215, 213, 0.68);
-}
-
-.admin-body .admin-szerkesztheto-kartya.szerkeszt {
-  background: #fbf6f2;
-}
-
-.admin-body .admin-szerkesztheto-kartya.szerkeszt .admin-kompakt-szerkeszto {
-  display: block;
-}
-
-.admin-body .admin-szerkesztheto-kartya .admin-db-akciok {
-  justify-content: flex-end;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(73, 58, 52, 0.09);
-}
-
-@media screen and (max-width: 768px) {
-  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
-  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) textarea {
-    font-size: max(22px, 1em);
-    font-size-adjust: var(--admin-ui-ios-field-optical-ratio);
-  }
-
-  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
-  .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
-    font-size: max(22px, 1em);
-    font-size-adjust: var(--admin-ui-ios-choice-optical-ratio);
-  }
-
-  .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) :is(input, textarea)::placeholder {
-    font-size: var(--admin-ui-placeholder-font-size);
-    font-size-adjust: none;
-  }
-
-  .admin-body .admin-db-grid,
-  .admin-body .admin-db-form {
-    grid-template-columns: 1fr;
-  }
-}
-
-.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb {
-  flex: 0 0 44px;
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  min-height: 44px;
-  padding: 0;
-  border: 1px solid var(--admin-v2-border);
-  border-radius: 11px;
-  color: var(--admin-v2-brand);
-  background: var(--admin-v2-surface);
-  box-shadow: 0 1px 3px rgba(67, 42, 35, .06);
-}
-.admin-body.admin-v2 #admin-tartalom #admin-foglalas-frissites.admin-frissites-ikon-gomb svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }

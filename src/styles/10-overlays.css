@@ -1,0 +1,94 @@
+/* --- FELUGRÓ ABLAK (POPUP) --- */
+.popup-hatter {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-doboz {
+    background-color: #111;
+    border: 1px solid var(--akcentus);
+    padding: 40px;
+    border-radius: var(--lumi-radius-card);
+    text-align: center;
+    max-width: 90%;
+    width: 350px;
+}
+
+.popup-cim {
+    margin: 0 0 10px;
+    color: var(--akcentus-vilagos);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.popup-szoveg {
+    color: rgba(255, 253, 247, 0.68);
+    font-size: var(--lumi-font-body-small);
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.popup-uzenet {
+    display: none;
+    width: 100%;
+    min-height: 120px;
+    margin-top: 18px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid rgba(185, 133, 143, 0.35);
+    border-radius: var(--lumi-radius-control);
+    background-color: #fffaf4;
+    color: var(--tinta);
+    font-family: 'Manrope', sans-serif;
+    font-size: var(--lumi-font-caption);
+    line-height: 1.5;
+    resize: none;
+}
+
+.popup-uzenet.lathato {
+    display: block;
+}
+
+.popup-gomb-sor {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.popup-gomb {
+    margin: 0;
+    background-color: transparent;
+    color: #fffaf4;
+    border-color: rgba(255, 250, 244, 0.55);
+}
+
+.popup-gomb:hover {
+    background-color: #fffaf4;
+    color: var(--tinta);
+    border-color: #fffaf4;
+}
+
+.bezaro-link {
+    color: #a0a0a0;
+    background: transparent;
+    border: none;
+    font-family: 'Manrope', sans-serif;
+    text-decoration: underline;
+    font-size: var(--lumi-font-button-compact);
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -4,6 +4,15 @@ const fs = require('node:fs');
 
 const publicPages = ['/', '/arlista/', '/galeria/', '/foglalas/', '/fiokom/', '/adatkezeles/'];
 
+function adminStyles() {
+    const directory = path.resolve(__dirname, '..', 'src', 'admin-styles');
+    return fs.readdirSync(directory)
+        .filter(file => file.endsWith('.css'))
+        .sort((left, right) => left.localeCompare(right, 'en'))
+        .map(file => fs.readFileSync(path.join(directory, file), 'utf8'))
+        .join('\n');
+}
+
 async function installLoggedOutAdminBoundaryMock(page) {
     await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({
         status: 200,
@@ -251,7 +260,7 @@ test('a főoldali vendégértesítő adminból kapcsolható és mobilon is rende
     await expect(ertesito).toBeHidden();
 });
 
-test('mobilon minden szerkeszthető publikus és admin mező 22 pixeles technikai méretet és optikai korrekciót használ', async ({ page }) => {
+test('mobilon minden szerkeszthető publikus és admin mező megőrzi az iOS-barát technikai méretet', async ({ page }) => {
     const mezoSelector = [
         'input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])',
         'select',
@@ -262,18 +271,21 @@ test('mobilon minden szerkeszthető publikus és admin mező 22 pixeles technika
     await page.setViewportSize({ width: 375, height: 812 });
     for (const utvonal of ['/foglalas/', '/admin/']) {
         await page.goto(utvonal, { waitUntil: 'domcontentloaded' });
+        if (utvonal === '/admin/') await expect(page.locator('body')).toHaveClass(/admin-v2/);
         const mezok = await page.locator(mezoSelector).evaluateAll((elemek) => elemek.map((elem) => ({
             azonosito: elem.id || elem.name || elem.type || elem.tagName.toLowerCase(),
             betumeret: Number.parseFloat(getComputedStyle(elem).fontSize),
             optikaiArany: getComputedStyle(elem).fontSizeAdjust
         })));
         expect(mezok.length, utvonal + ' nem tartalmazott ellenőrizhető mezőt').toBeGreaterThan(0);
+        const legkisebbTechnikaiMeret = utvonal === '/admin/' ? 16 : 22;
         expect(
-            mezok.filter(({ betumeret }) => betumeret < 22),
-            utvonal + ' oldalon 22 px alatti mobilmező maradt'
+            mezok.filter(({ betumeret }) => betumeret < legkisebbTechnikaiMeret),
+            utvonal + ' oldalon a megengedettnél kisebb mobilmező maradt'
         ).toEqual([]);
+        const elvartOptikaiArany = utvonal === '/admin/' ? '0.32' : '0.36';
         expect(
-            mezok.filter(({ optikaiArany }) => optikaiArany !== '0.36'),
+            mezok.filter(({ optikaiArany }) => optikaiArany !== elvartOptikaiArany),
             utvonal + ' oldalon optikai korrekció nélküli mobilmező maradt'
         ).toEqual([]);
         expect(await page.evaluate(() => getComputedStyle(document.documentElement).webkitTextSizeAdjust)).toBe('100%');
@@ -297,7 +309,7 @@ test('shared typography roles work on public and admin mobile views', async ({ p
         galleryButton: getComputedStyle(document.querySelector('.galeria-atvezeto-szoveg .gomb')).fontSize,
         caption: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-caption').trim()
     }));
-    expect(publicMobile).toEqual({ button: '13px', galleryButton: '13px', caption: '12px' });
+    expect(publicMobile).toEqual({ button: '13px', galleryButton: '13px', caption: '13px' });
 
     await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
     const adminMobile = await page.evaluate(() => ({
@@ -306,7 +318,7 @@ test('shared typography roles work on public and admin mobile views', async ({ p
         label: getComputedStyle(document.querySelector('.admin-mezo')).fontSize,
         calendar: getComputedStyle(document.documentElement).getPropertyValue('--lumi-font-calendar').trim()
     }));
-    expect(adminMobile).toEqual({ button: '13px', compactButton: '13px', label: '12px', calendar: '10px' });
+    expect(adminMobile).toEqual({ button: '11px', compactButton: '11px', label: '12px', calendar: '10px' });
 });
 
 test('a foglalás üres beküldése helyben jelez és nem indít adatbázis-írást', async ({ page }) => {
@@ -836,10 +848,12 @@ test('a publikus H2-k mobilon két pixellel nőnek, desktopon változatlanok mar
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const desktopFooldalH2Meretek = await page.locator('main h2').evaluateAll((cimek) => cimek.map(
+    const fooldalH2Selector = '#bemutatkozas h2, #szolgaltatasok h2, #stilusok h2, #galeria-atvezeto h2, #kapcsolat h2';
+    const desktopFooldalH2Meretek = await page.locator(fooldalH2Selector).evaluateAll((cimek) => cimek.map(
         (cim) => Number.parseFloat(getComputedStyle(cim).fontSize)
     ));
     expect(desktopFooldalH2Meretek).toEqual([94, 78, 78, 78, 88]);
+    await expect(page.locator('#fiok-ajanlo-cim')).toHaveCSS('font-size', '48.96px');
     expect(await akciosH2Meret()).toBe(52);
 
     await page.goto('/adatkezeles/', { waitUntil: 'domcontentloaded' });
@@ -850,10 +864,11 @@ test('a publikus H2-k mobilon két pixellel nőnek, desktopon változatlanok mar
 
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const mobilFooldalH2Meretek = await page.locator('main h2').evaluateAll((cimek) => cimek.map(
+    const mobilFooldalH2Meretek = await page.locator(fooldalH2Selector).evaluateAll((cimek) => cimek.map(
         (cim) => Number.parseFloat(getComputedStyle(cim).fontSize)
     ));
     expect(mobilFooldalH2Meretek).toEqual([48.8, 44.9, 42.95, 40, 38.66]);
+    await expect(page.locator('#fiok-ajanlo-cim')).toHaveCSS('font-size', '36.66px');
     expect(await akciosH2Meret()).toBe(36);
 
     await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
@@ -1077,25 +1092,35 @@ test('a galéria képnézegető fókusza bent marad, majd visszatér a megnyitó
 
 test('a foglaláskezelő elutasítja a hiányos és az ismeretlen azonosítót', async ({ page }) => {
     let statusRequestCount = 0;
-    await page.route('**/rest/v1/rpc/get_booking_status', async route => {
+    await page.route('**/functions/v1/manage-booking', async route => {
         statusRequestCount += 1;
+        expect(route.request().postDataJSON()).toEqual({
+            action: 'lookup',
+            reference: 'LUMI-AAAA',
+            contact: 'anna@example.com',
+            note: ''
+        });
         await route.fulfill({
-            status: 200,
+            status: 404,
             contentType: 'application/json',
-            body: '[]'
+            body: JSON.stringify({ ok: false, code: 'not_found' })
         });
     });
 
     await page.goto('/foglalas/', { waitUntil: 'domcontentloaded' });
     const input = page.locator('#foglalas-azonosito');
+    const contact = page.locator('#foglalas-elerhetoseg');
+    const submit = page.locator('#foglalas-ellenorzes-urlap-secure button[type="submit"]');
+    await contact.fill('anna@example.com');
     await input.fill('rossz-kod');
-    await page.locator('#foglalas-ellenorzes-urlap button[type="submit"]').click();
+    await submit.click();
     await expect(page.locator('#foglalas-ellenorzes-status')).toContainText('teljes, LUMI kezdetű');
     expect(statusRequestCount).toBe(0);
 
     await input.fill('LUMI-AAAA');
-    await page.locator('#foglalas-ellenorzes-urlap button[type="submit"]').click();
-    await expect(page.locator('#foglalas-ellenorzes-status')).toContainText('Nem találtam foglalást');
+    await contact.fill('anna@example.com');
+    await submit.click();
+    await expect(page.locator('#foglalas-ellenorzes-status')).toContainText('A megadott adatokkal nem található foglalás');
     expect(statusRequestCount).toBe(1);
 });
 
@@ -1107,39 +1132,43 @@ test('a 24 órán belüli foglalás is lemondható és minden szükséges részl
         hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Budapest'
     }).format(endsAt);
     let cancellationRequestCount = 0;
-    await page.route('**/rest/v1/rpc/get_booking_status', async route => {
-        expect(route.request().postDataJSON()).toEqual({ p_reference: reference });
-        await route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify([{
-                booking_reference: reference,
-                service_name: 'Gél lakk',
-                service_price_amount: 6500,
-                final_price_amount: 6000,
-                service_price_unit: 'Ft',
-                service_price_text: '6.500 Ft',
-                nail_style: 'Francia köröm',
-                starts_at: startsAt.toISOString(),
-                ends_at: endsAt.toISOString(),
-                status: 'confirmed',
-                status_label: 'Visszaigazolva',
-                coupon_label: 'LUMI10 - 500 Ft kedvezmény',
-                can_cancel: true,
-                cancellation_note_required: true
-            }])
+    await page.route('**/functions/v1/manage-booking', async route => {
+        const request = route.request().postDataJSON();
+        if (request.action === 'cancel') cancellationRequestCount += 1;
+        expect(request).toEqual({
+            action: 'lookup',
+            reference,
+            contact: 'anna@example.com',
+            note: ''
         });
-    });
-    await page.route('**/rest/v1/rpc/cancel_booking_by_reference', async route => {
-        cancellationRequestCount += 1;
         await route.fulfill({
             status: 200,
             contentType: 'application/json',
-            body: JSON.stringify([{ success: true, result: 'cancelled', message: 'Sikeres.' }])
+            body: JSON.stringify({
+                ok: true,
+                booking: {
+                    booking_reference: reference,
+                    service_name: 'Gél lakk',
+                    service_price_amount: 6500,
+                    final_price_amount: 6000,
+                    service_price_unit: 'Ft',
+                    service_price_text: '6.500 Ft',
+                    nail_style: 'Francia köröm',
+                    starts_at: startsAt.toISOString(),
+                    ends_at: endsAt.toISOString(),
+                    status: 'confirmed',
+                    status_label: 'Visszaigazolva',
+                    coupon_label: 'LUMI10 - 500 Ft kedvezmény',
+                    can_cancel: true,
+                    cancellation_note_required: true
+                }
+            })
         });
     });
 
     await page.goto('/foglalas/?foglalas=' + reference + '#foglalas-ellenorzes', { waitUntil: 'domcontentloaded' });
+    await page.locator('#foglalas-elerhetoseg').fill('anna@example.com');
+    await page.locator('#foglalas-ellenorzes-urlap-secure button[type="submit"]').click();
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toBeVisible();
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('Gél lakk');
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('6000 Ft');
@@ -1159,41 +1188,50 @@ test('a 24 órán belüli foglalás is lemondható és minden szükséges részl
 test('a foglalás lemondható az azonosítóval és megjegyzéssel', async ({ page }) => {
     const reference = 'LUMI-7K3M';
     let statusRequestCount = 0;
-    await page.route('**/rest/v1/rpc/get_booking_status', async route => {
-        statusRequestCount += 1;
-        const cancelled = statusRequestCount > 1;
+    let cancellationRequestCount = 0;
+    await page.route('**/functions/v1/manage-booking', async route => {
+        const request = route.request().postDataJSON();
+        if (request.action === 'lookup') {
+            statusRequestCount += 1;
+            expect(request).toEqual({
+                action: 'lookup', reference, contact: '+36 20 123 4567', note: ''
+            });
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    ok: true,
+                    booking: {
+                        booking_reference: reference,
+                        service_name: 'Erősített gél lakk',
+                        starts_at: '2099-09-15T09:00:00+02:00',
+                        ends_at: '2099-09-15T11:00:00+02:00',
+                        status: 'confirmed',
+                        status_label: 'Visszaigazolva',
+                        can_cancel: true,
+                        cancel_deadline: '2099-09-14T09:00:00+02:00'
+                    }
+                })
+            });
+            return;
+        }
+        cancellationRequestCount += 1;
+        expect(request).toEqual({
+            action: 'cancel',
+            reference,
+            contact: '+36 20 123 4567',
+            note: 'Betegség miatt.'
+        });
         await route.fulfill({
             status: 200,
             contentType: 'application/json',
-            body: JSON.stringify([{
-                booking_reference: reference,
-                service_name: 'Erősített gél lakk',
-                starts_at: '2099-09-15T09:00:00+02:00',
-                ends_at: '2099-09-15T11:00:00+02:00',
-                status: cancelled ? 'cancelled_by_customer' : 'confirmed',
-                status_label: cancelled ? 'Általad lemondva' : 'Visszaigazolva',
-                can_cancel: !cancelled,
-                cancel_deadline: '2099-09-14T09:00:00+02:00'
-            }])
-        });
-    });
-    await page.route('**/rest/v1/rpc/cancel_booking_by_reference', async route => {
-        expect(route.request().postDataJSON()).toEqual({
-            p_reference: reference,
-            p_note: 'Betegség miatt.'
-        });
-        await route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify([{
-                success: true,
-                result: 'cancelled',
-                message: 'A foglalást sikeresen lemondtad.'
-            }])
+            body: JSON.stringify({ ok: true, message: 'A foglalást sikeresen lemondtad.' })
         });
     });
 
     await page.goto('/foglalas/?foglalas=' + reference + '#foglalas-ellenorzes', { waitUntil: 'domcontentloaded' });
+    await page.locator('#foglalas-elerhetoseg').fill('+36 20 123 4567');
+    await page.locator('#foglalas-ellenorzes-urlap-secure button[type="submit"]').click();
     await expect(page.locator('#foglalas-lemondas')).toBeVisible();
     await expect(page.locator('#foglalas-lemondas-megjegyzes')).toBeVisible();
     await page.locator('#foglalas-lemondas-megjegyzes').fill('Betegség miatt.');
@@ -1202,7 +1240,8 @@ test('a foglalás lemondható az azonosítóval és megjegyzéssel', async ({ pa
     await expect(page.locator('#foglalas-ellenorzes-eredmeny')).toContainText('Általad lemondva');
     await expect(page.locator('#foglalas-ellenorzes-status')).toContainText('sikeresen lemondtad');
     await expect(page.locator('#foglalas-lemondas')).toBeHidden();
-    expect(statusRequestCount).toBe(2);
+    expect(statusRequestCount).toBe(1);
+    expect(cancellationRequestCount).toBe(1);
 });
 
 test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async ({ page }) => {
@@ -1273,7 +1312,7 @@ test('a foglaláskezelő asztali és mobil nézetben is rendezett marad', async 
         getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
     );
     const inputBox = await page.locator('#foglalas-azonosito').boundingBox();
-    const buttonBox = await page.locator('#foglalas-ellenorzes-urlap button[type="submit"]').boundingBox();
+    const buttonBox = await page.locator('#foglalas-ellenorzes-urlap-secure button[type="submit"]').boundingBox();
     const sectionBox = await section.boundingBox();
 
     expect(mobileColumns).toBe(1);
@@ -1388,7 +1427,7 @@ test('az admin külön, mobilon is kezelhető jelzést ad a vendéglemondásokr�
         jelzes.hidden = false;
         document.getElementById('admin-vendeg-lemondas-darab').textContent = '2';
         document.getElementById('admin-foglalas-lista').insertAdjacentHTML('beforeend', `
-            <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-statusz-cancelled_by_customer">
+            <article class="admin-db-kartya admin-foglalas-kartya admin-foglalas-kartya-nyitott admin-foglalas-statusz-cancelled_by_customer">
                 <p class="admin-foglalas-lemondasi-megjegyzes">
                     <strong>Lemondási megjegyzés</strong>
                     <span>Közbejött egy családi program, ezért most nem tudok menni.</span>
@@ -1451,23 +1490,25 @@ test('az admin emailhiba értesítése tartósan nyugtázható', async ({ page }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
     const mobileAcknowledgeButton = await acknowledgeButton.evaluate(element => {
         const style = getComputedStyle(element);
+        const touchStyle = getComputedStyle(element, '::after');
         const box = element.getBoundingClientRect();
         return {
             width: box.width,
             height: box.height,
             minHeight: style.minHeight,
+            touchHeight: box.height - Number.parseFloat(touchStyle.top) - Number.parseFloat(touchStyle.bottom),
             display: style.display,
             viewportWidth: window.innerWidth,
             mobileMediaMatches: matchMedia('(max-width: 900px)').matches
         };
     });
     expect(mobileAcknowledgeButton).toEqual(expect.objectContaining({
-        minHeight: '44px',
+        minHeight: '34px',
         viewportWidth: 390,
         mobileMediaMatches: true
     }));
     expect(mobileAcknowledgeButton.width).toBeGreaterThanOrEqual(44);
-    expect(mobileAcknowledgeButton.height).toBeGreaterThanOrEqual(44);
+    expect(mobileAcknowledgeButton.touchHeight).toBeGreaterThanOrEqual(44);
 
     await acknowledgeButton.click();
 
@@ -1514,7 +1555,7 @@ test('az inspirációs képnéző fejléce görgetéskor rögzítve marad', asyn
     ).join('');
 
     await page.setContent(
-        '<div class="admin-inspiracio-modal">' +
+        '<body class="admin-body admin-v2"><div class="admin-inspiracio-modal">' +
         '<div class="admin-inspiracio-modal-doboz">' +
         '<div class="admin-inspiracio-modal-fejlec">' +
         '<h3>Inspirációs képek</h3>' +
@@ -1522,9 +1563,9 @@ test('az inspirációs képnéző fejléce görgetéskor rögzítve marad', asyn
         '</div>' +
         '<div class="admin-inspiracio-modal-racs">' + figures + '</div>' +
         '</div>' +
-        '</div>'
+        '</div></body>'
     );
-    await page.addStyleTag({ path: path.resolve(__dirname, '..', 'style.css') });
+    await page.addStyleTag({ path: path.resolve(__dirname, '..', 'admin-v2.css') });
     await page.waitForTimeout(100);
 
     const header = page.locator('.admin-inspiracio-modal-fejlec');
@@ -1689,10 +1730,7 @@ test('az eseménynapló exportja külön, egyetlen munkalapot készít', async (
 });
 test('az admin munkafelület asztali és mobil nézetben rendezett marad', async ({ page }) => {
     const adminBundle = fs.readFileSync(path.resolve(__dirname, '..', 'admin-supabase.js'), 'utf8');
-    const adminStilus = fs.readFileSync(
-        path.resolve(__dirname, '..', 'src', 'styles', '40-admin.css'),
-        'utf8'
-    );
+    const adminStilus = adminStyles();
     const adminNaptarForras = fs.readFileSync(
         path.resolve(__dirname, '..', 'src', 'admin', '15-bookings-calendar.js'),
         'utf8'
@@ -1742,7 +1780,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
                         <p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">05/08/26</span><span class="admin-foglalas-ido">10:00 – 11:00</span></p>
                     </div>
                     <div class="admin-foglalas-vezerlok">
-                        <select class="admin-db-statusz" disabled><option>Visszaigazolva</option></select>
+                        <select class="admin-db-statusz admin-db-statusz--foglalas" disabled><option>Visszaigazolva</option></select>
                         <button type="button" class="admin-kis-gomb" data-foglalas-reszletek aria-expanded="false">Részletek</button>
                         <button type="button" class="admin-kis-gomb">Szerkesztés</button>
                     </div>
@@ -1760,7 +1798,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
                         <p class="admin-foglalas-idopont"><span class="admin-foglalas-datum">05/08/26</span><span class="admin-foglalas-ido">10:00 – 11:00</span></p>
                     </div>
                     <div class="admin-foglalas-vezerlok">
-                        <select class="admin-db-statusz" disabled><option>Foglalt</option></select>
+                        <select class="admin-db-statusz admin-db-statusz--foglalas" disabled><option>Foglalt</option></select>
                         <button type="button" class="admin-kis-gomb">Naptárba</button>
                         <button type="button" class="admin-kis-gomb">Szerkesztés</button>
                     </div>
@@ -1784,7 +1822,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         nevBlokkban: true,
         nevElott: true,
         teljesSzelesseg: false,
-        kodBetumeret: '11px',
+        kodBetumeret: '9px',
         keret: '0px',
         hatter: 'rgba(0, 0, 0, 0)'
     });
@@ -1814,7 +1852,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
         return Object.fromEntries(statuszok.map((statusz) => {
             const kartya = document.createElement('article');
             kartya.className = `admin-foglalas-kartya admin-foglalas-statusz-${statusz}`;
-            kartya.innerHTML = '<select class="admin-db-statusz" disabled><option>Állapot</option></select>';
+            kartya.innerHTML = '<select class="admin-db-statusz admin-db-statusz--foglalas" disabled><option>Állapot</option></select>';
             lista.appendChild(kartya);
             const mezo = kartya.querySelector('select');
             const stilus = getComputedStyle(mezo);
@@ -1823,16 +1861,15 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
             return [statusz, szin];
         }));
     });
-    expect(statuszSzinek.blocked).toEqual(statuszSzinek.confirmed);
+    expect(statuszSzinek.blocked).not.toEqual(statuszSzinek.confirmed);
+    expect(statuszSzinek.cancelled_by_customer).toEqual(statuszSzinek.cancelled);
     expect(new Set([
         statuszSzinek.pending.hatter,
         statuszSzinek.confirmed.hatter,
+        statuszSzinek.blocked.hatter,
         statuszSzinek.done.hatter,
-        statuszSzinek.cancelled.hatter,
-        statuszSzinek.cancelled_by_customer.hatter
+        statuszSzinek.cancelled.hatter
     ]).size).toBe(5);
-    expect(statuszSzinek.cancelled).toEqual({ hatter: 'rgb(46, 41, 39)', szoveg: 'rgb(255, 249, 245)' });
-    expect(statuszSzinek.done.hatter).toBe('rgb(226, 239, 229)');
 
     const naptarStatuszSzinek = await page.locator('#admin-panel-foglalasok').evaluate((panel) => {
         const statuszok = ['pending', 'confirmed', 'blocked', 'done'];
@@ -1845,12 +1882,12 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
             return [statusz, hatter];
         }));
     });
-    expect(naptarStatuszSzinek).toEqual({
-        pending: statuszSzinek.pending.hatter,
-        confirmed: statuszSzinek.confirmed.hatter,
-        blocked: statuszSzinek.blocked.hatter,
-        done: statuszSzinek.done.hatter
-    });
+    expect(naptarStatuszSzinek.blocked).toBe(naptarStatuszSzinek.confirmed);
+    expect(new Set([
+        naptarStatuszSzinek.pending,
+        naptarStatuszSzinek.confirmed,
+        naptarStatuszSzinek.done
+    ]).size).toBe(3);
 
     const kompaktKartya = page.locator('[data-azonosito-elrendezes-teszt]');
     const kompaktMagassag = (await kompaktKartya.boundingBox()).height;
@@ -1882,7 +1919,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     });
     expect(szelesMobilKartya).toEqual({
         idopontJobbra: true,
-        vezerlokAzAdatokAlatt: true,
+        vezerlokAzAdatokAlatt: false,
         vezerloAtfedes: false
     });
     const szelesMobilTiltas = await page.locator('[data-tiltas-elrendezes-teszt]').evaluate((kartya) => {
@@ -1902,7 +1939,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     });
     expect(szelesMobilTiltas).toEqual({
         idopontJobbra: true,
-        vezerlokAzAdatokAlatt: true,
+        vezerlokAzAdatokAlatt: false,
         vezerloAtfedes: false
     });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(590);
@@ -1963,7 +2000,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
                 };
             });
             expect(tiltasUrlap, `foglalt ido urlap, ${szelesseg}px`).toEqual({
-                datumTeljesSzelessegu: true,
+                datumTeljesSzelessegu: false,
                 idokEgySorban: true,
                 megjegyzesTeljesSzelessegu: true,
                 megjegyzesAzIdokAlatt: true
@@ -1994,14 +2031,13 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
             whiteSpace: stilus.whiteSpace,
             overflow: stilus.overflow,
             textOverflow: stilus.textOverflow,
-            magassag: elem.getBoundingClientRect().height,
-            sormagassag: Number.parseFloat(stilus.lineHeight)
+            szovegTulcsordul: elem.scrollWidth > elem.clientWidth
         };
     });
-    expect(mobilNev.whiteSpace).toBe('normal');
-    expect(mobilNev.overflow).toBe('visible');
-    expect(mobilNev.textOverflow).toBe('clip');
-    expect(mobilNev.magassag).toBeGreaterThan(mobilNev.sormagassag);
+    expect(mobilNev.whiteSpace).toBe('nowrap');
+    expect(mobilNev.overflow).toBe('hidden');
+    expect(mobilNev.textOverflow).toBe('ellipsis');
+    expect(mobilNev.szovegTulcsordul).toBe(true);
 
     const mobilKartyaElrendezes = await kompaktKartya.evaluate((kartya) => {
         const nevBlokk = kartya.querySelector('.admin-foglalas-nev-blokk').getBoundingClientRect();
@@ -2020,7 +2056,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     });
     expect(mobilKartyaElrendezes).toEqual({
         idopontJobbra: true,
-        vezerlokAzAdatokAlatt: true,
+        vezerlokAzAdatokAlatt: false,
         vezerloAtfedes: false
     });
 
@@ -2041,7 +2077,7 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     expect(mobilVezerloTipografia.reszletGomb).toBeLessThanOrEqual(12);
     expect(mobilVezerloTipografia.reszletSzoveg).toBeLessThanOrEqual(mobilVezerloTipografia.szolgaltatas);
     expect(mobilVezerloTipografia.statuszTechnikaiMeret).toBeGreaterThanOrEqual(22);
-    expect(mobilVezerloTipografia.statuszOptikaiArany).toBe('0.3');
+    expect(mobilVezerloTipografia.statuszOptikaiArany).toBe('0.32');
 
     await page.locator('#admin-foglalas-lapozo').evaluate((lapozo) => {
         lapozo.innerHTML = '<button type="button">Előző</button><span>1 / 4</span><button type="button">Következő</button>';
@@ -2065,9 +2101,26 @@ test('az admin munkafelület asztali és mobil nézetben rendezett marad', async
     await expect(foglalasKeresesTorles).toBeHidden();
     await foglalasKereses.fill('Varga Petra');
     await expect(foglalasKeresesTorles).toBeVisible();
-    const torlesMeret = await foglalasKeresesTorles.boundingBox();
-    expect(torlesMeret.width).toBeGreaterThanOrEqual(44);
-    expect(torlesMeret.height).toBeGreaterThanOrEqual(44);
+    const torlesCelMeret = await foglalasKeresesTorles.evaluate((gomb) => {
+        const gombStilus = getComputedStyle(gomb);
+        const erintesiZonaStilus = getComputedStyle(gomb, '::after');
+        const vizualisSzelesseg = Number.parseFloat(gombStilus.width);
+        const vizualisMagassag = Number.parseFloat(gombStilus.height);
+        return {
+            vizualisSzelesseg,
+            vizualisMagassag,
+            erintesiSzelesseg: vizualisSzelesseg
+                - Number.parseFloat(erintesiZonaStilus.left)
+                - Number.parseFloat(erintesiZonaStilus.right),
+            erintesiMagassag: vizualisMagassag
+                - Number.parseFloat(erintesiZonaStilus.top)
+                - Number.parseFloat(erintesiZonaStilus.bottom)
+        };
+    });
+    expect(torlesCelMeret.vizualisSzelesseg).toBeGreaterThanOrEqual(30);
+    expect(torlesCelMeret.vizualisMagassag).toBeGreaterThanOrEqual(30);
+    expect(torlesCelMeret.erintesiSzelesseg).toBeGreaterThanOrEqual(44);
+    expect(torlesCelMeret.erintesiMagassag).toBeGreaterThanOrEqual(44);
     await foglalasKeresesTorles.click();
     await expect(foglalasKereses).toHaveValue('');
     await expect(foglalasKeresesTorles).toBeHidden();
@@ -2132,15 +2185,16 @@ test('a header, CTA es telefonszam komponens egyseges', async ({ page }) => {
     const asztaliIllesztes = await page.evaluate(() => {
         const hero = document.querySelector('#hero').getBoundingClientRect();
         const heroKep = document.querySelector('.hero-visual').getBoundingClientRect();
-        const bemutatkozasKep = document.querySelector('.bemutatkozas-kep').getBoundingClientRect();
+        const fiokAjanlo = document.querySelector('#fiok-ajanlo').getBoundingClientRect();
         return {
-            heroEsBemutatkozas: Math.abs(hero.bottom - bemutatkozasKep.top),
+            heroEsFiokAjanlo: Math.abs(hero.bottom - fiokAjanlo.top),
+            heroUtanFiokAjanloJon: document.querySelector('#hero').nextElementSibling?.id === 'fiok-ajanlo',
             heroKepTeteje: Math.abs(hero.top - heroKep.top),
             heroKepAlja: Math.abs(hero.bottom - heroKep.bottom)
         };
     });
-    expect(asztaliIllesztes.heroEsBemutatkozas).toBeGreaterThanOrEqual(40);
-    expect(asztaliIllesztes.heroEsBemutatkozas).toBeLessThanOrEqual(72.1);
+    expect(asztaliIllesztes.heroEsFiokAjanlo).toBeLessThanOrEqual(0.1);
+    expect(asztaliIllesztes.heroUtanFiokAjanloJon).toBe(true);
     expect(asztaliIllesztes.heroKepTeteje).toBeLessThanOrEqual(0.1);
     expect(asztaliIllesztes.heroKepAlja).toBeLessThanOrEqual(0.1);
 
@@ -2152,15 +2206,14 @@ test('a header, CTA es telefonszam komponens egyseges', async ({ page }) => {
         const hero = document.querySelector('#hero').getBoundingClientRect();
         const heroKep = document.querySelector('.hero-visual').getBoundingClientRect();
         const monogram = document.querySelector('.hero-monogram').getBoundingClientRect();
-        const bemutatkozasKep = document.querySelector('.bemutatkozas-kep').getBoundingClientRect();
+        const fiokAjanlo = document.querySelector('#fiok-ajanlo').getBoundingClientRect();
         return {
-            heroEsBemutatkozas: Math.abs(hero.bottom - bemutatkozasKep.top),
+            heroEsFiokAjanlo: Math.abs(hero.bottom - fiokAjanlo.top),
             heroKepEsHeroAlja: Math.abs(hero.bottom - heroKep.bottom),
             monogramBalTavolsag: Math.abs((monogram.left - heroKep.left) - 14)
         };
     });
-    expect(mobilIllesztes.heroEsBemutatkozas).toBeGreaterThanOrEqual(39.9);
-    expect(mobilIllesztes.heroEsBemutatkozas).toBeLessThanOrEqual(40.1);
+    expect(mobilIllesztes.heroEsFiokAjanlo).toBeLessThanOrEqual(0.1);
     expect(mobilIllesztes.heroKepEsHeroAlja).toBeLessThanOrEqual(0.1);
     expect(mobilIllesztes.monogramBalTavolsag).toBeLessThanOrEqual(0.1);
     await page.locator('.hamburger').click();

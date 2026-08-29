@@ -1,0 +1,351 @@
+/* Legal */
+.jogi-oldal {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: clamp(72px, 8vw, 116px) 0 0;
+}
+
+.jogi-fejlec h1 {
+    margin: 0;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(68px, 9vw, 116px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    text-align: left;
+}
+
+.jogi-fejlec > p {
+    max-width: 620px;
+    margin: 24px 0 0;
+    color: var(--ui-muted);
+    font-size: var(--lumi-font-body);
+    line-height: 1.75;
+    text-align: left;
+}
+
+.jogi-fejlec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.56fr);
+    align-items: end;
+    gap: clamp(40px, 6vw, 84px);
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--ui-line-strong);
+}
+
+.jogi-fejlec > div {
+    min-width: 0;
+}
+
+.jogi-fejlec .jogi-cimke {
+    max-width: none;
+    margin: 0 0 18px;
+    color: var(--ui-rose-dark);
+    font-family: "Manrope", sans-serif;
+    font-size: var(--lumi-font-caption);
+    font-weight: 750;
+    letter-spacing: 0.17em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.jogi-elrendezes {
+    display: grid;
+    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(44px, 6vw, 80px);
+    margin-top: 64px;
+}
+
+.jogi-oldalsav {
+    position: sticky;
+    top: calc(var(--ui-header-height) + 24px);
+    min-width: 0;
+}
+
+.jogi-tartalomjegyzek {
+    padding: 20px 0;
+    border-top: 1px solid var(--ui-line-strong);
+    border-bottom: 1px solid var(--ui-line-strong);
+}
+
+.jogi-tartalomjegyzek > p {
+    margin: 0 0 14px;
+    color: var(--ui-rose-dark);
+    font-size: var(--lumi-font-caption);
+    font-weight: 750;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.jogi-tartalomjegyzek ol {
+    display: grid;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: jogi-tartalom;
+}
+
+.jogi-tartalomjegyzek li {
+    counter-increment: jogi-tartalom;
+}
+
+.jogi-tartalomjegyzek a {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+    color: var(--ui-muted);
+    font-size: var(--lumi-font-label);
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.jogi-tartalomjegyzek a::before {
+    content: counter(jogi-tartalom, decimal-leading-zero);
+    color: var(--ui-primary);
+    font-size: var(--lumi-font-micro);
+    letter-spacing: 0.04em;
+}
+
+.jogi-tartalomjegyzek a:hover {
+    color: var(--ui-ink);
+}
+
+.jogi-tartalom {
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.jogi-szekcio {
+    max-width: none;
+    margin: 0;
+    padding: 0 0 52px;
+    overflow: visible;
+    border-bottom: 1px solid var(--ui-line);
+}
+
+.jogi-szekcio + .jogi-szekcio {
+    padding-top: 52px;
+}
+
+.jogi-tartalom h2 {
+    margin: 0 0 18px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    text-align: left;
+}
+
+.jogi-tartalom h3 {
+    margin: 0 0 8px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.jogi-tartalom p,
+.jogi-tartalom li,
+.jogi-tartalom span {
+    color: var(--ui-muted);
+    font-size: var(--lumi-font-body-small);
+    line-height: 1.85;
+}
+
+.jogi-tartalom p {
+    margin: 0 0 16px;
+}
+
+.jogi-tartalom ul:not(.jogi-adatlista) {
+    margin: 14px 0 0;
+    padding-left: 20px;
+}
+
+.jogi-tartalom a {
+    color: var(--ui-ink);
+    font-weight: 700;
+    text-underline-offset: 3px;
+}
+
+.jogi-kiemeles,
+.jogi-adatkezelo {
+    display: grid;
+    gap: 4px;
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-left: 3px solid var(--ui-primary);
+    background: color-mix(in srgb, var(--ui-accent) 38%, transparent);
+}
+
+.jogi-kiemeles strong,
+.jogi-adatkezelo strong {
+    color: var(--ui-ink);
+}
+
+.jogi-adatkezelo p {
+    margin: 0;
+}
+
+.jogi-adatlista {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.jogi-adatlista li {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--ui-line);
+    background: color-mix(in srgb, var(--ui-surface) 72%, transparent);
+}
+
+.jogi-adatlista strong {
+    color: var(--ui-ink);
+}
+
+.jogi-tablazat {
+    display: grid;
+    margin-top: 24px;
+    border-top: 1px solid var(--ui-line);
+}
+
+.jogi-sor {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.72fr) minmax(0, 1.28fr);
+    gap: 28px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--ui-line);
+}
+
+.jogi-sor strong {
+    color: var(--ui-ink);
+    line-height: 1.55;
+}
+
+.jogi-ket-kartya {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.jogi-ket-kartya > div {
+    padding: 22px;
+    border: 1px solid var(--ui-line);
+    background: color-mix(in srgb, var(--ui-surface) 72%, transparent);
+}
+
+.jogi-ket-kartya p {
+    margin-bottom: 0;
+}
+
+.jogi-megjegyzes {
+    margin-top: 22px;
+    padding-left: 18px;
+    border-left: 2px solid var(--ui-line-strong);
+}
+
+.jogi-frissitve {
+    margin: 34px 0 0;
+    color: var(--ui-primary);
+    font-size: var(--lumi-font-caption);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+@media screen and (max-width: 900px) {
+    .jogi-fejlec {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+    }
+
+    .jogi-elrendezes {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 44px;
+        margin-top: 48px;
+    }
+
+    .jogi-oldalsav {
+        position: static;
+    }
+
+    .jogi-tartalomjegyzek ol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 32px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .jogi-oldal {
+        width: calc(100% - 32px);
+        padding-top: 24px;
+    }
+
+    .jogi-fejlec {
+        padding-bottom: 42px;
+    }
+
+    .jogi-elrendezes {
+        gap: 38px;
+        margin-top: 40px;
+    }
+
+    .jogi-tartalom h2 {
+        font-size: 42px;
+    }
+
+    .jogi-szekcio {
+        padding-bottom: 40px;
+    }
+
+    .jogi-szekcio + .jogi-szekcio {
+        padding-top: 40px;
+    }
+
+    .jogi-adatlista,
+    .jogi-ket-kartya {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jogi-sor {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .jogi-tartalomjegyzek ol {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jogi-kiemeles,
+    .jogi-adatkezelo,
+    .jogi-adatlista li,
+    .jogi-ket-kartya > div {
+        padding: 18px;
+    }
+}
+
+/* =========================================
+   GALÉRIA OLDAL
+   ========================================= */

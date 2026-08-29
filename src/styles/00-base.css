@@ -8,6 +8,29 @@
     --szoveg: #655e57;
     --rozsa-halvany: #f1ded9;
     --zsalyaszurke: #a7b7a1;
+
+    /* Public semantic design tokens. */
+    --ui-primary: #91766e;
+    --ui-on-primary: #fff9f5;
+    --ui-accent: #f0d7d5;
+    --ui-on-accent: #211b19;
+    --ui-bg: #f3ece3;
+    --ui-surface: #fff9f5;
+    --ui-soft: #e7d8d3;
+    --ui-highlight: #f3ece3;
+    --ui-warm: #f0d7d5;
+    --ui-off-black: #211b19;
+    --ui-off-white: #fff9f5;
+    --ui-header-bg: var(--ui-bg);
+    --ui-ink: var(--ui-primary);
+    --ui-muted: #6f5e58;
+    --ui-rose: var(--ui-accent);
+    --ui-rose-dark: var(--ui-primary);
+    --ui-line: rgba(145, 118, 110, 0.16);
+    --ui-line-strong: rgba(145, 118, 110, 0.3);
+    --ui-shadow: 0 18px 55px rgba(33, 27, 25, 0.1);
+    --ui-gutter: clamp(20px, 5vw, 76px);
+    --ui-header-height: 82px;
     --lumi-section-gap: clamp(30px, 3.6vw, 54px);
     --lumi-section-gap-mobile: 30px;
     --lumi-section-gap-small: 26px;
@@ -39,6 +62,10 @@
     --lumi-control-focus: 0 0 0 3px rgba(185, 133, 143, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.75);
     --lumi-soft-shadow: 0 14px 34px rgba(70, 48, 42, 0.1);
     --lumi-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' fill='none' stroke='%2364524d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+* {
+    box-sizing: border-box;
 }
 
 @media screen and (max-width: 768px) {
@@ -244,93 +271,26 @@ textarea {
     }
 }
 
-/* =========================================
- 2. KEZDŐLAP ELEMEI (Kártyák, stb.)
-========================================= */
-#hero {
-    width: min(1080px, calc(100% - 72px));
-    margin: 2px auto 0;
-    background-image: linear-gradient(90deg, rgba(43, 37, 33, 0.04) 0%, rgba(43, 37, 33, 0.12) 42%, rgba(43, 37, 33, 0.74) 100%), url('kepek/hatter2.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    aspect-ratio: 1179 / 420;
-    position: relative;
-    padding: 0;
-    border-radius: 22px;
-    overflow: hidden;
-}
-
-.hero-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    position: absolute;
-    top: 14%;
-    right: clamp(20px, 4.8vw, 58px);
-    width: min(460px, 46%);
-}
-
-.hero-kicker {
-    margin-bottom: 8px;
-    color: rgba(255, 250, 244, 0.86);
-    font-size: clamp(10px, 1vw, 13px);
-    font-weight: 700;
-    letter-spacing: 2.6px;
-    line-height: 1.2;
-    text-align: right;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-    text-transform: uppercase;
-}
-
-.hero-content h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(34px, 5vw, 68px);
-    font-weight: 700;
-    text-align: right;
-    color: white;
-    line-height: 0.92;
-    margin: 0;
-    white-space: nowrap;
-    text-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
-}
-
-.hero-content p {
-    max-width: 390px;
-    font-size: clamp(13px, 1.1vw, 17px);
-    font-weight: 400;
-    text-align: right;
-    line-height: 1.45;
-    color: white;
-    margin: clamp(8px, 1.4vw, 14px) 0 0;
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.38);
-}
-
 /* 1. EZ FELEL A TÚLHÚZÁS SZÍNÉÉRT (Eltünteti a fehéret/pirosat az űrből) */
 html {
     background-color: var(--krem);
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    scroll-padding-top: 56px;
+    scroll-padding-top: calc(var(--ui-header-height) + 24px);
     max-width: 100%;
     overflow-x: hidden;
 }
 
 /* 2. EZ A WEBOLDALAD TARTALMA ÉS A MINTA */
 body {
-    background-color: var(--krem);
-    background-image: url('kepek/Background2.svg');
-    background-repeat: repeat;
-    background-size: 450px;
-
-    /* Az eddigi dizájn beállításaid */
+    background: var(--ui-bg);
     margin: 0;
     max-width: 100%;
-    padding-top: 78px;
-    overflow-x: hidden;
+    padding: var(--ui-header-height) 0 0;
+    overflow-x: clip;
     font-family: 'Manrope', sans-serif;
     font-size: var(--lumi-font-body);
-    color: var(--akcentus);
+    color: var(--ui-ink);
     scroll-behavior: smooth;
 }
 
@@ -494,15 +454,15 @@ h2 {
 .kiemelt-stilus-kartya img {
     display: block;
     width: 100%;
-    height: 100%;
-    min-height: 420px;
-    object-fit: cover;
-    transform: scale(1.02);
+    height: auto;
+    min-height: 0;
+    object-fit: contain;
+    transform: none;
     transition: transform 0.45s ease;
 }
 
 .kiemelt-stilus-kartya:hover img {
-    transform: scale(1.07);
+    transform: none;
 }
 
 .kiemelt-stilus-kartya::after {
@@ -544,145 +504,6 @@ h2 {
     line-height: 1.55;
 }
 
-/* =========================================
-   GALERIA ATVEZETO SECTION - clean gallery layout
-   ========================================= */
-#galeria-atvezeto {
-    --galeria-gap: 14px;
-    --galeria-mosaic-height: clamp(320px, 24vw, 390px);
-    width: 100%;
-    max-width: none;
-    padding: 0;
-}
-
-.galeria-atvezeto-belso {
-    display: grid;
-    grid-template-columns: minmax(720px, 1.04fr) minmax(340px, 0.48fr);
-    align-items: center;
-    gap: clamp(32px, 4vw, 62px);
-    width: var(--lumi-container-width);
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.galeria-atvezeto-kepek {
-    display: grid;
-    grid-template-columns: 1.42fr 0.94fr 0.94fr;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: var(--galeria-gap);
-    height: var(--galeria-mosaic-height);
-    min-height: 0;
-}
-
-.galeria-atvezeto-kepek img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    object-fit: cover;
-    object-position: center center;
-    content-visibility: visible;
-    border: 1px solid rgba(185, 133, 143, 0.2);
-    border-radius: 18px;
-    box-shadow: 0 14px 34px rgba(78, 54, 48, 0.09);
-}
-
-.galeria-atvezeto-kepek img:first-child {
-    grid-row: 1 / 3;
-}
-
-.galeria-atvezeto-kepek img:nth-child(n+6) {
-    display: none;
-}
-
-.galeria-atvezeto-szoveg {
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.galeria-atvezeto-szoveg h2 {
-    text-align: left;
-}
-
-.galeria-atvezeto-szoveg .szekcio-leiras {
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 24px;
-    text-align: left;
-}
-
-
-@media screen and (max-width: 768px) {
-    #galeria-atvezeto {
-        --galeria-gap: 10px;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-
-    .galeria-atvezeto-belso {
-        display: flex;
-        flex-direction: column;
-        width: calc(100% - 28px);
-        max-width: calc(100% - 28px);
-        gap: 22px;
-    }
-
-    .galeria-atvezeto-szoveg {
-        order: 1;
-        align-self: stretch;
-        align-items: center;
-        text-align: center;
-    }
-
-    .galeria-atvezeto-szoveg h2 {
-        text-align: center;
-    }
-
-    .galeria-atvezeto-szoveg .szekcio-leiras {
-        max-width: 520px;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 18px;
-        text-align: center;
-    }
-
-
-    .galeria-atvezeto-kepek {
-        order: 2;
-        width: 100%;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(2, clamp(130px, 42vw, 190px));
-        gap: var(--galeria-gap);
-        height: auto;
-        min-height: 0;
-    }
-
-    .galeria-atvezeto-kepek img {
-        border-radius: 18px;
-    }
-
-    .galeria-atvezeto-kepek img:first-child {
-        grid-row: 1 / 3;
-    }
-
-    .galeria-atvezeto-kepek img:nth-child(n+4) {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 380px) {
-    .galeria-atvezeto-belso {
-        width: calc(100% - 24px);
-        max-width: calc(100% - 24px);
-    }
-
-    .galeria-atvezeto-kepek {
-        grid-template-rows: repeat(2, clamp(118px, 40vw, 170px));
-    }
-}
 /* =========================================
             3. FOGLALAS OLDAL ELEMEI
             ========================================= */
@@ -842,27 +663,14 @@ select.urlap-mezo:invalid {
     opacity: 0.68;
 }
 
-.lebego-foglalas-gomb {
-    position: fixed;
-    right: 28px;
-    bottom: calc(28px + env(safe-area-inset-bottom));
-    z-index: 1200;
-    width: auto;
-    margin: 0;
+@media screen and (max-width: 768px) {
+    :root {
+        --ui-header-height: 72px;
+        --ui-mobile-type-scale: 80%;
+    }
 
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease, box-shadow 0.25s ease;
-}
-
-.lebego-foglalas-gomb:hover {
-    transform: translateY(-2px);
-}
-
-.lebego-foglalas-gomb.rejtve {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(14px);
+    body:not(.admin-body) {
+        -webkit-text-size-adjust: var(--ui-mobile-type-scale);
+        text-size-adjust: var(--ui-mobile-type-scale);
+    }
 }

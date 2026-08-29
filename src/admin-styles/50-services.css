@@ -55,15 +55,6 @@
   justify-content: flex-end;
   gap: 5px;
 }
-.admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-allapot-jelzo {
-  min-height: 22px;
-  padding: 0 7px;
-  border-radius: 999px;
-  font-size: 8px;
-  font-weight: 600;
-  line-height: 22px;
-  white-space: nowrap;
-}
 .admin-body.admin-v2 #admin-panel-szolgaltatasok [data-admin-kartya-toggle] {
   position: relative;
   width: var(--admin-ui-icon-button-size);
@@ -189,7 +180,6 @@
   .admin-body.admin-v2 #admin-panel-szolgaltatasok { max-width: none; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-fej { min-height: 58px; padding-block: 8px; gap: 8px; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-vezerlok { gap: 4px; }
-  .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-allapot-jelzo { padding-inline: 6px; font-size: 7px; }
   .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szolgaltatas-kartya.szerkeszt {
     top: auto;
     right: 0;

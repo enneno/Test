@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, '..');
 const ADMIN_STYLE_FILES = [
     '00-foundation.css',
     '05-panel-state.css',
+    '10-components.css',
     '15-responsive-context.css',
     '20-workspace.css',
     '30-bookings.css',
@@ -17,8 +18,7 @@ const ADMIN_STYLE_FILES = [
     '70-availability.css',
     '80-communications.css',
     '90-customers.css',
-    '95-pwa.css',
-    '10-components.css'
+    '95-pwa.css'
 ];
 
 const bundles = [

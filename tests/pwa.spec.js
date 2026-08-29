@@ -93,6 +93,26 @@ test.describe('Lumi Nails PWA', () => {
     expect(count).toBe(0);
   });
 
+  test('keeps browser admin zoomable and disables zoom only in standalone admin', async ({ page }) => {
+    await page.goto('/admin/', { waitUntil: 'domcontentloaded' });
+
+    const viewport = page.locator('meta[name="viewport"]');
+    await expect(viewport).not.toHaveAttribute('content', /maximum-scale/);
+    await expect(viewport).not.toHaveAttribute('content', /user-scalable=no/);
+
+    await page.addInitScript(() => {
+      Object.defineProperty(window.navigator, 'standalone', {
+        configurable: true,
+        value: true
+      });
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    await expect(page.locator('body')).toHaveClass(/lumi-admin-standalone/);
+    await expect(viewport).toHaveAttribute('content', /maximum-scale=1/);
+    await expect(viewport).toHaveAttribute('content', /user-scalable=no/);
+  });
+
   test('standalone admin uses 21st-style toolbar dock and quick-add action', async ({ page }) => {
     await page.addInitScript(() => {
       Object.defineProperty(window.navigator, 'standalone', {

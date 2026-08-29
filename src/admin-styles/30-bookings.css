@@ -436,36 +436,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-vezerlok > [data-foglalas-szerkesztes] { grid-column: 3; }
 .admin-body.admin-v2 #admin-panel-foglalasok [data-foglalas-reszletek],
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-details-trigger { display: none; }
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz {
-  height: 34px;
-  min-height: 34px;
-  padding: 0 28px;
-  appearance: none;
-  -webkit-appearance: none;
-  border-color: var(--booking-state-border);
-  border-radius: 999px;
-  color: var(--booking-state-color);
-  background-color: var(--booking-state-bg);
-  background-repeat: no-repeat;
-  -webkit-text-fill-color: currentColor;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  line-height: 1.25;
-  text-align: center;
-  text-align-last: center;
-  opacity: 1;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya:not(.szerkeszt) .admin-db-statusz:disabled {
-  background-image: none;
-  cursor: default;
-}
-.admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
-  background-position: right 9px center;
-  background-size: 14px 14px;
-  cursor: pointer;
-}
-
 /* Lucide action icons: shared button chrome comes from 10-components.css. */
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-booking-icon-button {
   color: var(--booking-state-color);
@@ -612,10 +582,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 #admin-panel-foglalasok {
   min-width: 0;
   gap: 5px;
   overflow: hidden;
-  color: var(--admin-v2-muted);
-  font-size: 9px;
-  font-weight: 600;
-  line-height: 1.15;
 }
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo-szeles {
   grid-column: 1 / -1;
@@ -944,7 +910,6 @@ body.admin-modal-nyitva { overflow: hidden; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-rovid-szolgaltatas { font-size: 10px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-datum { font-size: 11px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-ido { font-size: 10px; }
-  .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz { font-size: 11px; font-size-adjust: none; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid { gap: 8px 14px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid :is(span, a) { font-size: 10.5px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-meta-grid strong { font-size: 8.5px; }

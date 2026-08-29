@@ -91,11 +91,21 @@ for (const token of requiredTokens) {
   if (!componentCss.includes(token)) fail(`canonical component token is missing: ${token}`);
 }
 
+const requiredVariants = [
+  '.admin-db-lista--sorok',
+  '.admin-db-lista--surubb',
+  '.admin-db-statusz--foglalas',
+  '.admin-allapot-jelzo--kompakt'
+];
+for (const variant of requiredVariants) {
+  if (!componentCss.includes(variant)) fail(`canonical component variant is missing: ${variant}`);
+}
+
 /* Feature IDs have one feature owner. The workspace may also scope its generic
    page-action shell to a panel; that remains workspace ownership, not feature styling. */
 const ownership = [
-  { pattern: '#admin-panel-foglalasok', owners: ['20-workspace.css', '30-bookings.css'] },
-  { pattern: '#admin-panel-szolgaltatasok', owners: ['50-services.css'] },
+  { pattern: '#admin-panel-foglalasok', owners: ['10-components.css', '20-workspace.css', '30-bookings.css'] },
+  { pattern: '#admin-panel-szolgaltatasok', owners: ['10-components.css', '50-services.css'] },
   { pattern: '#admin-panel-kuponok', owners: ['60-coupons.css'] },
   { pattern: '#admin-panel-idosavok', owners: ['70-availability.css'] },
   { pattern: '#admin-idosav-', owners: ['70-availability.css'] },
@@ -103,7 +113,7 @@ const ownership = [
   { pattern: '#admin-panel-esemenynaplo', owners: ['80-communications.css'] },
   { pattern: '#admin-esemenynaplo-', owners: ['80-communications.css'] },
   { pattern: '.admin-email-teszt-', owners: ['80-communications.css'] },
-  { pattern: '#admin-panel-szovegek', owners: ['40-content-editor.css', '42-cms-image-controls.css', '45-gallery-editor.css'] }
+  { pattern: '#admin-panel-szovegek', owners: ['10-components.css', '40-content-editor.css', '42-cms-image-controls.css', '45-gallery-editor.css'] }
 ];
 
 for (const rule of ownership) {
@@ -113,6 +123,19 @@ for (const rule of ownership) {
   });
   if (offenders.length) {
     fail(`${rule.pattern} has non-owner CSS: ${offenders.join(', ')}; owner: ${rule.owners.join(' / ')}`);
+  }
+}
+
+const forbiddenFeatureVisualOwners = [
+  '#admin-kupon-lista > .admin-db-kartya',
+  '#admin-idosav-lista > .admin-db-kartya',
+  '#admin-tiltas-lista > .admin-db-kartya',
+  '#admin-esemenynaplo-lista > .admin-db-kartya'
+];
+for (const selector of forbiddenFeatureVisualOwners) {
+  const offenders = actualFiles.filter(name => name !== '10-components.css' && cssByFile.get(name).includes(selector));
+  if (offenders.length) {
+    fail(`${selector} must use a semantic component variant instead of a feature visual override: ${offenders.join(', ')}`);
   }
 }
 
@@ -128,8 +151,14 @@ if (!responsiveContextCss.includes('container: admin-workspace / inline-size')) 
 }
 
 const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-assets.js'), 'utf8');
-for (const name of expectedFiles) {
-  if (!buildScript.includes(`'${name}'`)) fail(`admin bundle order is missing ${name}`);
+const manifestMatch = buildScript.match(/const ADMIN_STYLE_FILES = \[([\s\S]*?)\];/);
+if (!manifestMatch) {
+  fail('admin bundle has no explicit ADMIN_STYLE_FILES manifest.');
+} else {
+  const buildFiles = [...manifestMatch[1].matchAll(/'([^']+\.css)'/g)].map(match => match[1]);
+  if (JSON.stringify(buildFiles) !== JSON.stringify(expectedFiles)) {
+    fail(`admin bundle order differs. Expected: ${expectedFiles.join(', ')}. Found: ${buildFiles.join(', ')}`);
+  }
 }
 if (!buildScript.includes('files: ADMIN_STYLE_FILES')) {
   fail('admin bundle must use an explicit source manifest instead of filename sorting.');

@@ -32,21 +32,20 @@ test('a V2 mentés nem rejtett lebegő gomb kattintását használja', async () 
 });
 
 test('a régi rejtett admin Mentés gomb teljesen eltűnt a forrásból', async () => {
+    const projectRoot = path.resolve(__dirname, '..');
+    const sourceFiles = (directory, extension) => fs.readdirSync(path.join(projectRoot, directory))
+        .filter(name => name.endsWith(extension))
+        .map(name => path.join(directory, name));
     const files = [
         'admin/index.html',
-        'src/admin/00-bootstrap-auth-calendar.js',
         'admin-content.js',
-        'src/admin-styles/05-panel-state.css',
-        'src/admin-styles/10-components.css',
-        'src/admin-styles/20-workspace.css',
-        'src/admin-styles/30-bookings.css',
-        'src/admin-styles/40-content-editor.css',
-        'src/styles/10-public-components.css',
-        'src/styles/99-unified-design.css'
+        ...sourceFiles('src/admin', '.js'),
+        ...sourceFiles('src/admin-styles', '.css'),
+        ...sourceFiles('src/styles', '.css')
     ];
 
     for (const file of files) {
-        const source = fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8');
+        const source = fs.readFileSync(path.join(projectRoot, file), 'utf8');
         expect(source, file).not.toContain('admin-lebego-mentes');
     }
 });

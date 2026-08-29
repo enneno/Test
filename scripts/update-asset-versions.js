@@ -23,9 +23,7 @@ const ASSETS = [
     'account.js',
     'admin-supabase.js',
     'admin-export.js',
-    'admin-content.js',
-    'pwa.js',
-    'pwa-admin-shell.js'
+    'admin-content.js'
 ];
 
 function assetHash(relativePath) {

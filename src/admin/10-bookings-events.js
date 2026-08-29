@@ -706,7 +706,7 @@
                     ${foglalasKartyaIdopont(foglalas.starts_at, foglalas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
-                    <select class="admin-db-statusz" data-foglalas-statusz disabled>
+                    <select class="admin-db-statusz admin-db-statusz--foglalas" data-foglalas-statusz disabled>
                         ${statuszOption('pending', 'Függőben', foglalas.status)}
                         ${statuszOption('confirmed', 'Visszaigazolva', foglalas.status)}
                         ${statuszOption('done', 'Kész', foglalas.status)}
@@ -961,7 +961,7 @@
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
-                    <select class="admin-db-statusz" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
+                    <select class="admin-db-statusz admin-db-statusz--foglalas" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
                         <option value="blocked" ${statusz === 'blocked' ? 'selected' : ''}>Foglalt</option>
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>

@@ -204,15 +204,6 @@
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya {
-  padding: 9px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-idosav-lista .admin-idosav-grid {
   grid-template-columns: minmax(160px, 1.2fr) minmax(100px, .65fr) minmax(100px, .65fr) 36px;
   align-items: center;
@@ -251,15 +242,6 @@
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya {
-  padding: 12px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
 .admin-body.admin-v2 #admin-tiltas-lista .admin-db-kartya-fej {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -290,8 +272,6 @@
 }
 
 @container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-idosav-lista > .admin-db-kartya,
-  .admin-body.admin-v2 #admin-tiltas-lista > .admin-db-kartya { padding-inline: 3px; }
   .admin-body.admin-v2 #admin-idosav-naptar { padding: 11px; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-naptar-fej { grid-template-columns: 1fr; }
   .admin-body.admin-v2 #admin-idosav-naptar .admin-kozos-idosav-sor { grid-template-columns: repeat(3, minmax(0, 1fr)); }

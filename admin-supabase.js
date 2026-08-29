@@ -2702,7 +2702,7 @@ function arlistaFeliratokFrissitese() {
                     ${foglalasKartyaIdopont(foglalas.starts_at, foglalas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
-                    <select class="admin-db-statusz" data-foglalas-statusz disabled>
+                    <select class="admin-db-statusz admin-db-statusz--foglalas" data-foglalas-statusz disabled>
                         ${statuszOption('pending', 'Függőben', foglalas.status)}
                         ${statuszOption('confirmed', 'Visszaigazolva', foglalas.status)}
                         ${statuszOption('done', 'Kész', foglalas.status)}
@@ -2957,7 +2957,7 @@ function arlistaFeliratokFrissitese() {
                     ${foglalasKartyaIdopont(tiltas.starts_at, tiltas.ends_at)}
                 </div>
                 <div class="admin-foglalas-vezerlok">
-                    <select class="admin-db-statusz" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
+                    <select class="admin-db-statusz admin-db-statusz--foglalas" data-foglalas-statusz aria-label="Kézi idő státusza" disabled>
                         <option value="blocked" ${statusz === 'blocked' ? 'selected' : ''}>Foglalt</option>
                         <option value="done" ${statusz === 'done' ? 'selected' : ''}>Kész</option>
                         <option value="cancelled_by_customer" ${statusz === 'cancelled_by_customer' ? 'selected' : ''}>Vendég mondta le</option>
@@ -3900,8 +3900,8 @@ function arlistaFeliratokFrissitese() {
                     <p>${html(arOsszeg)} · ${html(idoFelirat)}</p>
                 </div>
                 <div class="admin-kompakt-kartya-vezerlok">
-                    <span class="admin-allapot-jelzo${szolgaltatas.active ? '' : ' inaktiv'}">${szolgaltatas.active ? 'Látható' : 'Rejtett'}</span>
-                    <span class="admin-allapot-jelzo${szolgaltatas.booking_enabled ? '' : ' inaktiv'}">${szolgaltatas.booking_enabled ? 'Foglalható' : 'Nem foglalható'}</span>
+                    <span class="admin-allapot-jelzo admin-allapot-jelzo--kompakt${szolgaltatas.active ? '' : ' inaktiv'}">${szolgaltatas.active ? 'Látható' : 'Rejtett'}</span>
+                    <span class="admin-allapot-jelzo admin-allapot-jelzo--kompakt${szolgaltatas.booking_enabled ? '' : ' inaktiv'}">${szolgaltatas.booking_enabled ? 'Foglalható' : 'Nem foglalható'}</span>
                     <button type="button" class="admin-kis-gomb admin-ikonos-gomb" data-admin-kartya-toggle aria-expanded="${String(ujTetel)}">${adminV2Ikon(ujTetel ? 'close' : 'edit')}<span>${ujTetel ? 'Bezárás' : 'Szerkesztés'}</span></button>
                 </div>
             </div>

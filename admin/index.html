@@ -22,7 +22,7 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="/admin-v2.css?v=9c8e4e0c85d6">
+    <link rel="stylesheet" href="/admin-v2.css?v=1a81f49a4660">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
@@ -201,7 +201,7 @@
                     <div class="admin-panel-akciok">
                         <button type="button" id="admin-kupon-hozzaadas" class="admin-hozzaadas">Új kupon</button>
                     </div>
-                    <div id="admin-kupon-lista" class="admin-db-lista"></div>
+                    <div id="admin-kupon-lista" class="admin-db-lista admin-db-lista--sorok"></div>
                 </div>
 
                 <div id="admin-panel-idosavok" class="admin-db-panel">
@@ -254,7 +254,7 @@
                         <button type="button" id="admin-idosav-lepes-osszes" class="admin-kis-gomb" title="Lépés alkalmazása minden napra">Lépés minden napra</button>
                         <button type="button" id="admin-idosav-osszes-torles" class="admin-kis-gomb admin-veszely-gomb" title="Összes beállított nap törlése">Összes nap törlése</button>
                     </div>
-                    <div id="admin-idosav-lista" class="admin-db-lista"></div>
+                    <div id="admin-idosav-lista" class="admin-db-lista admin-db-lista--sorok admin-db-lista--surubb"></div>
                 </div>
 
                 <div id="admin-panel-tiltasok" class="admin-db-panel">
@@ -280,7 +280,7 @@
                         </div>
                     </form>
                     <div id="admin-tiltas-lapozo" class="admin-lapozo admin-lapozo-felso"></div>
-                    <div id="admin-tiltas-lista" class="admin-db-lista"></div>
+                    <div id="admin-tiltas-lista" class="admin-db-lista admin-db-lista--sorok"></div>
                 </div>
 
                 <div id="admin-panel-esemenynaplo" class="admin-db-panel">
@@ -291,7 +291,7 @@
                         </div>
                     </div>
                     <div id="admin-esemenynaplo-lapozo-felso" class="admin-lapozo admin-lapozo-felso"></div>
-                    <div id="admin-esemenynaplo-lista" class="admin-db-lista"></div>
+                    <div id="admin-esemenynaplo-lista" class="admin-db-lista admin-db-lista--sorok"></div>
                     <div id="admin-esemenynaplo-lapozo" class="admin-lapozo"></div>
                 </div>
 
@@ -345,12 +345,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
     <script src="/supabase-config.js?v=84d7307ff175"></script>
     <script src="/script.js?v=8aba5f50ba23"></script>
-    <script src="/admin-supabase.js?v=578633d1243f"></script>
+    <script src="/admin-supabase.js?v=debd904bb27f"></script>
     <script src="/admin-export.js?v=7f5a873b8293"></script>
     <script src="/admin-content.js?v=4dcbd5fdbbb6"></script>
-
-    <script src="/pwa.js?v=41cc3d811b82"></script>
-    <script src="/pwa-admin-shell.js?v=f0eb71987f8f"></script>
 </body>
 
 </html>

@@ -6,16 +6,6 @@
   gap: 0;
   border-top: 1px solid var(--admin-line);
 }
-.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya {
-  padding: 12px 7px;
-  border: 0;
-  border-bottom: 1px solid var(--admin-line);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya:hover { background: var(--admin-v2-surface-soft); }
-
 .admin-body.admin-v2 #admin-panel-kuponok .admin-db-grid-kupon {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -84,7 +74,6 @@
 }
 
 @container admin-workspace (max-width: 480px) {
-  .admin-body.admin-v2 #admin-kupon-lista > .admin-db-kartya { padding: 11px 3px; }
   .admin-body.admin-v2 #admin-panel-kuponok .admin-db-grid-kupon { gap: 8px; }
   .admin-body.admin-v2 #admin-panel-kuponok .admin-kupon-kod,
   .admin-body.admin-v2 #admin-panel-kuponok .admin-kupon-sorrend { grid-column: auto; }
