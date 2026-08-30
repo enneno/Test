@@ -402,13 +402,15 @@ function galeriaAdatokAlkalmazasa(galeria) {
     const racs = szekcio?.querySelector('.galeria-racs');
     if (!szekcio || !galeria || !racs) return;
 
+    szovegBeallitasa('.galeria-oldal-fej .szekcio-kicker', galeria.kicker, szekcio);
     szovegBeallitasa('h1', galeria.cim, szekcio);
     szovegBeallitasa('.szekcio-leiras', galeria.leiras, szekcio);
+    szovegBeallitasa('.galeria-oldal-zaras p', galeria.zaras, szekcio);
     szovegBeallitasa('a.gomb[href*="foglalas"]', galeria.foglalasGomb, szekcio);
 
     if (!Array.isArray(galeria.elemek)) return;
     racs.innerHTML = '';
-    galeria.elemek.filter(elem => elem?.kep).forEach(elem => {
+    galeria.elemek.filter(elem => elem?.kep).forEach((elem, index) => {
         const gomb = document.createElement('button');
         gomb.type = 'button';
         gomb.className = `galeria-kep-gomb${elem.magas ? ' magas' : ''}`;
@@ -417,7 +419,9 @@ function galeriaAdatokAlkalmazasa(galeria) {
         const kep = document.createElement('img');
         kep.src = elem.eloKep || elem.kep;
         kep.alt = elem.kepAlt || 'Lumi Nails köröm munka';
-        kep.loading = 'lazy';
+        kep.loading = index < 3 ? 'eager' : 'lazy';
+        kep.decoding = 'async';
+        if (index === 0) kep.fetchPriority = 'high';
         gomb.appendChild(kep);
         racs.appendChild(gomb);
     });

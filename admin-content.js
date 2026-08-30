@@ -139,8 +139,10 @@
             title: 'Galéria oldal és teljes galéria',
             description: 'A külön Galéria oldal címe, leírása és összes képe. A képeknél külön jelölhető a főoldali átvezető és a Nail Art oldal.',
             fields: [
+                field('galeria.kicker', 'Kis felső felirat'),
                 field('galeria.cim', 'Oldal címe'),
                 field('galeria.leiras', 'Bevezető szöveg', 'textarea'),
+                field('galeria.zaras', 'Foglalás előtti zárómondat'),
                 field('galeria.foglalasGomb', 'Foglalás gomb szövege')
             ],
             gallery: true

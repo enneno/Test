@@ -4277,7 +4277,7 @@ function arlistaFeliratokFrissitese() {
         select.disabled = false;
         select.innerHTML = szolgaltatasok.map(szolgaltatas => `
             <option value="${attr(String(szolgaltatas.id))}" ${String(szolgaltatas.id) === arKalkulatorAllapot.szolgaltatasId ? 'selected' : ''}>
-                ${html(szolgaltatas.name || 'Névtelen szolgáltatás')}
+                ${html(arKalkulatorSzolgaltatasNev(szolgaltatas))}
             </option>
         `).join('');
     }
@@ -4362,7 +4362,7 @@ function arlistaFeliratokFrissitese() {
 
         let osszeg = arKalkulatorAllapot.alapAr || 0;
         const szolgaltatas = arKalkulatorAktivSzolgaltatas();
-        const sorok = szolgaltatas ? [{ nev: szolgaltatas.name || 'Alapszolgáltatás', osszeg }] : [];
+        const sorok = szolgaltatas ? [{ nev: arKalkulatorSzolgaltatasNev(szolgaltatas), osszeg }] : [];
         arKalkulatorAllapot.extrak.forEach(extra => {
             const reszosszeg = extra.ar * extra.darab;
             osszeg += reszosszeg;
@@ -4433,6 +4433,10 @@ function arlistaFeliratokFrissitese() {
         const teljesNev = String(tetel?.name || '').trim();
         const reszek = teljesNev.split(/\s+-\s+/).filter(Boolean);
         return reszek.length > 1 ? reszek.slice(1).join(' - ') : (tetel?.description || teljesNev || 'Díszítés');
+    }
+
+    function arKalkulatorSzolgaltatasNev(szolgaltatas) {
+        return String(szolgaltatas?.description || szolgaltatas?.name || 'Névtelen szolgáltatás').trim();
     }
 
     function arKalkulatorKulcs(ertek) {

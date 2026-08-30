@@ -296,8 +296,10 @@ function lumiAlapOldalAdatok() {
             leiras: 'Az árak tájékoztató jellegűek, a pontos végösszeg az egyedi igényektől és díszítéstől függhet.'
         },
         galeria: {
+            kicker: 'Válogatott munkák',
             cim: 'Galéria',
             leiras: 'Finom részletek, letisztult formák és visszafogottan elegáns díszítések egy helyen.',
+            zaras: 'Megtaláltad a hozzád illő hangulatot?',
             foglalasGomb: 'Időpontfoglalás',
             elemek: [
                 { kep: '/galeria/optimized/large/image3.jpg', eloKep: '/galeria/optimized/thumbs/image3.jpg', kepAlt: 'Lumi Nails köröm munka', magas: true },

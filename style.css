@@ -1301,101 +1301,213 @@ select.urlap-mezo:invalid {
    GALÉRIA OLDAL
    ========================================= */
 
-/* Public gallery page, shared footer and responsive navigation shell. */
+/* Public gallery page. The editorial bento rhythm is inspired by the clean
+   image-grid patterns on 21st.dev, adapted to Lumi Nails without dependencies. */
 .galeria-oldal {
-    width: min(1360px, calc(100% - 32px));
+    width: min(1360px, calc(100% - 40px));
     margin: 0 auto;
-    padding: clamp(72px, 8vw, 116px) 0 0;
+    padding: clamp(62px, 7vw, 104px) 0 clamp(68px, 8vw, 112px);
 }
 
-.galeria-oldal > h1 {
-    margin: 0;
+.galeria-oldal-fej {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.55fr);
+    align-items: end;
+    gap: clamp(32px, 6vw, 96px);
+    padding: 0 clamp(4px, 1vw, 14px) clamp(34px, 5vw, 62px);
+    border-bottom: 1px solid var(--ui-line);
+}
+
+.galeria-oldal-fej .szekcio-kicker {
+    color: var(--ui-rose-dark);
+}
+
+.galeria-oldal-fej h1 {
+    margin: 12px 0 0;
     color: var(--ui-ink);
     font-family: "Cormorant Garamond", serif;
     font-size: clamp(68px, 9vw, 116px);
     font-weight: 600;
     letter-spacing: -0.045em;
-    line-height: 0.9;
+    line-height: 0.82;
     text-align: left;
 }
 
-.galeria-oldal > .szekcio-leiras {
-    max-width: 620px;
-    margin: 24px 0 0;
+.galeria-oldal-fej .szekcio-leiras {
+    max-width: 42ch;
+    margin: 0;
     color: var(--ui-muted);
     font-size: var(--lumi-font-body);
     line-height: 1.75;
-    text-align: left;
+    text-align: justify;
+    text-align-last: left;
+    hyphens: none;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .galeria-racs {
-    display: block;
-    max-width: none;
-    margin: 66px 0 0;
-    column-count: 4;
-    column-gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-rows: 58px;
+    gap: 10px;
+    margin: 10px 0 0;
 }
 
 .galeria-kep-gomb,
 .galeria-kep-gomb.magas {
+    position: relative;
+    grid-column: span 4;
+    grid-row: span 6;
     display: block;
     width: 100%;
-    height: auto;
-    margin: 0 0 10px;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
     padding: 0;
     overflow: hidden;
-    break-inside: avoid;
     border: 0;
-    border-radius: 3px;
+    border-radius: 16px;
     background: var(--ui-soft);
     box-shadow: none;
-    cursor: pointer;
+    cursor: zoom-in;
+}
+
+.galeria-kep-gomb:nth-child(1) { grid-column: span 7; grid-row: span 8; }
+.galeria-kep-gomb:nth-child(2) { grid-column: span 5; grid-row: span 8; }
+.galeria-kep-gomb:nth-child(6) { grid-column: span 8; grid-row: span 7; }
+.galeria-kep-gomb:nth-child(7) { grid-column: span 4; grid-row: span 7; }
+
+.galeria-kep-gomb::after {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 253, 249, 0.42);
+    border-radius: inherit;
+    box-shadow: inset 0 -70px 70px -70px rgba(28, 20, 18, 0.34);
+    content: "";
+    pointer-events: none;
 }
 
 .galeria-kep-gomb img {
     display: block;
     width: 100%;
-    height: auto;
-    aspect-ratio: auto;
-    object-fit: contain;
-    transform: none;
-    transition: none;
-}
-
-.galeria-kep-gomb:hover {
-    transform: none;
-    box-shadow: none;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.001);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
 }
 
 .galeria-kep-gomb:hover img {
-    transform: none;
+    filter: saturate(1.04);
+    transform: scale(1.025);
 }
 
-@media screen and (max-width: 900px) {
-    .galeria-racs {
-        column-count: 3;
-    }
+.galeria-kep-gomb:focus-visible {
+    outline: 3px solid var(--ui-rose-dark);
+    outline-offset: 3px;
 }
 
-@media screen and (max-width: 768px) {
-    .galeria-oldal {
-        width: calc(100% - 32px);
-        padding-top: 24px;
-    }
-
-    .galeria-racs {
-        column-count: 2;
-    }
+.galeria-oldal-zaras {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(34px, 5vw, 58px);
+    padding: 24px 4px 0;
+    border-top: 1px solid var(--ui-line);
 }
 
-@media screen and (max-width: 480px) {
+.galeria-oldal-zaras p {
+    margin: 0;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(25px, 3vw, 36px);
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.galeria-foglalas-gomb {
+    min-height: 44px;
+    padding-inline: 18px;
+    font-size: var(--lumi-font-caption);
+}
+
+@media screen and (max-width: 960px) {
+    .galeria-oldal-fej {
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.65fr);
+    }
+
     .galeria-racs {
-        column-gap: 7px;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-auto-rows: 54px;
     }
 
     .galeria-kep-gomb,
-    .galeria-kep-gomb.magas {
-        margin-bottom: 7px;
+    .galeria-kep-gomb.magas,
+    .galeria-kep-gomb:nth-child(2),
+    .galeria-kep-gomb:nth-child(6),
+    .galeria-kep-gomb:nth-child(7) {
+        grid-column: span 3;
+        grid-row: span 5;
+    }
+
+    .galeria-kep-gomb:nth-child(1) {
+        grid-column: span 6;
+        grid-row: span 6;
+    }
+}
+
+@media screen and (max-width: 680px) {
+    .galeria-oldal {
+        width: calc(100% - 24px);
+        padding-top: 28px;
+    }
+
+    .galeria-oldal-fej {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 4px 28px;
+    }
+
+    .galeria-oldal-fej h1 {
+        font-size: clamp(60px, 22vw, 86px);
+    }
+
+    .galeria-oldal-fej .szekcio-leiras {
+        max-width: none;
+        font-size: var(--lumi-font-body-small);
+    }
+
+    .galeria-racs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 82px;
+        gap: 7px;
+        margin-top: 7px;
+    }
+
+    .galeria-kep-gomb,
+    .galeria-kep-gomb.magas,
+    .galeria-kep-gomb:nth-child(2),
+    .galeria-kep-gomb:nth-child(6),
+    .galeria-kep-gomb:nth-child(7) {
+        grid-column: span 1;
+        grid-row: span 2;
+        border-radius: 11px;
+    }
+
+    .galeria-kep-gomb:nth-child(1),
+    .galeria-kep-gomb:nth-child(5n + 1) {
+        grid-column: span 2;
+        grid-row: span 3;
+    }
+
+    .galeria-oldal-zaras {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+        padding-inline: 4px;
     }
 }
 
@@ -3487,22 +3599,34 @@ select.urlap-mezo:invalid {
 .galeria-kartya-elozo,
 .galeria-kartya-kovetkezo {
     display: inline-flex;
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     align-items: center;
     justify-content: center;
     padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-ink);
+    cursor: pointer;
+}
+
+.galeria-kartya-elozo > span,
+.galeria-kartya-kovetkezo > span {
+    display: inline-grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
     border: 1px solid var(--ui-line-strong);
     border-radius: 3px;
     background: transparent;
-    color: var(--ui-ink);
-    font-size: 18px;
-    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
     transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.galeria-kartya-elozo:hover,
-.galeria-kartya-kovetkezo:hover {
+.galeria-kartya-elozo:hover > span,
+.galeria-kartya-kovetkezo:hover > span {
     border-color: var(--ui-ink);
     background: var(--ui-ink);
     color: var(--ui-off-white);
@@ -3577,11 +3701,6 @@ select.urlap-mezo:invalid {
         padding: 2px 4px;
     }
 
-    .galeria-kartya-elozo,
-    .galeria-kartya-kovetkezo {
-        width: 40px;
-        height: 40px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3658,12 +3777,6 @@ select.urlap-mezo:invalid {
     }
 }
 
-.galeria-kartya-elozo,
-.galeria-kartya-kovetkezo {
-    width: 44px;
-    height: 44px;
-}
-
 .galeria-kartya-pontok {
     gap: 0;
 }
@@ -3698,12 +3811,6 @@ select.urlap-mezo:invalid {
 }
 
 @media screen and (max-width: 768px) {
-    .galeria-kartya-elozo,
-    .galeria-kartya-kovetkezo {
-        width: 44px;
-        height: 44px;
-    }
-
     .galeria-kartya-vezerlok {
         gap: 6px;
         padding: 2px 4px;
