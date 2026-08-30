@@ -978,7 +978,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-statusz--foglalas {
   height: 34px;
   min-height: 34px;
-  padding: 0 28px;
+  padding: 0 16px;
   appearance: none;
   -webkit-appearance: none;
   border-color: var(--booking-state-border);
@@ -1001,6 +1001,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya.szerkeszt .admin-db-statusz--foglalas {
+  padding: 0 28px 0 12px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f5f59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
   background-position: right 9px center;
   background-size: 14px 14px;

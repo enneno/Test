@@ -2,7 +2,7 @@
    This is the only admin CSS owner for #admin-panel-foglalasok and .admin-foglalas-* rules. */
 
 .admin-body.admin-v2 #admin-panel-foglalasok {
-  --booking-status-width: 142px;
+  --booking-status-width: 150px;
   --booking-calendar-header-bg: #f4efeb;
 --booking-calendar-cell-bg: #fff9f5;
 --booking-calendar-empty-bg: #f7f3ef;
@@ -903,7 +903,7 @@ body.admin-modal-nyitva { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
-  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 142px; }
+  .admin-body.admin-v2 #admin-panel-foglalasok { --booking-status-width: 150px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-kartya { padding-right: 2px; padding-left: 8px; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-db-kartya-fej { height: 78px; min-height: 78px; gap: 4px 10px; padding: 8px 0; }
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-foglalas-nev-blokk h3 { font-size: 14px; line-height: 1.2; }

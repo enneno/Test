@@ -128,6 +128,7 @@
         adminV2AlmenuLetrehozasa();
         adminV2EsemenyekKapcsolasa(tartalom);
         adminV2AdatFigyelokKapcsolasa();
+        adminV2NaphatarFrissitesKapcsolasa();
         adminV2MenuGesztusokKapcsolasa(body);
 
         allapot.aktivTab = 'attekintes';
@@ -617,6 +618,21 @@
         });
     }
 
+    let adminV2NaphatarIdozito = null;
+
+    function adminV2NaphatarFrissitesKapcsolasa() {
+        window.clearTimeout(adminV2NaphatarIdozito);
+
+        const now = new Date();
+        const nextDay = new Date(now);
+        nextDay.setHours(24, 0, 0, 100);
+
+        adminV2NaphatarIdozito = window.setTimeout(() => {
+            adminV2AttekintesFrissitese();
+            adminV2NaphatarFrissitesKapcsolasa();
+        }, Math.max(1000, nextDay - now));
+    }
+
     function adminV2MenuGesztusokKapcsolasa(body) {
         let pointerKezdet = null;
         let touchKezdet = null;
@@ -888,8 +904,7 @@
         const panel = document.getElementById('admin-panel-attekintes');
         if (!panel) return;
 
-        const now = new Date();
-        const todayKey = adminV2DatumKulcs(now);
+        const todayKey = adminV2DatumKulcs(new Date());
         const bookings = allapot.foglalasElemek
             .filter(item => item.tipus === 'booking')
             .map(item => item.adat);
@@ -901,7 +916,7 @@
             .filter(item => adminV2DatumKulcs(new Date(item.starts_at)) === todayKey)
             .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
         const upcoming = activeSchedule
-            .filter(item => new Date(item.starts_at) > now)
+            .filter(item => adminV2DatumKulcs(new Date(item.starts_at)) > todayKey)
             .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))
             .slice(0, 5);
         const notificationData = adminV2ErtesitesAdatok(activeBookings);
