@@ -12,8 +12,8 @@ A `D:\Asztal\Luminails` mappa az éles `luminails.hu` tároló helyi példánya.
 1. A módosítás a `LumiNails_Test` mappában készül el.
 2. A `main` ágra kerülő commit teljes ellenőrzés után automatikusan a tesztoldalra települ.
 3. A tesztoldalon manuálisan is ellenőrizzük a fontos működéseket.
-4. Élesítéshez kézzel elindítható a `Promote tested site to luminails.hu` workflow, vagy a jóváhagyott TEST commit teljes azonosítóját kell a `.github/live-release-request.txt` fájlba írni; ez automatikusan elindítja ugyanazt a folyamatot.
-5. A workflow ellenőrzi, hogy a kiválasztott TEST commit GitHub Pages telepítése már sikeresen lefutott, megőrzi az éles `CNAME` és `.github` fájlokat, majd ismételt teljes tesztfuttatás nélkül ugyanazt az ellenőrzött verziót telepíti a `luminails.hu` oldalra.
+4. Élesítéshez az `enneno/Test` tárolóban kézzel kell elindítani a `Promote tested site to luminails.hu` workflow-t.
+5. A workflow újra ellenőrzi a kiválasztott teszt commitot, megőrzi az éles `CNAME` és `.github` fájlokat, majd ugyanazt az ellenőrzött csomagot menti és telepíti a `luminails.hu` oldalra.
 
 Normál fejlesztés közben semmi nem kerül automatikusan az éles oldalra. Visszaállításhoz az utolsó promóciós commit visszavonható, majd a `Redeploy current luminails.hu site` workflow kézzel újraindítható.
 

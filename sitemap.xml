@@ -2,8 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://luminails.hu/</loc>
-        <lastmod>2026-06-07</lastmod>
+        <lastmod>2026-08-30</lastmod>
         <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://luminails.hu/mukorom-epites-toltes/</loc>
+        <lastmod>2026-08-30</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://luminails.hu/gel-lakk-tatabanya/</loc>
+        <lastmod>2026-08-30</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://luminails.hu/manikur-tatabanya/</loc>
+        <lastmod>2026-08-30</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://luminails.hu/korom-diszites-nail-art-tatabanya/</loc>
+        <lastmod>2026-08-30</lastmod>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://luminails.hu/arlista/</loc>

@@ -136,7 +136,7 @@ function lumiAlapOldalAdatok() {
                 leiras: 'Letisztult alapoktól az egyedi díszítésig — minden szett személyre szabva, nyugodt tempóban készül.',
                 kartyak: [
                     { cim: 'Körömépítés & Töltés', leiras: 'S, M és L méretű zselés vagy porcelán műkörmök\nprecíz felhelyezése és rendszeres karbantartása.', linkSzoveg: 'Részletek és árak' },
-                    { cim: 'Díszítés / Nail Art', leiras: 'Egyedi minták, matricák, strasszkövek, beépített francia és különleges 3D dekorációk.', linkSzoveg: 'Inspirációk' },
+                    { cim: 'Díszítés / Nail Art', leiras: 'Francia, matricák, kövek és más visszafogott részletek a választott körömszetthez igazítva.', linkSzoveg: 'Részletek' },
                     { cim: 'Gél Lakk', leiras: 'Hagyományos és erősített technika a tartós, ragyogó színekért, amelyek hetekig hibátlanok maradnak.', linkSzoveg: 'Részletek és árak' },
                     { cim: 'Manikűr', leiras: 'Klasszikus körömápolás, gél lakk szakszerű eltávolítása\nés a kezek kényeztető felfrissítése.', linkSzoveg: 'Részletek és árak' }
                 ]
@@ -158,6 +158,196 @@ function lumiAlapOldalAdatok() {
                 leiras: 'Válassz szolgáltatást és szabad időpontot néhány egyszerű lépésben.',
                 gombSzoveg: 'Időpontot foglalok',
                 megjegyzes: 'Gyors, online visszaigazolással'
+            }
+        },
+        szolgaltatasOldalak: {
+            mukorom: {
+                seoCim: 'Műköröm építés és töltés Tatabányán | Lumi Nails',
+                seoLeiras: 'Műköröm építés és töltés Tatabányán gépi manikűrrel, személyre szabott formával és díszítéssel. Ismerd meg a folyamatot, majd foglalj online.',
+                kicker: 'Műköröm Tatabánya',
+                cim: 'Műköröm építés és töltés Tatabányán',
+                leiras: 'A szép, ápolt körmök teljessé tehetik a megjelenésedet, és a mindennapokban is magabiztosságot adhatnak. A Lumi Nailsnál minden szett személyre szabottan készül, a természetes körmeidhez, a kezedhez és az elképzeléseidhez igazítva.',
+                kep: '/kepek/szolgaltatas-epites.jpg',
+                kepAlt: 'Elegáns épített műköröm a Lumi Nails tatabányai munkái közül',
+                bevezetoKicker: 'Tartós, hozzád illő szett',
+                bevezetoCim: 'Személyre szabott műköröm',
+                bevezeto: 'A műköröm építés jó választás lehet, ha tartós, esztétikus körmöket szeretnél, vagy változtatnál a természetes körmeid formáján és hosszán. Lehet szó rövid, visszafogott körmökről vagy látványosabb, hosszabb szettről: a cél minden esetben egy harmonikus, kényelmes és az elképzeléseidhez illő végeredmény.',
+                szekciok: [
+                    {
+                        kicker: 'Új szett kialakítása',
+                        cim: 'Műköröm építés',
+                        szoveg: 'A műköröm építés a természetes körmök és a köröm körüli terület alapos előkészítésével kezdődik. A megfelelő előkészítés a tartós és szép végeredmény fontos része, ezért a szolgáltatás gépi manikűrt is tartalmaz.\n\nEzután következik a körmök kialakítása a választott hossz és forma alapján. A formát, a színt és a díszítést közösen pontosítjuk, így az egyszínű, letisztult szettől a különlegesebb díszítésig többféle elképzelés megvalósítható.\n\nHa van inspirációs képed vagy konkrét ötleted, nyugodtan hozd magaddal, vagy töltsd fel már az online foglalás során.'
+                    },
+                    {
+                        kicker: 'A meglévő szett frissítése',
+                        cim: 'Műköröm töltés',
+                        szoveg: 'Ahogy a természetes köröm növekszik, fokozatosan megjelenik a lenövés. Ilyenkor általában nincs szükség minden alkalommal teljesen új szett építésére: a meglévő műköröm töltéssel frissíthető és korrigálható.\n\nA töltés során eltávolítom a lenőtt és szükség esetén elvált részeket, ellenőrzöm a körmök állapotát, majd korrigálom a köröm szerkezetét és formáját. A szolgáltatás itt is tartalmazza a gépi manikűrt és a megfelelő előkészítést.\n\nA töltés jó alkalom a változtatásra is: választhatsz új színt és díszítést, bizonyos keretek között pedig a forma vagy a hossz is módosítható.'
+                    }
+                ],
+                kiemeles: {
+                    kicker: 'Építés vagy töltés?',
+                    cim: 'Melyiket válaszd?',
+                    szoveg: 'Ha nincs meglévő műkörmöd, általában az építés a megfelelő választás. Ha a meglévő szetted lenőtt és frissítésre szorul, válaszd a töltést. Ha bizonytalan vagy, foglaláskor írd le röviden a jelenlegi állapotot, és segítek pontosítani.'
+                },
+                gyikKicker: 'Rövid válaszok foglalás előtt',
+                gyikCim: 'Gyakori kérdések műköröm építésről és töltésről',
+                gyik: [
+                    { kerdes: 'Mikor érdemes műköröm töltésre jönni?', valasz: 'Általában 3–4 hetente érdemes töltésre érkezni, de ezt a körmök növekedési üteme, hossza és igénybevétele is befolyásolja. Ha felválást vagy sérülést látsz, jelezd minél előbb.' },
+                    { kerdes: 'Első alkalommal építést vagy töltést válasszak?', valasz: 'Ha nincs meglévő műkörmöd, válaszd az építést. A töltés a már meglévő, lenőtt műköröm frissítésére szolgál.' },
+                    { kerdes: 'Vihetek inspirációs képet?', valasz: 'Igen. A képet megmutathatod személyesen, vagy feltöltheted az online foglalás során, így előre látható, milyen formát, színt vagy díszítést szeretnél.' },
+                    { kerdes: 'Lehet változtatni a színen, a formán vagy a hosszon töltéskor?', valasz: 'A szín és a díszítés szabadon változtatható, a forma és a hossz pedig a meglévő körmök állapotától függően módosítható.' },
+                    { kerdes: 'Mennyi ideig tart a műköröm építés vagy töltés?', valasz: 'Az időtartam a választott hossztól, formától és díszítéstől függ. Az online foglalásnál mindig az aktuális szolgáltatáshoz tartozó időtartamot látod.' },
+                    { kerdes: 'Mit tegyek, ha a köröm megsérül vagy felválik?', valasz: 'Ne várj a következő tervezett töltésig: írj üzenetet, és lehetőleg küldj képet is, hogy meg lehessen beszélni a megfelelő megoldást.' }
+                ],
+                zaras: {
+                    kicker: 'Következő lépés',
+                    cim: 'Foglalj műköröm építésre vagy töltésre Tatabányán',
+                    szoveg: 'Válaszd ki a megfelelő szolgáltatást és a számodra alkalmas szabad időpontot. Ha van elképzelésed, inspirációs képet is csatolhatsz.',
+                    foglalasGomb: 'Online időpontfoglalás',
+                    masodlagosGomb: 'Korábbi munkák'
+                },
+                kepek: []
+            },
+            gelLakk: {
+                seoCim: 'Gél lakk Tatabányán | Hagyományos és erősített | Lumi Nails',
+                seoLeiras: 'Hagyományos és erősített gél lakk Tatabányán gondos előkészítéssel, személyre szabott színnel és visszafogott díszítési lehetőségekkel.',
+                kicker: 'Gél lakk Tatabánya',
+                cim: 'Gél lakk Tatabányán',
+                leiras: 'A gél lakk jó választás, ha természetes hatású, ápolt körmöket és tartós színt szeretnél. A Lumi Nailsnál hagyományos és erősített gél lakk is kérhető, mindig a természetes körmeid állapotához és a mindennapi igénybevételhez igazítva.',
+                kep: '/kepek/szolgaltatas-gel-lakk.jpg',
+                kepAlt: 'Igényesen elkészített gél lakk a Lumi Nails tatabányai munkái közül',
+                bevezetoKicker: 'Tartós szín természetes körmön',
+                bevezetoCim: 'Ápolt, kényelmes és hozzád illő',
+                bevezeto: 'A megfelelően elkészített gél lakk követi a természetes köröm formáját, miközben egységes, fényes vagy matt felületet ad. A szín kiválasztásakor a saját stílusod, a körmeid hossza és az alkalom is számít, ezért a letisztult árnyalatoktól a karakteresebb színekig többféle megoldás közül választhatsz.',
+                szekciok: [
+                    {
+                        kicker: 'Könnyű, tartós színréteg',
+                        cim: 'Hagyományos gél lakk',
+                        szoveg: 'A kezelés a körmök formázásával, a köröm körüli terület rendezésével és gondos előkészítéssel kezdődik. Ezután kerül fel az alap, a választott szín és a fedőréteg.\n\nA hagyományos gél lakk elsősorban akkor jó választás, ha a természetes körmeid megfelelő állapotúak, és egy vékony, tartós színréteget szeretnél. Egyszínű, francia vagy visszafogottan díszített változatban is kérhető.'
+                    },
+                    {
+                        kicker: 'Plusz tartás a természetes körömnek',
+                        cim: 'Erősített gél lakk',
+                        szoveg: 'Az erősített gél lakk egy kissé stabilabb alapot ad a természetes körömnek. Segíthet az apróbb egyenetlenségek korrigálásában, és jó választás lehet akkor, ha a hagyományos gél lakknál valamivel erősebb tartást szeretnél.\n\nA megfelelő technikát mindig a körmeid aktuális állapota és hossza alapján érdemes kiválasztani. Ha bizonytalan vagy, foglaláskor jelezd, és az időpont elején közösen pontosítjuk.'
+                    }
+                ],
+                kiemeles: {
+                    kicker: 'Hagyományos vagy erősített?',
+                    cim: 'Melyik illik a körmeidhez?',
+                    szoveg: 'A hagyományos gél lakk könnyű és természetes hatású megoldás. Az erősített változat stabilabb alapot adhat, ha a körmeidnek nagyobb tartásra van szükségük. A döntésnél a természetes köröm állapota fontosabb, mint az, hogy melyik elnevezés hangzik jobban.'
+                },
+                gyikKicker: 'Rövid válaszok foglalás előtt',
+                gyikCim: 'Gyakori kérdések a gél lakkról',
+                gyik: [
+                    { kerdes: 'Meddig marad szép a gél lakk?', valasz: 'A tartósságot a köröm növekedése, állapota és a mindennapi igénybevétel is befolyásolja. A következő időpontot általában a látható lenövéshez és a körmök állapotához érdemes igazítani.' },
+                    { kerdes: 'Rövid körömre is kérhető gél lakk?', valasz: 'Igen. A gél lakk rövid természetes körmön is szép, rendezett és kényelmes viselet lehet.' },
+                    { kerdes: 'Hogyan történik a gél lakk eltávolítása?', valasz: 'Az anyagot szakszerűen távolítom el, hogy a természetes köröm a lehető legkíméletesebb kezelést kapja. Otthoni lefeszítés vagy letépés nem ajánlott.' },
+                    { kerdes: 'Kérhetek díszítést gél lakk mellé?', valasz: 'Igen. Francia, matrica, kő vagy más egyszerűbb díszítés is választható; a foglalásnál érdemes előre jelezni az elképzelést.' }
+                ],
+                zaras: {
+                    kicker: 'Következő lépés',
+                    cim: 'Foglalj gél lakkra Tatabányán',
+                    szoveg: 'Válaszd ki a hagyományos vagy erősített gél lakk szolgáltatást, majd foglalj a számodra megfelelő szabad időpontra.',
+                    foglalasGomb: 'Online időpontfoglalás',
+                    masodlagosGomb: 'Árak'
+                },
+                kepek: []
+            },
+            manikur: {
+                seoCim: 'Manikűr Tatabányán | Körömápolás és eltávolítás | Lumi Nails',
+                seoLeiras: 'Manikűr Tatabányán természetes körmök formázásával, körömápolással, gépi előkészítéssel és igény szerint anyageltávolítással.',
+                kicker: 'Manikűr Tatabánya',
+                cim: 'Manikűr Tatabányán',
+                leiras: 'A rendezett természetes köröm önmagában is igényes megjelenést ad. A manikűr során a körmök formája és a köröm körüli terület kap figyelmet, így akkor is jó választás, ha nem szeretnél színes vagy épített körmöket.',
+                kep: '/kepek/szolgaltatas-manikur.jpg',
+                kepAlt: 'Ápolt természetes körmök manikűr után a Lumi Nailsnál',
+                bevezetoKicker: 'Természetes körömápolás',
+                bevezetoCim: 'Letisztult, rendezett kezek',
+                bevezeto: 'A manikűr célja a természetes körmök egységes formázása és a köröm körüli terület gondos rendezése. Kérhető önálló ápolásként, korábbi anyag eltávolításával együtt, illetve más körmös szolgáltatás előkészítő részeként is.',
+                szekciok: [
+                    {
+                        kicker: 'Formázás és előkészítés',
+                        cim: 'Manikűr lépésről lépésre',
+                        szoveg: 'A kezelés a körmök állapotának ellenőrzésével és a kívánt forma megbeszélésével kezdődik. Ezután következik a hossz és a forma kialakítása, valamint a köröm körüli bőr és a letapadt részek kíméletes rendezése.\n\nA végeredmény tiszta, egységes és természetes hatású. Ha később gél lakk vagy műköröm készül, a gondos manikűr az anyag tartósságának fontos alapja is.'
+                    },
+                    {
+                        kicker: 'Korábbi anyag után',
+                        cim: 'Eltávolítás és körömápolás',
+                        szoveg: 'Ha a meglévő gél lakkot vagy műkörmöt nem szeretnéd új szettel pótolni, az anyag szakszerűen eltávolítható, majd a természetes körmök formázhatók és ápolhatók.\n\nAz eltávolítás módja mindig a fenn lévő anyaghoz és a körmök állapotához igazodik. Fontos, hogy az anyagot ne tépd vagy feszítsd le otthon, mert ezzel a természetes köröm felszíne is sérülhet.'
+                    }
+                ],
+                kiemeles: {
+                    kicker: 'Önálló kezelés vagy előkészítés',
+                    cim: 'Mikor válaszd a manikűrt?',
+                    szoveg: 'A manikűr akkor is megfelelő, ha csak rendezett, természetes körmöket szeretnél. Ha gél lakkot vagy műkörmöt foglalsz, a szükséges előkészítés annak a szolgáltatásnak a része, ezért külön manikűrt általában nem kell mellé választanod.'
+                },
+                gyikKicker: 'Rövid válaszok foglalás előtt',
+                gyikCim: 'Gyakori kérdések a manikűrről',
+                gyik: [
+                    { kerdes: 'A manikűr tartalmaz színes lakkozást?', valasz: 'Az önálló manikűr elsősorban körömápolás és formázás. Ha tartós színt szeretnél, válaszd a megfelelő gél lakk szolgáltatást.' },
+                    { kerdes: 'Milyen gyakran érdemes manikűrre jönni?', valasz: 'Ez a körmök növekedésétől és az otthoni ápolástól függ. Akkor érdemes új időpontot választani, amikor a forma vagy a köröm körüli terület ismét rendezést igényel.' },
+                    { kerdes: 'Le lehet szedni a korábbi gél lakkot vagy műkörmöt?', valasz: 'Igen, az árlistában külön eltávolítási lehetőségek találhatók. Foglaláskor válaszd ki, milyen anyag van jelenleg a körmeiden.' },
+                    { kerdes: 'Nagyon rövid körömmel is mehetek?', valasz: 'Igen. A kezelés mindig az aktuális hosszhoz és állapothoz igazodik, a cél a rendezett és kényelmes végeredmény.' }
+                ],
+                zaras: {
+                    kicker: 'Következő lépés',
+                    cim: 'Foglalj manikűrre Tatabányán',
+                    szoveg: 'Válaszd ki az önálló manikűrt vagy a szükséges eltávolítással kombinált szolgáltatást, majd foglalj szabad időpontot online.',
+                    foglalasGomb: 'Online időpontfoglalás',
+                    masodlagosGomb: 'Árak'
+                },
+                kepek: []
+            },
+            nailArt: {
+                seoCim: 'Körömdíszítés és Nail Art Tatabányán | Lumi Nails',
+                seoLeiras: 'Körömdíszítés és visszafogott Nail Art Tatabányán: francia, kövek, matricák és apró részletek a választott körömszetthez igazítva.',
+                kicker: 'Körömdíszítés Tatabánya',
+                cim: 'Körömdíszítés és Nail Art Tatabányán',
+                leiras: 'Egy jól megválasztott részlet különlegessé teheti a körömszettet anélkül, hogy túl sok lenne. A díszítést mindig a választott színhez, formához és a saját stílusodhoz igazítjuk, a letisztult megoldásoktól a kicsit hangsúlyosabb részletekig.',
+                kep: '/kepek/szolgaltatas-diszites.jpg',
+                kepAlt: 'Visszafogott körömdíszítés a Lumi Nails tatabányai munkái közül',
+                bevezetoKicker: 'Apró részletek, egységes összhatás',
+                bevezetoCim: 'Díszítés a körömszetthez igazítva',
+                bevezeto: 'A Nail Art nem feltétlenül jelent feltűnő vagy minden körmön eltérő mintát. Sokszor egy finom francia vonal, néhány kő, egy matrica vagy egy visszafogott fényes részlet adja meg azt a pluszt, amitől a szett személyesebb lesz.',
+                szekciok: [
+                    {
+                        kicker: 'Választható részletek',
+                        cim: 'Körömdíszítési lehetőségek',
+                        szoveg: 'Kérhetsz klasszikus vagy színes franciát, köveket, matricát, fóliát, csillámot, krómhatást vagy más, az aktuális árlistában szereplő díszítést. Nem szükséges minden körmöt dekorálni: egy vagy két hangsúlyosabb köröm is elegáns összhatást adhat.\n\nAz egyszerűbb, kézzel festett minta előzetes egyeztetéssel kérhető, de a szolgáltatás fő iránya a hordható, igényes és a teljes szetthez illő díszítés.'
+                    },
+                    {
+                        kicker: 'Pontosabb idő- és ártervezés',
+                        cim: 'Egyeztetés foglalás előtt',
+                        szoveg: 'A díszítés időigénye és ára a választott technikától, valamint a díszített körmök számától függ. Foglaláskor jelöld a kívánt extrát, és ha van inspirációs képed, töltsd fel nyugodtan.\n\nA kép irányt mutat a színekhez és a hangulathoz, de a végeredményt mindig a saját körmeid formájához, hosszához és a rendelkezésre álló anyagokhoz igazítjuk.'
+                    }
+                ],
+                kiemeles: {
+                    kicker: 'Visszafogott vagy hangsúlyosabb?',
+                    cim: 'A díszítés legyen a szett része',
+                    szoveg: 'A cél nem az, hogy minél több elem kerüljön a körmökre, hanem hogy a kiválasztott részletek egységesek legyenek a formával és a színnel. Ha bizonytalan vagy, egy inspirációs kép alapján segítek egyszerűbb, hordható változatot választani.'
+                },
+                kepekKicker: 'Részletek közelről',
+                kepekCim: 'Díszítési inspirációk',
+                gyikKicker: 'Rövid válaszok foglalás előtt',
+                gyikCim: 'Gyakori kérdések a körömdíszítésről',
+                gyik: [
+                    { kerdes: 'Hogyan foglaljak díszített körömre?', valasz: 'Először válaszd ki az alapszolgáltatást, majd add hozzá a kívánt díszítést az extrák közül. Inspirációs képet is feltölthetsz.' },
+                    { kerdes: 'Mennyibe kerül a körömdíszítés?', valasz: 'A díszítések ára technikánként és darabszám szerint eltérhet. Az aktuális lehetőségeket és árakat mindig az árlistában látod.' },
+                    { kerdes: 'Minden körmöt díszíteni kell?', valasz: 'Nem. Sok szettnél egy vagy két díszített köröm ad szép, kiegyensúlyozott összhatást, de több körömre is kérhető dekoráció.' },
+                    { kerdes: 'Kérhetek kézzel festett mintát?', valasz: 'Egyszerűbb, kézzel festett részlet előzetes egyeztetéssel kérhető. A nagyon összetett, részletgazdag festéseket érdemes foglalás előtt képpel pontosítani, mert nem minden minta fér bele az adott időpontba.' }
+                ],
+                zaras: {
+                    kicker: 'Következő lépés',
+                    cim: 'Válassz díszítést a következő szettedhez',
+                    szoveg: 'Foglaláskor add hozzá a kívánt extrát az alapszolgáltatáshoz, és tölts fel képet, ha már van konkrét elképzelésed.',
+                    foglalasGomb: 'Online időpontfoglalás',
+                    masodlagosGomb: 'Díszítési árak'
+                },
+                kivalasztottKepek: [
+                    '/galeria/optimized/large/image2.jpg',
+                    '/galeria/optimized/large/image8.jpg',
+                    '/galeria/optimized/large/image12.jpg'
+                ]
             }
         },
         arlista: {
@@ -1093,6 +1283,7 @@ function oldalAdatokNormalizalasa(adatok, alap) {
     adatok.fooldal ||= {};
     adatok.fooldal.hero ||= {};
     adatok.fooldal.galeriaAtvezeto ||= {};
+    adatok.fooldal.szolgaltatasok ||= {};
     adatok.galeria ||= {};
     adatok.galeria.elemek ||= [];
 
@@ -1101,18 +1292,46 @@ function oldalAdatokNormalizalasa(adatok, alap) {
         adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-turkiz.jpg';
     }
 
-    const ervenyesKulcsok = new Set(
-        adatok.galeria.elemek
-            .filter(elem => elem?.kep)
-            .map(elem => elem.id || elem.kep)
-    );
     const kivalasztottKepek = Array.isArray(adatok.fooldal.galeriaAtvezeto.kivalasztottKepek)
         ? adatok.fooldal.galeriaAtvezeto.kivalasztottKepek
         : [];
-    adatok.fooldal.galeriaAtvezeto.kivalasztottKepek = kivalasztottKepek
-        .filter(kulcs => ervenyesKulcsok.has(kulcs))
-        .slice(0, 5);
+    adatok.fooldal.galeriaAtvezeto.kivalasztottKepek = galeriaKivalasztasNormalizalasa(
+        adatok.galeria.elemek,
+        kivalasztottKepek,
+        5
+    );
+
+    const nailArt = adatok.szolgaltatasOldalak?.nailArt;
+    if (nailArt) {
+        const nailArtKivalasztas = Array.isArray(nailArt.kivalasztottKepek)
+            ? nailArt.kivalasztottKepek
+            : [];
+        nailArt.kivalasztottKepek = galeriaKivalasztasNormalizalasa(
+            adatok.galeria.elemek,
+            nailArtKivalasztas,
+            4
+        );
+    }
+
+    const diszitesKartya = adatok.fooldal.szolgaltatasok.kartyak?.find(kartya =>
+        /dísz|nail art/i.test(String(kartya?.cim || ''))
+    );
+    if (diszitesKartya && /különleges 3D dekorációk/i.test(String(diszitesKartya.leiras || ''))) {
+        const alapKartya = alap?.fooldal?.szolgaltatasok?.kartyak?.find(kartya =>
+            /dísz|nail art/i.test(String(kartya?.cim || ''))
+        );
+        diszitesKartya.leiras = alapKartya?.leiras || diszitesKartya.leiras;
+        diszitesKartya.linkSzoveg = alapKartya?.linkSzoveg || 'Részletek';
+    }
     return adatok;
+}
+
+function galeriaKivalasztasNormalizalasa(elemek, kertKulcsok, limit) {
+    const kert = new Set(Array.isArray(kertKulcsok) ? kertKulcsok : []);
+    return (Array.isArray(elemek) ? elemek : [])
+        .filter(elem => elem?.kep && (kert.has(elem.id) || kert.has(elem.kep)))
+        .map(elem => elem.id || elem.kep)
+        .slice(0, limit);
 }
 
 function kapcsolatGyorsLinkekNormalizalasa(adatok) {
@@ -1137,6 +1356,7 @@ function oldalAdatokAlkalmazasa(adatok) {
     window.lumiAdatok = adatok;
     fejlecAdatokAlkalmazasa(adatok);
     fooldalAdatokAlkalmazasa(adatok.fooldal, adatok.galeria);
+    szolgaltatasOldalAdatokAlkalmazasa(adatok.szolgaltatasOldalak, adatok.galeria);
     arlistaAdatokAlkalmazasa(adatok.arlista);
     galeriaAdatokAlkalmazasa(adatok.galeria);
     foglalasAdatokAlkalmazasa(adatok.foglalas, adatok.arlista);
@@ -1363,6 +1583,116 @@ function kepBeallitasa(selector, src, alt) {
     if (alt) kep.alt = alt;
 }
 
+function szolgaltatasOldalAdatokAlkalmazasa(oldalak, galeria) {
+    const kulcs = document.body?.dataset.szolgaltatasOldal;
+    const oldal = kulcs ? oldalak?.[kulcs] : null;
+    const gyoker = document.querySelector('.seo-szolgaltatas-oldal');
+    if (!oldal || !gyoker) return;
+
+    if (oldal.seoCim) document.title = oldal.seoCim;
+    const leiras = document.querySelector('meta[name="description"]');
+    if (leiras && oldal.seoLeiras) leiras.content = oldal.seoLeiras;
+    document.querySelectorAll('meta[property="og:title"]').forEach(meta => {
+        if (oldal.seoCim) meta.content = oldal.seoCim;
+    });
+    document.querySelectorAll('meta[property="og:description"]').forEach(meta => {
+        if (oldal.seoLeiras) meta.content = oldal.seoLeiras;
+    });
+
+    szovegBeallitasa('.seo-szolgaltatas-hero .szekcio-kicker', oldal.kicker, gyoker);
+    szovegBeallitasa('.seo-szolgaltatas-hero h1', oldal.cim, gyoker);
+    szovegBeallitasa('.seo-szolgaltatas-hero-szoveg > p', oldal.leiras, gyoker);
+    kepBeallitasa('.seo-szolgaltatas-hero-kep img', oldal.kep, oldal.kepAlt);
+
+    const bevezeto = gyoker.querySelector('.seo-szolgaltatas-bevezeto');
+    if (bevezeto) {
+        szovegBeallitasa('.szekcio-kicker', oldal.bevezetoKicker, bevezeto);
+        szovegBeallitasa('h2', oldal.bevezetoCim, bevezeto);
+        szovegBeallitasa(':scope > p', oldal.bevezeto, bevezeto);
+    }
+
+    gyoker.querySelectorAll('.seo-szolgaltatas-szekcio').forEach((szekcio, index) => {
+        const adat = oldal.szekciok?.[index];
+        if (!adat) return;
+        szovegBeallitasa('.szekcio-kicker', adat.kicker, szekcio);
+        szovegBeallitasa('h2', adat.cim, szekcio);
+        szolgaltatasBekezdesekRenderelese(szekcio.querySelector('.seo-szolgaltatas-szekcio-szoveg'), adat.szoveg);
+    });
+
+    const kiemeles = gyoker.querySelector('.seo-szolgaltatas-kiemeles');
+    if (kiemeles && oldal.kiemeles) {
+        szovegBeallitasa('.szekcio-kicker', oldal.kiemeles.kicker, kiemeles);
+        szovegBeallitasa('h2', oldal.kiemeles.cim, kiemeles);
+        szovegBeallitasa(':scope > p', oldal.kiemeles.szoveg, kiemeles);
+    }
+
+    const gyikLista = gyoker.querySelector('.seo-gyik-lista');
+    const gyik = gyoker.querySelector('.seo-gyik');
+    if (gyik) {
+        szovegBeallitasa('.seo-gyik-fej .szekcio-kicker', oldal.gyikKicker, gyik);
+        szovegBeallitasa('.seo-gyik-fej h2', oldal.gyikCim, gyik);
+    }
+    if (gyikLista && Array.isArray(oldal.gyik)) {
+        gyikLista.innerHTML = oldal.gyik.map(tetel => `
+            <article>
+                <h3>${html(tetel?.kerdes || '')}</h3>
+                <p>${html(tetel?.valasz || '')}</p>
+            </article>
+        `).join('');
+    }
+
+    const kepSzekcio = gyoker.querySelector('.seo-szolgaltatas-kepek');
+    const kepRacs = kepSzekcio?.querySelector('.seo-szolgaltatas-kepracs');
+    const kepek = szolgaltatasOldalGaleriaKepei(oldal, galeria);
+    if (kepSzekcio) kepSzekcio.hidden = !kepek.length;
+    if (kepRacs && kepek.length) {
+        szovegBeallitasa('.seo-szolgaltatas-kepek-fej .szekcio-kicker', oldal.kepekKicker, kepSzekcio);
+        szovegBeallitasa('.seo-szolgaltatas-kepek-fej h2', oldal.kepekCim, kepSzekcio);
+        kepRacs.innerHTML = kepek.map(kep => `
+            <figure><img src="${attr(kep.kep)}" alt="${attr(kep.kepAlt || oldal.cim || 'Lumi Nails köröm munka')}" loading="lazy" decoding="async"></figure>
+        `).join('');
+    }
+
+    const zaras = gyoker.querySelector('.seo-szolgaltatas-zaras');
+    if (zaras && oldal.zaras) {
+        szovegBeallitasa('.szekcio-kicker', oldal.zaras.kicker, zaras);
+        szovegBeallitasa('h2', oldal.zaras.cim, zaras);
+        szovegBeallitasa('p', oldal.zaras.szoveg, zaras);
+        szovegBeallitasa('.seo-szolgaltatas-zaras-akciok .gomb', oldal.zaras.foglalasGomb, zaras);
+        const masodlagosGomb = zaras.querySelector('.seo-szolgaltatas-zaras-akciok .szoveges-link');
+        if (masodlagosGomb && oldal.zaras.masodlagosGomb !== undefined) {
+            masodlagosGomb.innerHTML = `${html(oldal.zaras.masodlagosGomb)} <span aria-hidden="true">→</span>`;
+        }
+    }
+}
+
+function szolgaltatasOldalGaleriaKepei(oldal, galeria) {
+    const galeriaElemek = Array.isArray(galeria?.elemek)
+        ? galeria.elemek.filter(elem => elem?.kep)
+        : [];
+    const kivalasztottKulcsok = Array.isArray(oldal?.kivalasztottKepek)
+        ? oldal.kivalasztottKepek
+        : [];
+    const kivalasztottKepek = kivalasztottKulcsok
+        .map(kulcs => galeriaElemek.find(elem => (elem.id || elem.kep) === kulcs))
+        .filter(Boolean)
+        .slice(0, 4)
+        .map(elem => ({ kep: elem.kep, kepAlt: elem.kepAlt }));
+
+    if (kivalasztottKepek.length) return kivalasztottKepek;
+    return Array.isArray(oldal?.kepek) ? oldal.kepek.filter(kep => kep?.kep).slice(0, 4) : [];
+}
+
+function szolgaltatasBekezdesekRenderelese(kontener, szoveg) {
+    if (!kontener || szoveg === undefined || szoveg === null) return;
+    kontener.querySelectorAll(':scope > p').forEach(bekezdes => bekezdes.remove());
+    String(szoveg).split(/\n\s*\n/).filter(Boolean).forEach(resz => {
+        const bekezdes = document.createElement('p');
+        bekezdes.textContent = resz.trim();
+        kontener.appendChild(bekezdes);
+    });
+}
+
 function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     const szekcio = document.getElementById('szolgaltatasok');
     const racs = szekcio?.querySelector('.szolgaltatas-lista');
@@ -1412,14 +1742,22 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         leiras.innerHTML = sortoresesSzoveg(kartya.leiras || '');
 
         const link = document.createElement('a');
-        const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
+        const galeriaKartya = megjelenes.valtozat === 'diszites';
         const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
-        link.href = galeriaKartya ? '/galeria/' : '/arlista/';
+        link.href = szolgaltatasKartyaLinkje(megjelenes.valtozat);
         link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">→</span>`;
 
         doboz.append(fej, cim, leiras, link);
         racs.appendChild(doboz);
     });
+}
+
+function szolgaltatasKartyaLinkje(valtozat) {
+    if (valtozat === 'epites') return '/mukorom-epites-toltes/';
+    if (valtozat === 'diszites') return '/korom-diszites-nail-art-tatabanya/';
+    if (valtozat === 'gel-lakk') return '/gel-lakk-tatabanya/';
+    if (valtozat === 'manikur') return '/manikur-tatabanya/';
+    return '/arlista/';
 }
 
 function galeriaAtvezetoAlkalmazasa(galeria, teljesGaleria) {

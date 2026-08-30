@@ -7,7 +7,7 @@ Ez a fájl a `D:\Asztal\LumiNails_Test` projektben végzett minden munkára köt
 - Az éles helyi projekt: `D:\Asztal\Luminails`.
 - A fejlesztési és ellenőrzési projekt: `D:\Asztal\LumiNails_Test`.
 - Minden fejlesztést először és kizárólag a TEST projektben kell elkészíteni.
-- A TEST-változtatásokat a feladat jellegének megfelelően vizuálisan és funkcionálisan ellenőrizni kell.
+- A TEST-változtatásokat a kockázatukhoz arányosan kell átnézni; kis és egyértelmű változásnál a Git-diff és szükség esetén egy gyors vizuális ellenőrzés elegendő.
 - Az ellenőrzés eredményét röviden, pontosan jelenteni kell a felhasználónak.
 - A TEST-ben elkészült változtatás csak külön, kifejezett felhasználói jóváhagyás után vihető át az éles helyi projektbe vagy az éles `luminails.hu` oldalra.
 - A TEST-re adott fejlesztési kérés önmagában soha nem jelent engedélyt az éles projekt vagy az éles oldal módosítására, telepítésére vagy közzétételére.
@@ -39,6 +39,19 @@ Ez a fájl a `D:\Asztal\LumiNails_Test` projektben végzett minden munkára köt
 - A publikus felületet, az admin felületet, a SEO-t, a sitemapet és a PWA-kódot csak akkor szabad módosítani, ha az aktuális feladat ezt kifejezetten kéri.
 - Generált fájl helyett az irányadó forrásfájlt kell módosítani.
 - Titkokat, kulcsokat, tokeneket és személyes adatokat tilos forráskódba vagy naplóba írni.
+
+## Tesztelési alapelv
+
+- A GitHubon semmilyen automatikus teszt nem futhat; a TEST GitHub-folyamat kizárólag a már késznek ítélt verzió közzétételére szolgál.
+- GitHubra csak olyan változtatás tölthető fel, amelyet helyileg a módosítás kockázatához arányosan már megfelelőnek ítéltünk.
+- A helyi tesztelés szükségességéről és mértékéről az aktuális változás alapján kell dönteni.
+- Kis admin-, megjelenési, CSS-, szöveges vagy jól körülhatárolt kezelőfelületi módosításnál, amely nem érint adatkezelést vagy közös infrastruktúrát, általában nem kell automatizált teszt.
+- Interakciós vagy működési logika módosításánál legfeljebb a közvetlenül érintett célzott Playwright-tesztet kell futtatni.
+- Teljes tesztcsomag csak Supabase-, hitelesítési, foglalási adat-, Storage-, e-mail-, közös build-, függőségi vagy több fontos folyamatot egyszerre érintő változtatásnál, illetve kifejezett felhasználói kérésre indokolt.
+- Tilos nem érintett oldalakat és funkciókat csak megszokásból tesztelni.
+- Tilos ugyanazt a sikeres tesztet érdemi kódváltozás nélkül újrafuttatni.
+- Sikertelen teszt után csak a hibához kapcsolódó javítást és a szükséges célzott ellenőrzést kell megismételni.
+- Az élesítés nem tesztel újra; kizárólag a felhasználó által külön jóváhagyott, sikeresen közzétett TEST commit emelhető át.
 
 ## Ellenőrzés és jelentés
 

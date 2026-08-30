@@ -58,7 +58,8 @@
 .admin-body .admin-mezo input[type="checkbox"],
 .admin-body .admin-mezo.admin-checkbox input[type="checkbox"],
 .admin-body .admin-db-grid .admin-mezo.admin-checkbox input[type="checkbox"],
-.admin-body .cms-gallery-home-choice input[type="checkbox"] {
+.admin-body .cms-gallery-home-choice input[type="checkbox"],
+.admin-body .cms-gallery-nail-art-choice input[type="checkbox"] {
   flex: 0 0 18px;
   width: 18px;
   height: 18px;

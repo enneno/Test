@@ -294,6 +294,7 @@ function oldalAdatokNormalizalasa(adatok, alap) {
     adatok.fooldal ||= {};
     adatok.fooldal.hero ||= {};
     adatok.fooldal.galeriaAtvezeto ||= {};
+    adatok.fooldal.szolgaltatasok ||= {};
     adatok.galeria ||= {};
     adatok.galeria.elemek ||= [];
 
@@ -302,18 +303,46 @@ function oldalAdatokNormalizalasa(adatok, alap) {
         adatok.fooldal.hero.kep = alap?.fooldal?.hero?.kep || '/kepek/hero-turkiz.jpg';
     }
 
-    const ervenyesKulcsok = new Set(
-        adatok.galeria.elemek
-            .filter(elem => elem?.kep)
-            .map(elem => elem.id || elem.kep)
-    );
     const kivalasztottKepek = Array.isArray(adatok.fooldal.galeriaAtvezeto.kivalasztottKepek)
         ? adatok.fooldal.galeriaAtvezeto.kivalasztottKepek
         : [];
-    adatok.fooldal.galeriaAtvezeto.kivalasztottKepek = kivalasztottKepek
-        .filter(kulcs => ervenyesKulcsok.has(kulcs))
-        .slice(0, 5);
+    adatok.fooldal.galeriaAtvezeto.kivalasztottKepek = galeriaKivalasztasNormalizalasa(
+        adatok.galeria.elemek,
+        kivalasztottKepek,
+        5
+    );
+
+    const nailArt = adatok.szolgaltatasOldalak?.nailArt;
+    if (nailArt) {
+        const nailArtKivalasztas = Array.isArray(nailArt.kivalasztottKepek)
+            ? nailArt.kivalasztottKepek
+            : [];
+        nailArt.kivalasztottKepek = galeriaKivalasztasNormalizalasa(
+            adatok.galeria.elemek,
+            nailArtKivalasztas,
+            4
+        );
+    }
+
+    const diszitesKartya = adatok.fooldal.szolgaltatasok.kartyak?.find(kartya =>
+        /dísz|nail art/i.test(String(kartya?.cim || ''))
+    );
+    if (diszitesKartya && /különleges 3D dekorációk/i.test(String(diszitesKartya.leiras || ''))) {
+        const alapKartya = alap?.fooldal?.szolgaltatasok?.kartyak?.find(kartya =>
+            /dísz|nail art/i.test(String(kartya?.cim || ''))
+        );
+        diszitesKartya.leiras = alapKartya?.leiras || diszitesKartya.leiras;
+        diszitesKartya.linkSzoveg = alapKartya?.linkSzoveg || 'Részletek';
+    }
     return adatok;
+}
+
+function galeriaKivalasztasNormalizalasa(elemek, kertKulcsok, limit) {
+    const kert = new Set(Array.isArray(kertKulcsok) ? kertKulcsok : []);
+    return (Array.isArray(elemek) ? elemek : [])
+        .filter(elem => elem?.kep && (kert.has(elem.id) || kert.has(elem.kep)))
+        .map(elem => elem.id || elem.kep)
+        .slice(0, limit);
 }
 
 function kapcsolatGyorsLinkekNormalizalasa(adatok) {
@@ -338,6 +367,7 @@ function oldalAdatokAlkalmazasa(adatok) {
     window.lumiAdatok = adatok;
     fejlecAdatokAlkalmazasa(adatok);
     fooldalAdatokAlkalmazasa(adatok.fooldal, adatok.galeria);
+    szolgaltatasOldalAdatokAlkalmazasa(adatok.szolgaltatasOldalak, adatok.galeria);
     arlistaAdatokAlkalmazasa(adatok.arlista);
     galeriaAdatokAlkalmazasa(adatok.galeria);
     foglalasAdatokAlkalmazasa(adatok.foglalas, adatok.arlista);
@@ -564,6 +594,116 @@ function kepBeallitasa(selector, src, alt) {
     if (alt) kep.alt = alt;
 }
 
+function szolgaltatasOldalAdatokAlkalmazasa(oldalak, galeria) {
+    const kulcs = document.body?.dataset.szolgaltatasOldal;
+    const oldal = kulcs ? oldalak?.[kulcs] : null;
+    const gyoker = document.querySelector('.seo-szolgaltatas-oldal');
+    if (!oldal || !gyoker) return;
+
+    if (oldal.seoCim) document.title = oldal.seoCim;
+    const leiras = document.querySelector('meta[name="description"]');
+    if (leiras && oldal.seoLeiras) leiras.content = oldal.seoLeiras;
+    document.querySelectorAll('meta[property="og:title"]').forEach(meta => {
+        if (oldal.seoCim) meta.content = oldal.seoCim;
+    });
+    document.querySelectorAll('meta[property="og:description"]').forEach(meta => {
+        if (oldal.seoLeiras) meta.content = oldal.seoLeiras;
+    });
+
+    szovegBeallitasa('.seo-szolgaltatas-hero .szekcio-kicker', oldal.kicker, gyoker);
+    szovegBeallitasa('.seo-szolgaltatas-hero h1', oldal.cim, gyoker);
+    szovegBeallitasa('.seo-szolgaltatas-hero-szoveg > p', oldal.leiras, gyoker);
+    kepBeallitasa('.seo-szolgaltatas-hero-kep img', oldal.kep, oldal.kepAlt);
+
+    const bevezeto = gyoker.querySelector('.seo-szolgaltatas-bevezeto');
+    if (bevezeto) {
+        szovegBeallitasa('.szekcio-kicker', oldal.bevezetoKicker, bevezeto);
+        szovegBeallitasa('h2', oldal.bevezetoCim, bevezeto);
+        szovegBeallitasa(':scope > p', oldal.bevezeto, bevezeto);
+    }
+
+    gyoker.querySelectorAll('.seo-szolgaltatas-szekcio').forEach((szekcio, index) => {
+        const adat = oldal.szekciok?.[index];
+        if (!adat) return;
+        szovegBeallitasa('.szekcio-kicker', adat.kicker, szekcio);
+        szovegBeallitasa('h2', adat.cim, szekcio);
+        szolgaltatasBekezdesekRenderelese(szekcio.querySelector('.seo-szolgaltatas-szekcio-szoveg'), adat.szoveg);
+    });
+
+    const kiemeles = gyoker.querySelector('.seo-szolgaltatas-kiemeles');
+    if (kiemeles && oldal.kiemeles) {
+        szovegBeallitasa('.szekcio-kicker', oldal.kiemeles.kicker, kiemeles);
+        szovegBeallitasa('h2', oldal.kiemeles.cim, kiemeles);
+        szovegBeallitasa(':scope > p', oldal.kiemeles.szoveg, kiemeles);
+    }
+
+    const gyikLista = gyoker.querySelector('.seo-gyik-lista');
+    const gyik = gyoker.querySelector('.seo-gyik');
+    if (gyik) {
+        szovegBeallitasa('.seo-gyik-fej .szekcio-kicker', oldal.gyikKicker, gyik);
+        szovegBeallitasa('.seo-gyik-fej h2', oldal.gyikCim, gyik);
+    }
+    if (gyikLista && Array.isArray(oldal.gyik)) {
+        gyikLista.innerHTML = oldal.gyik.map(tetel => `
+            <article>
+                <h3>${html(tetel?.kerdes || '')}</h3>
+                <p>${html(tetel?.valasz || '')}</p>
+            </article>
+        `).join('');
+    }
+
+    const kepSzekcio = gyoker.querySelector('.seo-szolgaltatas-kepek');
+    const kepRacs = kepSzekcio?.querySelector('.seo-szolgaltatas-kepracs');
+    const kepek = szolgaltatasOldalGaleriaKepei(oldal, galeria);
+    if (kepSzekcio) kepSzekcio.hidden = !kepek.length;
+    if (kepRacs && kepek.length) {
+        szovegBeallitasa('.seo-szolgaltatas-kepek-fej .szekcio-kicker', oldal.kepekKicker, kepSzekcio);
+        szovegBeallitasa('.seo-szolgaltatas-kepek-fej h2', oldal.kepekCim, kepSzekcio);
+        kepRacs.innerHTML = kepek.map(kep => `
+            <figure><img src="${attr(kep.kep)}" alt="${attr(kep.kepAlt || oldal.cim || 'Lumi Nails köröm munka')}" loading="lazy" decoding="async"></figure>
+        `).join('');
+    }
+
+    const zaras = gyoker.querySelector('.seo-szolgaltatas-zaras');
+    if (zaras && oldal.zaras) {
+        szovegBeallitasa('.szekcio-kicker', oldal.zaras.kicker, zaras);
+        szovegBeallitasa('h2', oldal.zaras.cim, zaras);
+        szovegBeallitasa('p', oldal.zaras.szoveg, zaras);
+        szovegBeallitasa('.seo-szolgaltatas-zaras-akciok .gomb', oldal.zaras.foglalasGomb, zaras);
+        const masodlagosGomb = zaras.querySelector('.seo-szolgaltatas-zaras-akciok .szoveges-link');
+        if (masodlagosGomb && oldal.zaras.masodlagosGomb !== undefined) {
+            masodlagosGomb.innerHTML = `${html(oldal.zaras.masodlagosGomb)} <span aria-hidden="true">→</span>`;
+        }
+    }
+}
+
+function szolgaltatasOldalGaleriaKepei(oldal, galeria) {
+    const galeriaElemek = Array.isArray(galeria?.elemek)
+        ? galeria.elemek.filter(elem => elem?.kep)
+        : [];
+    const kivalasztottKulcsok = Array.isArray(oldal?.kivalasztottKepek)
+        ? oldal.kivalasztottKepek
+        : [];
+    const kivalasztottKepek = kivalasztottKulcsok
+        .map(kulcs => galeriaElemek.find(elem => (elem.id || elem.kep) === kulcs))
+        .filter(Boolean)
+        .slice(0, 4)
+        .map(elem => ({ kep: elem.kep, kepAlt: elem.kepAlt }));
+
+    if (kivalasztottKepek.length) return kivalasztottKepek;
+    return Array.isArray(oldal?.kepek) ? oldal.kepek.filter(kep => kep?.kep).slice(0, 4) : [];
+}
+
+function szolgaltatasBekezdesekRenderelese(kontener, szoveg) {
+    if (!kontener || szoveg === undefined || szoveg === null) return;
+    kontener.querySelectorAll(':scope > p').forEach(bekezdes => bekezdes.remove());
+    String(szoveg).split(/\n\s*\n/).filter(Boolean).forEach(resz => {
+        const bekezdes = document.createElement('p');
+        bekezdes.textContent = resz.trim();
+        kontener.appendChild(bekezdes);
+    });
+}
+
 function szolgaltatasKartyakRenderelese(szolgaltatasok) {
     const szekcio = document.getElementById('szolgaltatasok');
     const racs = szekcio?.querySelector('.szolgaltatas-lista');
@@ -613,14 +753,22 @@ function szolgaltatasKartyakRenderelese(szolgaltatasok) {
         leiras.innerHTML = sortoresesSzoveg(kartya.leiras || '');
 
         const link = document.createElement('a');
-        const galeriaKartya = /dísz|nail art/i.test(kartya.cim || '');
+        const galeriaKartya = megjelenes.valtozat === 'diszites';
         const linkSzoveg = kartya.linkSzoveg || (galeriaKartya ? 'Inspirációk' : 'Részletek és árak');
-        link.href = galeriaKartya ? '/galeria/' : '/arlista/';
+        link.href = szolgaltatasKartyaLinkje(megjelenes.valtozat);
         link.innerHTML = `${html(linkSzoveg)} <span aria-hidden="true">→</span>`;
 
         doboz.append(fej, cim, leiras, link);
         racs.appendChild(doboz);
     });
+}
+
+function szolgaltatasKartyaLinkje(valtozat) {
+    if (valtozat === 'epites') return '/mukorom-epites-toltes/';
+    if (valtozat === 'diszites') return '/korom-diszites-nail-art-tatabanya/';
+    if (valtozat === 'gel-lakk') return '/gel-lakk-tatabanya/';
+    if (valtozat === 'manikur') return '/manikur-tatabanya/';
+    return '/arlista/';
 }
 
 function galeriaAtvezetoAlkalmazasa(galeria, teljesGaleria) {

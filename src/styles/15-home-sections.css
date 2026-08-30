@@ -214,6 +214,7 @@
 }
 
 .szolgaltatas-kartya > a {
+    position: static;
     display: inline-flex;
     min-height: 44px;
     max-width: 100%;
@@ -229,6 +230,19 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
     white-space: normal;
+}
+
+.szolgaltatas-kartya > a::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    content: "";
+}
+
+.szolgaltatas-kartya:has(> a:focus-visible) {
+    outline: 3px solid var(--ui-accent);
+    outline-offset: 4px;
 }
 
 @media (hover: hover) and (pointer: fine) {

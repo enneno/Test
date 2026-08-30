@@ -8,6 +8,22 @@
     const IMAGE_UPLOAD_PREVIEW_QUALITY = 0.76;
     const IMAGE_UPLOAD_MIN_QUALITY = 0.56;
     const BUCKET = window.LUMI_MEDIA_BUCKET || 'site-media';
+    const GALLERY_SELECTIONS = {
+        home: {
+            path: 'fooldal.galeriaAtvezeto.kivalasztottKepek',
+            limit: 5,
+            countSelector: '.cms-gallery-selection-count',
+            countText: darab => `${darab} / 5 kép jelenik meg a főoldalon`,
+            statusText: darab => `${darab} kép kiválasztva a főoldali galériaátvezetőhöz.`
+        },
+        nailArt: {
+            path: 'szolgaltatasOldalak.nailArt.kivalasztottKepek',
+            limit: 4,
+            countSelector: '.cms-gallery-nail-art-selection-count',
+            countText: darab => `${darab} / 4 kép jelenik meg a Nail Art oldalon`,
+            statusText: darab => `${darab} kép kiválasztva a Nail Art oldalhoz.`
+        }
+    };
     const config = window.LUMI_SUPABASE;
     const supabaseLib = window.supabase;
     const state = {
@@ -121,7 +137,7 @@
         },
         {
             title: 'Galéria oldal és teljes galéria',
-            description: 'A külön Galéria oldal címe, leírása és összes képe. Ez nem azonos a főoldali ötképes előnézettel.',
+            description: 'A külön Galéria oldal címe, leírása és összes képe. A képeknél külön jelölhető a főoldali átvezető és a Nail Art oldal.',
             fields: [
                 field('galeria.cim', 'Oldal címe'),
                 field('galeria.leiras', 'Bevezető szöveg', 'textarea'),
@@ -311,6 +327,26 @@
                 field('fooldal.ertesito.cimke', 'Kis felső felirat'),
                 field('fooldal.ertesito.szoveg', 'Üzenet a vendégeknek', 'textarea')
             ]
+        },
+        {
+            title: 'Szolgáltatási oldal – Műköröm',
+            description: 'A műköröm építés és töltés oldal teljes szövege, keresőleírása és nyitóképe.',
+            fields: servicePageFields('szolgaltatasOldalak.mukorom', 6)
+        },
+        {
+            title: 'Szolgáltatási oldal – Gél lakk',
+            description: 'A hagyományos és erősített gél lakk oldal teljes szövege, keresőleírása és nyitóképe.',
+            fields: servicePageFields('szolgaltatasOldalak.gelLakk', 4)
+        },
+        {
+            title: 'Szolgáltatási oldal – Manikűr',
+            description: 'A manikűr oldal teljes szövege, keresőleírása és nyitóképe.',
+            fields: servicePageFields('szolgaltatasOldalak.manikur', 4)
+        },
+        {
+            title: 'Szolgáltatási oldal – Díszítés / Nail Art',
+            description: 'A körömdíszítési oldal teljes szövege, keresőleírása és nyitóképe. A további fotók a Galéria képei között jelölhetők ki.',
+            fields: servicePageFields('szolgaltatasOldalak.nailArt', 4, true)
         }
     ];
 
@@ -319,13 +355,19 @@
             id: 'fooldal',
             title: 'Főoldal',
             description: 'A nyitóoldal minden fontos tartalmi blokkja.',
-            groups: [15, 1, 2, 3, 4, 5]
+            groups: [16, 15, 1, 2, 3, 4, 5]
         },
         {
             id: 'foglalas',
             title: 'Foglalás',
             description: 'A foglalási oldal, az űrlap és a vendégnek szóló üzenetek.',
             groups: [8, 9, 10, 11]
+        },
+        {
+            id: 'szolgaltatasi-oldalak',
+            title: 'Szolgáltatások',
+            description: 'A külön szolgáltatási oldalak szövegei, kérdései és képei.',
+            groups: [17, 18, 19, 20]
         },
         {
             id: 'oldalak',
@@ -405,7 +447,11 @@
             ['Cím, telefon és email', 2, 8],
             ['Közösségi és üzenetküldő linkek', 9, 13],
             ['Lábléc', 14, 15]
-        ]
+        ],
+        17: servicePageFieldSets(6),
+        18: servicePageFieldSets(4),
+        19: servicePageFieldSets(4),
+        20: servicePageFieldSets(4, true)
     };
     document.addEventListener('DOMContentLoaded', () => {
         const root = document.getElementById('admin-cms-root');
@@ -437,6 +483,79 @@
             field(`${base}.${index}.leiras`, `${label} szövege`, 'textarea'),
             field(`${base}.${index}.linkSzoveg`, `${label} linkjének szövege`)
         ];
+    }
+
+    function servicePageFields(base, faqCount, hasGallerySection = false) {
+        const fields = [
+            field(`${base}.seoCim`, 'Kereső és böngésző címe'),
+            field(`${base}.seoLeiras`, 'Kereső rövid leírása', 'textarea'),
+            field(`${base}.kicker`, 'Nyitókép kis felső szövege'),
+            field(`${base}.cim`, 'Oldal főcíme'),
+            field(`${base}.leiras`, 'Nyitókép bevezető szövege', 'textarea'),
+            image(`${base}.kep`, 'Nyitókép'),
+            field(`${base}.kepAlt`, 'Nyitókép leírása'),
+            field(`${base}.bevezetoKicker`, 'Bevezető kis felső szövege'),
+            field(`${base}.bevezetoCim`, 'Bevezető címe'),
+            field(`${base}.bevezeto`, 'Bevezető szövege', 'textarea'),
+            field(`${base}.szekciok.0.kicker`, 'Első tartalmi rész kis felső szövege'),
+            field(`${base}.szekciok.0.cim`, 'Első tartalmi rész címe'),
+            field(`${base}.szekciok.0.szoveg`, 'Első tartalmi rész szövege – üres sorral új bekezdés kezdhető', 'textarea'),
+            field(`${base}.szekciok.1.kicker`, 'Második tartalmi rész kis felső szövege'),
+            field(`${base}.szekciok.1.cim`, 'Második tartalmi rész címe'),
+            field(`${base}.szekciok.1.szoveg`, 'Második tartalmi rész szövege – üres sorral új bekezdés kezdhető', 'textarea'),
+            field(`${base}.kiemeles.kicker`, 'Kiemelt segítség kis felső szövege'),
+            field(`${base}.kiemeles.cim`, 'Kiemelt segítség címe'),
+            field(`${base}.kiemeles.szoveg`, 'Kiemelt segítség szövege', 'textarea')
+        ];
+
+        Array.from({ length: faqCount }, (_item, index) => {
+            fields.push(
+                field(`${base}.gyik.${index}.kerdes`, `${index + 1}. kérdés`),
+                field(`${base}.gyik.${index}.valasz`, `${index + 1}. válasz`, 'textarea')
+            );
+        });
+
+        fields.push(
+            field(`${base}.zaras.kicker`, 'Záró blokk kis felső szövege'),
+            field(`${base}.zaras.cim`, 'Záró blokk címe'),
+            field(`${base}.zaras.szoveg`, 'Záró blokk szövege', 'textarea'),
+            field(`${base}.gyikKicker`, 'Gyakori kérdések kis felső szövege'),
+            field(`${base}.gyikCim`, 'Gyakori kérdések blokk címe'),
+            field(`${base}.zaras.foglalasGomb`, 'Záró foglalás gomb felirata'),
+            field(`${base}.zaras.masodlagosGomb`, 'Záró másodlagos link felirata')
+        );
+
+        if (hasGallerySection) {
+            fields.push(
+                field(`${base}.kepekKicker`, 'Képes blokk kis felső szövege'),
+                field(`${base}.kepekCim`, 'Képes blokk címe')
+            );
+        }
+        return fields;
+    }
+
+    function servicePageFieldSets(faqCount, hasGallerySection = false) {
+        const faqStart = 19;
+        const faqEnd = faqStart + faqCount * 2 - 1;
+        const closingStart = faqEnd + 1;
+        const extrasStart = closingStart + 3;
+        const sets = [
+            ['Keresőbeállítások', 0, 1],
+            ['Nyitókép', 2, 6],
+            ['Bevezető', 7, 9],
+            ['Első tartalmi rész', 10, 12],
+            ['Második tartalmi rész', 13, 15],
+            ['Kiemelt segítség', 16, 18],
+            ['Gyakori kérdések', faqStart, faqEnd],
+            ['Záró blokk', closingStart, closingStart + 2],
+            ['Gyakori kérdések blokk címe', extrasStart, extrasStart + 1],
+            ['Záró blokk gombjai', extrasStart + 2, extrasStart + 3]
+        ];
+        if (hasGallerySection) {
+            const galleryStart = extrasStart + 4;
+            sets.push(['Képes blokk', galleryStart, galleryStart + 1]);
+        }
+        return sets;
     }
 
     async function loadContent() {
@@ -640,13 +759,13 @@
         wrapper.className = 'cms-gallery-editor';
         const header = document.createElement('div');
         header.className = 'cms-gallery-header';
-        const kivalasztottAzonositok = new Set(
-            getPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
-        );
+        const kivalasztottAzonositok = new Set(getPath(state.content, GALLERY_SELECTIONS.home.path) || []);
+        const nailArtAzonositok = new Set(getPath(state.content, GALLERY_SELECTIONS.nailArt.path) || []);
         header.innerHTML = `
             <div>
                 <h3>Galéria képei</h3>
-                <span class="cms-gallery-selection-count">${kivalasztottAzonositok.size} / 5 kép jelenik meg a főoldalon</span>
+                <span class="cms-gallery-selection-count">${GALLERY_SELECTIONS.home.countText(kivalasztottAzonositok.size)}</span>
+                <span class="cms-gallery-nail-art-selection-count">${GALLERY_SELECTIONS.nailArt.countText(nailArtAzonositok.size)}</span>
             </div>`;
         const add = document.createElement('button');
         add.type = 'button';
@@ -666,20 +785,24 @@
             card.className = 'cms-gallery-item';
             card.dataset.galleryIndex = String(index);
             card.dataset.homeSelected = String(kivalasztottAzonositok.has(azonosito));
+            card.dataset.nailArtSelected = String(nailArtAzonositok.has(azonosito));
             const title = document.createElement('h4');
             title.textContent = `${index + 1}. kép`;
 
-            const homeChoice = document.createElement('label');
-            homeChoice.className = 'cms-gallery-home-choice';
-            const homeCheckbox = document.createElement('input');
-            homeCheckbox.type = 'checkbox';
-            homeCheckbox.dataset.cmsHomeGallerySelect = azonosito;
-            homeCheckbox.checked = kivalasztottAzonositok.has(azonosito);
-            const homeChoiceText = document.createElement('span');
-            homeChoiceText.textContent = 'Megjelenjen a főoldali galériaátvezetőben';
-            homeChoice.append(homeCheckbox, homeChoiceText);
+            const homeChoice = renderGalleryChoice(
+                'home',
+                azonosito,
+                'Megjelenjen a főoldali galériaátvezetőben',
+                kivalasztottAzonositok.has(azonosito)
+            );
+            const nailArtChoice = renderGalleryChoice(
+                'nailArt',
+                azonosito,
+                'Megjelenjen a Nail Art oldalon',
+                nailArtAzonositok.has(azonosito)
+            );
 
-            card.append(title, homeChoice);
+            card.append(title, homeChoice, nailArtChoice);
             card.appendChild(renderImageField(`galeria.elemek.${index}.kep`, 'Fotó'));
             card.appendChild(renderField(field(`galeria.elemek.${index}.kepAlt`, 'Kép leírása')));
             card.appendChild(renderField(checkbox(`galeria.elemek.${index}.magas`, 'Magas kiemelt csempe')));
@@ -694,6 +817,21 @@
         });
         wrapper.appendChild(list);
         return wrapper;
+    }
+
+    function renderGalleryChoice(selectionKey, azonosito, labelText, checked) {
+        const label = document.createElement('label');
+        label.className = `cms-gallery-choice cms-gallery-${selectionKey === 'home' ? 'home' : 'nail-art'}-choice`;
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.dataset.cmsGallerySelection = selectionKey;
+        input.dataset.cmsGalleryItem = azonosito;
+        if (selectionKey === 'home') input.dataset.cmsHomeGallerySelect = azonosito;
+        input.checked = checked;
+        const text = document.createElement('span');
+        text.textContent = labelText;
+        label.append(input, text);
+        return label;
     }
 
     function cmsInput(event) {
@@ -715,42 +853,51 @@
             return;
         }
 
-        const homeSelection = event.target.closest('[data-cms-home-gallery-select]');
-        if (homeSelection) {
-            const items = state.content.galeria?.elemek || [];
-            const kivalasztott = new Set(
-                getPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
-            );
-            const azonosito = homeSelection.dataset.cmsHomeGallerySelect;
-
-            if (homeSelection.checked && !kivalasztott.has(azonosito) && kivalasztott.size >= 5) {
-                homeSelection.checked = false;
-                status('Legfeljebb 5 képet választhatsz a főoldali galériaátvezetőhöz.', true);
-                return;
-            }
-
-            if (homeSelection.checked) kivalasztott.add(azonosito);
-            else kivalasztott.delete(azonosito);
-
-            const rendezettKivalasztas = items
-                .map(item => item.id || item.kep)
-                .filter(itemAzonosito => kivalasztott.has(itemAzonosito))
-                .slice(0, 5);
-            setPath(state.content, 'fooldal.galeriaAtvezeto.kivalasztottKepek', rendezettKivalasztas);
-            document.querySelectorAll('[data-cms-home-gallery-select]').forEach(input => {
-                input.closest('.cms-gallery-item').dataset.homeSelected = String(input.checked);
-            });
-            const count = document.querySelector('.cms-gallery-selection-count');
-            if (count) count.textContent = `${rendezettKivalasztas.length} / 5 kép jelenik meg a főoldalon`;
-            state.dirty = true;
-            updateSaveLabel();
-            status(`${rendezettKivalasztas.length} kép kiválasztva a főoldali galériaátvezetőhöz.`);
+        const gallerySelection = event.target.closest('[data-cms-gallery-selection]');
+        if (gallerySelection) {
+            updateGallerySelection(gallerySelection);
             return;
         }
 
         const input = event.target.closest('[data-cms-upload]');
         if (!input || !input.files?.[0]) return;
         await uploadImage(input.dataset.cmsUpload, input.files[0], input);
+    }
+
+    function updateGallerySelection(input) {
+        const selectionKey = input.dataset.cmsGallerySelection;
+        const definition = GALLERY_SELECTIONS[selectionKey];
+        if (!definition) return;
+
+        const items = state.content.galeria?.elemek || [];
+        const kivalasztott = new Set(getPath(state.content, definition.path) || []);
+        const azonosito = input.dataset.cmsGalleryItem;
+
+        if (input.checked && !kivalasztott.has(azonosito) && kivalasztott.size >= definition.limit) {
+            input.checked = false;
+            status(`Legfeljebb ${definition.limit} képet választhatsz ehhez a blokkhoz.`, true);
+            return;
+        }
+
+        if (input.checked) kivalasztott.add(azonosito);
+        else kivalasztott.delete(azonosito);
+
+        const rendezettKivalasztas = items
+            .map(item => item.id || item.kep)
+            .filter(itemAzonosito => kivalasztott.has(itemAzonosito))
+            .slice(0, definition.limit);
+        setPath(state.content, definition.path, rendezettKivalasztas);
+        document.querySelectorAll(`[data-cms-gallery-selection="${selectionKey}"]`).forEach(selectionInput => {
+            const card = selectionInput.closest('.cms-gallery-item');
+            if (!card) return;
+            if (selectionKey === 'home') card.dataset.homeSelected = String(selectionInput.checked);
+            if (selectionKey === 'nailArt') card.dataset.nailArtSelected = String(selectionInput.checked);
+        });
+        const count = document.querySelector(definition.countSelector);
+        if (count) count.textContent = definition.countText(rendezettKivalasztas.length);
+        state.dirty = true;
+        updateSaveLabel();
+        status(definition.statusText(rendezettKivalasztas.length));
     }
 
     function rememberCmsScroll() {
@@ -827,6 +974,12 @@
                 state.content,
                 'fooldal.galeriaAtvezeto.kivalasztottKepek',
                 kivalasztott.filter(azonosito => azonosito !== torlendoAzonosito)
+            );
+            const nailArtKivalasztott = getPath(state.content, GALLERY_SELECTIONS.nailArt.path) || [];
+            setPath(
+                state.content,
+                GALLERY_SELECTIONS.nailArt.path,
+                nailArtKivalasztott.filter(azonosito => azonosito !== torlendoAzonosito)
             );
             markDirtyAndRenderGallery();
         }
@@ -1050,6 +1203,12 @@
         const serviceCards = Array.from({ length: 4 }, (_item, index) =>
             deepMerge(clone(defaultCards[index] || { cim: '', leiras: '', linkSzoveg: '' }), storedCards[index] || {})
         );
+        const decorationCard = serviceCards.find(card => /dísz|nail art/i.test(String(card?.cim || '')));
+        if (decorationCard && /különleges 3D dekorációk/i.test(String(decorationCard.leiras || ''))) {
+            const defaultDecorationCard = defaultCards.find(card => /dísz|nail art/i.test(String(card?.cim || '')));
+            decorationCard.leiras = defaultDecorationCard?.leiras || decorationCard.leiras;
+            decorationCard.linkSzoveg = defaultDecorationCard?.linkSzoveg || 'Részletek';
+        }
         setPath(normalized, 'fooldal.szolgaltatasok.kartyak', serviceCards);
 
         normalized.galeria ||= {};
@@ -1071,7 +1230,7 @@
             getPath(normalized, 'fooldal.galeriaAtvezeto.kivalasztottKepek') || []
         );
         let kivalasztottKepek = normalized.galeria.elemek
-            .filter(elem => elem?.kep && kertKivalasztas.has(elem.id))
+            .filter(elem => elem?.kep && (kertKivalasztas.has(elem.id) || kertKivalasztas.has(elem.kep)))
             .map(elem => elem.id)
             .slice(0, 5);
         if (!kivalasztottKepek.length) {
@@ -1083,6 +1242,36 @@
         setPath(normalized, 'fooldal.galeriaAtvezeto.kivalasztottKepek', kivalasztottKepek);
         const galeriaAtvezeto = getPath(normalized, 'fooldal.galeriaAtvezeto');
         if (galeriaAtvezeto && typeof galeriaAtvezeto === 'object') delete galeriaAtvezeto.kepek;
+
+        const nailArt = getPath(normalized, 'szolgaltatasOldalak.nailArt');
+        if (nailArt && typeof nailArt === 'object') {
+            const korabbiNailArtKepek = Array.isArray(nailArt.kepek)
+                ? nailArt.kepek.filter(kep => kep?.kep)
+                : [];
+            korabbiNailArtKepek.forEach(kep => {
+                if (normalized.galeria.elemek.some(elem => elem?.kep === kep.kep)) return;
+                let azonosito = `galeria-${randomId()}`;
+                while (hasznaltAzonositok.has(azonosito)) azonosito = `galeria-${randomId()}`;
+                hasznaltAzonositok.add(azonosito);
+                normalized.galeria.elemek.push({
+                    id: azonosito,
+                    kep: kep.kep,
+                    eloKep: '',
+                    kepAlt: kep.kepAlt || 'Lumi Nails Nail Art munka',
+                    magas: false
+                });
+            });
+            const kertNailArtKivalasztas = new Set([
+                ...(Array.isArray(nailArt.kivalasztottKepek) ? nailArt.kivalasztottKepek : []),
+                ...korabbiNailArtKepek.map(kep => kep.kep)
+            ]);
+            const nailArtKivalasztottKepek = normalized.galeria.elemek
+                .filter(elem => elem?.kep && (kertNailArtKivalasztas.has(elem.id) || kertNailArtKivalasztas.has(elem.kep)))
+                .map(elem => elem.id)
+                .slice(0, GALLERY_SELECTIONS.nailArt.limit);
+            setPath(normalized, GALLERY_SELECTIONS.nailArt.path, nailArtKivalasztottKepek);
+            delete nailArt.kepek;
+        }
 
         const services = getPath(normalized, 'fooldal.szolgaltatasok');
         if (services && typeof services === 'object') {

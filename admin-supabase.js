@@ -5756,7 +5756,7 @@ function arlistaFeliratokFrissitese() {
             const title = root.querySelector('.cms-editor-card-header h3');
             if (title) title.textContent = 'Galéria képek';
 
-            moveHomepageChoicesIntoControls(root);
+            moveGalleryChoicesIntoControls(root);
             renderGalleryPagination(root);
             return;
         }
@@ -5767,16 +5767,25 @@ function arlistaFeliratokFrissitese() {
         });
     }
 
-    function moveHomepageChoicesIntoControls(root) {
+    function moveGalleryChoicesIntoControls(root) {
         root.querySelectorAll('.cms-gallery-item').forEach(item => {
             const controls = item.querySelector('.cms-image-controls');
-            const choice = Array.from(item.children)
-                .find(child => child.classList?.contains('cms-gallery-home-choice'));
-            if (!controls || !choice) return;
+            const choices = Array.from(item.children)
+                .filter(child => child.classList?.contains('cms-gallery-choice')
+                    || child.classList?.contains('cms-gallery-home-choice')
+                    || child.classList?.contains('cms-gallery-nail-art-choice'));
+            if (!controls || !choices.length) return;
 
-            const label = choice.querySelector('span');
-            if (label) label.textContent = 'Megjelenjen a főoldalon';
-            controls.prepend(choice);
+            choices.forEach(choice => {
+                const label = choice.querySelector('span');
+                if (label && choice.classList.contains('cms-gallery-home-choice')) {
+                    label.textContent = 'Megjelenjen a főoldalon';
+                }
+                if (label && choice.classList.contains('cms-gallery-nail-art-choice')) {
+                    label.textContent = 'Megjelenjen a Nail Art oldalon';
+                }
+                controls.appendChild(choice);
+            });
         });
     }
 

@@ -97,7 +97,8 @@
   font-weight: 600;
 }
 
-.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice {
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-home-choice,
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-nail-art-choice {
   width: 100%;
   min-width: 0;
   min-height: 34px;
@@ -139,7 +140,7 @@
   width: 100%;
   min-width: 0;
   grid-template-columns: repeat(3, var(--admin-ui-touch-target));
-  grid-template-rows: auto var(--admin-ui-touch-target);
+  grid-template-rows: auto auto var(--admin-ui-touch-target);
   align-self: start;
   align-content: start;
   justify-content: start;
@@ -152,16 +153,21 @@
   grid-row: 1;
 }
 
+.admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls > .cms-gallery-nail-art-choice {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-image-controls > [data-cms-gallery-delete-proxy] {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-actions {
   display: grid;
   width: auto;
   grid-column: 2 / span 2;
-  grid-row: 2;
+  grid-row: 3;
   grid-template-columns: repeat(2, var(--admin-ui-touch-target));
   justify-content: start;
   gap: 8px;
