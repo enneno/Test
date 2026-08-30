@@ -34,17 +34,17 @@
   --admin-v2-neutral-soft: #eeeae7;
   --admin-v2-divider-soft: #f0eae6;
   --admin-v2-switch-knob: #ffffff;
-  --lumi-font-body: 14px;
-  --lumi-font-body-small: 13px;
-  --lumi-font-control: 14px;
-  --lumi-font-label: 12px;
-  --lumi-font-caption: 11px;
-  --lumi-font-lead: 15px;
+  --lumi-font-body: 16px;
+  --lumi-font-body-small: 14px;
+  --lumi-font-control: 16px;
+  --lumi-font-label: 14px;
+  --lumi-font-caption: 12px;
+  --lumi-font-lead: 17px;
   min-height: 100vh;
   padding-top: 0;
   color: var(--admin-v2-ink);
   background: var(--admin-v2-bg);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 
@@ -137,7 +137,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-auth-panel .admin-eyebrow {
   margin: 0 0 8px;
   color: var(--admin-v2-brand);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
   line-height: 1.2;
@@ -157,7 +157,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-auth-panel .admin-leiras {
   margin: 14px 0 0;
   color: var(--admin-v2-muted);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.55;
 }
@@ -172,7 +172,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   display: grid;
   gap: 6px;
   color: var(--admin-v2-muted);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -180,7 +180,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   width: 100%;
   margin: 2px 0 0;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -189,7 +189,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   min-height: 18px;
   margin: 12px 0 0;
   color: var(--admin-v2-muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -289,7 +289,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 6px;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -305,7 +305,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   margin: 0;
   padding: 11px 10px 4px;
   color: rgba(255, 255, 255, 0.38);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -324,7 +324,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: rgba(255, 255, 255, 0.7);
   background: transparent;
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -381,7 +381,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   border-radius: 999px;
   color: #4b302b;
   background: #e7c1b6;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -447,7 +447,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   border-radius: 9px;
   color: #452f2a;
   background: #ead5cd;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -457,14 +457,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 .admin-v2-profile strong {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.25;
 }
 
 .admin-body.admin-v2 .admin-v2-profile small {
   margin-top: 2px;
   color: rgba(255, 255, 255, 0.48);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .admin-body.admin-v2 .admin-v2-public-link {
@@ -476,7 +476,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9px;
   color: rgba(255, 255, 255, 0.76);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   transition: color 160ms ease, background-color 160ms ease;
@@ -498,7 +498,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: rgba(255, 255, 255, 0.5);
   background: transparent;
   font: inherit;
-  font-size: 10px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -529,7 +529,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   margin: 0;
   padding: 11px 14px;
   border-radius: 11px;
-  font-size: 11px;
+  font-size: 14px;
   transform: translateY(12px);
 }
 
@@ -554,14 +554,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 .admin-v2-topbar-section {
   color: var(--admin-v2-ink);
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-topbar-section + p {
   margin-top: 2px;
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 .admin-v2-topbar-actions {
@@ -634,12 +634,12 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 .admin-v2-notification-panel > header strong {
   color: var(--admin-v2-ink);
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .admin-body.admin-v2 .admin-v2-notification-panel > header small {
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 .admin-v2-notification-panel ul {
@@ -705,13 +705,13 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 .admin-v2-notification-panel li strong {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.35;
 }
 
 .admin-body.admin-v2 .admin-v2-notification-panel li small {
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -752,7 +752,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-v2-kicker {
   margin: 0 0 5px;
   color: var(--admin-v2-brand);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -762,7 +762,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   margin: 0;
   color: var(--admin-v2-ink);
   font-family: var(--font-display, Georgia, serif);
-  font-size: clamp(25px, 2.25vw, 31px);
+  font-size: clamp(30px, 2.5vw, 38px);
   font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.025em;
@@ -772,7 +772,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   max-width: 680px;
   margin: 7px 0 0;
   color: var(--admin-v2-muted);
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.55;
 }
 
@@ -800,7 +800,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-ink);
   background: var(--admin-v2-surface);
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -882,7 +882,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-v2-stat-card p {
   margin: 0;
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -931,7 +931,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   display: block;
   margin-top: 7px;
   color: var(--admin-v2-subtle);
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.35;
 }
 
@@ -973,14 +973,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   margin: 0;
   color: var(--admin-v2-ink);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-card-header p {
   margin: 3px 0 0;
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 .admin-v2-inline-action {
@@ -992,7 +992,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-brand);
   background: transparent;
   font: inherit;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1035,14 +1035,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 .admin-v2-schedule-time strong {
   color: var(--admin-v2-brand-dark);
-  font-size: 11px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-time small {
   margin-top: 2px;
   color: var(--admin-v2-subtle);
-  font-size: 8px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1065,14 +1065,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-copy strong {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-schedule-copy small {
   margin-top: 2px;
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 .admin-v2-status-chip {
@@ -1083,7 +1083,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-info);
   background: var(--admin-v2-info-soft);
   font: inherit;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -1164,7 +1164,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 .admin-v2-upcoming-list strong,
 .admin-body.admin-v2 .admin-v2-task-item strong {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1172,7 +1172,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-v2-task-item small {
   margin-top: 2px;
   color: var(--admin-v2-muted);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .admin-body.admin-v2 .admin-v2-task-item {
@@ -1211,7 +1211,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-brand);
   background: transparent;
   font: inherit;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1229,7 +1229,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-v2-empty {
   padding: 25px 17px;
   color: var(--admin-v2-muted);
-  font-size: 10px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -1255,7 +1255,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 .admin-v2-communication-summary span {
   color: var(--admin-v2-muted);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -1284,7 +1284,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-v2-communication-action p {
   margin: 0;
   color: var(--admin-v2-muted);
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -1324,14 +1324,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 .admin-v2-settings-header h2 {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .admin-body.admin-v2 .admin-v2-settings-header p {
   margin-top: 4px;
   color: var(--admin-v2-muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .admin-body.admin-v2 .admin-v2-setting-row {
@@ -1352,13 +1352,13 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 }
 
 .admin-body.admin-v2 .admin-v2-setting-row strong {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .admin-body.admin-v2 .admin-v2-setting-row small {
   margin-top: 2px;
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .admin-body.admin-v2 .admin-v2-setting-row input[type="checkbox"] {
@@ -1428,7 +1428,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-cms-root,
 .admin-body.admin-v2 .admin-tablazat-wrap,
 .admin-body.admin-v2 .admin-foglalasok-lista {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .admin-body.admin-v2 .admin-db-toolbar,
@@ -1479,7 +1479,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-foglalas-meta,
 .admin-body.admin-v2 .admin-foglalas-reszletek,
 .admin-body.admin-v2 .admin-foglalas-esemenyek {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .admin-body.admin-v2 .admin-foglalas-reszletek {
@@ -1491,7 +1491,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-statusz,
 .admin-body.admin-v2 .admin-pill,
 .admin-body.admin-v2 .admin-allapot-jelzes {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.2;
 }
 
@@ -1504,13 +1504,13 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 .admin-body.admin-v2 .admin-panel-fej p,
 .admin-body.admin-v2 .admin-cms-heading p,
 .admin-body.admin-v2 .admin-db-panel > p {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .admin-body.admin-v2 .admin-ures-allapot,
 .admin-body.admin-v2 .admin-betoltes {
   padding: 27px 17px;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .admin-body.admin-v2 :where(button, a, input, select, textarea):focus-visible {
@@ -1652,7 +1652,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   .admin-body.admin-v2 #admin-panel-foglalasok .admin-v2-button {
     min-height: 36px;
     padding: 7px 11px;
-    font-size: 11px;
+    font-size: 14px;
   }
 
   .admin-body.admin-v2 .admin-v2-page-heading {
@@ -1673,7 +1673,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
   .admin-body.admin-v2 .admin-v2-topbar-actions .admin-v2-button {
     padding-inline: 10px;
-    font-size: 11px;
+    font-size: 14px;
   }
 
 
@@ -1687,7 +1687,12 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   }
 
   .admin-body.admin-v2 .admin-v2-page-heading p:not(.admin-v2-kicker) {
-    font-size: 11px;
+    font-size: 14px;
+  }
+
+  .admin-body.admin-v2 .admin-v2-subnav .admin-segmented-item {
+    padding-inline: 9px;
+    font-size: 12px;
   }
 
   .admin-body.admin-v2 .admin-v2-page-actions {
@@ -1716,7 +1721,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   }
 
   .admin-body.admin-v2 .admin-v2-stat-card p {
-    font-size: 8px;
+    font-size: 11px;
   }
 
   .admin-body.admin-v2 .admin-v2-stat-card > strong {

@@ -55,7 +55,19 @@ const PUBLIC_ROOT_FILES = new Set([
     'robots.txt',
     'sitemap.xml'
 ]);
-const PUBLIC_DIRECTORIES = new Set(['adatkezeles', 'admin', 'arlista', 'fiokom', 'foglalas', 'galeria', 'kepek']);
+const PUBLIC_DIRECTORIES = new Set([
+    'adatkezeles',
+    'admin',
+    'arlista',
+    'fiokom',
+    'foglalas',
+    'galeria',
+    'gel-lakk-tatabanya',
+    'kepek',
+    'korom-diszites-nail-art-tatabanya',
+    'manikur-tatabanya',
+    'mukorom-epites-toltes'
+]);
 const PUBLIC_NESTED_EXTENSIONS = new Set(['.html', '.jpg', '.jpeg', '.png', '.webp', '.svg', '.ico']);
 
 function isPublicFile(filePath) {

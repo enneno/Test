@@ -9,29 +9,20 @@
     display: grid;
     width: 100%;
     min-width: 0;
-    max-width: 880px;
     box-sizing: border-box;
     margin: 0 auto;
-    gap: 18px;
 }
 
 .foglalas-lepes {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-    padding: clamp(18px, 3vw, 28px);
     overflow: hidden;
-    background: rgba(255, 250, 244, 0.76);
-    border: 1px solid rgba(185, 133, 143, 0.2);
-    border-radius: 26px;
 }
 
 .foglalas-lepes-fej {
     display: grid;
-    grid-template-columns: 46px minmax(0, 1fr);
-    gap: 14px;
     align-items: start;
-    margin-bottom: 18px;
 }
 
 .foglalas-lepes-fej h3 {
@@ -51,13 +42,7 @@
 
 .foglalas-lepes-szam {
     display: inline-flex;
-    width: 42px;
-    height: 42px;
     align-items: center;
-    justify-content: center;
-    color: var(--barna);
-    background: rgba(209, 145, 158, 0.2);
-    border-radius: var(--lumi-radius-pill);
     font-weight: 800;
 }
 
@@ -75,20 +60,17 @@
 .foglalas-kartya-racs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px;
 }
 
 .foglalas-stilus-racs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
 }
 
 .foglalas-mini-racs,
 .foglalas-ido-racs {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
     margin-top: 10px;
 }
 
@@ -98,7 +80,6 @@
 .foglalas-stilus-kartya {
     box-sizing: border-box;
     color: var(--tinta);
-    background: rgba(241, 222, 217, 0.18);
     border: 1px solid rgba(185, 133, 143, 0.22);
     font-family: "Manrope", sans-serif;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
@@ -108,27 +89,7 @@
     display: grid;
     align-content: center;
     gap: 6px;
-    min-height: 92px;
-    padding: 14px;
-    border-radius: 16px;
     text-align: left;
-}
-
-.foglalas-valaszto-kartya:hover,
-.foglalas-mini-kartya:hover,
-.foglalas-idopont-gomb:hover,
-.foglalas-stilus-kartya:hover {
-    border-color: rgba(185, 133, 143, 0.5);
-    transform: translateY(-2px);
-}
-
-.foglalas-valaszto-kartya.aktiv,
-.foglalas-mini-kartya.aktiv,
-.foglalas-idopont-gomb.aktiv,
-.foglalas-stilus-kartya.aktiv {
-    background: rgba(209, 145, 158, 0.18);
-    border-color: var(--akcentus);
-    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.18);
 }
 
 .foglalas-kartya-cim {
@@ -146,9 +107,7 @@
 
 .foglalas-mini-kartya,
 .foglalas-idopont-gomb {
-    min-height: 44px;
     padding: 11px 14px;
-    border-radius: 18px;
     text-align: center;
     font-weight: 800;
 }
@@ -165,9 +124,6 @@
 .foglalas-stilus-kartya {
     display: grid;
     gap: 5px;
-    min-height: 112px;
-    padding: 16px;
-    border-radius: 18px;
     text-align: left;
 }
 
@@ -189,12 +145,7 @@
 
 .foglalas-stilus-ido {
     justify-self: start;
-    padding: 4px 8px;
     color: var(--akcentus-sotet);
-    background: rgba(209, 145, 158, 0.14);
-    border: 1px solid rgba(185, 133, 143, 0.3);
-    border-radius: var(--lumi-radius-pill);
-    font-size: var(--lumi-font-caption);
     line-height: 1;
 }
 
@@ -212,9 +163,7 @@
     align-items: center;
     gap: 14px;
     padding: 17px;
-    background: rgba(241, 222, 217, 0.16);
     border: 1px dashed rgba(185, 133, 143, 0.45);
-    border-radius: 22px;
     cursor: pointer;
 }
 
@@ -232,8 +181,6 @@
     align-items: center;
     justify-content: center;
     color: #fffaf4;
-    background: var(--akcentus);
-    border-radius: 15px;
     font-size: 24px;
     line-height: 1;
 }
@@ -260,9 +207,7 @@
     align-items: center;
     margin-top: 12px;
     padding: 12px;
-    background: rgba(255, 250, 244, 0.92);
     border: 1px solid rgba(185, 133, 143, 0.18);
-    border-radius: 18px;
 }
 
 .foglalas-kep-elonezet[hidden] {
@@ -286,7 +231,6 @@
 
 .foglalas-megjegyzes {
     width: 100%;
-    margin-top: 12px;
 }
 
 .foglalas-adat-racs {
@@ -301,11 +245,7 @@
 }
 
 .foglalas-osszefoglalo {
-    margin-top: 14px;
-    padding: 16px;
-    background: rgba(241, 222, 217, 0.22);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 20px;
 }
 
 .foglalas-osszefoglalo h3 {
@@ -406,16 +346,6 @@
 }
 
 @media screen and (max-width: 640px) {
-    .foglalas-lepes-fej {
-        grid-template-columns: 38px minmax(0, 1fr);
-        gap: 10px;
-    }
-
-    .foglalas-lepes-szam {
-        width: 36px;
-        height: 36px;
-    }
-
     .foglalas-lepes-fej h3 {
         font-size: 24px;
     }
@@ -433,16 +363,10 @@
 /* Dátumválasztó */
 .foglalas-datum-csik {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-    max-height: 250px;
     margin-top: 12px;
-    padding: 2px 2px 8px;
-    overflow-x: hidden;
-    overflow-y: auto;
 }
 
 .foglalas-datum-csik::-webkit-scrollbar {
@@ -456,43 +380,19 @@
 
 .foglalas-datum-chip {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr);
     align-items: center;
-    gap: 7px;
     width: 100%;
-    min-height: 46px;
-    padding: 7px 8px;
     color: var(--tinta);
-    background: rgba(241, 222, 217, 0.18);
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 15px;
     cursor: pointer;
     font-family: 'Manrope', sans-serif;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.foglalas-datum-chip:hover {
-    border-color: rgba(185, 133, 143, 0.5);
-    transform: translateY(-1px);
-}
-
-.foglalas-datum-chip.aktiv {
-    background: rgba(209, 145, 158, 0.18);
-    border-color: var(--akcentus);
-    box-shadow: 0 10px 22px rgba(185, 133, 143, 0.16);
-}
-
 .foglalas-datum-chip-nap {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
     color: var(--akcentus);
-    background: rgba(255, 250, 244, 0.86);
-    border: 1px solid rgba(185, 133, 143, 0.32);
-    border-radius: 9px;
-    font-size: var(--lumi-font-caption);
     font-weight: 900;
 }
 
@@ -501,8 +401,6 @@
     min-width: 0;
     overflow: hidden;
     color: var(--barna);
-    font-size: var(--lumi-font-caption);
-    font-weight: 850;
     line-height: 1.1;
     text-align: left;
     text-overflow: ellipsis;
@@ -519,26 +417,11 @@
 }
 
 /* =========================================
-   BOOKING SCROLL TARGETS
-   ========================================= */
-.foglalas-asszisztens-szekcio {
-    scroll-margin-top: 112px;
-}
-
-@media screen and (max-width: 768px) {
-    .foglalas-asszisztens-szekcio,
-    .foglalas-lepes {
-        scroll-margin-top: 104px;
-    }
-}
-
-/* =========================================
    BOOKING RESPONSIVE SAFETY
    ========================================= */
 .foglalas-oldal,
 .foglalas-nyito,
 .foglalas-asszisztens-szekcio,
-.foglalas-lepes-fej,
 .foglalas-lepes-fej > div,
 .foglalas-kartya-racs,
 .foglalas-stilus-racs,
@@ -554,41 +437,6 @@
 }
 
 @media screen and (max-width: 640px) {
-    .foglalas-nyito,
-    .foglalas-asszisztens-szekcio {
-        overflow: hidden;
-    }
-
-    .foglalas-ut-kartya {
-        min-height: 148px;
-        padding: 13px;
-        border-radius: 20px;
-    }
-
-    .foglalas-ut-ikon {
-        width: 34px;
-        height: 34px;
-        font-size: 13px;
-    }
-
-    .foglalas-ut-cim {
-        font-size: 19px;
-    }
-
-    .foglalas-ut-leiras {
-        font-size: var(--lumi-font-body-small);
-        line-height: 1.35;
-    }
-
-    .foglalas-ut-gomb {
-        font-size: var(--lumi-font-button-compact);
-    }
-
-    .foglalas-valaszto-kartya {
-        min-height: 88px;
-        padding: 12px;
-    }
-
     .foglalas-kartya-cim {
         font-size: var(--lumi-font-body-small);
     }
@@ -608,17 +456,6 @@
         white-space: nowrap;
     }
 
-    .foglalas-datum-csik {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-height: 220px;
-        gap: 7px;
-    }
-
-    .foglalas-datum-chip {
-        grid-template-columns: 28px minmax(0, 1fr);
-        min-height: 46px;
-        padding: 7px 8px;
-    }
 }
 
 /* =========================================
@@ -665,8 +502,6 @@
     margin: 18px 0;
     padding: 16px;
     border: 1px solid rgba(185, 133, 143, 0.22);
-    border-radius: 22px;
-    background: rgba(255, 250, 244, 0.72);
 }
 
 .foglalas-kupon-cimke {
@@ -715,13 +550,9 @@
 
 /* Booking — végleges megjelenés (99-ből migrálva) */
 .foglalas-oldal {
-    width: min(1180px, calc(100% - 48px));
+    width: min(1120px, calc(100% - 48px));
     margin: 0 auto;
     padding: clamp(72px, 8vw, 116px) 0 0;
-}
-
-.foglalas-oldal {
-    width: min(1120px, calc(100% - 48px));
 }
 
 .foglalas-nyito {
@@ -865,7 +696,6 @@
 }
 
 .foglalas-ut-kartya-kiemelt .foglalas-ut-cim,
-.foglalas-ut-kartya-kiemelt .foglalas-ut-leiras,
 .foglalas-ut-kartya-kiemelt .foglalas-ut-gomb,
 .foglalas-ut-kartya-kiemelt .foglalas-ut-ikon {
     color: var(--ui-off-white);
@@ -947,10 +777,12 @@
 }
 
 .foglalas-lepes-fej {
+    min-width: 0;
     grid-template-columns: 52px minmax(0, 1fr);
     gap: clamp(18px, 3vw, 34px);
     align-items: start;
     max-width: 840px;
+    box-sizing: border-box;
     margin-bottom: 28px;
 }
 
@@ -1235,7 +1067,6 @@
 .foglalas-oldal .urlap-mezo:focus,
 .foglalas-oldal .tel-csoport:focus-within {
     border-color: var(--ui-rose-dark);
-    outline: 3px solid rgba(145, 118, 110, 0.2);
     box-shadow: none;
 }
 
@@ -1286,10 +1117,6 @@
 
     .foglalas-asszisztens-fej {
         margin-bottom: 36px;
-    }
-
-    .foglalas-oldal .urlap-mezo {
-        font-size: var(--lumi-font-control);
     }
 
     .foglalas-datum-csik {
@@ -1427,27 +1254,60 @@
 .foglalas-kezelo-bevezeto > p:last-child,
 .foglalas-kezelo-segitseg {
     color: var(--ui-muted);
-    font-size: var(--lumi-font-body-small);
     line-height: 1.7;
+}
+
+.foglalas-kezelo-bevezeto > p:last-child {
+    font-size: var(--lumi-font-body-small);
 }
 
 .foglalas-kezelo-kartya {
     padding: clamp(24px, 4vw, 42px);
     border: 1px solid var(--ui-line);
-    border-radius: 4px;
+    border-radius: 20px;
     background: var(--ui-surface);
     box-shadow: var(--ui-shadow);
+}
+
+@media (min-width: 769px) {
+    .foglalas-kezelo-szekcio {
+        grid-template-columns: minmax(300px, 0.78fr) minmax(460px, 1.22fr);
+        gap: clamp(46px, 6vw, 76px);
+        margin-bottom: clamp(72px, 8vw, 104px);
+        padding: clamp(46px, 6vw, 68px);
+        border: 1px solid var(--ui-line);
+        border-radius: 24px;
+        background: var(--ui-surface);
+    }
+
+    .foglalas-kezelo-bevezeto {
+        align-self: center;
+    }
+
+    .foglalas-kezelo-kartya {
+        padding: 34px;
+        background: var(--ui-bg);
+        box-shadow: none;
+    }
+
+    .foglalas-kezelo-bevitel :is(input, .gomb) {
+        height: 50px;
+        min-height: 50px;
+    }
 }
 
 .foglalas-kezelo-kartya > label,
 .foglalas-popup-azonosito > span {
     display: block;
     margin-bottom: 9px;
-    color: var(--ui-rose-dark);
     font-size: var(--lumi-font-caption);
     font-weight: 750;
     letter-spacing: 0.13em;
     text-transform: uppercase;
+}
+
+.foglalas-kezelo-kartya > label {
+    color: var(--ui-rose-dark);
 }
 
 .foglalas-kezelo-bevitel {

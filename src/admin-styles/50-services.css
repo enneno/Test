@@ -1,6 +1,6 @@
 /* Services / price-list editor. This file is the only owner of #admin-panel-szolgaltatasok. */
 .admin-body.admin-v2 #admin-panel-szolgaltatasok {
-  max-width: 980px;
+  max-width: 1280px;
   margin-inline: auto;
 }
 .admin-body.admin-v2 #admin-panel-szolgaltatasok #admin-szolgaltatas-lista {
@@ -37,7 +37,7 @@
   overflow: hidden;
   color: var(--admin-v2-ink);
   font-family: "Manrope", sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.3;
   text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-osszefoglalo p {
   margin: 0;
   color: var(--admin-v2-muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.35;
 }
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-kompakt-kartya-vezerlok {
@@ -105,7 +105,7 @@
   backdrop-filter: blur(14px);
 }
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szolgaltatas-kartya.szerkeszt .admin-kompakt-kartya-osszefoglalo h3 {
-  font-size: 14px;
+  font-size: 16px;
   white-space: normal;
 }
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szolgaltatas-kartya.szerkeszt .admin-kompakt-kartya-osszefoglalo p,
@@ -133,7 +133,7 @@
 .admin-body.admin-v2 #admin-panel-szolgaltatasok .admin-szerkeszto-szakasz legend {
   padding-inline: 5px;
   color: var(--admin-v2-brand-dark);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: .09em;
   text-transform: uppercase;

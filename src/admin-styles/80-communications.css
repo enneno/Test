@@ -78,7 +78,7 @@
 }
 
 /* E-mail preview sender */
-.admin-body.admin-v2 .admin-email-teszt-panel { max-width: 980px; }
+.admin-body.admin-v2 .admin-email-teszt-panel { max-width: 1280px; }
 .admin-body.admin-v2 .admin-email-teszt-fej {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

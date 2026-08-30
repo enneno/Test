@@ -4,7 +4,7 @@
 
 .foglalas-kezelo-biztonsagi-mezok {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px;
     min-width: 0;
 }
@@ -35,8 +35,7 @@
 }
 
 @media (max-width: 760px) {
-    .foglalas-kezelo-bevitel.foglalas-kezelo-bevitel-biztonsagos,
-    .foglalas-kezelo-biztonsagi-mezok {
+    .foglalas-kezelo-bevitel.foglalas-kezelo-bevitel-biztonsagos {
         grid-template-columns: 1fr;
     }
 }

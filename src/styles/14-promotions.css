@@ -256,7 +256,9 @@
 /* Home-page promotion variant. */
 .fooldal .akcios-banner {
     width: min(1040px, calc(100% - 48px));
-    margin: 78px auto 138px;
+    margin-right: auto;
+    margin-bottom: 0;
+    margin-left: auto;
     padding: 0;
     border: 0;
     border-radius: 0;
@@ -291,9 +293,13 @@
 }
 
 .fooldal .akcios-banner-kicker,
+.fooldal .akcios-banner .akcios-banner-cim {
+    color: #fffdf9;
+}
+
+.fooldal .akcios-banner-kicker,
 .fooldal .akcios-banner .akcios-banner-cim,
 .fooldal .akcios-banner p {
-    color: #fffdf9;
     text-align: left;
 }
 

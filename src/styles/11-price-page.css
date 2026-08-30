@@ -49,15 +49,14 @@
 }
 
 .arlista-csoport h3 {
-    margin: 0 0 24px;
-    color: var(--ui-rose-dark);
-    font-family: "Manrope", sans-serif;
-    font-size: var(--lumi-font-caption);
-    font-weight: 750;
-    letter-spacing: 0.18em;
-    line-height: 1;
+    margin: 0 0 20px;
+    color: var(--ui-ink);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
     text-align: left;
-    text-transform: uppercase;
 }
 
 .arlista-sor {
@@ -68,7 +67,7 @@
     padding: 8px 0;
     color: var(--ui-ink);
     font-family: "Manrope", sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.45;
 }
 
@@ -84,6 +83,7 @@
 .arlista-sor > span {
     min-width: 0;
     order: 1;
+    font-weight: 600;
 }
 
 .arlista-sor strong {
@@ -99,12 +99,11 @@
 }
 
 .arlista-ido {
-    color: var(--ui-muted);
+    color: color-mix(in srgb, var(--ui-muted) 72%, transparent);
     font-family: 'Manrope', sans-serif;
-    font-size: var(--lumi-font-caption);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 .arlista-megjegyzes {

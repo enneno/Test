@@ -28,8 +28,11 @@
     display: flex;
     align-items: flex-end;
     width: 100vw;
+    max-width: none;
     min-height: clamp(640px, 76vh, 820px);
+    margin-right: calc(50% - 50vw);
     margin-left: calc(50% - 50vw);
+    padding: 0;
     overflow: hidden;
     border-bottom: 1px solid var(--ui-line-strong);
 }
@@ -66,7 +69,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 22px;
-    margin-top: 34px;
+    margin-top: 0;
 }
 
 .seo-szolgaltatas-hero-kep {
@@ -82,9 +85,7 @@
     position: absolute;
     z-index: 1;
     inset: 0;
-    background:
-        linear-gradient(90deg, rgba(24, 18, 17, 0.78) 0%, rgba(24, 18, 17, 0.54) 56%, rgba(24, 18, 17, 0.2) 100%),
-        linear-gradient(0deg, rgba(24, 18, 17, 0.44) 0%, transparent 58%);
+    background: rgba(24, 18, 17, 0.58);
     content: "";
 }
 
@@ -123,7 +124,7 @@
 
 .seo-szolgaltatas-bevezeto {
     display: grid;
-    grid-template-columns: minmax(260px, 0.62fr) minmax(0, 1.38fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(36px, 7vw, 94px);
     padding: var(--seo-tartalmi-terkoz) 0;
 }
@@ -134,12 +135,18 @@
 .seo-gyik h2,
 .seo-szolgaltatas-zaras h2 {
     margin: 14px 0 0;
-    color: var(--ui-ink);
     font-family: "Cormorant Garamond", serif;
     font-size: clamp(42px, 5vw, 66px);
     font-weight: 600;
     letter-spacing: -0.035em;
     line-height: 1;
+}
+
+.seo-szolgaltatas-bevezeto h2,
+.seo-szolgaltatas-szekcio h2,
+.seo-szolgaltatas-kiemeles h2,
+.seo-gyik h2 {
+    color: var(--ui-ink);
 }
 
 .seo-szolgaltatas-bevezeto > p {
@@ -328,20 +335,77 @@
 
 .seo-szolgaltatas-zaras-akciok {
     justify-content: flex-end;
-    margin-top: 0;
 }
 
 .seo-szolgaltatas-zaras .szoveges-link {
     color: var(--ui-off-white);
 }
 
+@media screen and (min-width: 769px) {
+    .seo-szolgaltatas-bevezeto {
+        grid-template-rows: auto 1fr;
+        align-items: start;
+    }
+
+    .seo-szolgaltatas-bevezeto > .szekcio-kicker {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .seo-szolgaltatas-bevezeto > h2 {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .seo-szolgaltatas-bevezeto > p {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+
+    .seo-szolgaltatas-szekcio > .seo-szolgaltatas-szekcio-szoveg {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+        gap: 0 clamp(48px, 7vw, 96px);
+        max-width: none;
+    }
+
+    .seo-szolgaltatas-szekcio-szoveg > .szekcio-kicker {
+        grid-column: 1;
+        grid-row: 1;
+        margin-bottom: 14px;
+    }
+
+    .seo-szolgaltatas-szekcio-szoveg > h2 {
+        grid-column: 1;
+        grid-row: 2 / span 20;
+        min-width: 0;
+        margin-top: 0;
+    }
+
+    .seo-szolgaltatas-szekcio-szoveg > p {
+        grid-column: 2;
+    }
+}
+
 @media screen and (max-width: 900px) {
     .seo-szolgaltatas-bevezeto,
+    .seo-szolgaltatas-szekcio > .seo-szolgaltatas-szekcio-szoveg,
     .seo-szolgaltatas-kiemeles,
     .seo-szolgaltatas-kepek-fej,
     .seo-gyik-fej,
     .seo-szolgaltatas-zaras {
         grid-template-columns: 1fr;
+    }
+
+    .seo-szolgaltatas-bevezeto > :is(.szekcio-kicker, h2, p),
+    .seo-szolgaltatas-szekcio-szoveg > :is(.szekcio-kicker, h2, p) {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .seo-szolgaltatas-bevezeto {
+        row-gap: 12px;
     }
 
     .seo-szolgaltatas-zaras-akciok {
@@ -369,8 +433,7 @@
     }
 
     .seo-szolgaltatas-hero-kep::after {
-        background:
-            linear-gradient(0deg, rgba(24, 18, 17, 0.82) 0%, rgba(24, 18, 17, 0.52) 66%, rgba(24, 18, 17, 0.18) 100%);
+        background: rgba(24, 18, 17, 0.62);
     }
 
     .seo-szolgaltatas-ugras {

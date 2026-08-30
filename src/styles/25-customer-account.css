@@ -1,5 +1,5 @@
 .fiok-main {
-    width: min(1180px, calc(100% - 40px));
+    width: min(1080px, calc(100% - 40px));
     min-height: 70vh;
     margin: 0 auto;
     padding: 58px 0 96px;
@@ -13,10 +13,13 @@
 .fiok-dashboard-fej {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
-    align-items: end;
     gap: clamp(32px, 6vw, 80px);
     padding-bottom: 42px;
     border-bottom: 1px solid var(--ui-line-strong, rgba(145, 118, 110, 0.28));
+}
+
+.fiok-hero {
+    align-items: end;
 }
 
 .fiok-hero h1,
@@ -80,8 +83,11 @@
 .fiok-auth-elrendezes {
     display: grid;
     grid-template-columns: minmax(260px, 0.72fr) minmax(420px, 1fr);
+    align-items: center;
+    width: min(100%, 980px);
+    min-height: calc(100svh - var(--ui-header-height) - 154px);
     gap: clamp(26px, 5vw, 72px);
-    margin-top: 0;
+    margin: 0 auto;
 }
 
 .fiok-auth-bevezeto {
@@ -133,7 +139,7 @@
     box-sizing: border-box;
     border: 1px solid var(--ui-line, rgba(145, 118, 110, 0.18));
     border-radius: 20px;
-    background: color-mix(in srgb, var(--ui-surface, #fffaf4) 88%, transparent);
+    background: var(--ui-surface, #fffaf4);
     box-shadow: var(--lumi-soft-shadow);
 }
 
@@ -208,7 +214,6 @@
 .fiok-form textarea {
     width: 100%;
     min-width: 0;
-    min-height: 46px;
     box-sizing: border-box;
     padding: 10px 13px;
     border: 1px solid var(--lumi-control-border);
@@ -221,11 +226,16 @@
     font-size: var(--lumi-font-body-small);
 }
 
+.fiok-form input:not([type="checkbox"]),
 .fiok-form select {
-    background-image: linear-gradient(45deg, transparent 50%, var(--ui-muted, #756a65) 50%), linear-gradient(135deg, var(--ui-muted, #756a65) 50%, transparent 50%);
-    background-position: calc(100% - 17px) 19px, calc(100% - 12px) 19px;
+    min-height: 46px;
+}
+
+.fiok-form select {
+    background-image: var(--lumi-select-arrow);
+    background-position: right 12px center;
     background-repeat: no-repeat;
-    background-size: 5px 5px, 5px 5px;
+    background-size: 14px 14px;
     padding-right: 36px;
 }
 
@@ -570,7 +580,6 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--ui-ink, #64524d);
     font-family: "Manrope", sans-serif;
     font-size: var(--lumi-font-caption);
     font-weight: 700;
@@ -578,6 +587,10 @@
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
+}
+
+.fiok-foglalas-akciok .fiok-szoveges-link {
+    color: var(--ui-ink, #64524d);
 }
 
 .fiok-foglalas-akciok button {
@@ -676,6 +689,7 @@
 
     .fiok-auth-elrendezes,
     .fiok-dashboard {
+        min-height: 0;
         margin-top: 0;
     }
 

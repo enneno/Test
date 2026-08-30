@@ -1,16 +1,15 @@
 .fooldal .fiok-ajanlo {
     width: 100%;
+    max-width: none;
     margin: 0;
     padding: 0;
     border-top: 1px solid rgba(185, 133, 143, 0.14);
     border-bottom: 1px solid rgba(185, 133, 143, 0.16);
-    background:
-        radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.72), transparent 30%),
-        linear-gradient(105deg, #f8eee9 0%, #f6e7e5 48%, #f3e1e4 100%);
+    background: #f6e8e5;
 }
 
 .fooldal .fiok-ajanlo-belso {
-    width: min(1400px, calc(100% - 72px));
+    width: min(1120px, calc(100% - 48px));
     margin: 0 auto;
     padding: clamp(34px, 4vw, 58px) 0;
     display: grid;

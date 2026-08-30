@@ -2,7 +2,9 @@
 #galeria-atvezeto {
     width: min(1380px, calc(100% - 32px));
     max-width: none;
-    margin: 0 auto 32px;
+    margin-right: auto;
+    margin-bottom: 0;
+    margin-left: auto;
     padding: 0;
 }
 
@@ -106,7 +108,6 @@
 @media screen and (max-width: 768px) {
     .galeria-showcase-fej {
         grid-template-columns: 1fr;
-        gap: 22px;
     }
 
     .galeria-atvezeto-kepek {
@@ -131,7 +132,6 @@
 
     .galeria-atvezeto-szoveg {
         align-self: stretch;
-        align-items: flex-start;
         text-align: center;
     }
 
@@ -145,31 +145,6 @@
         margin-bottom: 18px;
         margin-left: auto;
         text-align: center;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .galeria-showcase-fej > *,
-    .galeria-showcase-fej h2,
-    .galeria-showcase-meta {
-        width: auto;
-        min-width: 0;
-        max-width: 100%;
-    }
-
-    .galeria-showcase-fej h2 {
-        font-size: clamp(36px, 11.5vw, 48px);
-        letter-spacing: -0.045em;
-        overflow-wrap: normal;
-        white-space: normal;
-    }
-
-    .galeria-atvezeto-kepek {
-        grid-template-rows: repeat(3, 150px);
-    }
-
-    .galeria-atvezeto-szoveg {
-        flex-direction: column;
     }
 }
 
@@ -314,21 +289,35 @@
 .galeria-kartya-pontok {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0;
 }
 
 .galeria-kartya-pont {
-    width: 7px;
-    height: 7px;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
     padding: 0;
     border: 0;
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.galeria-kartya-pont::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: rgba(67, 49, 43, 0.24);
-    cursor: pointer;
+    content: "";
+    transform: translate(-50%, -50%);
     transition: width 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease;
 }
 
-.galeria-kartya-pont[data-aktiv="true"] {
+.galeria-kartya-pont[data-aktiv="true"]::before {
     width: 22px;
     border-radius: 999px;
     background: var(--ui-rose-dark);
@@ -398,7 +387,9 @@
 @media screen and (max-width: 768px) {
     #galeria-atvezeto {
         width: 100%;
-        margin: 0;
+        margin-right: 0;
+        margin-bottom: 0;
+        margin-left: 0;
         padding: 24px 0 20px;
         overflow: hidden;
         background: var(--ui-surface);
@@ -456,37 +447,29 @@
     }
 }
 
-.galeria-kartya-pontok {
-    gap: 0;
-}
+@media screen and (max-width: 480px) {
+    .galeria-showcase-fej > *,
+    .galeria-showcase-fej h2,
+    .galeria-showcase-meta {
+        width: auto;
+        min-width: 0;
+        max-width: 100%;
+    }
 
-.galeria-kartya-pont,
-.galeria-kartya-pont[data-aktiv="true"] {
-    position: relative;
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    border-radius: 0;
-    background: transparent;
-}
+    .galeria-showcase-fej h2 {
+        font-size: clamp(36px, 11.5vw, 48px);
+        letter-spacing: -0.045em;
+        overflow-wrap: normal;
+        white-space: normal;
+    }
 
-.galeria-kartya-pont::before {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(67, 49, 43, 0.24);
-    content: "";
-    transform: translate(-50%, -50%);
-    transition: width 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease;
-}
+    .galeria-atvezeto-kepek {
+        grid-template-rows: repeat(3, 150px);
+    }
 
-.galeria-kartya-pont[data-aktiv="true"]::before {
-    width: 22px;
-    border-radius: 999px;
-    background: var(--ui-rose-dark);
+    .galeria-atvezeto-szoveg {
+        flex-direction: column;
+    }
 }
 
 @media screen and (max-width: 768px) {

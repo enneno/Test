@@ -11,7 +11,7 @@
 #szolgaltatasok {
     width: 100%;
     max-width: none;
-    margin: 0 0 150px;
+    margin-bottom: 0;
     padding: clamp(72px, 8vw, 112px) var(--ui-gutter);
     background: var(--ui-primary);
 }
@@ -305,14 +305,6 @@
     outline-color: var(--ui-highlight);
 }
 
-@media screen and (max-width: 480px) {
-    #szolgaltatasok h2 {
-        font-size: clamp(36px, 10vw, 44px);
-        overflow-wrap: normal;
-        white-space: normal;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .szolgaltatas-kartya,
     .szolgaltatas-kartya:hover {
@@ -330,7 +322,6 @@
 @media screen and (max-width: 768px) {
     #szolgaltatasok {
         width: 100%;
-        margin-bottom: 64px;
         padding: 58px 20px 60px;
     }
 
@@ -441,6 +432,14 @@
     }
 }
 
+@media screen and (max-width: 480px) {
+    #szolgaltatasok h2 {
+        font-size: clamp(36px, 10vw, 44px);
+        overflow-wrap: normal;
+        white-space: normal;
+    }
+}
+
 @media screen and (max-width: 380px) {
     .szolgaltatas-lista {
         width: calc(100% - 24px);
@@ -460,14 +459,16 @@
 /* Home introduction — végleges megjelenés (99-ből migrálva) */
 #bemutatkozas {
     width: min(1120px, calc(100% - 48px));
-    margin: clamp(40px, 6vw, 72px) auto 150px;
+    margin-right: auto;
+    margin-bottom: 0;
+    margin-left: auto;
     padding: 0;
     background: transparent;
 }
 
 #bemutatkozas .bemutatkozas-belso {
     display: grid;
-    grid-template-columns: minmax(340px, 0.88fr) minmax(0, 1.12fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(52px, 8vw, 110px);
     align-items: stretch;
     width: 100%;
@@ -555,29 +556,13 @@
 }
 
 @media screen and (max-width: 768px) {
-    .bemutatkozas {
-        width: calc(100% - 36px);
-        margin-bottom: 110px;
-    }
-
-    #bemutatkozas .bemutatkozas-belso {
-        grid-template-columns: 1fr;
-        gap: 44px;
-    }
-
-    #bemutatkozas .bemutatkozas-kep {
-        height: auto;
-    }
-}
-
-@media screen and (max-width: 768px) {
     #bemutatkozas {
         width: 100%;
-        margin-bottom: 64px;
         padding: 0 20px;
     }
 
     #bemutatkozas .bemutatkozas-belso {
+        grid-template-columns: 1fr;
         gap: 32px;
     }
 
@@ -616,7 +601,6 @@
     gap: 50px;
     align-items: end;
     width: 100%;
-    margin: 0;
     padding: clamp(70px, 8vw, 110px) var(--ui-gutter);
     border: 0;
     border-radius: 0;
@@ -626,7 +610,7 @@
 .fooldal #kapcsolat h2 {
     max-width: 760px;
     margin: 12px 0 18px;
-    color: var(--ui-ink);
+    color: var(--ui-off-black);
     font-family: "Cormorant Garamond", serif;
     font-size: clamp(54px, 7vw, 88px);
     line-height: 0.92;
@@ -657,7 +641,6 @@
 }
 
 .fooldal #kapcsolat .szekcio-kicker,
-.fooldal #kapcsolat h2,
 .fooldal #kapcsolat .szekcio-leiras {
     color: var(--ui-off-black);
 }
@@ -779,27 +762,4 @@
         font-size: var(--lumi-font-body);
         line-height: 1.65;
     }
-}
-
-/* Public helpers — végleges megjelenés (99-ből migrálva) */
-.szoveges-link {
-    display: inline-flex;
-    max-width: 100%;
-    align-items: baseline;
-    gap: 8px;
-    margin-top: 18px;
-    color: var(--ui-rose-dark);
-    font-family: "Manrope", sans-serif;
-    font-size: var(--lumi-font-caption);
-    font-weight: 700;
-    line-height: 1.5;
-}
-
-.szoveges-link > span {
-    flex: 0 0 auto;
-    font-family: Arial, sans-serif;
-    font-size: 1.15em;
-    font-weight: 400;
-    line-height: 1;
-    text-decoration: none;
 }

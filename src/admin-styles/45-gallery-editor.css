@@ -52,7 +52,7 @@
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-header h3 {
   margin: 0 0 3px;
   font-family: "Manrope", sans-serif;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -93,7 +93,7 @@
 .admin-body.admin-v2 #admin-panel-szovegek #admin-cms-root[data-lumi-cms-gallery-context="images"] .cms-gallery-item h4 {
   margin: 0;
   font-family: "Manrope", sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -104,7 +104,7 @@
   min-height: 34px;
   gap: 7px;
   padding: 6px 7px;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.2;
 }
 

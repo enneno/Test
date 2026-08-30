@@ -1,11 +1,11 @@
 .admin-body.admin-v2 .admin-vendeg-panel {
-  max-width: 900px;
+  max-width: 1200px;
 }
 
 .admin-body.admin-v2 .admin-vendeg-osszefoglalo {
   margin: 0 0 12px;
   color: var(--admin-v2-ink);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -41,7 +41,7 @@
   border-radius: 50%;
   color: var(--admin-v2-brand-dark);
   background: var(--admin-v2-brand-soft);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
@@ -60,13 +60,13 @@
 }
 
 .admin-body.admin-v2 .admin-vendeg-sor-copy strong {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.3;
 }
 
 .admin-body.admin-v2 .admin-vendeg-sor-copy small {
   color: var(--admin-v2-muted);
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
@@ -74,7 +74,7 @@
   margin: 0;
   padding: 28px 18px;
   color: var(--admin-v2-muted);
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
 }
 

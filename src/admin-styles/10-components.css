@@ -15,11 +15,11 @@
   --admin-ui-button-padding-x: 13px;
   --admin-ui-textarea-min-height: 72px;
   --admin-ui-control-line-height: 1.2;
-  --admin-ui-action-font-size: 11px;
-  --admin-ui-placeholder-font-size: 11px;
+  --admin-ui-action-font-size: 14px;
+  --admin-ui-placeholder-font-size: 14px;
   --admin-ui-input-font-size: 18px;
-  --admin-ui-select-font-size: 11px;
-  --admin-ui-page-size-font-size: 11px;
+  --admin-ui-select-font-size: 14px;
+  --admin-ui-page-size-font-size: 14px;
   --admin-ui-picker-font-size: 20px;
   --admin-ui-ios-field-optical-ratio: 0.32;
   --admin-ui-ios-choice-optical-ratio: 0.32;
@@ -104,18 +104,18 @@
   overflow-wrap: anywhere;
   color: var(--barna);
   font-family: "Manrope", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.25;
 }
 
 .admin-body .admin-db-kartya p {
   margin: 6px 0 0;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.45;
 }
 
-.admin-body.admin-v2 .admin-db-kartya span {
-  font-size: 11px;
+.admin-body.admin-v2 .admin-db-kartya span:not(.admin-allapot-jelzo) {
+  font-size: 14px;
   line-height: 1.45;
 }
 
@@ -158,7 +158,7 @@
 .admin-body .admin-kartya-tipus {
   margin: 0 0 4px;
   color: var(--admin-v2-subtle);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1em;
   line-height: 1.2;
@@ -231,7 +231,7 @@
   color: var(--admin-v2-muted);
   background: transparent;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -525,7 +525,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 :is(#admin-tartalom, #admin-bejelentkezes-panel) select,
 .admin-body.admin-v2 #admin-tartalom .admin-db-statusz {
-  font-size: 11px;
+  font-size: 14px;
   font-size-adjust: none;
   height: var(--admin-ui-choice-height);
   min-height: var(--admin-ui-choice-height);
@@ -702,7 +702,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-muted);
   background: transparent;
   font-family: inherit;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -739,7 +739,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   color: var(--admin-v2-brand-dark);
   background: var(--admin-v2-surface);
   box-shadow: 0 1px 3px rgba(67, 42, 35, .08);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -759,7 +759,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   gap: 6px;
   margin: 0;
   color: var(--admin-v2-subtle);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -1010,14 +1010,14 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 
 .admin-body.admin-v2 #admin-panel-foglalasok .admin-idopont-szerkeszto .admin-mezo {
   color: var(--admin-v2-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.15;
 }
 
 .admin-body.admin-v2 #admin-panel-szovegek .admin-mezo {
   color: var(--admin-v2-muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1025,7 +1025,7 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
   min-height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
   line-height: 22px;
   white-space: nowrap;
@@ -1044,6 +1044,6 @@ html[data-admin-theme="dark"] .admin-body.admin-v2 {
 @media screen and (max-width: 768px) {
   .admin-body .admin-allapot-jelzo--kompakt {
     padding-inline: 6px;
-    font-size: 7px;
+    font-size: 9px;
   }
 }

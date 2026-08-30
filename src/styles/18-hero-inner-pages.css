@@ -1,24 +1,4 @@
-/* Public accessibility and hero components. */
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-    outline: 3px solid var(--ui-rose-dark);
-    outline-offset: 3px;
-}
-
-.szekcio-kicker,
-.hero-kicker,
-.foglalas-kicker {
-    color: var(--ui-rose-dark);
-    font-family: "Manrope", sans-serif;
-    font-size: var(--lumi-font-caption);
-    font-weight: 750;
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
-}
+/* Public hero components. */
 
 /* Home hero */
 #hero.hero-preview-refresh {
@@ -210,76 +190,17 @@ textarea:focus-visible {
 
 }
 
-@media screen and (max-width: 768px) {
-    #hero.hero-preview-refresh {
-        display: flex;
-        flex-direction: column-reverse;
-        width: 100%;
-        height: auto;
-        min-height: 0;
-        margin-top: 0;
-    }
-
-    .hero-content {
-        padding: 36px 24px;
-    }
-
-    .hero-bizalom {
-        margin-top: 34px;
-    }
-
-    .hero-content h1 {
-        font-size: clamp(70px, 22vw, 104px);
-    }
-
-    .hero-visual {
-        height: clamp(340px, 58vw, 460px);
-        min-height: 0;
-        border-radius: 0;
-        clip-path: none;
-    }
-
-    .hero-kep {
-        height: 100%;
-        object-position: center;
-    }
-
-    .hero-monogram {
-        top: 20px;
-        right: 20px;
-        left: auto;
-        width: 88px;
-        height: 88px;
-        border-radius: 4px;
-        transform: none;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .hero-content h1 {
-        font-size: clamp(62px, 18vw, 78px);
-    }
-
-    .hero-visual {
-        min-height: 0;
-    }
-
-    .hero-visual-cimke {
-        right: 16px;
-        bottom: 16px;
-        left: 16px;
-    }
-
-}
-
 /* Phone-only editorial refinement. Desktop layout remains unchanged. */
 @media screen and (max-width: 768px) {
 
     #hero.hero-preview-refresh {
         display: flex;
+        width: 100%;
+        height: auto;
         min-height: 0;
         flex-direction: column;
         gap: 28px;
+        margin-top: 0;
         padding: 28px 18px 0;
         background: var(--ui-ink);
         box-shadow: 0 12px 30px rgba(78, 54, 48, 0.11);
@@ -347,7 +268,9 @@ textarea:focus-visible {
         min-height: 0;
         flex-direction: column;
         overflow: visible;
+        border-radius: 0;
         background: rgba(255, 249, 245, 0.04);
+        clip-path: none;
     }
 
     .hero-kep {
@@ -368,6 +291,7 @@ textarea:focus-visible {
         height: 76px;
         border-radius: 3px;
         font-size: 25px;
+        transform: none;
     }
 
     .hero-visual-cimke {
@@ -396,23 +320,8 @@ textarea:focus-visible {
 
 }
 
-/* iOS fokusznagyitas elleni tartalek: 22 px technikai, kb. 14-15 px optikai meret. */
-@media screen and (max-width: 768px) {
-    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-    select,
-    textarea,
-    [contenteditable="true"] {
-        font-size: max(22px, 1em);
-        font-size-adjust: var(--lumi-input-optical-ratio, 0.36);
-    }
-
-    #fo-tartalom input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-    #fo-tartalom select,
-    #fo-tartalom textarea,
-    #lablec-helye input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-    #lablec-helye select,
-    #lablec-helye textarea {
-        font-size: max(22px, 1em);
-        font-size-adjust: var(--lumi-input-optical-ratio, 0.36);
+@media screen and (max-width: 480px) {
+    .hero-content h1 {
+        font-size: clamp(62px, 18vw, 78px);
     }
 }
