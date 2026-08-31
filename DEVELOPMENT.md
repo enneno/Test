@@ -2,20 +2,21 @@
 
 ## Fejlesztési forrás és éles példány
 
-A projekt elsődleges fejlesztési példánya: `D:\Asztal\LumiNails_Test`.
+A projekt elsődleges fejlesztési példánya: `C:\Users\llevi\OneDrive\Asztali gép\LumiNails_test`.
 Minden fejlesztést és hibajavítást ebben a mappában kell elvégezni, ellenőrizni és a tesztoldalra feltölteni.
 
-A `D:\Asztal\Luminails` mappa az éles `luminails.hu` tároló helyi példánya. Ebben normál fejlesztést nem végzünk; az éles tartalmat az ellenőrzött promóciós folyamat frissíti.
+Az éles `luminails.hu` GitHub-tároló az `enneno/LumiNails-Live`. Ebben normál fejlesztést nem végzünk; az éles tartalmat az ellenőrzött promóciós folyamat frissíti. Ha az éles tároló helyi példányára szükség van, az útvonalát minden művelet előtt külön ellenőrizni kell.
 
 ## Tesztelés és élesítés
 
-1. A módosítás a `LumiNails_Test` mappában készül el.
-2. A `main` ágra kerülő commit teljes ellenőrzés után automatikusan a tesztoldalra települ.
-3. A tesztoldalon manuálisan is ellenőrizzük a fontos működéseket.
-4. Élesítéshez az `enneno/Test` tárolóban kézzel kell elindítani a `Promote tested site to luminails.hu` workflow-t.
-5. A workflow újra ellenőrzi a kiválasztott teszt commitot, megőrzi az éles `CNAME` és `.github` fájlokat, majd ugyanazt az ellenőrzött csomagot menti és telepíti a `luminails.hu` oldalra.
+1. A módosítás a `LumiNails_test` mappában készül el.
+2. A módosítást helyileg, az `AGENTS.md` kockázatalapú szabályai szerint kell ellenőrizni. Kis vizuális változásnál nem kell teljes tesztcsomag.
+3. Az `enneno/enneno.github.io` `main` ágára kerülő commit automatikusan a tesztoldalra települ, GitHubon futó alkalmazásteszt nélkül.
+4. A tesztoldalon manuálisan csak a változás által érintett fontos működéseket és nézeteket kell ellenőrizni.
+5. Élesítéshez az `enneno/LumiNails-Live` tárolóban kézzel kell elindítani a `Promote tested site to luminails.hu` workflow-t, megadni az ellenőrzött TEST commitot vagy ágat, majd beírni az `ELESITES` megerősítést.
+6. A workflow ellenőrzi, hogy a kiválasztott TEST commit sikeresen kikerült-e a tesztoldalra, megőrzi az éles `CNAME` és `.github` fájlokat, majd ugyanazt az ellenőrzött tartalmat új GitHub-teszt futtatása nélkül menti és telepíti a `luminails.hu` oldalra.
 
-Normál fejlesztés közben semmi nem kerül automatikusan az éles oldalra. Visszaállításhoz az utolsó promóciós commit visszavonható, majd a `Redeploy current luminails.hu site` workflow kézzel újraindítható.
+Normál fejlesztés közben semmi nem kerül automatikusan az éles oldalra. Visszaállításhoz az utolsó promóciós commit visszavonható, majd a `Redeploy current luminails.hu site` workflow kézzel, `UJRATELEPITES` megerősítéssel újraindítható. Az újratelepítés a már helyileg ellenőrzött éles commitot teszi közzé, ezért nem futtat új tesztet.
 
 ## Szerkeszthető források
 
@@ -35,11 +36,11 @@ Az önálló `admin-content.js`, `supabase-config.js` és a HTML-fájlok tovább
 - `npm run build` – összeállítja a böngészőnek szánt CSS/JS fájlokat.
 - `npm run assets:version` – a fájlok tartalmából frissíti a cache-verziókat a HTML-ben.
 - `npm run check` – statikus ellenőrzések, szintaxis, hivatkozások, Supabase-kliens, CSS-szabályok és forrás/bundle egyezés.
-- `npm test` – Edge-alapú böngészős füsttesztek mobil és asztali nézetben.
-- `npm run verify` – a teljes helyi kiadási ellenőrzés a megfelelő sorrendben.
+- `npm test` – a Playwright böngészős tesztcsomag; csak az `AGENTS.md` szerint indokolt esetben futtatandó teljes egészében.
+- `npm run verify` – a teljes helyi kiadási ellenőrzés; csak nagy kockázatú, több fontos folyamatot érintő változásnál vagy kifejezett kérésre futtatandó.
 - `npm run serve` – helyi szerver a 8101-es porton.
 
-A `verify` sikeres futása nélkül ne készüljön commit vagy push.
+Commit vagy push előtt a módosítás kockázatához illeszkedő legkisebb elegendő helyi ellenőrzést kell sikeresen elvégezni. A teljes `verify` nem általános előfeltétel.
 
 ## Biztonság
 

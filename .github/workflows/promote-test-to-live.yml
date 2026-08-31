@@ -12,11 +12,6 @@ on:
         description: "Írd be: ELESITES"
         required: true
         type: string
-  push:
-    branches:
-      - main
-    paths:
-      - .github/live-release-request.txt
 
 concurrency:
   group: pages
@@ -57,11 +52,7 @@ jobs:
         env:
           MANUAL_REF: ${{ inputs.test_ref }}
         run: |
-          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
-            test_ref="$MANUAL_REF"
-          else
-            test_ref="$(tr -d '\r\n ' < live/.github/live-release-request.txt)"
-          fi
+          test_ref="$(printf '%s' "$MANUAL_REF" | tr -d '\r\n')"
           if [[ -z "$test_ref" ]]; then
             echo "::error::Hiányzik a TEST commit vagy ág."
             exit 1

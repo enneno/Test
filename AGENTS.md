@@ -1,11 +1,11 @@
 # AGENTS.md — LumiNails TEST fejlesztési szabályzat
 
-Ez a fájl a `D:\Asztal\LumiNails_Test` projektben végzett minden munkára kötelező szabályokat rögzíti.
+Ez a fájl a `C:\Users\llevi\OneDrive\Asztali gép\LumiNails_test` projektben végzett minden munkára kötelező szabályokat rögzíti.
 
 ## Környezetek és kötelező kiadási folyamat
 
-- Az éles helyi projekt: `D:\Asztal\Luminails`.
-- A fejlesztési és ellenőrzési projekt: `D:\Asztal\LumiNails_Test`.
+- A fejlesztési és ellenőrzési projekt: `C:\Users\llevi\OneDrive\Asztali gép\LumiNails_test`.
+- Az éles helyi projekt útvonalát minden élesítés előtt külön, read-only ellenőrzéssel kell azonosítani; régi vagy feltételezett útvonalat tilos használni.
 - Minden fejlesztést először és kizárólag a TEST projektben kell elkészíteni.
 - A TEST-változtatásokat a kockázatukhoz arányosan kell átnézni; kis és egyértelmű változásnál a Git-diff és szükség esetén egy gyors vizuális ellenőrzés elegendő.
 - Az ellenőrzés eredményét röviden, pontosan jelenteni kell a felhasználónak.
@@ -42,16 +42,28 @@ Ez a fájl a `D:\Asztal\LumiNails_Test` projektben végzett minden munkára köt
 
 ## Tesztelési alapelv
 
-- A GitHubon semmilyen automatikus teszt nem futhat; a TEST GitHub-folyamat kizárólag a már késznek ítélt verzió közzétételére szolgál.
-- GitHubra csak olyan változtatás tölthető fel, amelyet helyileg a módosítás kockázatához arányosan már megfelelőnek ítéltünk.
-- A helyi tesztelés szükségességéről és mértékéről az aktuális változás alapján kell dönteni.
-- Kis admin-, megjelenési, CSS-, szöveges vagy jól körülhatárolt kezelőfelületi módosításnál, amely nem érint adatkezelést vagy közös infrastruktúrát, általában nem kell automatizált teszt.
-- Interakciós vagy működési logika módosításánál legfeljebb a közvetlenül érintett célzott Playwright-tesztet kell futtatni.
-- Teljes tesztcsomag csak Supabase-, hitelesítési, foglalási adat-, Storage-, e-mail-, közös build-, függőségi vagy több fontos folyamatot egyszerre érintő változtatásnál, illetve kifejezett felhasználói kérésre indokolt.
-- Tilos nem érintett oldalakat és funkciókat csak megszokásból tesztelni.
+- Mindig a legkisebb, még kellően megbízható ellenőrzést kell választani. A tesztelés terjedelmét a tényleges változási kör és kockázat határozza meg, nem a megszokás.
+- Kis vizuális, CSS-, tipográfiai, spacing-, szín-, ikon- vagy szövegmódosítás miatt tilos a teljes weboldalt vagy a teljes Playwright-csomagot végigtesztelni.
+- Kis, jól körülhatárolt vizuális változásnál alapértelmezés szerint elegendő:
+  1. a Git-diff ellenőrzése;
+  2. az érintett oldal vagy komponens gyors vizuális ellenőrzése;
+  3. csak az érintett viewport ellenőrzése, illetve desktop és mobil nézet együtt, ha a változás reszponzív viselkedést érint.
+- Egyszerű vizuális vagy szöveges módosításnál automatizált tesztet, Lighthouse-, axe- vagy teljes oldalas auditot csak akkor kell futtatni, ha a változás közvetlenül érinti az adott területet, vagy konkrét kockázat indokolja.
+- Interakciós vagy működési logika módosításánál kizárólag a közvetlenül érintett célzott Playwright-specet vagy a lehető legszűkebb tesztesetet kell futtatni.
+- Közös CSS-, navigációs vagy megosztott komponens módosításánál néhány reprezentatív érintett oldal ellenőrizhető, de ez önmagában nem indokol teljes tesztcsomagot.
+- Teljes tesztcsomag csak akkor indokolt, ha a változás Supabase-t, hitelesítést, foglalási adatot, Storage-ot, e-mailt, közös buildfolyamatot, függőséget vagy több fontos felhasználói folyamatot egyszerre érint, illetve ha a felhasználó ezt kifejezetten kéri.
+- Egy kis változtatás ellenőrzése nem válhat indokolatlan, hosszú — például félórás — teljes oldalas teszteléssé. Ha egy célzott ellenőrzés váratlanul széles vagy lassú lesz, meg kell állni és újra kell szűkíteni a tesztkört.
+- Tilos nem érintett oldalakat és funkciókat „biztonság kedvéért” vagy rutinból tesztelni.
 - Tilos ugyanazt a sikeres tesztet érdemi kódváltozás nélkül újrafuttatni.
-- Sikertelen teszt után csak a hibához kapcsolódó javítást és a szükséges célzott ellenőrzést kell megismételni.
-- Az élesítés nem tesztel újra; kizárólag a felhasználó által külön jóváhagyott, sikeresen közzétett TEST commit emelhető át.
+- Sikertelen teszt után csak a hibához kapcsolódó javítást és a szükséges célzott ellenőrzést kell megismételni; a sikertelen célzott teszt nem jogosít fel automatikusan teljes tesztcsomag futtatására.
+
+## GitHub és kiadás
+
+- A GitHubon semmilyen automatikus teszt nem futhat.
+- A GitHub-folyamat kizárólag a helyileg már ellenőrzött és késznek ítélt TEST-verzió közzétételére szolgálhat.
+- GitHubra csak olyan változtatás tölthető fel, amelyet helyileg, a fenti kockázatalapú szabályok szerint már megfelelőnek ítéltünk.
+- A push vagy a GitHub Pages közzététel nem indíthat új tesztet, auditot vagy teljes ellenőrzést.
+- Az élesítés nem tesztel újra; kizárólag a felhasználó által külön jóváhagyott, helyileg ellenőrzött és sikeresen közzétett TEST commit emelhető át.
 
 ## Ellenőrzés és jelentés
 

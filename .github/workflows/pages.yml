@@ -13,9 +13,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
+  deploy:
     permissions:
       contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Confirm recovery redeploy
@@ -35,28 +40,10 @@ jobs:
         shell: bash
         run: grep -qx 'luminails.hu' CNAME
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Edge for Playwright
-        run: npx playwright install --with-deps msedge
-
-      - name: Verify admin release
-        run: npm run verify:admin
-
-      - name: Verify committed live candidate
-        run: npm run check && npm test
-
-      - name: Prepare verified Pages artifact
+      - name: Prepare current Pages artifact
         shell: bash
         run: |
-          artifact_dir="${RUNNER_TEMP}/verified-live-site"
+          artifact_dir="${RUNNER_TEMP}/live-site"
           mkdir -p "$artifact_dir"
           rsync -a \
             --exclude='.git/' \
@@ -66,46 +53,15 @@ jobs:
             --exclude='test-results/' \
             ./ "$artifact_dir/"
 
-      - name: Store verified live artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: verified-live-site
-          path: ${{ runner.temp }}/verified-live-site
-          include-hidden-files: true
-          retention-days: 3
-
-  deploy:
-    needs: verify
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download verified live artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: verified-live-site
-          path: site
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload static files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: site
+          path: ${{ runner.temp }}/live-site
           include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Smoke test luminails.hu
-        shell: bash
-        run: |
-          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/
-          curl --fail --silent --show-error --retry 12 --retry-delay 5 https://luminails.hu/foglalas/
